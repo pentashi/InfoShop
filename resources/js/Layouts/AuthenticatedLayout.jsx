@@ -17,12 +17,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PaidIcon from '@mui/icons-material/Paid';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import StoreIcon from '@mui/icons-material/Store';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 const drawerWidth = 240;
 
@@ -202,15 +204,20 @@ export default function Authenticated({ header, children, ...props }) {
 
           <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")}/>
           <NavItem href="/product" icon={InventoryIcon} label="Product" open={open} selected={isSelected("/product")}/>
+          <NavItem href="/collection" icon={AccountTreeIcon} label="Collection" open={open} selected={isSelected("/collection")} />
           <NavItem href="/sale" icon={PaidIcon} label="Sale" open={open} selected={isSelected("/sale")}/>
           <NavItem href="/purchase" icon={AddShoppingCartIcon} label="Purchase" open={open} selected={isSelected("/purchase")}/>
+          <NavItem href="/store" icon={StoreIcon} label="Store" open={open} selected={isSelected("/store")} />
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
+          
 
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
+          <Box className="py-4 px-4">
           <main>{children}</main>
+          </Box>
         </Box>
       </Box>
     );

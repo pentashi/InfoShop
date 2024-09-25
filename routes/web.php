@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StoreController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -26,6 +28,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/product', [ProductController::class, 'index'])->name('product');
+    
+    Route::get('/store', [StoreController::class, 'index'])->name('store');
+    Route::post('/store', [StoreController::class, 'store']);
+    Route::put('/store/{id}', [StoreController::class, 'update']);
 });
 
 require __DIR__.'/auth.php';
