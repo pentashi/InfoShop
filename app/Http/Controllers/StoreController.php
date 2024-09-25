@@ -30,10 +30,6 @@ class StoreController extends Controller
         // 4. Save the data to the database
         $store = Store::create($validatedData);
 
-        // return response()->json([
-        //     'message' => 'Store created successfully!',
-        //     'data' => $validatedData, // Optional: Include the submitted data
-        // ]);
         return Redirect::route('store')->with('success', 'Store created successfully!');
     }
 

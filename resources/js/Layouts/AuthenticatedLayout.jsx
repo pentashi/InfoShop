@@ -209,7 +209,6 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/purchase" icon={AddShoppingCartIcon} label="Purchase" open={open} selected={isSelected("/purchase")}/>
           <NavItem href="/store" icon={StoreIcon} label="Store" open={open} selected={isSelected("/store")} />
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
-          
 
           </List>
         </Drawer>

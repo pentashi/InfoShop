@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\CollectionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -33,6 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/store', [StoreController::class, 'index'])->name('store');
     Route::post('/store', [StoreController::class, 'store']);
     Route::put('/store/{id}', [StoreController::class, 'update']);
+
+    Route::get('/collection', [CollectionController::class, 'index'])->name('collection');
+    Route::post('/collection', [CollectionController::class, 'store']);
+    Route::put('/collection/{id}', [CollectionController::class, 'update']);
 });
 
 require __DIR__.'/auth.php';

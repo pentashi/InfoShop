@@ -3,29 +3,15 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
 import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 
-import { DataGrid, GridToolbar, DEFAULT_GRID_AUTOSIZE_OPTIONS} from '@mui/x-data-grid';
+import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 
 import FormDialog from './Partial/FormDialog';
 
-
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-    }),
-  }));
 
   const columns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -74,7 +60,7 @@ const Item = styled(Paper)(({ theme }) => ({
     return (
         <AuthenticatedLayout>
           
-            <Head title="Product" />
+            <Head title="Store" />
 
             {console.log(stores)}
                 <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
