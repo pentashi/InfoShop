@@ -1,0 +1,68 @@
+Sure! Here are the **table structures** only:
+
+---
+
+### **Products Table**
+- `product_id`: INT, Primary Key, Auto Increment
+- `name`: VARCHAR(255), Product Name
+- `description`: TEXT, Product Description
+- `price`: DECIMAL(10, 2), Product Price
+- `cost`: DECIMAL(10, 2), Product Cost
+- `sku`: VARCHAR(100), Unique SKU
+- `barcode`: VARCHAR(100), Unique Barcode
+- `image_url`: VARCHAR(255), Product Image URL
+- `created_at`: TIMESTAMP, Product Creation Time
+- `updated_at`: TIMESTAMP, Auto-update on modification
+- `is_active`: BOOLEAN, Product Active Status
+
+---
+
+### **Taxonomy Table**
+- `taxonomy_id`: INT, Primary Key, Auto Increment
+- `taxonomy_type`: ENUM ('category', 'brand', 'tag'), Type of taxonomy
+- `name`: VARCHAR(255), Taxonomy Name (Category, Brand, etc.)
+- `description`: TEXT, Optional description of taxonomy
+- `parent_id`: INT, Optional Foreign Key for hierarchical categories
+
+---
+
+### **Stores Table**
+- `store_id`: INT, Primary Key, Auto Increment
+- `name`: VARCHAR(255), Store Name
+- `address`: VARCHAR(255), Store Address
+- `contact_number`: VARCHAR(50), Store Contact Number
+
+---
+
+### **Product Stock Table**
+- `stock_id`: INT, Primary Key, Auto Increment
+- `product_id`: INT, Foreign Key (References Products Table)
+- `store_id`: INT, Foreign Key (References Stores Table)
+- `quantity`: INT, Quantity of product in stock
+- `expiry_date`: DATE, Expiry date of the product batch
+- `batch_number`: VARCHAR(100), Unique identifier for batches of product
+
+---
+
+### **Product Meta Table**
+- `meta_id`: INT, Primary Key, Auto Increment
+- `product_id`: INT, Foreign Key (References Products Table)
+- `meta_key`: VARCHAR(255), The name of the custom field (e.g., color, size)
+- `meta_value`: TEXT, The value of the custom field (e.g., red, large)
+
+---
+
+SELECT 
+    p.id AS product_id, 
+    p.name AS product_name, 
+    p.description AS product_description, 
+    p.price AS product_price,
+    GROUP_CONCAT(c.name ORDER BY c.collection_type ASC SEPARATOR ', ') AS collections
+FROM 
+    products p
+LEFT JOIN 
+    product_collections pc ON p.id = pc.product_id
+LEFT JOIN 
+    collections c ON pc.collection_id = c.id
+GROUP BY 
+    p.id;

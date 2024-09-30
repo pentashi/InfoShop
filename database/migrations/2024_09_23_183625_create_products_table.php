@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 255); // Product Name
+            $table->text('description')->nullable(); // Product Description
+            $table->string('sku', 100)->nullable()->unique(); // Unique SKU
+            $table->string('barcode', 100)->nullable()->unique(); // Unique Barcode
+            $table->string('image_url', 255)->nullable(); // Product Image URL
+            $table->string('unit', 10); // Km/Litre/Box
+            $table->integer('brand_id')->nullable(); // Brand ID (integer)
+            $table->integer('category_id')->nullable(); // Category ID (integer)
+            $table->decimal('quantity', 10, 2)->default(0); // Quantity of product in stock
+            $table->decimal('alert_quantity', 10, 2)->default(5); // Minimum stock threshold for alerts
+            $table->boolean('is_stock_managed')->default(true); // Indicates if stock management is enabled
+            $table->boolean('is_active')->default(true); // Product Active Status, default to true
             $table->timestamps();
         });
     }

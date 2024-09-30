@@ -13,6 +13,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Swal from 'sweetalert2';
 
+
 export default function FormDialog({ open, handleClose, collection }) {
   const [name, setName] = useState('');
   const [collectionType, setCollectionType] = useState('');
@@ -80,7 +81,7 @@ export default function FormDialog({ open, handleClose, collection }) {
         <DialogContent>
           {/* Collection Name */}
           <TextField
-            className="py-8"
+            className="py-8 mb-4"
             autoFocus
             required
             margin="dense"
@@ -93,35 +94,22 @@ export default function FormDialog({ open, handleClose, collection }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <FormControl fullWidth className="py-8" margin="dense">
-          <InputLabel id="demo-simple-select-label">Type</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="collection_type"
-            value={collectionType}
-            label="Type"
-            onChange={handleChange}
-            name="collection_type"
-          >
-          <MenuItem value={'category'}>Category</MenuItem>
-          <MenuItem value={'brand'}>Brand</MenuItem>
-          <MenuItem value={'tag'}>Tag</MenuItem>
-        </Select>
-        </FormControl>
-          {/* Collection Type
-          <TextField
-            className="py-8"
-            required
-            margin="dense"
-            id="collection_type"
-            name="collection_type"
-            label="Collection Type"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={collectionType}
-            onChange={(e) => setCollectionType(e.target.value)}
-          /> */}
+
+            <FormControl fullWidth className="py-8" style={{marginTop:'1.5rem', marginBottom:'0.5rem'}} margin="dense">
+              <InputLabel id="collection-type-label" >Type</InputLabel>
+              <Select
+                labelId="collection-type-label"
+                id="collection_type"
+                value={collectionType}
+                label="Type"
+                onChange={handleChange}
+                name="collection_type"
+              >
+              <MenuItem value={'category'}>Category</MenuItem>
+              <MenuItem value={'brand'}>Brand</MenuItem>
+              <MenuItem value={'tag'}>Tag</MenuItem>
+              </Select>
+          </FormControl>
 
           {/* Collection Description */}
           <TextField

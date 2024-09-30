@@ -61,8 +61,6 @@ import FormDialog from './Partial/FormDialog';
         <AuthenticatedLayout>
           
             <Head title="Store" />
-
-            {console.log(stores)}
                 <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
                     <Grid size={8}>
                         <Typography variant="h4" component="h2">Store</Typography>
@@ -72,18 +70,18 @@ import FormDialog from './Partial/FormDialog';
                     </Grid>
 
                     <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
-                    <DataGrid 
-                    rows={stores} 
-                    columns={columns(handleEdit)}
-                    pageSize={5}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                          showQuickFilter: true,
-                        },
-                      }}
-                     />
-                </Box>
+                      <DataGrid 
+                      rows={stores} 
+                      columns={columns(handleEdit)}
+                      pageSize={5}
+                      slots={{ toolbar: GridToolbar }}
+                      slotProps={{
+                          toolbar: {
+                            showQuickFilter: true,
+                          },
+                        }}
+                      />
+                  </Box>
                 </Grid>
 
                 <FormDialog open={open} handleClose={handleClose} store={selectedStore} />

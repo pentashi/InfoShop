@@ -167,7 +167,7 @@ export default function Authenticated({ header, children, ...props }) {
     // }, []); 
 
     //Logic to selected menu item
-    const isSelected = (href) => pathname === href;
+    const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
   
     return (
       <Box sx={{ display: 'flex' }}>
@@ -203,11 +203,11 @@ export default function Authenticated({ header, children, ...props }) {
           <List>
 
           <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")}/>
-          <NavItem href="/product" icon={InventoryIcon} label="Product" open={open} selected={isSelected("/product")}/>
-          <NavItem href="/collection" icon={AccountTreeIcon} label="Collection" open={open} selected={isSelected("/collection")} />
-          <NavItem href="/sale" icon={PaidIcon} label="Sale" open={open} selected={isSelected("/sale")}/>
-          <NavItem href="/purchase" icon={AddShoppingCartIcon} label="Purchase" open={open} selected={isSelected("/purchase")}/>
-          <NavItem href="/store" icon={StoreIcon} label="Store" open={open} selected={isSelected("/store")} />
+          <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")}/>
+          <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")} />
+          <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")}/>
+          <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")}/>
+          <NavItem href="/stores" icon={StoreIcon} label="Stores" open={open} selected={isSelected("/stores")} />
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
 
           </List>

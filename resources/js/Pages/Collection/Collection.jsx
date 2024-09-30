@@ -13,11 +13,11 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import FormDialog from './Partial/FormDialog';
 
 const columns = (handleEdit) => [
-  { field: 'id', headerName: 'ID', width: 100 },
+  { field: 'id', headerName: 'ID', width: 80 },
   { field: 'name', headerName: 'Name', width: 200 },
-  { field: 'collection_type', headerName: 'Collection Type', width: 180 },
+  { field: 'collection_type', headerName: 'Collection Type', width: 150 },
   { field: 'description', headerName: 'Description', width: 250 },
-  { field: 'created_at', headerName: 'Created At', width: 200 },
+  { field: 'created_at', headerName: 'Created At', width: 150 },
   {
     field: 'action',
     headerName: 'Actions',
@@ -29,7 +29,7 @@ const columns = (handleEdit) => [
   },
 ];
 
-export default function Collection({ collections, session }) {
+export default function Collection({ collections }) {
   const auth = usePage().props.auth.user;
   const [open, setOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState(null);
