@@ -34,9 +34,6 @@ import { styled } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-const options = ["Brand 1", "Brand 2"];
-const units = ["PC", "KG"];
-
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -50,21 +47,31 @@ const VisuallyHiddenInput = styled('input')({
   });
 
 export default function Product({ product, collection }) {
-    const [imageUrl, setImageUrl] = useState('https://placehold.co/600x400');//Featured image
-    const [manageStock, setManageStock] = React.useState('1');
-    const [productUnit, setProductUnit] = React.useState('PC');
+    // Filter and map the collection
+    const brandOptions = collection
+    .filter(item => item.collection_type === 'brand')
+    .map(({ id, name }) => ({ id, label: name }));
 
-    const [formData, setFormData] = useState({
+    // Filter and map the collection
+    const categoryOptions = collection
+    .filter(item => item.collection_type === 'category')
+    .map(({ id, name }) => ({ id, label: name }));
+
+    const [manageStock, setManageStock] = React.useState('1');
+    const [selectedBrand, setSelectedBrand] = useState(brandOptions.find(option => option.id === null) || null);
+    const [selectedCategory, setSelectedCategory] = useState(categoryOptions.find(option => option.id === null) || null);
+
+    const [productFormData, setFormData] = useState({
         name: '',
         description: '',
         sku: '',
         barcode: '',
         featured_image: 'https://placehold.co/600x400', // For file input
-        unit: '',
+        unit: 'PC',
         quantity: 0,
         alert_quantity: 0,
-        is_stock_managed: false,
-        is_active: false,
+        is_stock_managed: 1,
+        is_active: 1,
         brand_id: '',
         category_id: '',
     });
@@ -73,7 +80,7 @@ export default function Product({ product, collection }) {
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({
-            ...formData,
+            ...productFormData,
             [name]: type === 'checkbox' ? checked : value,
         });
     };
@@ -85,7 +92,7 @@ export default function Product({ product, collection }) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData({
-                    ...formData,
+                    ...productFormData,
                     featured_image: reader.result,
                 });
             };
@@ -101,8 +108,7 @@ export default function Product({ product, collection }) {
                 sku: product.sku || '',
                 barcode: product.barcode || '',
                 featured_image: product.image_url?'/storage/'+product.image_url : 'https://placehold.co/600x400', // Reset file input on edit
-                unit: product.unit || '',
-                quantity: product.quantity || 0,
+                unit: product.unit || 'PC',
                 alert_quantity: product.alert_quantity || 0,
                 is_stock_managed: product.is_stock_managed || false,
                 is_active: product.is_active || false,
@@ -110,18 +116,12 @@ export default function Product({ product, collection }) {
                 category_id: product.category_id || '',
             });
             setManageStock(product.is_stock_managed.toString());
+
+            setSelectedBrand(brandOptions.find(option => option.id === product.brand_id))
+            setSelectedCategory(categoryOptions.find(option => option.id === product.category_id))
         }
+       
     }, [product]);
-
-    // Filter and map the collection
-    const brandOptions = collection
-    .filter(item => item.collection_type === 'brand')
-    .map(({ id, name }) => ({ id, label: name }));
-
-    // Filter and map the collection
-    const categoryOptions = collection
-    .filter(item => item.collection_type === 'category')
-    .map(({ id, name }) => ({ id, label: name }));
 
     const handleStockChange = (event,newStatus ) => {
         if(!newStatus)setManageStock('0');
@@ -130,13 +130,15 @@ export default function Product({ product, collection }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries(formData.entries());
+        const submittedFormData = new FormData(event.currentTarget);
+        const formJson = Object.fromEntries(submittedFormData.entries());
         formJson.brand_id = selectedBrand?.id ?? '';
         formJson.category_id = selectedCategory?.id ?? '';
-        console.log(formJson);
 
-        router.post('/product/store', formJson, {
+        // Determine the endpoint based on whether we are editing or adding
+        const endpoint = product ? `/products/${product.id}` : '/products';
+        
+        router.post(endpoint, formJson, {
             forceFormData: true,
             onSuccess: (resp) => {
               Swal.fire({
@@ -149,32 +151,19 @@ export default function Product({ product, collection }) {
                 timerProgressBar: true,
                 toast: true,
               });
-              router.get('/products', options)
             },
             onError: (errors) => {
               console.error('Submission failed with errors:', errors);
+              console.log(formJson)
             },
           });
     }
 
-    const [selectedBrand, setSelectedBrand] = useState(
-        brandOptions.find(option => option.id === null) || null // Default value if needed
-    );
-
-    const [selectedCategory, setSelectedCategory] = useState(
-        categoryOptions.find(option => option.id === null) || null // Default value if needed
-    );
-
-    const handleUnitChange = (event) => {
-        setProductUnit(event.target.value);
-    };
-
     return (
        
         <AuthenticatedLayout>
-            {console.log(product)}
             <Head title="Products" />
-            <form id="product-form" encType="multipart/form-data" method="post" onSubmit={handleSubmit}>
+            <form id="product-form" encType="multipart/form-data" onSubmit={handleSubmit}>
                 <input name="is_stock_managed" type="hidden" value={manageStock}/>
                 <Box className="mb-10">
                     <Breadcrumbs aria-label="breadcrumb">
@@ -191,7 +180,7 @@ export default function Product({ product, collection }) {
                             Products
                         </Link>
                         <Typography sx={{ color: "text.primary" }}>
-                            Add Product
+                        {product ? 'Edit Product' : 'Add Product'}
                         </Typography>
                     </Breadcrumbs>
                 </Box>
@@ -204,7 +193,7 @@ export default function Product({ product, collection }) {
                             name="barcode"
                             fullWidth
                             required
-                            value={formData.barcode}
+                            value={productFormData.barcode}
                             onChange={handleChange}
                         />
                     </div>
@@ -212,7 +201,7 @@ export default function Product({ product, collection }) {
                     {/* SKU */}
                     <div className="mb-3">
                         <TextField label="SKU" id="sku" name="sku"
-                        value={formData.sku}
+                        value={productFormData.sku}
                         onChange={handleChange}
                         fullWidth />
                     </div>
@@ -224,7 +213,7 @@ export default function Product({ product, collection }) {
                             name="name"
                             fullWidth
                             required
-                            value={formData.name}
+                            value={productFormData.name}
                             onChange={handleChange}
                         />
                     </div>
@@ -235,9 +224,9 @@ export default function Product({ product, collection }) {
                         <Select
                             labelId="product-unit-label"
                             id="product_unit"
-                            value={productUnit}
+                            value={productFormData.unit}
                             label="Type"
-                            onChange={handleUnitChange}
+                            onChange={handleChange}
                             name="unit"
                         >
                         <MenuItem value={'PC'}>PC</MenuItem>
@@ -264,96 +253,111 @@ export default function Product({ product, collection }) {
                 <Typography variant="h5" color="initial">
                     Stock
 
-                    <ToggleButtonGroup
-                    color="primary"
-                    value={manageStock}
-                    exclusive
-                    onChange={handleStockChange}
-                    aria-label="Manage stock"
-                    className="ml-4"
-                    >
-                    <ToggleButton value="1">Manage Stock</ToggleButton>
-                    </ToggleButtonGroup>
+                    
 
                 </Typography>
-
-                
-
                 </Box>
-                
-
-                <Box className="sm:columns-1 md:columns-5 mb-4 mt-4">
-                    {/* Cost */}
-                    <div className="mb-3">
-                        <TextField
-                            label="Cost"
-                            id="cost"
-                            name="cost"
-                            type="number"
-                            fullWidth
-                            required
-                            min={0}
-                            slotProps={{
-                                input: {
-                                    min: 0,
-                                },
-                            }}
-                        />
-                    </div>
-
-                    {/* Price */}
-                    <div className="mb-3">
-                        <TextField
-                            label="Price"
-                            id="price"
-                            name="price"
-                            type="number"
-                            fullWidth
-                            required
-                        />
-                    </div>
-
-                    {/* Quantity */}
-                    <div className="mb-3">
-                        <TextField
-                            label="Quantity"
-                            id="quantity"
-                            name="quantity"
-                            type="number"
-                            min="0"
-                            fullWidth
-                            required
-                            value={formData.quantity}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <TextField
-                            label="Batch number"
-                            id="batch-number"
-                            name="batch_number"
-                            fullWidth
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <LocalizationProvider
-                            dateAdapter={AdapterDayjs}
-                            adapterLocale="en-gb"
-                        >
-                            <DatePicker
-                                name="expiry_date"
-                                label="Expiry Date"
-                                className="w-full"
+                {!product && (
+                    
+                    <Box className="sm:columns-1 md:columns-5 mb-3 mt-4">
+                        
+                        {/* Cost */}
+                        <div className="mb-3">
+                            <TextField
+                                label="Cost"
+                                id="cost"
+                                name="cost"
+                                type="number"
+                                fullWidth
+                                min={0}
+                                required
+                                slotProps={{
+                                    input: {
+                                        min: 0,
+                                    },
+                                }}
                             />
-                        </LocalizationProvider>
-                    </div>
-                </Box>
+                        </div>
 
-                <Box className="sm:columns-1 md:columns-3 mb-4">
-                    {/* Quantity */}
-                </Box>
+                        {/* Price */}
+                        <div className="mb-3">
+                            <TextField
+                                label="Price"
+                                id="price"
+                                name="price"
+                                type="number"
+                                fullWidth
+                                required
+                            />
+                        </div>
+
+                        {/* Quantity */}
+                        <div className="mb-3">
+                            <TextField
+                                label="Quantity"
+                                id="quantity"
+                                name="quantity"
+                                type="number"
+                                min="0"
+                                fullWidth
+                                required
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <TextField
+                                label="Batch number"
+                                id="batch-number"
+                                name="batch_number"
+                                fullWidth
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <LocalizationProvider
+                                dateAdapter={AdapterDayjs}
+                                adapterLocale="en-gb"
+                            >
+                                <DatePicker
+                                    name="expiry_date"
+                                    label="Expiry Date"
+                                    className="w-full"
+                                />
+                            </LocalizationProvider>
+                        </div>
+                    </Box>
+                    )}
+
+                    <Box className="sm:columns-1 md:columns-5 mb-4 mt-2">
+                        <div className="mb-3">
+                            <ToggleButtonGroup
+                                color="primary"
+                                value={manageStock}
+                                exclusive
+                                onChange={handleStockChange}
+                                aria-label="Manage stock"
+                                className="h-full"
+                                id="btn-manage-stock"
+                                variant="contained"
+                                fullWidth
+                            >
+                                <ToggleButton value="1" sx={{ p: '15px' }} variant="contained">Manage Stock</ToggleButton>
+                            </ToggleButtonGroup>
+                        </div>
+
+                        <div className="mb-3">
+                            <TextField
+                                label="Alert Quantity"
+                                id="alert-quantity"
+                                name="alert_quantity"
+                                type="number"
+                                fullWidth
+                                onChange={handleChange}
+                                value={productFormData.alert_quantity}
+                            />
+                        </div>
+                    </Box>
+                
 
                 <Divider></Divider>
                 <Typography variant="h5" sx={{ mt: 2 }} color="initial">
@@ -367,31 +371,30 @@ export default function Product({ product, collection }) {
                         <Autocomplete
                             disablePortal
                             // defaultValue={brandOptions.find(option => option.id === null)}
-                            value={selectedBrand}
+                            value={selectedBrand || null}
                             onChange={(event, newValue) => {
+                                console.log(newValue)
                                 setSelectedBrand(newValue);
                             }}
                             getOptionLabel={(options)=>options.label}
                             options={brandOptions}
                             fullWidth
-                            name="brand"
                             id="brand"
                             renderInput={(params) => (
-                                <TextField {...params} label="Brand" name="brand" />
+                                <TextField {...params} label="Brand" />
                             )}
                         />
                     </div>
                     <div className="mb-3">
                         <Autocomplete
                             disablePortal
-                            value={selectedCategory}
+                            value={selectedCategory||null}
                             onChange={(event, newValue) => {
                                 setSelectedCategory(newValue);
                             }}
                             options={categoryOptions}
                             getOptionLabel={(options)=>options.label}
                             fullWidth
-                            name="category"
                             id="category"
                             renderInput={(params) => (
                                 <TextField {...params} label="Category" />
@@ -410,7 +413,7 @@ export default function Product({ product, collection }) {
                                 multiline
                                 rows={4}
                                 fullWidth
-                                value={formData.description}
+                                value={productFormData.description}
                                 onChange={handleChange}
                             />
                         </div>
@@ -420,7 +423,7 @@ export default function Product({ product, collection }) {
                         <Card sx={{width:{xs:'100%', sm:350}}}>
                             <CardMedia
                                 sx={{ height: 300 }}
-                                image={formData.featured_image}
+                                image={productFormData.featured_image}
                                 title="green iguana"
                             />
 

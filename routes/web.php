@@ -37,10 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/collection', [CollectionController::class, 'store']);
     Route::put('/collection/{id}', [CollectionController::class, 'update']);
 
-    Route::get('/products', [ProductController::class, 'index'])->name('product');
-    Route::get('/product/{id}', [ProductController::class, 'find'])->name('product.find');
-    Route::get('/product/add', [ProductController::class, 'create'])->name('product.add');
-    Route::post('/product/store', [ProductController::class, 'store'])->name('product.store');
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{id}/edit', [ProductController::class, 'find'])->name('products.find');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::post('/products/{id}', [ProductController::class, 'update'])->name('products.update');
 });
 
 require __DIR__.'/auth.php';

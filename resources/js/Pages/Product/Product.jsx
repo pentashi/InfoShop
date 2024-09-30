@@ -17,40 +17,43 @@ const productColumns = (handleEdit) => [
             params.value ? (  // Check if params.value is not null
                 <img
                     src={'storage/' + params.value} // Use the value from the image_url field
-                    style={{ width: '100%', height: '50px', objectFit: 'cover', padding: '5px', paddingLeft:'0' }} // Adjust the size as needed
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', padding: '5px', paddingBottom:'5px', paddingLeft:'0' }} // Adjust the size as needed
                     alt="Product Image" // Alt text for accessibility
                 />
             ) : (
-                <span style={{ width: '100%', height: '50px', objectFit: 'cover', padding: '5px',paddingLeft:'0' }} className='text-center'>No Image</span>  // Render fallback if no image URL
+                <span style={{ width: '100%', height: '100%', objectFit: 'cover', padding: '5px',paddingBottom:'5px', paddingLeft:'0' }} className='text-center'>No Image</span>  // Render fallback if no image URL
             )
         ),
      },
     { field: 'name', headerName: 'Product Name', width: 200,
         renderCell: (params) => (
-            <Link href={"/product/"+params.row.id}>{params.value}</Link>
+            <Link underline="hover" className='hover:underline' href={"/products/"+params.row.id+"/edit"}><p className='font-bold'>{params.value}</p></Link>
         ),
      },
     { field: 'barcode', headerName: 'Barcode', width: 170 },
-    { field: 'quantity', headerName: 'Quantity', width: 100 },
+    { field: 'batch_number', headerName: 'Batch', width: 100 },
+    { field: 'cost', headerName: 'Cost', width: 100 },
+    { field: 'price', headerName: 'Price', width: 100 },
+    { field: 'total_quantity', headerName: 'Quantity', width: 100 },
     { field: 'created_at', headerName: 'Created At', width: 100 },
     { field: 'updated_at', headerName: 'Updated At', width: 100 },
-    {
-        field: 'action',
-        headerName: 'Actions',
-        renderCell: (params) => (
-            <Button
-                onClick={() => handleEdit(params.row)}
-                startIcon={<EditIcon />}
-                variant="outlined"
-            >
-                Edit
-            </Button>
-        ),
-    },
+    // {
+    //     field: 'action',
+    //     headerName: 'Actions',
+    //     renderCell: (params) => (
+    //         <Button
+    //             onClick={() => handleEdit(params.row)}
+    //             startIcon={<EditIcon />}
+    //             variant="outlined"
+    //         >
+    //             Edit
+    //         </Button>
+    //     ),
+    // },
 ];
 
 
- export default function Product({products, urlImage}) {
+ export default function Product({products, urlImage, results}) {
     const auth = usePage().props.auth.user
 
     const handleEdit = (product) => {
@@ -59,6 +62,7 @@ const productColumns = (handleEdit) => [
 
     return (
         <AuthenticatedLayout>
+            {console.log(results)}
             <Head title="Products" />
 
             <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
@@ -66,7 +70,7 @@ const productColumns = (handleEdit) => [
                     <Typography variant="h4" component="h2">Products</Typography>
                 </Grid>
                 <Grid size={4} container justifyContent='end'>
-                    <Link href="/product/add"><Button variant="contained" startIcon={<AddIcon />}> Add Product</Button></Link>
+                    <Link href="/products/create"><Button variant="contained" startIcon={<AddIcon />}> Add Product</Button></Link>
                     
                 </Grid>
 
