@@ -23,8 +23,8 @@ import PaidIcon from '@mui/icons-material/Paid';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StoreIcon from '@mui/icons-material/Store';
-import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 
 const drawerWidth = 240;
 
@@ -203,6 +203,7 @@ export default function Authenticated({ header, children, ...props }) {
           <List>
 
           <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")}/>
+          <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")}/>
           <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")}/>
           <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")} />
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")}/>

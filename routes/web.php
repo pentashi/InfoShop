@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\POSController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -42,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/{id}/edit', [ProductController::class, 'find'])->name('products.find');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::post('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+
+    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
 });
 
 require __DIR__.'/auth.php';

@@ -23,7 +23,7 @@ class ProductController extends Controller
             'p.image_url',
             'p.name',
             'p.barcode',
-            'pb.batch_number',
+            DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
             DB::raw("COALESCE(pb.expiry_date, 'N/A') AS expiry_date"),
             'pb.cost',
             'pb.price',

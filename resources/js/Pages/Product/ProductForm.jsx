@@ -2,7 +2,7 @@ import * as React from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect } from 'react';
-import { Head, usePage,router } from "@inertiajs/react";
+import { Head,router } from "@inertiajs/react";
 import { Button, Box, Divider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -145,11 +145,11 @@ export default function Product({ product, collection }) {
                 title: 'Success!',
                 text: 'Successfully saved',
                 icon: 'success',
-                position: 'bottom-start',
+                // position: 'bottom-start',
                 showConfirmButton: false,
-                timer: 3000,
+                timer: 2000,
                 timerProgressBar: true,
-                toast: true,
+                // toast: true,
               });
             },
             onError: (errors) => {

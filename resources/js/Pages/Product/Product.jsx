@@ -6,7 +6,6 @@ import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid2';
 import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { Link } from '@inertiajs/react'
 
@@ -35,25 +34,12 @@ const productColumns = (handleEdit) => [
     { field: 'cost', headerName: 'Cost', width: 100 },
     { field: 'price', headerName: 'Price', width: 100 },
     { field: 'total_quantity', headerName: 'Quantity', width: 100 },
-    { field: 'created_at', headerName: 'Created At', width: 100 },
-    { field: 'updated_at', headerName: 'Updated At', width: 100 },
-    // {
-    //     field: 'action',
-    //     headerName: 'Actions',
-    //     renderCell: (params) => (
-    //         <Button
-    //             onClick={() => handleEdit(params.row)}
-    //             startIcon={<EditIcon />}
-    //             variant="outlined"
-    //         >
-    //             Edit
-    //         </Button>
-    //     ),
-    // },
+    { field: 'created_at', headerName: 'Created At'},
+    { field: 'updated_at', headerName: 'Updated At'},
 ];
 
 
- export default function Product({products, urlImage, results}) {
+ export default function Product({products, urlImage}) {
     const auth = usePage().props.auth.user
 
     const handleEdit = (product) => {
@@ -62,7 +48,6 @@ const productColumns = (handleEdit) => [
 
     return (
         <AuthenticatedLayout>
-            {console.log(results)}
             <Head title="Products" />
 
             <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
