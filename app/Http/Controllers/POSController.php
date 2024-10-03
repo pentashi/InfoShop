@@ -21,6 +21,7 @@ class POSController extends Controller
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
             'pb.cost',
             'pb.price',
+            'pb.id AS batch_id',
             'ps.quantity', // Only keeping the summed quantity from product_stocks
         )
         ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id

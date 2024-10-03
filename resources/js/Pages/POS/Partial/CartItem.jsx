@@ -8,11 +8,14 @@ import {Avatar, Box, Typography, TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
 
+import { useCart } from '../CartContext';
 
-export default function CartItems({ cartItems, removeFromCart, updateProductQuantity}) {
+
+export default function CartItems() {
+  const { cartState, removeFromCart } = useCart();
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-      {cartItems.map((item) => (
+      {cartState.map((item) => (
         <React.Fragment key={item.id + item.batch_number}>
             
           <ListItem alignItems="center">
@@ -35,16 +38,15 @@ export default function CartItems({ cartItems, removeFromCart, updateProductQuan
                     variant="body2"
                     sx={{ color: 'text.primary', display: 'inline' }}
                   >
-                    Price: Rs.{item.price} X {item.quantity}
+                    Rs.{item.price} X {item.quantity} = <b>Rs.{(item.price * item.quantity).toFixed(2)}</b>
                     <br></br>
-                    Total: Rs.{(item.price * item.quantity).toFixed(2)}
                   </Typography>
               }
             />
             <Box className="flex flex-row">
               <div className="relative w-full flex flex-row">
-              <QuantityInput cartItem={item} cartItems={cartItems} updateProductQuantity={updateProductQuantity}></QuantityInput>
-              <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(item.id, item.batch_number)}>
+              <QuantityInput cartItem={item}></QuantityInput>
+              <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(item)}>
                 <DeleteIcon />
                 </IconButton>
               </div>

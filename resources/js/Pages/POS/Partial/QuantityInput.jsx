@@ -3,45 +3,47 @@ import './QuantityInput.css'; // Import your CSS file
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-const QuantityInput = ({cartItem,cartItems, updateProductQuantity}) => {
+import { useCart } from '../CartContext';
+
+const QuantityInput = ({cartItem}) => {
+  const { cartState, updateProductQuantity } = useCart();
+
   const [quantity, setQuantity] = useState(cartItem.quantity);
+  const [inputValue, setInputValue] = useState(cartItem.quantity);
   const min = 0;
   const max = 9999;
 
   useEffect(() => {
-    updateButtonStates();
-  }, [cartItems]);                                                                   
+    setQuantity(cartItem.quantity);
+    setInputValue(cartItem.quantity);
+  }, [cartState]);                                                                
 
-  const updateButtonStates = () => {
-    setQuantity(cartItem.quantity)
-  };
 
   const handleQuantityChange = (event) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
         const newQuantity = Math.max(min, Math.min(value, max));
         setQuantity(newQuantity);
+        setInputValue(newQuantity);
         updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
     } else {
-        setQuantity(min);
+        setInputValue(min);
         updateProductQuantity(cartItem.id, cartItem.batch_number, min);
     }
   };
 
   const decreaseValue = () => {
-    setQuantity((prev) => {
-        const newQuantity = Math.max(prev - 1, min);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
-        return newQuantity;
-    });
+    const newQuantity = Math.max(quantity - 1, min);
+    setQuantity(newQuantity);
+    setInputValue(newQuantity);
+    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
   };
 
   const increaseValue = () => {
-    setQuantity((prev) => {
-        const newQuantity = Math.max(prev + 1, min);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
-        return newQuantity;
-    });
+    const newQuantity = Math.min(quantity + 1, max);
+    setQuantity(newQuantity);
+    setInputValue(newQuantity);
+    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
   };
 
   return (
@@ -53,7 +55,7 @@ const QuantityInput = ({cartItem,cartItems, updateProductQuantity}) => {
         type="number"
         className="input-box"
         step='0.01'
-        value={quantity}
+        value={inputValue}
         min={min}
         max={max}
         onChange={handleQuantityChange}

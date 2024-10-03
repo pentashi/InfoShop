@@ -4,10 +4,16 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Typography, Chip } from '@mui/material';
 
+import { useCart } from '../CartContext';
+
 export default function ProductItem({ product }) {
     const { name, price, image_url, quantity } = product;
+    const { cartState, addToCart } = useCart();
+
   return (
-    <Card>
+    <Card 
+    onClick={() => addToCart(product)}
+    >
         
       <CardMedia
         sx={{ height: 120 }}
