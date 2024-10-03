@@ -17,18 +17,15 @@ class POSController extends Controller
             'p.id',
             'p.image_url',
             'p.name',
-            'p.barcode',
+            'p.discount',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
-            DB::raw("COALESCE(pb.expiry_date, 'N/A') AS expiry_date"),
             'pb.cost',
             'pb.price',
-            DB::raw("SUM(ps.quantity) AS total_quantity"), // Only keeping the summed quantity from product_stocks
-            'p.created_at',
-            'p.updated_at'
+            'ps.quantity', // Only keeping the summed quantity from product_stocks
         )
         ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->groupBy('p.id','pb.id') // Group by the selected fields
+        ->where('ps.store_id', 1) //Get store ID from session.
         ->get();
    
         return Inertia::render('POS/POS', [
