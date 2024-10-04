@@ -5,8 +5,10 @@ import BackHandIcon from "@mui/icons-material/BackHand";
 import AddCardIcon from "@mui/icons-material/AddCard";
 
 import CashCheckoutDialog from "./CashCheckoutDialog";
+import { useCart } from '../CartContext';
 
-export default function CartFooter({cartItems}) {
+export default function CartFooter() {
+    const { cartState } = useCart();
     return (
         <>
             <Button
@@ -15,6 +17,7 @@ export default function CartFooter({cartItems}) {
                 sx={{ mr: "0.5rem", paddingY: "15px" }}
                 size="large"
                 endIcon={<BackHandIcon />}
+                disabled={cartState.length === 0}
             >
                 HOLD
             </Button>
@@ -24,11 +27,14 @@ export default function CartFooter({cartItems}) {
                 sx={{ mr: "0.5rem", paddingY: "15px" }}
                 size="large"
                 endIcon={<AddCardIcon />}
+                disabled={cartState.length === 0}
             >
                 PAYMENTS
             </Button>
 
-            <CashCheckoutDialog/>
+            <CashCheckoutDialog
+                disabled={cartState.length === 0}
+            />
         </>
     );
 }

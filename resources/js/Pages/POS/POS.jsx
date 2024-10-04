@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Head } from "@inertiajs/react";
 import {
     AppBar,
@@ -7,30 +7,21 @@ import {
     Divider,
     Drawer,
     IconButton,
-    List,
     Toolbar,
     Typography,
-    ListItemText,
-    TextField,
     Grid2 as Grid,
-    InputBase,
-    Checkbox,
-    Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
-import { blue } from "@mui/material/colors";
 
 import ProductItem from "./Partial/ProductItem";
 import CartItems from "./Partial/CartItem";
 import CustomerSelect from "./Partial/CustomerSelect";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
-import { CartProvider } from './CartContext';
+import SearchBox from "./Partial/SearchBox";
+import { CartProvider } from "./CartContext";
 
 const drawerWidth = 500;
 
@@ -82,10 +73,13 @@ function POS({ products }) {
                     className="flex flex-col overflow-auto"
                     sx={{ height: "calc(100vh - 150px);" }}
                 >
+                    {/* Cart Items - List of all items */}
                     <CartItems></CartItems>
+                    {/* Cart Summary - Total and discount area */}
                     <CartSummary></CartSummary>
                 </Box>
                 <DrawerFooter>
+                    {/* Cart footer - Buttons */}
                     <CartFooter></CartFooter>
                 </DrawerFooter>
             </form>
@@ -119,58 +113,8 @@ function POS({ products }) {
                                 POS
                             </Typography>
                         </Box>
-
-                        <Box
-                            elevation={0}
-                            component="form"
-                            sx={{
-                                p: "2px 2px",
-                                ml: "2rem",
-                                display: "flex",
-                                alignItems: "center",
-                                width: "100%",
-                                height: "55px",
-                                backgroundColor: "white",
-                                borderRadius: "5px",
-                            }}
-                        >
-                            <InputBase
-                                sx={{ ml: 1, flex: 1 }}
-                                placeholder="Search Product"
-                                inputProps={{ "aria-label": "search product" }}
-                                fullWidth
-                            />
-                            <IconButton
-                                type="button"
-                                sx={{ p: "10px" }}
-                                aria-label="search"
-                            >
-                                <SearchIcon />
-                            </IconButton>
-                            <Divider
-                                sx={{ height: 28, m: 0.5 }}
-                                orientation="vertical"
-                            />
-                            <IconButton color="white" sx={{ p: "10px" }}>
-                                <Checkbox
-                                    icon={<QrCodeScannerOutlinedIcon />}
-                                    checkedIcon={<QrCodeScannerIcon />}
-                                    sx={{
-                                        color: "default", // Unchecked color
-                                        "&.Mui-checked": {
-                                            color: "white", // Checked icon color
-                                            backgroundColor: blue[900], // Background color when checked
-                                            "&:hover": {
-                                                backgroundColor: blue[800], // Background on hover while checked
-                                            },
-                                        },
-                                        "& .MuiSvgIcon-root": {
-                                            fontSize: 28, // Customize icon size
-                                        },
-                                    }}
-                                />
-                            </IconButton>
-                        </Box>
+                        {/* Product Search Box  */}
+                        <SearchBox></SearchBox>
                     </Toolbar>
                 </AppBar>
                 <Box

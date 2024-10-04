@@ -48,7 +48,7 @@ export default function CartSummary() {
             <ListItem
                 secondaryAction={
                     <Typography variant="h5" color="initial">
-                        {cartState.length} | {totalQuantity}
+                        {cartState.length} | Qty. {totalQuantity}
                     </Typography>
                 }
             >

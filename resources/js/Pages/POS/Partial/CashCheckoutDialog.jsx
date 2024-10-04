@@ -7,7 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
 
-export default function CashCheckoutDialog() {
+export default function CashCheckoutDialog({disabled}) {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -27,6 +27,7 @@ export default function CashCheckoutDialog() {
                 size="large"
                 endIcon={<PaymentsIcon />}
                 onClick={handleClickOpen}
+                disabled={disabled}
             >
                 CASH
             </Button>
