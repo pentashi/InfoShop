@@ -3,17 +3,18 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import { Box, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from '@mui/material/InputAdornment';
+import axios from "axios";
+import Swal from "sweetalert2";
 
 import { useCart } from '../CartContext';
 
 export default function CashCheckoutDialog({ disabled }) {
-    const { cartState, cartTotal, totalProfit } = useCart();
+    const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
 
     const [discount, setDiscount] = useState(0);
     const [amountRecieved, setAmountRecieved]=useState(0);
@@ -43,8 +44,28 @@ export default function CashCheckoutDialog({ disabled }) {
         const formJson = Object.fromEntries(formData.entries());
         formJson.cartItems = cartState;
         formJson.profit_amount = totalProfit;
-        console.log(formJson)
+        formJson.payment_method = 'Cash'
 
+        axios.post('/pos/checkout', formJson)
+        .then((resp) => {
+            console.log(resp);
+            Swal.fire({
+                title: "Success!",
+                text: resp.data.message,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+            emptyCart() //Clear the cart from the Context API
+            setAmountRecieved(0)
+            setDiscount(0)
+            setOpen(false);
+        })
+        .catch((error) => {
+            console.error("Submission failed with errors:", error);
+            console.log(formJson);
+        });
     };
 
     return (

@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::get('/pos/searchproduct', [POSController::class, 'searchProduct'])->name('pos.searchproduct');
+    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 });
 
 require __DIR__.'/auth.php';

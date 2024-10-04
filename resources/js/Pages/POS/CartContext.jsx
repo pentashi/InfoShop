@@ -101,27 +101,7 @@ const CartProvider = ({ children }) => {
     dispatch({ type: 'EMPTY_CART' });
   };
 
-  // Calculate the cart total
-  // const cartTotal = useMemo(() => {
-  //   return cartState.reduce((total, item) => {
-  //     return total + item.price * item.quantity;
-  //   }, 0);
-  // }, [cartState]);
-
-  // const totalQuantity = useMemo(() => {
-  //   return cartState.reduce((total, item) => {
-  //     return total + item.quantity;
-  //   }, 0);
-  // }, [cartState]);
-
-  // const totalProfit = useMemo(() => {
-  //   return cartState.reduce((total, item) => {
-  //     const profitPerItem = (item.price - item.cost) * item.quantity; // Adjust according to your properties
-  //     return total + profitPerItem;
-  //   }, 0);
-  // }, [cartState]);
-
-  const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
+ const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
     return cartState.reduce((acc, item) => {
       const itemTotal = item.price * item.quantity;
       const itemProfit = (item.price - item.cost) * item.quantity; // Ensure you have 'cost' property
