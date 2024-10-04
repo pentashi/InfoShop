@@ -62,6 +62,11 @@ const cartReducer = (state, action) => {
       return cart; // Return the updated cart
     }
 
+    case 'EMPTY_CART': {
+      // Return an empty cart (i.e., empty array)
+      return [];
+    }
+
     default:
       return state; // Return the current state if no action matches
   }
@@ -91,17 +96,42 @@ const CartProvider = ({ children }) => {
     });
   };
 
-  // Calculate the cart total
-  const cartTotal = useMemo(() => {
-    return cartState.reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0);
-  }, [cartState]);
+  // Empty the cart
+  const emptyCart = () => {
+    dispatch({ type: 'EMPTY_CART' });
+  };
 
-  const totalQuantity = useMemo(() => {
-    return cartState.reduce((total, item) => {
-      return total + item.quantity;
-    }, 0);
+  // Calculate the cart total
+  // const cartTotal = useMemo(() => {
+  //   return cartState.reduce((total, item) => {
+  //     return total + item.price * item.quantity;
+  //   }, 0);
+  // }, [cartState]);
+
+  // const totalQuantity = useMemo(() => {
+  //   return cartState.reduce((total, item) => {
+  //     return total + item.quantity;
+  //   }, 0);
+  // }, [cartState]);
+
+  // const totalProfit = useMemo(() => {
+  //   return cartState.reduce((total, item) => {
+  //     const profitPerItem = (item.price - item.cost) * item.quantity; // Adjust according to your properties
+  //     return total + profitPerItem;
+  //   }, 0);
+  // }, [cartState]);
+
+  const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
+    return cartState.reduce((acc, item) => {
+      const itemTotal = item.price * item.quantity;
+      const itemProfit = (item.price - item.cost) * item.quantity; // Ensure you have 'cost' property
+
+      acc.cartTotal += itemTotal;
+      acc.totalQuantity += item.quantity;
+      acc.totalProfit += itemProfit;
+
+      return acc;
+    }, { cartTotal: 0, totalQuantity: 0, totalProfit: 0 });
   }, [cartState]);
 
   useEffect(() => {
@@ -109,7 +139,7 @@ const CartProvider = ({ children }) => {
   }, [cartState]);
 
   return (
-    <CartContext.Provider value={{ cartState,cartTotal,totalQuantity, addToCart, removeFromCart, updateProductQuantity}}>
+    <CartContext.Provider value={{ cartState, cartTotal, totalQuantity, totalProfit, addToCart, removeFromCart, updateProductQuantity, emptyCart}}>
       {children}
     </CartContext.Provider>
   );

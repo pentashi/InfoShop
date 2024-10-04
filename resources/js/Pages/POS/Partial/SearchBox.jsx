@@ -5,19 +5,21 @@ import {
     IconButton,
     TextField,
     Checkbox,
-    Autocomplete
+    Autocomplete,
+    CircularProgress 
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
 import { blue } from "@mui/material/colors";
 import axios from "axios";
+import _ from 'lodash';
 
 import { useCart } from '../CartContext';
 
 export default function SearchBox() {
     const { cartState, addToCart } = useCart();
-
+    const [loading, setLoading] = useState(false);
     const [search_query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
     const [inputValue, setInputValue] = useState("");
@@ -26,17 +28,19 @@ export default function SearchBox() {
     const handleSearchQuery=(search_query)=>{
         setQuery(search_query)
         if (search_query.length > 2) {
+          setLoading(true);
             axios
               .get(`/pos/searchproduct`, { params: { search_query, barcodeChecked } }) // Send both parameters
               .then((response) => {
                 setOptions(response.data.products); // Set options with response products
-
+                setLoading(false);
                 if(barcodeChecked && response.data.products.length===1){
                     addToCart(response.data.products[0])
                 }
               })
               .catch((error) => {
                 console.error(error); // Log any errors
+                setLoading(false);
               });
           }
       };
@@ -48,13 +52,12 @@ export default function SearchBox() {
       const handleKeyDown = (event) => {
         // Check if the Enter key is pressed
         if (event.key === "Enter") {
-            
-          // Prevent adding 'Unknown Product' if no valid option is selected
-          if (!options.find((option) => option.name === search_query)) {
-            handleSearchQuery(search_query)
+          
+          if(barcodeChecked){
             setInputValue("");
-            setQuery(""); // Optionally clear the input field
+            setQuery("");
           }
+
         }
       };
 
@@ -82,13 +85,12 @@ export default function SearchBox() {
             onInputChange={(event, value) => {
                 setInputValue(value);
             }}
-            getOptionLabel={(option) => option.name || ''}
+            // getOptionLabel={(option) => option.name || ''}
+            getOptionLabel={(option) => typeof option === 'string' ? option : option.name+' | '+option.batch_number+' | Rs.'+option.price}
             getOptionKey={(option) => option.id}
             onChange={(event, newValue) => {
-                // newValue && typeof newValue === "object" && newValue.id ? addToCart(newValue):console.warn("Selected value is invalid:", newValue)
                 if (newValue && typeof newValue === "object" && newValue.id) {
                     addToCart(newValue); // Add product to cart
-                    //setInputValue(newValue.name); // Set input value to selected option name
                   }
             }}         
             renderInput={(params) => (

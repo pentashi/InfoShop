@@ -7,17 +7,17 @@ import { useCart } from '../CartContext';
 
 export default function CartSummary() {
     const { cartState, cartTotal, totalQuantity } = useCart();
-    const [discount, setDiscount] = useState(0);
+    // const [discount, setDiscount] = useState(0);
 
-    const handleDiscountChange = (event) => {
-        const inputDiscount = event.target.value;
-        const newDiscount = inputDiscount !== "" ? parseInt(inputDiscount) : 0;
-        setDiscount(newDiscount);
-    };
+    // const handleDiscountChange = (event) => {
+    //     const inputDiscount = event.target.value;
+    //     const newDiscount = inputDiscount !== "" ? parseInt(inputDiscount) : 0;
+    //     setDiscount(newDiscount);
+    // };
 
     return (
-        <List sx={{ width: "100%", bgcolor: "background.paper", mt: "1rem" }}>
-            <ListItem
+        <List sx={{ width: "100%", bgcolor: "background.paper",}}>
+            {/* <ListItem
                 secondaryAction={
                     <TextField
                         sx={{ width: "150px" }}
@@ -36,7 +36,7 @@ export default function CartSummary() {
                 }
             >
                 <ListItemText primary="Discount" />
-            </ListItem>
+            </ListItem> */}
 
             <Divider
                 sx={{
@@ -57,7 +57,8 @@ export default function CartSummary() {
             <ListItem
                 secondaryAction={
                     <Typography variant="h5" color="initial">
-                        Rs.{(cartTotal-discount).toFixed(2)}
+                        {/* Rs.{(cartTotal-discount).toFixed(2)} */}
+                         Rs.{(cartTotal).toFixed(2)}
                     </Typography>
                 }
             >

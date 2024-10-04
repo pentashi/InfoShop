@@ -27,6 +27,7 @@
         "@mui/x-data-grid": "^7.18.0",
         "@mui/x-date-pickers": "^7.18.0",
         "dayjs": "^1.11.13",
+        "lodash": "^4.17.21",
         "sweetalert2": "^11.14.1"
     }
 }
