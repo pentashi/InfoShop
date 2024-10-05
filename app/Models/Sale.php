@@ -20,4 +20,21 @@ class Sale extends Model
         'status',          // Sale status ['completed', 'pending', 'refunded']
         'note',            // Note
     ];
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    }
+
+    // Accessor for formatted created_at date
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    }
+
+    // Accessor for formatted sale_date date
+    public function getSaleDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    }
 }

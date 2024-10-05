@@ -11,6 +11,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SaleController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -55,8 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/vendors', function () {
         return app(ContactController::class)->index('vendor'); // Pass 'customer' as a parameter
     })->name('vendors.index');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-    Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contact.update');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
+    Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contacts.update');
+
+    Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
 });
 
 require __DIR__.'/auth.php';
