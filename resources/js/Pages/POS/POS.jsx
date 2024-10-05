@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import {
     AppBar,
     Box,
@@ -14,6 +14,7 @@ import {
 import { styled } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
 
 import ProductItem from "./Partial/ProductItem";
 import CartItems from "./Partial/CartItem";
@@ -115,6 +116,18 @@ function POS({ products }) {
                         </Box>
                         {/* Product Search Box  */}
                         <SearchBox></SearchBox>
+                        <Link href="/dashboard">
+                        <IconButton
+                            color="inherit"
+                            sx={{ ml: 2, p: "10px",color: "default", // Unchecked color
+                                "& .MuiSvgIcon-root": {
+                                    fontSize: 30, // Customize icon size
+                                }, }}
+                            type="button"
+                        >
+                            <HomeIcon />
+                        </IconButton>
+                        </Link>
                     </Toolbar>
                 </AppBar>
                 <Box
