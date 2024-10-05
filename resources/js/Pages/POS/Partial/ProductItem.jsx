@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Typography, Chip } from '@mui/material';
 
-import { useCart } from '../CartContext';
+import { useCart } from '../../../Context/CartContext';
 
 export default function ProductItem({ product }) {
     const { name, price, image_url, quantity } = product;

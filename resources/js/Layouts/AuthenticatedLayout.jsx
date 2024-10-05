@@ -28,6 +28,8 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CustomerIcon from '@mui/icons-material/PeopleAlt';
 import VendorIcon from '@mui/icons-material/ContactEmergency';
 
+import { SharedProvider } from '@/Context/SharedContext';
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -172,6 +174,7 @@ export default function Authenticated({ header, children, ...props }) {
     const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
   
     return (
+      <SharedProvider> {/* SharedProvider Context API: commonly used states */}
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>
@@ -224,5 +227,6 @@ export default function Authenticated({ header, children, ...props }) {
           </Box>
         </Box>
       </Box>
+      </SharedProvider>
     );
 }

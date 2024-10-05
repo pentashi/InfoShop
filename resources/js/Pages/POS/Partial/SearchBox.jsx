@@ -15,7 +15,7 @@ import { blue } from "@mui/material/colors";
 import axios from "axios";
 import _ from 'lodash';
 
-import { useCart } from '../CartContext';
+import { useCart } from '../../../Context/CartContext';
 
 export default function SearchBox() {
     const { cartState, addToCart } = useCart();

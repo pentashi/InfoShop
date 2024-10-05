@@ -15,6 +15,7 @@ export default function FormDialog({
     handleClose,
     contact,
     contactType,
+    onSuccess,
 }) {
     const [formData, setFormData] = useState({
         name: "",
@@ -50,7 +51,7 @@ export default function FormDialog({
 
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
-        formJson.type = contactType
+        formJson.type = contactType;
         // Determine the endpoint based on whether we are editing or adding
         const endpoint = contact ? `/contact/${contact.id}` : "/contact";
 
@@ -69,8 +70,8 @@ export default function FormDialog({
                     timerProgressBar: true,
                     toast: true,
                 });
-
                 handleClose(); // Close dialog on success
+                onSuccess(response.data.data);
             })
             .catch((error) => {
                 console.error(

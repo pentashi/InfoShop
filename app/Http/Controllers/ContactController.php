@@ -37,13 +37,16 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         // Validate and create a new contact in one step
-        $contact = Contact::create($request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:15',
-            'address' => 'nullable|string|max:255',
-            'type' => 'required|string|in:customer,vendor', // Only allow specific types
-        ]));
+        $contact = Contact::create(array_merge(
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'phone' => 'nullable|string|max:15',
+                'address' => 'nullable|string|max:255',
+                'type' => 'required|string|in:customer,vendor', // Only allow specific types
+            ]),
+            ['balance' => 0] // Append 'balance' manually with a default value of 0
+        ));
 
         // Return a success response
         return response()->json([

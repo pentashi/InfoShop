@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
 import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
+import { router } from '@inertiajs/react'
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
@@ -14,7 +15,11 @@ import FormDialog from './Partial/FormDialog';
 
 const columns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'name', headerName: 'Name', width: 200 },
+    { field: 'name', headerName: 'Name', width: 200,
+      renderCell: (params) => (
+          <Link underline="hover" className='hover:underline' onClick={(event) => {event.preventDefault(); handleEdit(params.row);}}><p className='font-bold'>{params.value}</p></Link>
+      ),
+    },
     { field: 'email', headerName: 'Email', width: 200 },
     { field: 'phone', headerName: 'Phone', width: 150 },
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
@@ -52,9 +57,11 @@ export default function Contact({contacts, type}) {
     setOpen(false);
   };
 
-  const handleFormSuccess = () => {
-    // Close the dialog and refresh contacts
-    
+//   Reload the table after form success
+  const handleFormSuccess = (contact) => {
+    router.reload({
+        only: ['contacts'],
+      })
   };
 
   return (
@@ -79,6 +86,13 @@ export default function Contact({contacts, type}) {
             rows={contacts}
             columns={columns(handleEdit)}
             pageSize={10}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
             slots={{ toolbar: GridToolbar }}
             getRowId={(row) => row.id}
             slotProps={{
@@ -90,7 +104,7 @@ export default function Contact({contacts, type}) {
         </Box>
       </Grid>
 
-      <FormDialog open={open} handleClose={handleClose} contact={selectedContact} contactType={type} />
+      <FormDialog open={open} handleClose={handleClose} contact={selectedContact} contactType={type} onSuccess={handleFormSuccess} />
     </AuthenticatedLayout>
   );
 }

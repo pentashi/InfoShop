@@ -393,7 +393,6 @@ export default function Product({ product, collection }) {
                                     // defaultValue={brandOptions.find(option => option.id === null)}
                                     value={selectedBrand || null}
                                     onChange={(event, newValue) => {
-                                        console.log(newValue);
                                         setSelectedBrand(newValue);
                                     }}
                                     getOptionLabel={(options) => options.label}

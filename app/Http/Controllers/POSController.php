@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Transaction;
+use App\Models\Contact;
 
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,8 @@ class POSController extends Controller
 {
     public function index()
     {
-        // $products = Product::select('id','image_url', 'name', 'barcode', 'quantity', 'created_at', 'updated_at')->get();
+        $contacts = Contact::select('id', 'name','balance')->customers()->get();
+
         $products = DB::table('Products AS p')
         ->select(
             'p.id',
@@ -35,6 +37,7 @@ class POSController extends Controller
         return Inertia::render('POS/POS', [
             'products' => $products,
             'urlImage' =>url('storage/'),
+            'customers'=>$contacts,
         ]);
     }
 
@@ -83,10 +86,11 @@ class POSController extends Controller
         $profitAmount = $request->input('profit_amount', 0); // Default to 0 if not provided
         $cartItems = $request->input('cartItems');
         $paymentMethod = $request->input('payment_method');
+        $customerID = $request->input('customer_id');
 
         $sale = Sale::create([
             'store_id' => 1, // Assign appropriate store ID
-            'customer_id' => 1, // Assign appropriate customer ID
+            'customer_id' => $customerID, // Assign appropriate customer ID
             'sale_date' => now(), // Current date and time
             'total_amount' => $total,
             'discount' => $discount,
@@ -99,7 +103,7 @@ class POSController extends Controller
         $transaction = Transaction::create([
             'sales_id' => $sale->id,
             'store_id' => 1,
-            'customer_id' => 1,
+            'customer_id' => $customerID,
             'transaction_date' => now(), // Current date and time
             'amount' => $total,
             'payment_method' => $paymentMethod,

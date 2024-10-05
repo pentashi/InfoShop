@@ -3,7 +3,7 @@ import List from "@mui/material/List";
 import { ListItem, TextField, Divider, Typography } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 
-import { useCart } from '../CartContext';
+import { useCart } from '../../../Context/CartContext';
 
 export default function CartSummary() {
     const { cartState, cartTotal, totalQuantity } = useCart();

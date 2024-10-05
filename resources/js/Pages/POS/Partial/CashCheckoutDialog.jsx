@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -11,10 +11,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import axios from "axios";
 import Swal from "sweetalert2";
 
-import { useCart } from '../CartContext';
+import { useCart } from '@/Context/CartContext';
+import { SharedContext } from "@/Context/SharedContext";
 
 export default function CashCheckoutDialog({ disabled }) {
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
+    const {selectedCustomer} = useContext(SharedContext); 
 
     const [discount, setDiscount] = useState(0);
     const [amountRecieved, setAmountRecieved]=useState(0);
@@ -45,6 +47,7 @@ export default function CashCheckoutDialog({ disabled }) {
         formJson.cartItems = cartState;
         formJson.profit_amount = totalProfit;
         formJson.payment_method = 'Cash'
+        formJson.customer_id = selectedCustomer.id
 
         axios.post('/pos/checkout', formJson)
         .then((resp) => {

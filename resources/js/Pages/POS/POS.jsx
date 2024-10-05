@@ -22,7 +22,8 @@ import CustomerSelect from "./Partial/CustomerSelect";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
-import { CartProvider } from "./CartContext";
+import { CartProvider } from "../../Context/CartContext";
+import { SharedProvider } from "@/Context/SharedContext";
 
 const drawerWidth = 500;
 
@@ -44,9 +45,9 @@ const DrawerFooter = styled("div")(({ theme }) => ({
     zIndex: "999",
 }));
 
-function POS({ products }) {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [isClosing, setIsClosing] = React.useState(false);
+function POS({ products, customers }) {
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -67,7 +68,7 @@ function POS({ products }) {
         <>
             <form action="/pos" id="posForm" method="post">
                 <Toolbar sx={{ display: { xs: "none", sm: "flex" } }}>
-                    <CustomerSelect />
+                    <CustomerSelect customers={customers}/>
                 </Toolbar>
                 <Divider />
                 <Box
@@ -89,6 +90,7 @@ function POS({ products }) {
 
     return (
         <CartProvider>
+           <SharedProvider SharedProvider>
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -105,11 +107,11 @@ function POS({ products }) {
                             aria-label="open drawer"
                             edge="start"
                             onClick={handleDrawerToggle}
-                            sx={{ mr: 2, display: { sm: "none" } }}
+                            sx={{ mr: 0, display: { sm: "none" } }}
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Box>
+                        <Box sx={{ display: { xs: "none", sm: "flex" }, mr:'1.5rem' }}>
                             <Typography variant="h4" noWrap component="div">
                                 POS
                             </Typography>
@@ -178,7 +180,7 @@ function POS({ products }) {
                         anchor="right"
                     >
                         <DrawerHeader>
-                            <CustomerSelect />
+                            <CustomerSelect customers={customers}/>
                             <IconButton onClick={handleDrawerClose}>
                                 <ChevronLeftIcon />
                             </IconButton>
@@ -203,6 +205,7 @@ function POS({ products }) {
                     </Drawer>
                 </Box>
             </Box>
+            </SharedProvider>
         </CartProvider>
     );
 }

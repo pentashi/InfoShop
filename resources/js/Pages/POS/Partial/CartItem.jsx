@@ -8,7 +8,7 @@ import {Avatar, Box, Typography, TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
 
-import { useCart } from '../CartContext';
+import { useCart } from '../../../Context/CartContext';
 
 
 export default function CartItems() {

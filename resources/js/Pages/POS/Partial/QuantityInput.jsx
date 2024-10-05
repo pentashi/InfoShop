@@ -3,7 +3,7 @@ import './QuantityInput.css'; // Import your CSS file
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-import { useCart } from '../CartContext';
+import { useCart } from '../../../Context/CartContext';
 
 const QuantityInput = ({cartItem}) => {
   const { cartState, updateProductQuantity } = useCart();
