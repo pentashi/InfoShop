@@ -25,6 +25,8 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StoreIcon from '@mui/icons-material/Store';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import CustomerIcon from '@mui/icons-material/PeopleAlt';
+import VendorIcon from '@mui/icons-material/ContactEmergency';
 
 const drawerWidth = 240;
 
@@ -206,6 +208,8 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")}/>
           <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")}/>
           <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")} />
+          <NavItem href="/customers" icon={CustomerIcon} label="Customers" open={open} selected={isSelected("/customers")} />
+          <NavItem href="/vendors" icon={VendorIcon} label="Vendors" open={open} selected={isSelected("/vendors")} />
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")}/>
           <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")}/>
           <NavItem href="/stores" icon={StoreIcon} label="Stores" open={open} selected={isSelected("/stores")} />

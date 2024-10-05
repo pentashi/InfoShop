@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React,{useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {Box, IconButton} from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import FormDialog from '@/Pages/Contact/Partial/FormDialog';
 
 const customers = [
     "Alice Johnson",
@@ -18,6 +19,12 @@ const customers = [
   ];
 
 export default function CustomerSelect() {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Box sx={{width:'100%', paddingY:'10px'}} className="flex items-center">
     <Autocomplete
@@ -26,9 +33,10 @@ export default function CustomerSelect() {
       fullWidth
       renderInput={(params) => <TextField {...params} label="Customer" />}
     />
-    <IconButton size="large" sx={{ ml: '1rem', bgcolor: 'success.main', width: '50px', height: '50px', color:'white' }}>
+    <IconButton onClick={() => setOpen(true)} size="large" sx={{ ml: '1rem', bgcolor: 'success.main', width: '50px', height: '50px', color:'white' }}>
         <PersonAddIcon fontSize="inherit" />
     </IconButton>
+    <FormDialog open={open} handleClose={handleClose} contactType={'customer'} />
     </Box>
   );
 }

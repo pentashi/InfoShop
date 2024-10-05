@@ -31,4 +31,10 @@ class Contact extends Model
     {
         return $query->where('type', 'vendor');
     }
+
+    // Accessor for formatted created_at date
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    }
 }

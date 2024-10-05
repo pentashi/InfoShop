@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\POSController;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -47,6 +48,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::get('/pos/searchproduct', [POSController::class, 'searchProduct'])->name('pos.searchproduct');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
+
+    Route::get('/customers', function () {
+        return app(ContactController::class)->index('customer'); // Pass 'customer' as a parameter
+    })->name('customers.index');
+    Route::get('/vendors', function () {
+        return app(ContactController::class)->index('vendor'); // Pass 'customer' as a parameter
+    })->name('vendors.index');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+    Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contact.update');
 });
 
 require __DIR__.'/auth.php';
