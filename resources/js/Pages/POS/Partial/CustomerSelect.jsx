@@ -8,7 +8,6 @@ import { SharedContext } from '@/Context/SharedContext';
 export default function CustomerSelect({customers}) {
   const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState(customers)
-  // const [selectedCustomer, setSelectedCustomer] = useState([])
   const { selectedCustomer, setSelectedCustomer} = useContext(SharedContext); 
 
   const handleClose = () => {

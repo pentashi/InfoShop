@@ -46,9 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/{id}/edit', [ProductController::class, 'find'])->name('products.find');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::post('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+    Route::get('/products/search', [ProductController::class, 'searchProduct'])->name('products.search');
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
-    Route::get('/pos/searchproduct', [POSController::class, 'searchProduct'])->name('pos.searchproduct');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 
     Route::get('/customers', function () {

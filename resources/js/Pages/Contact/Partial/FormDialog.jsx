@@ -102,7 +102,7 @@ export default function FormDialog({
                     onSubmit: handleSubmit,
                 }}
             >
-                <DialogTitle>Collection Information</DialogTitle>
+                <DialogTitle>Contact Information</DialogTitle>
                 <DialogContent>
                     {/* Collection Name */}
                     {/* Name of the contact (both customers and vendors) */}

@@ -3,7 +3,7 @@ import * as React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect } from "react";
 import { Head, router } from "@inertiajs/react";
-import { Button, Box, Divider, Typography } from "@mui/material";
+import { Button, Box, Divider, Typography, Select, MenuItem , InputLabel, FormControl} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -15,10 +15,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Grid from "@mui/material/Grid2";
 import "dayjs/locale/en-gb";
 import Swal from "sweetalert2";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -483,21 +479,17 @@ export default function Product({ product, collection }) {
                     <Toolbar>
                         
                         <Box sx={{ flexGrow: 1 }} />
-                        <Link
-                            underline="hover"
-                            color="inherit"
-                            href="/products"
-                        >
+
                             <Button
                             variant="contained"
                             color="warning"
                             size="large"
                             startIcon={<ArrowBackIosNewIcon />}
                             sx={{mr:'1rem'}}
+                            onClick={() => window.history.back()}
                         >
                             BACK
                         </Button>
-                        </Link>
                         
                         <Button
                             variant="contained"
