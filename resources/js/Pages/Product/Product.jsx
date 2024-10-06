@@ -56,7 +56,6 @@ const productColumns = (handleEdit) => [
                 </Grid>
                 <Grid size={4} container justifyContent='end'>
                     <Link href="/products/create"><Button variant="contained" startIcon={<AddIcon />}> Add Product</Button></Link>
-                    
                 </Grid>
 
                 <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>

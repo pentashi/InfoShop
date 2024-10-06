@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
 import { Button, Box,Typography } from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
 import dayjs from 'dayjs';
+
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
-const columns = (handleEdit) => [
+const columns = (handlePrintReciept) => [
   { field: 'id', headerName: 'ID', width: 100 },
   { field: 'name', headerName: 'Customer Name', width: 200 },
   { field: 'discount', headerName: 'Discount', width: 100 },
@@ -24,6 +26,16 @@ const columns = (handleEdit) => [
       return dayjs(params.value).format('YYYY-MM-DD');
     },
   },
+  {
+    field: 'action',
+    headerName: 'Actions',
+    width: 120,
+    renderCell: (params) => (
+      <Button onClick={() => handlePrintReciept(params.row)} startIcon={<PrintIcon />} variant="outlined">
+        PRINT
+      </Button>
+    ),
+  },
 ];
 
 
@@ -31,8 +43,8 @@ const columns = (handleEdit) => [
 export default function Sale({ sales }) {
   const auth = usePage().props.auth.user;
 
-  const handleEdit = (sales) => {
-    console.log(sales)
+  const handlePrintReciept = (sales) => {
+    router.visit('/reciept/'+sales.id)
   };
 
   return (
@@ -54,7 +66,7 @@ export default function Sale({ sales }) {
         <Box className="py-6 w-full" sx={{ display: 'grid', gridTemplateColumns: '1fr' }}>
           <DataGrid
             rows={sales}
-            columns={columns(handleEdit)}
+            columns={columns(handlePrintReciept)}
             slots={{ toolbar: GridToolbar }}
             slotProps={{
               toolbar: {

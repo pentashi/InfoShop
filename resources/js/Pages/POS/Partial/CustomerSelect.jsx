@@ -59,7 +59,9 @@ export default function CustomerSelect({customers}) {
           renderInput={(params) => <TextField {...params} label="Customer" />}
         />
       )}
-    <IconButton onClick={() => setOpen(true)} size="large" sx={{ ml: '1rem', bgcolor: 'success.main', width: '50px', height: '50px', color:'white' }}>
+    <IconButton onClick={() => setOpen(true)} size="large" sx={{ ml: '1rem', bgcolor: 'success.main', width: '50px', height: '50px', color:'white','&:hover': {
+            bgcolor: 'success.dark', // Change the background color on hover
+        } }}>
         <PersonAddIcon fontSize="inherit" />
     </IconButton>
     <FormDialog open={open} handleClose={handleClose} onSuccess={handleFormSuccess} contactType={'customer'} />

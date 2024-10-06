@@ -17,7 +17,9 @@ const columns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 80 },
     { field: 'name', headerName: 'Name', width: 200,
       renderCell: (params) => (
-          <Link underline="hover" className='hover:underline' onClick={(event) => {event.preventDefault(); handleEdit(params.row);}}><p className='font-bold'>{params.value}</p></Link>
+          <Link underline="hover" href='#' className='hover:underline' onClick={(event) => {event.preventDefault(); handleEdit(params.row);}}>
+            <p className='font-bold'>{params.value}</p>
+          </Link>
       ),
     },
     { field: 'email', headerName: 'Email', width: 200 },
@@ -25,15 +27,6 @@ const columns = (handleEdit) => [
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
     { field: 'balance', headerName: 'Balance', width: 100 }, // Added balance
     { field: 'created_at', headerName: 'Created At', width: 100 },
-    {
-      field: 'action',
-      headerName: 'Actions',
-      renderCell: (params) => (
-        <Button onClick={() => handleEdit(params.row)} startIcon={<EditIcon />} variant="outlined">
-          Edit
-        </Button>
-      ),
-    },
 ];
 
 export default function Contact({contacts, type}) {

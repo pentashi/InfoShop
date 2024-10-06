@@ -8,6 +8,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import { Box, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from '@mui/material/InputAdornment';
+import { router } from '@inertiajs/react';
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -51,7 +52,6 @@ export default function CashCheckoutDialog({ disabled }) {
 
         axios.post('/pos/checkout', formJson)
         .then((resp) => {
-            console.log(resp);
             Swal.fire({
                 title: "Success!",
                 text: resp.data.message,
@@ -63,7 +63,8 @@ export default function CashCheckoutDialog({ disabled }) {
             emptyCart() //Clear the cart from the Context API
             setAmountRecieved(0)
             setDiscount(0)
-            setOpen(false);
+            router.visit('/reciept/'+resp.data.sale_id)
+            // setOpen(false)           
         })
         .catch((error) => {
             console.error("Submission failed with errors:", error);

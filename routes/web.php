@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contacts.update');
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
+    Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
 });
 
 require __DIR__.'/auth.php';
