@@ -2,7 +2,12 @@ import * as React from 'react';
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
-
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import {Typography, Grid2 as Grid} from '@mui/material';
 
  export default function Dashboard({user}) {
     const auth = usePage().props.auth.user
@@ -12,13 +17,56 @@ import { Head, usePage } from '@inertiajs/react';
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">You're logged in!{auth.name}</div>
-                    </div>
-                </div>
-            </div>
+            <Grid container spacing={2}>
+                <Grid size={3}>
+                    <Card>
+                    <CardContent>
+                        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                            Total sales
+                        </Typography>
+                        <Typography variant="h5" component="div">
+                        100K
+                        </Typography>
+                    </CardContent>
+                    </Card>
+                </Grid>
+                <Grid size={3}>
+                    <Card>
+                    <CardContent>
+                        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                            Total sales
+                        </Typography>
+                        <Typography variant="h5" component="div">
+                        100K
+                        </Typography>
+                    </CardContent>
+                    </Card>
+                </Grid>
+                <Grid size={3}>
+                    <Card>
+                    <CardContent>
+                        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                            Total sales
+                        </Typography>
+                        <Typography variant="h5" component="div">
+                        100K
+                        </Typography>
+                    </CardContent>
+                    </Card>
+                </Grid>
+                <Grid size={3}>
+                    <Card>
+                    <CardContent>
+                        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                            Total sales
+                        </Typography>
+                        <Typography variant="h5" component="div">
+                        100K
+                        </Typography>
+                    </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
             
         </AuthenticatedLayout>
     );

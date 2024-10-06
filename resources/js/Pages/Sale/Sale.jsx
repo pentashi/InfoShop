@@ -73,6 +73,13 @@ export default function Sale({ sales }) {
                 showQuickFilter: true,
               },
             }}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
           />
         </Box>
       </Grid>

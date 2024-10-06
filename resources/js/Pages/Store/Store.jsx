@@ -47,7 +47,6 @@ import FormDialog from './Partial/FormDialog';
 
     const handleEdit = (store) => {
         setSelectedStore(store); // Set selected store for editing
-        // console.log(store)
         setOpen(true); // Open the dialog
       };
 

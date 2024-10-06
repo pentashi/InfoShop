@@ -54,8 +54,6 @@ export default function FormDialog({ open, handleClose,store }) {
           // confirmButtonText: 'OK',
           toast: true,
         })
-
-        console.log(resp);
         handleClose(); // Close dialog on success
       },
       onError: (errors) => {

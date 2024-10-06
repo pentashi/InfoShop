@@ -12,7 +12,6 @@ export default function CartFooter() {
     const {selectedCustomer} = useContext(SharedContext); 
     return (
         <>
-        {console.log(selectedCustomer)}
             <Button
                 variant="contained"
                 color="warning"

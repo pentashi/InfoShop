@@ -63,7 +63,7 @@ export default function CashCheckoutDialog({ disabled }) {
             emptyCart() //Clear the cart from the Context API
             setAmountRecieved(0)
             setDiscount(0)
-            router.visit('/reciept/'+resp.data.sale_id)
+            router.visit('/reciept/'+sales.id)
             // setOpen(false)           
         })
         .catch((error) => {

@@ -40,7 +40,6 @@ export default function Contact({contacts, type}) {
   };
 
   const handleEdit = (contact) => {
-    console.log(contact)
     setSelectedContact(contact); // Set selected collection for editing
     setOpen(true); // Open the dialog
   };

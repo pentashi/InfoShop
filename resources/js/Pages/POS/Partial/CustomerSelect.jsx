@@ -39,12 +39,9 @@ export default function CustomerSelect({customers}) {
     }
 }, [customers]);
 
-
-
   return (
   
     <Box sx={{width:'100%', paddingY:'10px'}} className="flex items-center">
-      {/* {console.log(customers)} */}
       {Array.isArray(customerList) && (
         <Autocomplete
           disablePortal

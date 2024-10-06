@@ -166,10 +166,6 @@ export default function Authenticated({ header, children, ...props }) {
       setOpen(false);
     };
 
-    // React.useEffect(() => {
-    //   console.log(pathname)
-    // }, []); 
-
     //Logic to selected menu item
     const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
   

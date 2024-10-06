@@ -8,6 +8,8 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Transaction;
 use App\Models\Contact;
+use App\Models\ProductStock;
+use App\Models\Product;
 
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +25,7 @@ class POSController extends Controller
             'p.image_url',
             'p.name',
             'p.discount',
+            'p.is_stock_managed',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
             'pb.cost',
             'pb.price',
@@ -119,9 +122,31 @@ class POSController extends Controller
                 'unit_cost' => $item['cost'], // Cost price per unit
                 'discount' => $item['discount'], // Discount applied to this item
             ]);
+    
+            if($item['is_stock_managed'] ==1){
+                $productStock = ProductStock::where('store_id', $sale->store_id) // Assuming you have store_id from $sale or $item
+                                    ->where('batch_id', $item['batch_id'])
+                                    ->first();
+
+                // Check if stock exists
+                if ($productStock) {
+                    // Deduct the quantity from the stock
+                    $productStock->quantity -= $item['quantity'];
+
+                    // Ensure that stock doesn't go negative
+                    if ($productStock->quantity < 0) {
+                        $productStock->quantity = 0;
+                    }
+
+                    // Save the updated stock quantity
+                    $productStock->save();
+                } else {
+                    // Handle case if stock does not exist (optional)
+                    // e.g., throw an exception or log an error
+                    throw new \Exception('Stock for product not found in the specified store or batch');
+                }
+            }
         }
-
-
 
         return response()->json(['message' => 'Sale recorded successfully!', 'sale_id' => $sale->id], 201);
     }

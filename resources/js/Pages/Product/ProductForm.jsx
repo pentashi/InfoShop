@@ -28,6 +28,7 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardMedia from "@mui/material/CardMedia";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { styled } from "@mui/material/styles";
 
 import ToggleButton from "@mui/material/ToggleButton";
@@ -480,8 +481,24 @@ export default function Product({ product, collection }) {
                     sx={{ top: "auto", bottom: 0 }}
                 >
                     <Toolbar>
+                        
                         <Box sx={{ flexGrow: 1 }} />
-
+                        <Link
+                            underline="hover"
+                            color="inherit"
+                            href="/products"
+                        >
+                            <Button
+                            variant="contained"
+                            color="warning"
+                            size="large"
+                            startIcon={<ArrowBackIosNewIcon />}
+                            sx={{mr:'1rem'}}
+                        >
+                            BACK
+                        </Button>
+                        </Link>
+                        
                         <Button
                             variant="contained"
                             type="submit"
