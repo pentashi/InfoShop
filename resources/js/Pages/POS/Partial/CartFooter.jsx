@@ -4,7 +4,7 @@ import BackHandIcon from "@mui/icons-material/BackHand";
 import AddCardIcon from "@mui/icons-material/AddCard";
 
 import CashCheckoutDialog from "./CashCheckoutDialog";
-import { useCart } from '@/Context/CartContext';
+import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function CartFooter() {

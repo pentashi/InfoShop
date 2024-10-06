@@ -3,41 +3,13 @@ import List from "@mui/material/List";
 import { ListItem, TextField, Divider, Typography } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 
-import { useCart } from '../../../Context/CartContext';
+import { useSales as useCart } from '@/Context/SalesContext';
 
 export default function CartSummary() {
     const { cartState, cartTotal, totalQuantity } = useCart();
-    // const [discount, setDiscount] = useState(0);
-
-    // const handleDiscountChange = (event) => {
-    //     const inputDiscount = event.target.value;
-    //     const newDiscount = inputDiscount !== "" ? parseInt(inputDiscount) : 0;
-    //     setDiscount(newDiscount);
-    // };
 
     return (
         <List sx={{ width: "100%", bgcolor: "background.paper",}}>
-            {/* <ListItem
-                secondaryAction={
-                    <TextField
-                        sx={{ width: "150px" }}
-                        id="txtDiscount"
-                        // label="Discount"
-                        type="number"
-                        name="discount"
-                        value={discount}
-                        onChange={handleDiscountChange}
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                    />
-                }
-            >
-                <ListItemText primary="Discount" />
-            </ListItem> */}
-
             <Divider
                 sx={{
                     borderBottom: "2px dashed",

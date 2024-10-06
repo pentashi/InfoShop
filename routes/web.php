@@ -12,6 +12,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\PurchaseController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
+
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');
 });
 
 require __DIR__.'/auth.php';

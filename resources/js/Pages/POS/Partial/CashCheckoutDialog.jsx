@@ -12,7 +12,7 @@ import { router } from '@inertiajs/react';
 import axios from "axios";
 import Swal from "sweetalert2";
 
-import { useCart } from '@/Context/CartContext';
+import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function CashCheckoutDialog({ disabled }) {
@@ -28,9 +28,7 @@ export default function CashCheckoutDialog({ disabled }) {
         setDiscount(newDiscount);
     };
 
-
     const [open, setOpen] = React.useState(false);
-
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -63,7 +61,7 @@ export default function CashCheckoutDialog({ disabled }) {
             emptyCart() //Clear the cart from the Context API
             setAmountRecieved(0)
             setDiscount(0)
-            router.visit('/reciept/'+sales.id)
+            router.visit('/reciept/'+resp.data.sale_id)
             // setOpen(false)           
         })
         .catch((error) => {

@@ -11,19 +11,6 @@ import { Link } from '@inertiajs/react'
 
 const productColumns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'image_url', headerName: 'Image', width: 100,
-        renderCell: (params) => (
-            params.value ? (  // Check if params.value is not null
-                <img
-                    src={'storage/' + params.value} // Use the value from the image_url field
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', padding: '5px', paddingBottom:'5px', paddingLeft:'0' }} // Adjust the size as needed
-                    alt="Product Image" // Alt text for accessibility
-                />
-            ) : (
-                <span style={{ width: '100%', height: '100%', objectFit: 'cover', padding: '5px',paddingBottom:'5px', paddingLeft:'0' }} className='text-center'>No Image</span>  // Render fallback if no image URL
-            )
-        ),
-     },
     { field: 'name', headerName: 'Product Name', width: 200,
         renderCell: (params) => (
             <Link underline="hover" className='hover:underline' href={"/products/"+params.row.id+"/edit"}><p className='font-bold'>{params.value}</p></Link>
@@ -48,14 +35,14 @@ const productColumns = (handleEdit) => [
 
     return (
         <AuthenticatedLayout>
-            <Head title="Products" />
+            <Head title="Purchases" />
 
             <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
                 <Grid size={8}>
-                    <Typography variant="h4" component="h2">Products</Typography>
+                    <Typography variant="h4" component="h2">Purchases</Typography>
                 </Grid>
                 <Grid size={4} container justifyContent='end'>
-                    <Link href="/products/create"><Button variant="contained" startIcon={<AddIcon />}> Add Product</Button></Link>
+                    <Link href="/purchase/create"><Button variant="contained" startIcon={<AddIcon />}> Add Purchase</Button></Link>
                 </Grid>
 
                 <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
