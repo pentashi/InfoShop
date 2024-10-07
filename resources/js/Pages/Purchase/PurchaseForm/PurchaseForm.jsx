@@ -1,8 +1,8 @@
 import * as React from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, useEffect, useContext } from "react";
-import { Head, router, Link } from "@inertiajs/react";
+import { useState, useEffect } from "react";
+import { Head, Link } from "@inertiajs/react";
 import {
     Button,
     Box,
@@ -16,87 +16,33 @@ import {
     Select,
     MenuItem,
     FormControl,
-    Checkbox,
+    AppBar,
+    Toolbar,
+    Breadcrumbs
 } from "@mui/material";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import HomeIcon from "@mui/icons-material/Home";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import "dayjs/locale/en-gb";
 import Swal from "sweetalert2";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { styled } from "@mui/material/styles";
+import axios from "axios";
 
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import FormDialog from "@/Pages/Contact/Partial/FormDialog";
+import ProductSearch from "./ProductSearch";
+import PurchaseCartItems from "./PurchaseCartItems";
 
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
-import { blue } from "@mui/material/colors";
+import { usePurchase } from "@/Context/PurchaseContext";
 
-import Select2 from "react-select";
-import axios from "axios";
-
-import { SharedContext } from "@/Context/SharedContext";
-
-export default function Product({ vendors, purchase, stores }) {
+export default function PurchaseForm({ vendors, purchase, stores }) {
+    const { cartState, cartTotal, totalQuantity, removeFromCart, updateProductQuantity, emptyCart } = usePurchase();
     const [store, setStore] = React.useState("");
 
     const [open, setOpen] = useState(false);
     const [vendorList, setvendorList] = useState(vendors);
     const [selectedvendor, setSelectedvendor] = useState(null);
-    const [barcodeChecked, setBarcodeChecked] = useState(true);
-
-    const [productOptions, setProductOptions] = useState([]); // Stores the options from the API
-    const [selectedProductOption, setSelectedProductOption] = useState(null); // Stores the selected option
-    const [inputValue, setInputValue] = useState("");
 
     const handleClose = () => {
         setOpen(false);
-    };
-
-    // Function to fetch product data based on the input value (user's search query)
-    const fetchProducts = (input) => {
-        if (!input) {
-            setProductOptions([]); // Clear options if input is empty
-            return;
-        }
-
-        axios
-            .get(`/products/search?q=${input}`, {
-                params: { input, barcodeChecked },
-            }) // Send input as a query to your API
-            .then((response) => {
-                const products = response.data.products;
-                setProductOptions(products);
-            })
-            .catch((error) => {
-                console.error("Error fetching products:", error);
-            });
-    };
-
-    // Handle input change (this is called when user types in the input field)
-    const handleInputChange = (newValue) => {
-        setInputValue(newValue); // Update the input value state
-        fetchProducts(newValue); // Fetch products based on the new input value
-    };
-
-    // Handle selection change (when the user selects an option from the dropdown)
-    const handleChange = (selectedOption) => {
-        setSelectedProductOption(selectedOption);
-        console.log(
-            "Selected product:",
-            selectedOption ? selectedOption : null
-        );
-    };
-
-    const handleBarcodeChange = (event) => {
-        setBarcodeChecked(event.target.checked); // Update the checked state
     };
 
     //   Reload the table after form success
@@ -252,63 +198,11 @@ export default function Product({ vendors, purchase, stores }) {
                         />
                     </Grid>
                 </Grid>
-                <Divider sx={{ my: "1rem" }} />
-                <Box
-                    elevation={0}
-                    sx={{
-                        p: "2px 2px",
-                        display: "flex",
-                        alignItems: "center",
-                        width: "100%",
-                        height: "55px",
-                        backgroundColor: "white",
-                        borderRadius: "5px",
-                    }}
-                >
-                    <Select2
-                        className="w-full"
-                        placeholder="Select a product..."
-                        styles={{
-                            control: (baseStyles, state) => ({
-                                ...baseStyles,
-                                height: "50px",
-                            }),
-                        }}
-                        options={productOptions} // Options to display in the dropdown
-                        value={selectedProductOption} // The currently selected option
-                        onChange={handleChange} // Triggered when an option is selected
-                        onInputChange={handleInputChange} // Triggered when the user types in the input field
-                        inputValue={inputValue} // Current value of the input field
-                        isClearable // Allow the user to clear the selected option
-                        noOptionsMessage={() => "No products found"}
-                        getOptionLabel={(option) =>
-                            option.name + " | " + option.batch_number
-                        }
-                    ></Select2>
 
-                    <IconButton color="white" sx={{ p: "10px" }}>
-                        <Checkbox
-                            icon={<QrCodeScannerOutlinedIcon />}
-                            checkedIcon={<QrCodeScannerIcon />}
-                            checked={barcodeChecked}
-                            onChange={handleBarcodeChange}
-                            sx={{
-                                color: "default", // Unchecked color
-                                "&.Mui-checked": {
-                                    color: "white", // Checked icon color
-                                    backgroundColor: blue[900], // Background color when checked
-                                    "&:hover": {
-                                        backgroundColor: blue[800], // Background on hover while checked
-                                    },
-                                },
-                                "& .MuiSvgIcon-root": {
-                                    fontSize: 25, // Customize icon size
-                                },
-                            }}
-                        />
-                    </IconButton>
-                        <Link href="/products/create"><Button variant="contained" size="large" sx={{minWidth:'200px'}} startIcon={<AddBoxIcon />}> Add Product</Button></Link>
-                </Box>
+                <Divider sx={{ my: "1rem" }} />
+                <ProductSearch></ProductSearch>
+                <Divider sx={{ my: "1rem" }} />
+                <PurchaseCartItems/>        
 
                 <AppBar
                     position="fixed"

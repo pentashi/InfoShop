@@ -30,11 +30,17 @@ class POSController extends Controller
             'pb.cost',
             'pb.price',
             'pb.id AS batch_id',
-            'ps.quantity', // Only keeping the summed quantity from product_stocks
+            'ps.quantity',
         )
         ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
         ->where('ps.store_id', 1) //Get store ID from session.
+        ->groupBy(
+            'p.id',
+            'pb.id', 
+            'pb.batch_number', 
+            'ps.quantity',
+            )
         ->get();
    
         return Inertia::render('POS/POS', [

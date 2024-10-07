@@ -92,7 +92,7 @@ function POS({ products, customers }) {
     return (
         <CartProvider>
             <SalesProvider>
-           <SharedProvider SharedProvider>
+           <SharedProvider>
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -148,7 +148,7 @@ function POS({ products, customers }) {
                         {products.map((product) => (
                             <Grid
                                 item="true"
-                                key={product.id}
+                                key={product.id+product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
                                 sx={{ cursor: "pointer" }}
                                 // onClick={() => handleAddToCart(product)}

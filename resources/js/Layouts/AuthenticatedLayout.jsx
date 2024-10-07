@@ -29,6 +29,7 @@ import CustomerIcon from '@mui/icons-material/PeopleAlt';
 import VendorIcon from '@mui/icons-material/ContactEmergency';
 
 import { SharedProvider } from '@/Context/SharedContext';
+import { PurchaseProvider } from '@/Context/PurchaseContext';
 
 const drawerWidth = 240;
 
@@ -171,6 +172,7 @@ export default function Authenticated({ header, children, ...props }) {
   
     return (
       <SharedProvider> {/* SharedProvider Context API: commonly used states */}
+      <PurchaseProvider>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>
@@ -223,6 +225,7 @@ export default function Authenticated({ header, children, ...props }) {
           </Box>
         </Box>
       </Box>
+      </PurchaseProvider>
       </SharedProvider>
     );
 }

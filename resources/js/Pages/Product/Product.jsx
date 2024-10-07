@@ -70,6 +70,7 @@ const productColumns = (handleEdit) => [
                     columns={productColumns(handleEdit)}
                     pageSize={5}
                     slots={{ toolbar: GridToolbar }}
+                    getRowId={(row) => row.id+row.batch_number}
                     slotProps={{
                         toolbar: {
                         showQuickFilter: true,

@@ -26,7 +26,7 @@ const productColumns = (handleEdit) => [
 ];
 
 
- export default function Product({products, urlImage}) {
+ export default function Purchases({products, urlImage}) {
     const auth = usePage().props.auth.user
 
     const handleEdit = (product) => {

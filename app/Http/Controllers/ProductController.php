@@ -20,6 +20,7 @@ class ProductController extends Controller
         $products = DB::table('Products AS p')
         ->select(
             'p.id',
+            'pb.id AS product_batch_id',
             'p.image_url',
             'p.name',
             'p.barcode',
@@ -27,13 +28,23 @@ class ProductController extends Controller
             DB::raw("COALESCE(pb.expiry_date, 'N/A') AS expiry_date"),
             'pb.cost',
             'pb.price',
-            DB::raw("SUM(ps.quantity) AS total_quantity"), // Only keeping the summed quantity from product_stocks
+            DB::raw("COALESCE(SUM(ps.quantity), 0) AS total_quantity"), // Only keeping the summed quantity from product_stocks
             'p.created_at',
             'p.updated_at'
         )
         ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->groupBy('p.id','pb.id') // Group by the selected fields
+        ->groupBy('p.id',
+        'pb.id', 
+        'p.image_url', 
+        'p.name', 
+        'p.barcode', 
+        'pb.batch_number', 
+        'pb.expiry_date', 
+        'pb.cost', 
+        'pb.price', 
+        'p.created_at', 
+        'p.updated_at') // Group by the selected fields
         ->get();
          // Render the 'Dashboard' component with data
         return Inertia::render('Product/Product', [
@@ -104,7 +115,7 @@ class ProductController extends Controller
 
         $productBatch = ProductBatch::create([
             'product_id' => $product->id,
-            'batch_number' => $request->batch_number ?: 'BATCH_001',
+            'batch_number' => $request->batch_number ?: 'DEFAULT',
             'expiry_date' => $request->expiry_date,
             'cost' => $request->cost,
             'price' => $request->price,
@@ -168,6 +179,7 @@ class ProductController extends Controller
     public function searchProduct(Request $request){
         $search_query = $request->input('search_query');
         $barcodeChecked = filter_var($request->input('barcodeChecked'), FILTER_VALIDATE_BOOLEAN);
+        $is_purchase = $request->input('is_purchase',0);
 
         $products = DB::table('Products AS p')
         ->select(
@@ -182,19 +194,26 @@ class ProductController extends Controller
             'ps.quantity', // Only keeping the summed quantity from product_stocks
         )
         ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
-        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->where('ps.store_id', 1);
+        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id'); // Join with product_stocks using batch_id
+
+        if($is_purchase==0){
+            $products = $products->where('ps.store_id', 1);
+        }
 
         if ($barcodeChecked) {
-            $products = $products->where('p.barcode', 'like', "%$search_query%"); // Assuming 'barcode' is the field name
+            $products = $products->where('p.barcode', 'like', "$search_query"); // Assuming 'barcode' is the field name
         } else {
             $products = $products->where('p.name', 'like', "%$search_query%"); // Search by product name
         }
-        \Log::info('Generated SQL:', [
-            'query' => $products->toSql(),
-            'bindings' => $products->getBindings()
-        ]);
-        $products = $products->limit(5)->get();
+      
+        $products = $products
+        ->groupBy(
+        'p.id',
+        'pb.id', 
+        'pb.batch_number', 
+        'ps.quantity',
+        )
+        ->limit(5)->get();
         
         return response()->json([
             'products' => $products,

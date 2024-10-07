@@ -15,7 +15,7 @@ const cartReducer = (state, action) => {
         cart[existingProductIndex].quantity =
           parseFloat(cart[existingProductIndex].quantity) + 1;
       } else {
-        const productToAdd = { ...action.payload, quantity: 1 };
+        const productToAdd = { ...action.payload, quantity: action.payload.quantity };
         cart.push(productToAdd);
       }
 
@@ -61,8 +61,8 @@ const useCartBase = (initialStateKey) => {
   const persistedState = localStorage.getItem(initialStateKey);
   const [cartState, dispatch] = useReducer(cartReducer, persistedState ? JSON.parse(persistedState) : []);
 
-  const addToCart = (item) => {
-    dispatch({ type: 'ADD_TO_CART', payload: item });
+  const addToCart = (item, quantity = 1) => {
+    dispatch({ type: 'ADD_TO_CART', payload: {...item, quantity} });
   };
 
   const removeFromCart = (product) => {
