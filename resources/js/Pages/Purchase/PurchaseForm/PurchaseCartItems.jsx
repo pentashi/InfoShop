@@ -28,15 +28,15 @@ export default function PurchaseCartItems() {
       };
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{mb:'4rem'}}>
             <Table>
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
                         <TableCell>Batch</TableCell>
+                        <TableCell>Price</TableCell>
                         <TableCell>Quantity</TableCell>
                         <TableCell>Cost</TableCell>
-                        <TableCell>Price</TableCell>
                         <TableCell>Total</TableCell>
                         <TableCell>Action</TableCell>
                     </TableRow>
@@ -46,9 +46,9 @@ export default function PurchaseCartItems() {
                         <TableRow key={item.batch_id}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.batch_number}</TableCell>
-                            <TableCell> {item.quantity} </TableCell>
-                            <TableCell>{parseFloat(item.cost).toFixed(2)}</TableCell>
                             <TableCell>{parseFloat(item.price).toFixed(2)}</TableCell>
+                            <TableCell> {item.quantity} </TableCell>
+                            <TableCell>{parseFloat(item.cost).toFixed(2)}</TableCell> 
                             <TableCell>{(parseFloat(item.cost)*parseFloat(item.quantity)).toFixed(2)}</TableCell>
                             <TableCell>
                                 <IconButton 
@@ -62,7 +62,7 @@ export default function PurchaseCartItems() {
                         </TableRow>
                     ))}
                     <TableRow>
-            <TableCell colSpan={6} style={{ textAlign: 'right' }}>
+            <TableCell colSpan={5} style={{ textAlign: 'right' }}>
               <strong>Total Cost Amount:</strong>
             </TableCell>
             <TableCell>
@@ -70,10 +70,6 @@ export default function PurchaseCartItems() {
             </TableCell>
           </TableRow>
                 </TableBody>
-
-
-          
-
             </Table>
         </TableContainer>
     );

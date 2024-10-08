@@ -6,13 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import {
-    Box,
     IconButton,
     TextField,
     Grid2 as Grid,
     FormControl,
     MenuItem,
-    Select,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -24,7 +22,8 @@ export default function AddToPurchase({
     addToPurchaseOpen,
     setAddToPurchaseOpen,
 }) {
-    const { cartState, addToCart, updateProductQuantity } = usePurchase();
+    const { addToCart } = usePurchase();
+    const [isSelectBatch, setIsSelectBatch] = useState(true);
     const [formState, setFormState] = useState({
         id:'',
         batch_id: "",
@@ -33,20 +32,44 @@ export default function AddToPurchase({
         price: "",
         batch_number:"",
         name:'',
+        new_batch:'',
     });
 
     const handleClose = () => {
         setAddToPurchaseOpen(false);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget)
         const formJson = Object.fromEntries(formData.entries())
-        addToCart(formJson,formJson.quantity)
-        event.target.reset()
-        handleClose()
+
+        if(!isSelectBatch){
+            const response = await axios.post('/storebatch', formJson);
+
+            if (response.status === 200) {
+                // Override formJson.batch_id with the response data
+                formJson.batch_id = response.data.batch_id; // Adjust the property name based on your response
+                formJson.batch_number = formJson.new_batch;
+
+                // Optionally log the modified formJson
+                console.log('Updated Form JSON:', formJson);
+
+                // You can now proceed with using the modified formJson
+                addToCart(formJson, formJson.quantity); // Uncomment to use this function
+
+                // Reset the form and close the modal (if applicable)
+                event.target.reset();
+                handleClose();
+            } else {
+                console.error('Error: Response not successful', response);
+            }
+        }
+        
+        // addToCart(formJson,formJson.quantity)
+        // event.target.reset()
+        // handleClose()
     };
 
     // Update selectedBatch when products change
@@ -108,6 +131,10 @@ export default function AddToPurchase({
         }
     };
 
+    const toggleInputType = () => {
+        setIsSelectBatch((prev) => !prev); // Toggle between select and input text field
+      };
+
     return (
         <React.Fragment>
             <Dialog
@@ -138,9 +165,7 @@ export default function AddToPurchase({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid size={6}>
-                            <FormControl fullWidth sx={{ mt: "0.5rem" }}>
-                            <input
+                    <input
                                 type="hidden"
                                 name="batch_number"
                                 value={formState.batch_number}
@@ -155,15 +180,30 @@ export default function AddToPurchase({
                                 name="id"
                                 value={formState.id}
                             />
-                                <Select
-                                    name="batch_id"
-                                    value={formState.batch_id}
+
+                        <Grid size={6}>
+                            <FormControl fullWidth sx={{ mt: "0.5rem" }}>
+                                <TextField
+                                    select={isSelectBatch}
+                                    label={isSelectBatch ? "Batch" : "New Batch"}
+                                    name={isSelectBatch ? "batch_id" : "new_batch"} // Different name for new batch input
+                                    value={isSelectBatch ? formState.batch_id : formState.new_batch}
                                     required
                                     onChange={handleInputChange}
                                     slotProps={{
                                         inputLabel: {
                                             shrink: true,
                                         },
+                                        input: {
+                                            endAdornment: 
+                                            <InputAdornment position="end" sx={{cursor:'pointer'}} onClick={toggleInputType}>
+                                            {isSelectBatch ? (<span className="hover:underline text-sky-500">ADD</span>) : (<span className="hover:underline text-amber-800">BACK</span>)}
+                                            </InputAdornment>,
+                                            sx: { pr: '12px !important' }
+                                        },
+                                        select:{
+                                            IconComponent: () => null, // This removes the arrow icon
+                                        }
                                     }}
                                 >
                                     {Array.isArray(products) ? (
@@ -183,7 +223,7 @@ export default function AddToPurchase({
                                             {products.batch_number}
                                         </MenuItem>
                                     )}
-                                </Select>
+                                </TextField>
                             </FormControl>
                         </Grid>
                         <Grid size={6}>

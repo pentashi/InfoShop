@@ -143,6 +143,11 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                             placeholder="Purchase Date"
                             fullWidth
                             type="date"
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
                             defaultValue={
                                 new Date().toISOString().split("T")[0]
                             }

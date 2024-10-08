@@ -220,4 +220,25 @@ class ProductController extends Controller
         ]);
     }
 
+    public function storeNewBatch(Request $request){
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'id' => 'required|exists:products,id', // Ensure product_id exists in products table
+            'new_batch' => 'required|string|max:255',
+            'cost' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $batch = ProductBatch::create([
+            'product_id' => $validatedData['id'], // Map 'id' to 'product_id'
+            'batch_number' => $validatedData['new_batch'], // Map 'new_batch' to 'batch_number'
+            'cost' => $validatedData['cost'],
+            'price' => $validatedData['price'],
+        ]);
+
+        return response()->json([
+            'batch_id' => $batch->id,
+        ]);
+    }
+
 }
