@@ -23,6 +23,7 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import Swal from "sweetalert2";
 import SaveIcon from "@mui/icons-material/Save";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import axios from "axios";
 
@@ -30,6 +31,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import FormDialog from "@/Pages/Contact/Partial/FormDialog";
 import ProductSearch from "./ProductSearch";
 import PurchaseCartItems from "./PurchaseCartItems";
+import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 
 import { usePurchase } from "@/Context/PurchaseContext";
 
@@ -40,6 +42,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     const [open, setOpen] = useState(false);
     const [vendorList, setvendorList] = useState(vendors);
     const [selectedvendor, setSelectedvendor] = useState(null);
+    const [openPayment, setOpenPayment] = useState(false);
 
     const handleClose = () => {
         setOpen(false);
@@ -75,14 +78,38 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     const handleStoreChange = (event) => {
         setStore(event.target.value);
     };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const submittedFormData = new FormData(event.currentTarget);
+        const formJson = Object.fromEntries(submittedFormData.entries());
+        formJson.cartItems = cartState
+        formJson.total_amount = cartTotal
+        formJson.amount_paid = cartTotal
+
+        axios.post('/purchase/store', formJson)
+        .then((resp) => {
+            Swal.fire({
+                title: "Success!",
+                text: resp.data.message,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+            //emptyCart() //Clear the cart from the Context API
+            // router.visit('/reciept/'+resp.data.sale_id)      
+        })
+        .catch((error) => {
+            console.error("Submission failed with errors:", error);
+            console.log(formJson);
+        });
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title="Add Purchase" />
-            <form
-                id="purchase-form"
-                encType="multipart/form-data"
-                // onSubmit={handleSubmit}
-            >
+            
                 <Box className="mb-10">
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link
@@ -110,6 +137,12 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                     </Breadcrumbs>
                 </Box>
 
+                <form
+                id="purchase-form"
+                encType="multipart/form-data"
+                onSubmit={handleSubmit}
+            >
+
                 <Grid container spacing={2}>
                     <Grid size={3}>
                         <FormControl fullWidth>
@@ -119,6 +152,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                                 label="Store"
                                 onChange={handleStoreChange}
                                 required
+                                name="store_id"
                             >
                                 {stores.map((store) => (
                                     <MenuItem key={store.id} value={store.id}>
@@ -203,6 +237,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         />
                     </Grid>
                 </Grid>
+                </form>
 
                 <Divider sx={{ my: "1rem" }} />
                 <ProductSearch></ProductSearch>
@@ -237,13 +272,15 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                             type="submit"
                             color="success"
                             size="large"
-                            endIcon={<SaveIcon />}
+                            endIcon={<PaymentsIcon />}
+                            onClick={()=>setOpenPayment(true)}
+                            
                         >
-                            SAVE
+                            PAYMENTS
                         </Button>
                     </Toolbar>
                 </AppBar>
-            </form>
+                <PaymentsCheckoutDialog open={openPayment} setOpen={setOpenPayment} useCart={usePurchase}/>
         </AuthenticatedLayout>
     );
 }

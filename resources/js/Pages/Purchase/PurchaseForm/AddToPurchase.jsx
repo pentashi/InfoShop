@@ -4,7 +4,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import {
     IconButton,
     TextField,
@@ -39,7 +38,7 @@ export default function AddToPurchase({
         setAddToPurchaseOpen(false);
     };
 
-    const handleSubmit = async (event) => {
+    const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget)
@@ -66,10 +65,11 @@ export default function AddToPurchase({
                 console.error('Error: Response not successful', response);
             }
         }
-        
-        // addToCart(formJson,formJson.quantity)
-        // event.target.reset()
-        // handleClose()
+        else{
+            addToCart(formJson,formJson.quantity)
+            event.target.reset()
+            handleClose()
+        }
     };
 
     // Update selectedBatch when products change
@@ -145,7 +145,7 @@ export default function AddToPurchase({
                 aria-labelledby="alert-dialog-title"
                 PaperProps={{
                     component: "form",
-                    onSubmit: handleSubmit,
+                    onSubmit: handleAddToCartSubmit,
                 }}
             >
                 <DialogTitle id="alert-dialog-title">

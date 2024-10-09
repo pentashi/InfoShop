@@ -28,4 +28,39 @@ class PurchaseController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        // Validate the incoming request data
+        // $validatedData = $request->validate([
+        //     'store_id' => 'required|integer',
+        //     'vendor_id' => 'required|integer',
+        //     'purchase_date' => 'required|date',
+        //     'total_amount' => 'required|numeric',
+        //     'discount' => 'nullable|numeric',
+        //     'amount_paid' => 'required|numeric',
+        //     'reference_no' => 'nullable|string',
+        //     'note' => 'nullable|string',
+        // ]);
+
+        // // Create a new purchase record
+        // $purchase = Purchase::create([
+        //     'store_id' => $validatedData['store_id'],
+        //     'vendor_id' => $validatedData['vendor_id'],
+        //     'purchase_date' => $validatedData['purchase_date'],
+        //     'total_amount' => $validatedData['total_amount'],
+        //     'discount' => $validatedData['discount'] ?? 0, // Optional, defaults to 0
+        //     'amount_paid' => $validatedData['amount_paid'],
+        //     'payment_status' => $validatedData['payment_status'] ?? 'pending',
+        //     'status' => $validatedData['status'] ?? 'pending',
+        //     'reference_no' => $validatedData['reference_no'] ?? null, // Optional
+        //     'note' => $validatedData['note'] ?? null, // Optional
+        // ]);
+
+        // Return a successful response
+        return response()->json([
+            'message' => 'Purchase created successfully!',
+            'purchase' => '$purchase',
+        ], 201);
+    }
+
 }

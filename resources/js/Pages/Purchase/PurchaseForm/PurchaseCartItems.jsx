@@ -13,6 +13,7 @@ export default function PurchaseCartItems() {
         removeFromCart,
         updateProductQuantity,
         emptyCart,
+        totalProfit,
     } = usePurchase();
 
     // Function to handle the removal of items from the cart
@@ -62,13 +63,21 @@ export default function PurchaseCartItems() {
                         </TableRow>
                     ))}
                     <TableRow>
-            <TableCell colSpan={5} style={{ textAlign: 'right' }}>
-              <strong>Total Cost Amount:</strong>
-            </TableCell>
-            <TableCell>
-              <strong>Rs.{cartTotal.toFixed(2)}</strong>
-            </TableCell>
-          </TableRow>
+                        <TableCell colSpan={5} style={{ textAlign: 'right' }}>
+                        <strong>Total Cost Amount:</strong>
+                        </TableCell>
+                        <TableCell>
+                        <strong>Rs.{cartTotal.toFixed(2)}</strong>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell colSpan={5} style={{ textAlign: 'right' }}>
+                        <strong>Total Profit Amount:</strong>
+                        </TableCell>
+                        <TableCell>
+                        <strong>Rs.{totalProfit.toFixed(2)}</strong>
+                        </TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>
