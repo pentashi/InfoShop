@@ -13,7 +13,7 @@ class Sale extends Model
         'store_id',        // Store ID
         'customer_id',     // Customer ID
         'sale_date',       // Sale date
-        'total_amount',    // Total amount
+        'total_amount',    //Net total (total after discount)
         'discount',        // Discount
         'amount_received',  // Amount received
         'profit_amount',   // Profit amount

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('vendor_id'); // Vendor ID (link to the supplier providing the products)
             $table->timestamp('purchase_date')->useCurrent(); // Date of purchase
             $table->string('reference_no');
-            $table->decimal('total_amount', 10, 2); // Total amount of the purchase
+            $table->decimal('total_amount', 10, 2); //Net total (total after discount)
             $table->decimal('discount', 10, 2)->default(0); // Discount applied on the purchase
             $table->decimal('amount_paid', 10, 2); // Amount paid so far
             $table->string('payment_status'); //['paid', 'partial', 'pending', 'overdue']

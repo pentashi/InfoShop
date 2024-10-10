@@ -13,7 +13,7 @@ class Purchase extends Model
         'store_id',
         'vendor_id',
         'purchase_date',
-        'total_amount',
+        'total_amount', //Net total (total after discount)
         'discount',
         'amount_paid',
         'payment_status',

@@ -158,8 +158,9 @@ export default function CashCheckoutDialog({ disabled }) {
                     />
 
                     <Box className="flex items-center">
+
+                    {/* Net total (after discount) */}
                     <TextField
-                        id="txtTotal"
                         fullWidth
                         label="Payable Amount"
                         variant="outlined"

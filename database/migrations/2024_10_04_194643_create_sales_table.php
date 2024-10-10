@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('store_id'); // Store ID without foreign key constraint
             $table->integer('customer_id');
             $table->timestamp('sale_date')->useCurrent(); // Sale date
-            $table->decimal('total_amount', 10, 2); // Total amount
+            $table->decimal('total_amount', 10, 2); //Net total (total after discount)
             $table->decimal('discount', 10, 2)->default(0); // Discount
             $table->decimal('amount_received', 10, 2); // Amount received
             $table->decimal('profit_amount', 10, 2)->default(0);

@@ -4,22 +4,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import {
-    Box,
     IconButton,
     TextField,
     Grid2 as Grid,
-    Typography,
     Divider,
-    Select,
     MenuItem,
-    InputLabel,
-    FormControl,
-    Paper,
-    InputBase,
     List,
-    ListItemIcon,
     ListItem,
     ListItemText,
     ListItemButton
@@ -33,20 +24,16 @@ import Swal from "sweetalert2";
 
 import Menu from "@mui/material/Menu";
 
-// import { useSales as useCart } from '@/Context/SalesContext';
-import { SharedContext } from "@/Context/SharedContext";
-
 export default function PaymentsCheckoutDialog({
-    disabled,
     useCart,
     open,
     setOpen,
+    selectedContact,
+    formData,
 }) {
-    const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
-    const { selectedCustomer } = useContext(SharedContext);
+    const { cartState, cartTotal, emptyCart } = useCart();
 
     const [discount, setDiscount] = useState(0);
-    // const [amountRecieved, setAmountRecieved] = useState(0);
     const [amount, setAmount] = useState((cartTotal - discount))
     const [payments, setPayments] = useState([])
 
@@ -73,14 +60,16 @@ export default function PaymentsCheckoutDialog({
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const formData = new FormData(event.currentTarget);
-        const formJson = Object.fromEntries(formData.entries());
+        const submittedFormData = new FormData(event.currentTarget);
+        let formJson = Object.fromEntries(submittedFormData.entries());
+        // formData = Object.fromEntries(formData);
+        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
         formJson.cartItems = cartState;
-        formJson.profit_amount = totalProfit;
-        formJson.customer_id = selectedCustomer.id;
+        formJson.contact_id = selectedContact.id;
+        formJson.payments = payments;
 
         axios
-            .post("/pos/checkout", formJson)
+            .post("/purchase/store", formJson)
             .then((resp) => {
                 Swal.fire({
                     title: "Success!",
@@ -92,8 +81,8 @@ export default function PaymentsCheckoutDialog({
                 });
                 emptyCart(); //Clear the cart from the Context API
                 setDiscount(0);
-                router.visit("/reciept/" + resp.data.sale_id);
-                // setOpen(false)
+                router.visit("/purchases");
+                setOpen(false)
             })
             .catch((error) => {
                 console.error("Submission failed with errors:", error);
@@ -155,9 +144,9 @@ export default function PaymentsCheckoutDialog({
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                label={"Net total"}
+                                label={"Sub total"}
                                 type="number"
-                                name="net_total"
+                                name="sub_total"
                                 value={cartTotal}
                                 slotProps={{
                                     input: {
@@ -204,9 +193,11 @@ export default function PaymentsCheckoutDialog({
                         <TextField
                                 fullWidth
                                 type="number"
-                                name="discount"
+                                name="net_total"
                                 label="Amount to pay"
                                 variant="outlined"
+                                readonly
+                                sx={{input:{fontWeight:'bold'}}}
                                 value={(cartTotal-discount).toFixed(2)}
                                 onFocus={(event) => {
                                     event.target.select();
@@ -221,6 +212,7 @@ export default function PaymentsCheckoutDialog({
                                                 Rs.
                                             </InputAdornment>
                                         ),
+                                        readOnly: true,
                                     },
                                 }}
                             />
@@ -239,6 +231,7 @@ export default function PaymentsCheckoutDialog({
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
+                                sx={{input:{fontSize:'1.4rem'}}}
                                 slotProps={{
                                     inputLabel: {
                                         shrink: true,
@@ -335,8 +328,6 @@ export default function PaymentsCheckoutDialog({
                     />
                 </DialogContent>
                 <DialogActions>
-                    {console.log(amountRecieved)}
-                    {console.log(amountRecieved - (cartTotal - discount))}
                     <Button
                         variant="contained"
                         fullWidth

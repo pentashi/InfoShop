@@ -1,7 +1,6 @@
 import * as React from "react";
-
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Head, Link } from "@inertiajs/react";
 import {
     Button,
@@ -22,7 +21,6 @@ import {
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import Swal from "sweetalert2";
-import SaveIcon from "@mui/icons-material/Save";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import axios from "axios";
@@ -34,21 +32,22 @@ import PurchaseCartItems from "./PurchaseCartItems";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 
 import { usePurchase } from "@/Context/PurchaseContext";
+import { SharedContext } from "@/Context/SharedContext";
 
 export default function PurchaseForm({ vendors, purchase, stores }) {
     const { cartState, cartTotal, totalQuantity, removeFromCart, updateProductQuantity, emptyCart } = usePurchase();
-    const [store, setStore] = React.useState("");
+    const { selectedVendor, setSelectedVendor } = useContext(SharedContext);
+    const [store, setStore] = useState("");
 
     const [open, setOpen] = useState(false);
     const [vendorList, setvendorList] = useState(vendors);
-    const [selectedvendor, setSelectedvendor] = useState(null);
     const [openPayment, setOpenPayment] = useState(false);
 
     const handleClose = () => {
         setOpen(false);
     };
 
-    //   Reload the table after form success
+    //   Set selectedVendor state after form success
     const handleFormSuccess = (contact) => {
         setvendorList((prevvendors) => {
             // Create the new vendor object
@@ -62,7 +61,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             const updatedvendorList = [...prevvendors, newvendor];
 
             // Select the newly added vendor directly
-            setSelectedvendor(newvendor); // Set selected vendor to the new vendor
+            setSelectedVendor(newvendor); // Set selected vendor to the new vendor
 
             return updatedvendorList; // Return the updated list
         });
@@ -71,7 +70,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     useEffect(() => {
         if (vendorList) {
             const initialvendor = vendorList.find((vendor) => vendor.id === 1);
-            setSelectedvendor(initialvendor || null);
+            setSelectedVendor(initialvendor || null);
         }
     }, [vendors]);
 
@@ -105,6 +104,23 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             console.log(formJson);
         });
     }
+
+    const [purchaseForm, setPurchaseForm] = useState({
+        store_id: '',
+        reference_no: '',
+        purchase_date: new Date().toISOString().split("T")[0], // default to today's date
+    });
+
+      // Handle changes for store, reference_no, and purchase_date
+    const handlePurchaseForm = (e) => {
+        const { name, value } = e.target;
+
+        // Update the purchaseData state dynamically based on field name
+        setPurchaseForm({
+        ...purchaseForm,
+        [name]: value, // Dynamically update the state based on input name
+        });
+    };
 
     return (
         <AuthenticatedLayout>
@@ -148,9 +164,9 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         <FormControl fullWidth>
                             <InputLabel>Store</InputLabel>
                             <Select
-                                value={store}
+                                value={purchaseForm.store_id}
                                 label="Store"
-                                onChange={handleStoreChange}
+                                onChange={handlePurchaseForm}
                                 required
                                 name="store_id"
                             >
@@ -166,6 +182,8 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         <TextField
                             label="Reference No"
                             name="reference_no"
+                            value={purchaseForm.reference_no}
+                            onChange={handlePurchaseForm}
                             fullWidth
                             required
                         />
@@ -196,7 +214,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                                 options={vendorList}
                                 fullWidth
                                 required
-                                value={selectedvendor || null}
+                                value={selectedVendor || null}
                                 getOptionKey={(option) => option.id}
                                 getOptionLabel={(option) =>
                                     typeof option === "string"
@@ -206,7 +224,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                                           parseFloat(option.balance).toFixed(2)
                                 }
                                 onChange={(event, newValue) => {
-                                    setSelectedvendor(newValue);
+                                    setSelectedVendor(newValue);
                                 }}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Vendor" />
@@ -280,7 +298,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         </Button>
                     </Toolbar>
                 </AppBar>
-                <PaymentsCheckoutDialog open={openPayment} setOpen={setOpenPayment} useCart={usePurchase}/>
+                <PaymentsCheckoutDialog open={openPayment} setOpen={setOpenPayment} useCart={usePurchase} selectedContact={selectedVendor} formData={purchaseForm}/>
         </AuthenticatedLayout>
     );
 }

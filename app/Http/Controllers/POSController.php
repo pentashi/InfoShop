@@ -64,7 +64,7 @@ class POSController extends Controller
             'store_id' => 1, // Assign appropriate store ID
             'customer_id' => $customerID, // Assign appropriate customer ID
             'sale_date' => now(), // Current date and time
-            'total_amount' => $total,
+            'total_amount' => $total, //Net total (total after discount)
             'discount' => $discount,
             'amount_received' => $amountReceived,
             'profit_amount' => $profitAmount,

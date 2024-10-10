@@ -22,8 +22,6 @@ import CustomerSelect from "./Partial/CustomerSelect";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
-import { CartProvider } from "../../Context/CartContext";
-import { SharedProvider } from "@/Context/SharedContext";
 import { SalesProvider } from "@/Context/SalesContext";
 
 const drawerWidth = 500;
@@ -90,9 +88,7 @@ function POS({ products, customers }) {
     );
 
     return (
-        <CartProvider>
             <SalesProvider>
-           <SharedProvider>
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -207,9 +203,7 @@ function POS({ products, customers }) {
                     </Drawer>
                 </Box>
             </Box>
-            </SharedProvider>
             </SalesProvider>
-        </CartProvider>
     );
 }
 
