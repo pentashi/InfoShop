@@ -7,16 +7,19 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import {Avatar, Box, Typography, TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
+import CartItemModal from './CartItemModal';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 
 export default function CartItems() {
   const { cartState, removeFromCart } = useCart();
+  const [cartItemModalOpen, setCartItemModalOpen] = useState(false)
+  const [selectedCartItem, setSelectedCartItem] = useState(null)
+
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
       {cartState.map((item) => (
         <React.Fragment key={item.id + item.batch_number}>
-            
           <ListItem alignItems="center">
             <ListItemAvatar>
               <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={'/storage/'+item.image_url} />
@@ -25,21 +28,25 @@ export default function CartItems() {
               primary={
                 <Typography
                   component="h5"
-                  sx={{ fontWeight: 'bold' }}  // Makes the text bold
+                  sx={{ fontWeight: 'bold', cursor:'pointer' }}  // Makes the text bold
+                  className='hover:underline'
+                  onClick={()=>{setSelectedCartItem(item); setCartItemModalOpen(true);}}
                 >
                   {item.name}
                 </Typography>
               }
               sx={{ml:'10px'}}
               secondary={
+                <>
                   <Typography
                     component="span"
                     variant="body2"
                     sx={{ color: 'text.primary', display: 'inline' }}
                   >
-                    Rs.{item.price} X {item.quantity} = <b>Rs.{(item.price * item.quantity).toFixed(2)}</b>
+                    Rs.{(item.price-item.discount).toFixed(2)} X {item.quantity} = <b>Rs.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
                     <br></br>
                   </Typography>
+                  </>
               }
             />
             <Box className="flex flex-row">
@@ -55,6 +62,7 @@ export default function CartItems() {
           <Divider variant="inset" component="li" />
         </React.Fragment>
       ))}
+      <CartItemModal cartItemModalOpen={cartItemModalOpen} setCartItemModalOpen={setCartItemModalOpen} selectedCartItem={selectedCartItem}></CartItemModal>
     </List>
   );
 }

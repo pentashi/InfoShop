@@ -18,7 +18,7 @@ class PurchaseController extends Controller
     {
         
         return Inertia::render('Purchase/Purchase', [
-            'products' => [],
+            'purchases' => [],
         ]);
     }
 

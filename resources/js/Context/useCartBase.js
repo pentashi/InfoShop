@@ -47,6 +47,34 @@ const cartReducer = (state, action) => {
       return cart;
     }
 
+    case 'UPDATE_CART_ITEM': {
+      const cart = [...state];
+      const existingProductIndex = cart.findIndex(
+        (item) =>
+          item.id === action.payload.id &&
+          item.batch_number === action.payload.batch_number
+      );
+
+      if (existingProductIndex !== -1) {
+        const updatedItem = {
+          ...cart[existingProductIndex],
+          cost: action.payload.cost !== undefined ? action.payload.cost : cart[existingProductIndex].cost,
+          price: action.payload.price !== undefined ? action.payload.price : cart[existingProductIndex].price,
+          quantity: action.payload.quantity !== undefined ? action.payload.quantity : cart[existingProductIndex].quantity,
+          discount: action.payload.discount !== undefined ? action.payload.discount : cart[existingProductIndex].discount
+        };
+        
+        cart[existingProductIndex] = updatedItem;
+
+        // Remove item if quantity becomes 0 or negative
+        if (updatedItem.quantity <= 0) {
+          cart.splice(existingProductIndex, 1);
+        }
+      }
+
+      return cart;
+    }
+
     case 'EMPTY_CART': {
       return [];
     }
@@ -79,6 +107,13 @@ const useCartBase = (initialStateKey) => {
     });
   };
 
+  const updateCartItem = (item) => {
+    dispatch({
+      type: 'UPDATE_CART_ITEM',
+      payload: item,
+    });
+  };
+
   const emptyCart = () => {
     dispatch({ type: 'EMPTY_CART' });
   };
@@ -87,7 +122,7 @@ const useCartBase = (initialStateKey) => {
     localStorage.setItem(initialStateKey, JSON.stringify(cartState));
   }, [cartState, initialStateKey]);
 
-  return { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart };
+  return { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem };
 };
 
 export default useCartBase;

@@ -4,16 +4,19 @@ import useCartBase from './useCartBase';
 const SalesContext = createContext();
 
 const SalesProvider = ({ children }) => {
-  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart } = useCartBase('sales_cart');
+  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem } = useCartBase('sales_cart');
 
   const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
     return cartState.reduce(
       (acc, item) => {
-        const itemTotal = item.price * item.quantity;
-        const itemProfit = (item.price - item.cost) * item.quantity;
+        const quantity = parseFloat(item.quantity)
+        const cost = parseFloat(item.cost)
+        const discountedPrice = parseFloat(item.price) - parseFloat(item.discount);
+        const itemTotal = discountedPrice * quantity;
+        const itemProfit = (discountedPrice - cost) * quantity;
 
         acc.cartTotal += itemTotal;
-        acc.totalQuantity += item.quantity;
+        acc.totalQuantity += quantity;
         acc.totalProfit += itemProfit;
 
         return acc;
@@ -33,6 +36,7 @@ const SalesProvider = ({ children }) => {
         removeFromCart,
         updateProductQuantity,
         emptyCart,
+        updateCartItem,
       }}
     >
       {children}

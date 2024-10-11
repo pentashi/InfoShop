@@ -3,13 +3,14 @@ import * as React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import { DataGrid, GridToolbar} from '@mui/x-data-grid';
-import Grid from '@mui/material/Grid2';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Typography, Grid2 as Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import Typography from '@mui/material/Typography';
-import { Link } from '@inertiajs/react'
+import { Link } from '@inertiajs/react';
 
-const productColumns = (handleEdit) => [
+import BatchModal from './Partial/BatchModal';
+import { useState } from 'react';
+
+const productColumns = (handleEditBatch) => [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'image_url', headerName: 'Image', width: 100,
         renderCell: (params) => (
@@ -30,7 +31,11 @@ const productColumns = (handleEdit) => [
         ),
      },
     { field: 'barcode', headerName: 'Barcode', width: 170 },
-    { field: 'batch_number', headerName: 'Batch', width: 100 },
+    { field: 'batch_number', headerName: 'Batch', width: 150,
+        renderCell: (params) =>(
+            <Button onClick={()=>handleEditBatch(params)} variant="text" fullWidth sx={{textAlign:'left', fontWeight:'bold', justifyContent: 'flex-start'}}>{params.value}</Button>
+        ),
+     },
     { field: 'cost', headerName: 'Cost', width: 100 },
     { field: 'price', headerName: 'Price', width: 100 },
     { field: 'total_quantity', headerName: 'Quantity', width: 100 },
@@ -41,8 +46,9 @@ const productColumns = (handleEdit) => [
 
  export default function Product({products, urlImage}) {
     const auth = usePage().props.auth.user
+    const [batchModalOpen, setBatchModalOpen] = useState(false)
 
-    const handleEdit = (product) => {
+    const handleEditBatch = (product) => {
         console.log(product)
       };
 
@@ -60,25 +66,25 @@ const productColumns = (handleEdit) => [
 
                 <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
                     <DataGrid 
-                    rowHeight={50}
-                    rows={products} 
-                    sx={{
-                        // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
-                        // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
-                        // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
-                      }}
-                    columns={productColumns(handleEdit)}
-                    pageSize={5}
-                    slots={{ toolbar: GridToolbar }}
-                    getRowId={(row) => row.id+row.batch_number}
-                    slotProps={{
-                        toolbar: {
-                        showQuickFilter: true,
-                        },
-                    }}
+                        rowHeight={50}
+                        rows={products} 
+                        sx={{
+                            // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
+                            // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
+                            // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+                        }}
+                        columns={productColumns(handleEditBatch)}
+                        slots={{ toolbar: GridToolbar }}
+                        getRowId={(row) => row.id+row.batch_number}
+                        slotProps={{
+                            toolbar: {
+                            showQuickFilter: true,
+                            },
+                        }}
                     />
                 </Box>
             </Grid>
+            <BatchModal/>
         </AuthenticatedLayout>
     );
 }
