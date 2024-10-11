@@ -1,31 +1,30 @@
 import React, { useState, useContext, useEffect } from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
     IconButton,
-    TextField,
-    Grid2 as Grid,
+    TextField, Switch, FormControlLabel,
+    Grid2 as Grid, DialogTitle, DialogContent, DialogActions, Dialog, Button
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
+
+import Swal from "sweetalert2";
 
 export default function BatchModal({
     batchModalOpen,
     setBatchModalOpen,
-    selectedBatch
+    selectedBatch,
+    products,
+    setProducts
 }) {
 
     const [formState, setFormState] = useState({
-        id:'',
         batch_id: "",
         quantity: "",
         cost: "",
         price: "",
         batch_number:"",
-        name:'',
-        discount:0,
+        expiry_date:'',
+        is_active:0,
     });
 
     const handleClose = () => {
@@ -34,7 +33,46 @@ export default function BatchModal({
 
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
-        handleClose()
+        const formData = new FormData(event.currentTarget)
+        const formJson = Object.fromEntries(formData.entries())
+
+        const response = await axios.post('/productbatch/'+formState.batch_id, formJson);
+        if (response.status === 200 || response.status === 201) {
+
+            // Use map to update the product inside the products array
+            const updatedProducts = products.map((product) => {
+                // Check if this is the product we want to update
+                if (product.batch_id === formState.batch_id) {
+                    // Return the updated product with new values from formState
+                    return {
+                        ...product, // Keep other fields the same
+                        cost: parseFloat(formState.cost).toFixed(2),
+                        price: parseFloat(formState.price).toFixed(2),
+                        batch_number: formState.batch_number,
+                        expiry_date: formState.expiry_date,
+                        is_active: formState.is_active,
+                    };
+                }
+                // Return the product as is if it doesn't match the batch_id
+                return product;
+            });
+
+            // Update the products state with the updated product list
+            setProducts(updatedProducts);
+
+            Swal.fire({
+                title: "Success!",
+                text: response.data.message,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+
+            handleClose();
+        } else {
+            console.error('Error: Response not successful', response);
+        }
     };
 
     // Update selectedBatch when products change
@@ -47,9 +85,8 @@ export default function BatchModal({
                 cost: selectedBatch.cost,
                 price: selectedBatch.price,
                 batch_number:selectedBatch.batch_number,
-                name:selectedBatch.name,
-                id:selectedBatch.id,
-                quantity:selectedBatch.quantity,
+                expiry_date:selectedBatch.expiry_date,
+                is_active:selectedBatch.is_active,
             }));
         }
 
@@ -59,10 +96,19 @@ export default function BatchModal({
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         // Update other fields (e.g., quantity, cost, price)
-        setFormState((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+        setFormState((prevState) => {
+            if (name === 'is_active') {
+                return {
+                    ...prevState,
+                    is_active: event.target.checked, // Update is_active based on the checkbox state
+                };
+            } else {
+                return {
+                    ...prevState,
+                    [name]: value, // For other inputs, update based on their name
+                };
+            }
+        });
     };
 
     return (
@@ -79,7 +125,7 @@ export default function BatchModal({
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"EDIT CART"}
+                    {"EDIT BATCH"}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -94,35 +140,19 @@ export default function BatchModal({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
-                    <Grid container spacing={2}>
-                    <input
-                                type="hidden"
-                                name="batch_number"
-                                value={formState.batch_number}
-                            />
-                            <input
-                                type="hidden"
-                                name="name"
-                                value={formState.name}
-                            />
-                            <input
-                                type="hidden"
-                                name="id"
-                                value={formState.id}
-                            />
-
+                    <Grid container spacing={2} sx={{justifyContent:'center'}}  direction="row">
                         <Grid size={6}>
                             <TextField
                                 fullWidth
-                                type="number"
-                                name="quantity"
-                                label="Quantity"
+                                // type="number"
+                                name="batch_number"
+                                label="Batch Number"
                                 variant="outlined"
                                 autoFocus
-                                value={formState.quantity}
+                                value={formState.batch_number}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.5rem",
+                                    mt: "0.3rem",
                                     input: { fontSize: "1rem" },
                                 }}
                                 required
@@ -151,34 +181,7 @@ export default function BatchModal({
                                 value={formState.price}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                    input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                    },
-                                }}
-                            />
-                        </Grid>
-                        <Grid size={6}>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                name="discount"
-                                label="Discount"
-                                variant="outlined"
-                                required
-                                value={formState.discount}
-                                onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
+                                    mt: "0.3rem",
                                     input: { fontSize: "1rem" },
                                 }}
                                 onFocus={(event) => {
@@ -218,9 +221,41 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
+                        <Grid size={6}>
+                            <TextField
+                                fullWidth
+                                type={'date'}
+                                name="expiry_date"
+                                label="Expiry Date"
+                                variant="outlined"
+                                value={formState.expiry_date}
+                                onChange={handleInputChange}
+                                sx={{
+                                    mt: "0.5rem",
+                                    input: { fontSize: "1rem" },
+                                }}
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        <Grid size={12} sx={{justifyContent:'center', mt:'1rem'}} container direction="row">
+                            <FormControlLabel
+                                fullWidth
+                                value="1"
+                                control={<Switch color="primary" name="is_active" onChange={handleInputChange} checked={formState.is_active} />}
+                                label="Is batch active? "
+                                labelPlacement="top"
+                            />
+                        </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions>          
                     <Button
                         variant="contained"
                         fullWidth
@@ -228,7 +263,7 @@ export default function BatchModal({
                         type="submit"
                         // onClick={handleClose}
                     >
-                        UPDATE CART
+                        UPDATE BATCH
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -15,5 +15,6 @@ class ProductBatch extends Model
         'expiry_date',     // The expiry date of the batch
         'cost',      // The cost price of this batch
         'price',      // The sale price of this batch
+        'is_active',
     ];
 }

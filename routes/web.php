@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::get('/products/search', [ProductController::class, 'searchProduct'])->name('products.search');
     Route::post('/storebatch', [ProductController::class, 'storeNewBatch'])->name('products.newbatch');
+    Route::post('/productbatch/{id}', [ProductController::class, 'updateBatch'])->name('products.updatebatch');
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');

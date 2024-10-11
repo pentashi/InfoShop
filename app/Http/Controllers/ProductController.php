@@ -28,6 +28,7 @@ class ProductController extends Controller
             DB::raw("COALESCE(pb.expiry_date, 'N/A') AS expiry_date"),
             'pb.cost',
             'pb.price',
+            'pb.is_active',
             DB::raw("COALESCE(SUM(ps.quantity), 0) AS total_quantity"), // Only keeping the summed quantity from product_stocks
             'p.created_at',
             'p.updated_at'
@@ -239,6 +240,28 @@ class ProductController extends Controller
         return response()->json([
             'batch_id' => $batch->id,
         ]);
+    }
+
+    public function updateBatch(Request $request, $id){
+        $validatedData = $request->validate([
+            'batch_number' => 'required|string|max:255',
+            'cost' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $batch = ProductBatch::findOrFail($id);
+        $batch->update([
+            'batch_number' => $validatedData['batch_number'], // Map 'new_batch' to 'batch_number'
+            'cost' => $validatedData['cost'],
+            'price' => $validatedData['price'],
+            'expiry_date'=>$request->expiry_date,
+            'is_active'=>$request->is_active ?? 0,
+        ]);
+
+        return response()->json([
+            'message' => 'Batch updated successfully!',
+            'batch'=>$batch,
+        ], 200);
     }
 
 }

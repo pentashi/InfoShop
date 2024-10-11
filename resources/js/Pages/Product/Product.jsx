@@ -33,7 +33,7 @@ const productColumns = (handleEditBatch) => [
     { field: 'barcode', headerName: 'Barcode', width: 170 },
     { field: 'batch_number', headerName: 'Batch', width: 150,
         renderCell: (params) =>(
-            <Button onClick={()=>handleEditBatch(params)} variant="text" fullWidth sx={{textAlign:'left', fontWeight:'bold', justifyContent: 'flex-start'}}>{params.value}</Button>
+            <Button onClick={()=>handleEditBatch(params.row)} variant="text" fullWidth sx={{textAlign:'left', fontWeight:'bold', justifyContent: 'flex-start'}}>{params.value}</Button>
         ),
      },
     { field: 'cost', headerName: 'Cost', width: 100 },
@@ -47,44 +47,70 @@ const productColumns = (handleEditBatch) => [
  export default function Product({products, urlImage}) {
     const auth = usePage().props.auth.user
     const [batchModalOpen, setBatchModalOpen] = useState(false)
+    const [selectedBatch, setSelectedBatch] = useState(false)
+    const [productsState, setProductsState] = useState(products);
 
     const handleEditBatch = (product) => {
-        console.log(product)
+        setSelectedBatch(product)
+        setBatchModalOpen(true)
       };
 
     return (
         <AuthenticatedLayout>
             <Head title="Products" />
 
-            <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
+            <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                sx={{ width: "100%" }}
+            >
                 <Grid size={8}>
-                    <Typography variant="h4" component="h2">Products</Typography>
+                    <Typography variant="h4" component="h2">
+                        Products
+                    </Typography>
                 </Grid>
-                <Grid size={4} container justifyContent='end'>
-                    <Link href="/products/create"><Button variant="contained" startIcon={<AddIcon />}> Add Product</Button></Link>
+                <Grid size={4} container justifyContent="end">
+                    <Link href="/products/create">
+                        <Button variant="contained" startIcon={<AddIcon />}>
+                            {" "}
+                            Add Product
+                        </Button>
+                    </Link>
                 </Grid>
 
-                <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
-                    <DataGrid 
+                <Box
+                    className="py-6 w-full"
+                    sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                >
+                    <DataGrid
                         rowHeight={50}
-                        rows={products} 
-                        sx={{
-                            // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
-                            // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
-                            // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
-                        }}
+                        rows={productsState}
+                        sx={
+                            {
+                                // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
+                                // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
+                                // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+                            }
+                        }
                         columns={productColumns(handleEditBatch)}
                         slots={{ toolbar: GridToolbar }}
-                        getRowId={(row) => row.id+row.batch_number}
+                        getRowId={(row) => row.id + row.batch_number}
                         slotProps={{
                             toolbar: {
-                            showQuickFilter: true,
+                                showQuickFilter: true,
                             },
                         }}
                     />
                 </Box>
             </Grid>
-            <BatchModal/>
+            <BatchModal
+                batchModalOpen={batchModalOpen}
+                setBatchModalOpen={setBatchModalOpen}
+                selectedBatch={selectedBatch}
+                products={productsState}
+                setProducts={setProductsState}
+            />
         </AuthenticatedLayout>
     );
 }
