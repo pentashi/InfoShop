@@ -20,7 +20,7 @@ class ProductController extends Controller
         $products = DB::table('Products AS p')
         ->select(
             'p.id',
-            'pb.id AS product_batch_id',
+            'pb.id AS batch_id',
             'p.image_url',
             'p.name',
             'p.barcode',
