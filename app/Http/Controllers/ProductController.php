@@ -8,18 +8,17 @@ use App\Models\Collection;
 use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\ProductStock;
+use App\Models\Store;
 
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        // $user = Auth::user();
-        // $products = Product::select('id','image_url', 'name', 'barcode', 'quantity', 'created_at', 'updated_at')->get();
-        $products = DB::table('Products AS p')
+    public function getProducts($store_id=0){
+        return DB::table('product_batches AS pb')
         ->select(
             'p.id',
+            'ps.id as stock_id',
             'pb.id AS batch_id',
             'p.image_url',
             'p.name',
@@ -29,29 +28,28 @@ class ProductController extends Controller
             'pb.cost',
             'pb.price',
             'pb.is_active',
-            DB::raw("COALESCE(SUM(ps.quantity), 0) AS total_quantity"), // Only keeping the summed quantity from product_stocks
+            DB::raw("COALESCE(ps.quantity, '0') AS quantity"),
+            'ps.store_id',
             'p.created_at',
             'p.updated_at'
         )
-        ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
+        ->leftJoin('products AS p', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->groupBy('p.id',
-        'pb.id', 
-        'p.image_url', 
-        'p.name', 
-        'p.barcode', 
-        'pb.batch_number', 
-        'pb.expiry_date', 
-        'pb.cost', 
-        'pb.price', 
-        'p.created_at', 
-        'p.updated_at') // Group by the selected fields
-        ->get();
+        ->when($store_id != 0, function ($query) use ($store_id) {
+            // Add the condition only if $storeId is not 0 (i.e. specific store)
+            return $query->where('ps.store_id', '=', $store_id);
+        })->get();
+    }
+
+    public function index()
+    {
+        $products = $this->getProducts();
+        $stores = Store::select('id', 'name')->get();
+
          // Render the 'Dashboard' component with data
         return Inertia::render('Product/Product', [
             'products' => $products,
-            'urlImage' =>url('storage/'),
-            // 'results'=>$results,
+            'stores'=>$stores,
         ]);
     }
 
@@ -238,6 +236,7 @@ class ProductController extends Controller
         ]);
 
         return response()->json([
+            'message'=>'Batch is created',
             'batch_id' => $batch->id,
         ]);
     }
@@ -261,6 +260,13 @@ class ProductController extends Controller
         return response()->json([
             'message' => 'Batch updated successfully!',
             'batch'=>$batch,
+        ], 200);
+    }
+
+    public function getProductsResponse($store_id){
+        $products = $this->getProducts($store_id);
+        return response()->json([
+            'products'=>$products,
         ], 200);
     }
 

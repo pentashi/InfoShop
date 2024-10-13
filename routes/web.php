@@ -13,6 +13,7 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\QuantityController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/search', [ProductController::class, 'searchProduct'])->name('products.search');
     Route::post('/storebatch', [ProductController::class, 'storeNewBatch'])->name('products.newbatch');
     Route::post('/productbatch/{id}', [ProductController::class, 'updateBatch'])->name('products.updatebatch');
+    Route::get('/getproducts/{store_id}', [ProductController::class, 'getProductsResponse'])->name('products.getproducts');
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
@@ -68,6 +70,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');
     Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchases.store');
+
+    Route::post('/quantity', [QuantityController::class, 'store'])->name('quantity.store');
 });
 
 require __DIR__.'/auth.php';

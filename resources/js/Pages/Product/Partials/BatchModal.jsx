@@ -17,48 +17,59 @@ export default function BatchModal({
     setProducts
 }) {
 
-    const [formState, setFormState] = useState({
+    const initialFormState = {
         batch_id: "",
         quantity: "",
         cost: "",
         price: "",
         batch_number:"",
         expiry_date:'',
-        is_active:0,
-    });
+        is_active:true,
+    }
+
+    const [isNew, setIsNew] = useState(false)
+    const [formState, setFormState] = useState(initialFormState);
 
     const handleClose = () => {
-        setBatchModalOpen(false);
+        setIsNew(false)
+        updateFormStateFromBatch(selectedBatch)
+        setBatchModalOpen(false)
     };
 
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget)
-        const formJson = Object.fromEntries(formData.entries())
+        const formData = new FormData(event.currentTarget);
+        const formJson = Object.fromEntries(formData.entries());
+        formJson.new_batch = formState.batch_number;
 
-        const response = await axios.post('/productbatch/'+formState.batch_id, formJson);
+        let response;
+        if(isNew) {response = await axios.post('/storebatch/', formJson);}
+        else {response = await axios.post('/productbatch/'+formState.batch_id, formJson);}
+
         if (response.status === 200 || response.status === 201) {
 
-            // Use map to update the product inside the products array
-            const updatedProducts = products.map((product) => {
-                // Check if this is the product we want to update
-                if (product.batch_id === formState.batch_id) {
-                    // Return the updated product with new values from formState
-                    return {
-                        ...product, // Keep other fields the same
-                        cost: parseFloat(formState.cost).toFixed(2),
-                        price: parseFloat(formState.price).toFixed(2),
-                        batch_number: formState.batch_number,
-                        expiry_date: formState.expiry_date,
-                        is_active: formState.is_active,
-                    };
-                }
-                // Return the product as is if it doesn't match the batch_id
-                return product;
-            });
+            if(!isNew){
+                // Use map to update the product inside the products array
+                const updatedProducts = products.map((product) => {
+                    // Check if this is the product we want to update
+                    if (product.batch_id === formState.batch_id) {
+                        // Return the updated product with new values from formState
+                        return {
+                            ...product, // Keep other fields the same
+                            cost: parseFloat(formState.cost).toFixed(2),
+                            price: parseFloat(formState.price).toFixed(2),
+                            batch_number: formState.batch_number,
+                            expiry_date: formState.expiry_date,
+                            is_active: formState.is_active,
+                        };
+                    }
+                    // Return the product as is if it doesn't match the batch_id
+                    return product;
+                });
 
-            // Update the products state with the updated product list
-            setProducts(updatedProducts);
+                // Update the products state with the updated product list
+                setProducts(updatedProducts);
+            }
 
             Swal.fire({
                 title: "Success!",
@@ -75,19 +86,25 @@ export default function BatchModal({
         }
     };
 
+    // Function to update form state based on a batch object
+    const updateFormStateFromBatch = (batch) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            batch_id: batch.batch_id,
+            cost: batch.cost,
+            price: batch.price,
+            batch_number: batch.batch_number,
+            expiry_date: batch.expiry_date,
+            is_active: batch.is_active === 1 ? true : false,
+        }));
+    };
+
     // Update selectedBatch when products change
     useEffect(() => {
 
-        if(selectedBatch){
-            setFormState((prevState) => ({
-                ...prevState,
-                batch_id: selectedBatch.batch_id,
-                cost: selectedBatch.cost,
-                price: selectedBatch.price,
-                batch_number:selectedBatch.batch_number,
-                expiry_date:selectedBatch.expiry_date,
-                is_active:selectedBatch.is_active,
-            }));
+        if (selectedBatch) {
+            updateFormStateFromBatch(selectedBatch); // Reuse the function to update state
+            setIsNew(false);
         }
 
     }, [selectedBatch]);
@@ -100,7 +117,7 @@ export default function BatchModal({
             if (name === 'is_active') {
                 return {
                     ...prevState,
-                    is_active: event.target.checked, // Update is_active based on the checkbox state
+                    is_active: e.target.checked, // Update is_active based on the checkbox state
                 };
             } else {
                 return {
@@ -124,8 +141,25 @@ export default function BatchModal({
                     onSubmit: handleAddToCartSubmit,
                 }}
             >
-                <DialogTitle id="alert-dialog-title">
-                    {"EDIT BATCH"}
+                <DialogTitle
+                    id="alert-dialog-title"
+                    sx={{ alignItems: "center", display: "flex" }}
+                >
+                    {isNew ? "NEW BATCH" : "EDIT BATCH"}
+
+                    {!isNew && (
+                        <Button
+                            sx={{ ml: "1rem" }}
+                            variant="contained"
+                            color="success"
+                            onClick={() => {
+                                setIsNew(true);
+                                setFormState(initialFormState);
+                            }}
+                        >
+                            CREATE NEW BATCH
+                        </Button>
+                    )}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -140,7 +174,12 @@ export default function BatchModal({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
-                    <Grid container spacing={2} sx={{justifyContent:'center'}}  direction="row">
+                    <Grid
+                        container
+                        spacing={2}
+                        sx={{ justifyContent: "center" }}
+                        direction="row"
+                    >
                         <Grid size={6}>
                             <TextField
                                 fullWidth
@@ -169,7 +208,7 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        
+
                         <Grid size={6}>
                             <TextField
                                 fullWidth
@@ -200,7 +239,7 @@ export default function BatchModal({
                         <Grid size={6}>
                             <TextField
                                 fullWidth
-                                type={'number'}
+                                type={"number"}
                                 name="cost"
                                 label="Cost"
                                 variant="outlined"
@@ -224,7 +263,7 @@ export default function BatchModal({
                         <Grid size={6}>
                             <TextField
                                 fullWidth
-                                type={'date'}
+                                type={"date"}
                                 name="expiry_date"
                                 label="Expiry Date"
                                 variant="outlined"
@@ -244,18 +283,29 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        <Grid size={12} sx={{justifyContent:'center', mt:'1rem'}} container direction="row">
+                        <Grid
+                            size={12}
+                            sx={{ justifyContent: "center", mt: "1rem" }}
+                            container
+                            direction="row"
+                        >
                             <FormControlLabel
-                                fullWidth
                                 value="1"
-                                control={<Switch color="primary" name="is_active" onChange={handleInputChange} checked={formState.is_active} />}
+                                control={
+                                    <Switch
+                                        color="primary"
+                                        name="is_active"
+                                        onChange={handleInputChange}
+                                        checked={formState.is_active}
+                                    />
+                                }
                                 label="Is batch active? "
                                 labelPlacement="top"
                             />
                         </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>          
+                <DialogActions>
                     <Button
                         variant="contained"
                         fullWidth
@@ -263,7 +313,7 @@ export default function BatchModal({
                         type="submit"
                         // onClick={handleClose}
                     >
-                        UPDATE BATCH
+                        {isNew ? "SAVE BATCH" : "UPDATE BATCH"}
                     </Button>
                 </DialogActions>
             </Dialog>

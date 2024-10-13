@@ -11,9 +11,8 @@ const PurchaseProvider = ({ children }) => {
       (acc, item) => {
         const price = parseFloat(item.price)
         const quantity = parseFloat(item.quantity)
-        const discount = parseFloat(item.discount)
         const cost = parseFloat(item.cost)
-        const itemTotal = (price-discount) * quantity;
+        const itemTotal = cost * quantity;
         const itemProfit = (price - cost) * quantity;
 
         acc.cartTotal += itemTotal;
