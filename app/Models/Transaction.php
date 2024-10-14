@@ -16,5 +16,6 @@ class Transaction extends Model
         'transaction_date', // Date and time of the transaction
         'amount',           // Amount paid
         'payment_method',   // Payment method
+        'transaction_type',
     ];
 }

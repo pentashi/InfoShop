@@ -98,7 +98,13 @@ export default function PaymentsCheckoutDialog({
 
      // Function to handle the addition of a payment
      const addPayment = (paymentMethod) => {
-        if (amount) {
+        const netTotal = cartTotal-discount
+        const balance = amountRecieved+parseFloat(amount)
+        if (netTotal<balance)
+        {
+            alert('Payment cannot be exceeded the total amount')
+        }
+        else if (amount) {
             const newPayment = { payment_method: paymentMethod, amount: parseFloat(amount) };
             setPayments([...payments, newPayment]);
 
@@ -286,6 +292,11 @@ export default function PaymentsCheckoutDialog({
                                                     <MenuItem onClick={() => addPayment('Credit')}>
                                                         CREDIT
                                                     </MenuItem>
+                                                    {selectedContact && selectedContact.id !==1 && (
+                                                        <MenuItem onClick={() => addPayment('Account')}>
+                                                            ACCOUNT
+                                                        </MenuItem>
+                                                    )}
                                                 </Menu>
                                             </InputAdornment>
                                         ),
@@ -314,7 +325,7 @@ export default function PaymentsCheckoutDialog({
                             <ListItemButton role={undefined} dense>
                                 {/* Displaying the payment method and amount */}
                                 <ListItemText primary={payment.payment_method} />
-                                <ListItemText id={labelId} primary={`Rs.${payment.amount}`} />
+                                <ListItemText id={labelId} primary={`Rs.${(payment.amount).toFixed(2)}`} />
                             </ListItemButton>
                         </ListItem>
                         {/* Only show Divider between items */}

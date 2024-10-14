@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('purchase_transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('purchase_id')->nullable();
             $table->unsignedBigInteger('vendor_id');
             $table->dateTime('transaction_date');
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
+            $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account_deposit'
             $table->timestamps();
         });
     }

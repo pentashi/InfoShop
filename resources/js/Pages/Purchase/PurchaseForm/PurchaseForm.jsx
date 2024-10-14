@@ -26,7 +26,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import axios from "axios";
 
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import FormDialog from "@/Pages/Contact/Partial/FormDialog";
+import ContactFormModal from "@/Pages/Contact/Partial/FormDialog";
 import ProductSearch from "./ProductSearch";
 import PurchaseCartItems from "./PurchaseCartItems";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
@@ -111,7 +111,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     }
 
     const [purchaseForm, setPurchaseForm] = useState({
-        store_id: '',
+        store_id: stores[0].id,
         reference_no: '',
         purchase_date: new Date().toISOString().split("T")[0], // default to today's date
     });
@@ -200,9 +200,8 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                                     shrink: true,
                                 },
                             }}
-                            defaultValue={
-                                new Date().toISOString().split("T")[0]
-                            }
+                            value={purchaseForm.purchase_date}
+                            onChange={handlePurchaseForm}
                             required
                         />
                     </Grid>
@@ -247,7 +246,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         >
                             <PersonAddIcon fontSize="inherit" />
                         </IconButton>
-                        <FormDialog
+                        <ContactFormModal
                             open={open}
                             handleClose={handleClose}
                             onSuccess={handleFormSuccess}
@@ -262,6 +261,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             <Divider sx={{ my: "1rem" }} />
             
             <PurchaseCartItems />
+
             <PurchaseAppBar setOpenPayment={setOpenPayment}></PurchaseAppBar>
             
             <PaymentsCheckoutDialog

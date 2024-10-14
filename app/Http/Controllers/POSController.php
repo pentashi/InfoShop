@@ -76,29 +76,47 @@ class POSController extends Controller
                 'note' => $note,
             ]);
 
-            if($paymentMethod=='cash'){
+            if($paymentMethod=='Cash'){
                 $transaction = Transaction::create([
                     'sales_id' => $sale->id,
                     'store_id' => $sale->store_id,
                     'customer_id' => $sale->customer_id,
-                    'transaction_date' => now(), // Current date and time
+                    'transaction_date' => $sale->sale_date, // Current date and time
                     'amount' => $total,
                     'payment_method' => $paymentMethod,
                 ]);
+                $sale->status = 'completed';
+                $sale->save();
             }
             else{
                 foreach ($payments as $payment) {
-                    if($payment['payment_method'] != 'Credit')
-                    {
-                        $transaction = Transaction::create([
-                            'sales_id' => $sale->id, // Assuming you want purchase_id, not sales_id
-                            'store_id' => $sale->store_id, // Assuming you have store_id from $purchase or a fixed value
-                            'customer_id' => $sale->customer_id, // Use the provided customer ID
-                            'transaction_date' => now(),
-                            'amount' => $payment['amount'], // Amount from the payment array
-                            'payment_method' => $payment['payment_method'], // Payment method from the payment array
-                        ]);
-                        $amountReceived +=$payment['amount'];
+                    // Check if the payment method is not 'Credit'
+                    if ($payment['payment_method'] != 'Credit') {
+                        // Prepare transaction data
+                        $transactionData = [
+                            'sales_id' => $sale->id,
+                            'store_id' => $sale->store_id,
+                            'customer_id' => $sale->customer_id,
+                            'transaction_date' => $sale->sale_date,
+                            'amount' => $payment['amount'],
+                            'payment_method' => $payment['payment_method'],
+                        ];
+
+                        // Determine transaction type based on the payment method
+                        if ($payment['payment_method'] == 'Account') {
+                            // Set transaction type to 'account_deposit' for account payments
+                            $transactionData['transaction_type'] = 'account_deposit';
+                            Contact::where('id', $sale->customer_id)->decrement('balance', $payment['amount']);
+                        } else {
+                            // Set transaction type to 'sale' for other payment methods
+                            $transactionData['transaction_type'] = 'sale';
+                        }
+
+                        // Update the total amount received
+                        $amountReceived += $payment['amount'];
+
+                        // Create the transaction
+                        $transaction = Transaction::create($transactionData);
                     }
                 }
 

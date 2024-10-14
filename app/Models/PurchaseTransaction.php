@@ -15,5 +15,7 @@ class PurchaseTransaction extends Model
         'transaction_date',
         'amount',
         'payment_method',
+        'purchase_id',
+        'transaction_type',
     ];
 }

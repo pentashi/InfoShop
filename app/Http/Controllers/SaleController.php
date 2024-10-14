@@ -58,6 +58,7 @@ class SaleController extends Controller
         ->leftJoin('products AS p', 'si.product_id', '=', 'p.id') // Join with contacts table using customer_id
         ->where('si.id','=',$id)
         ->get();
+        
         return Inertia::render('Sale/Reciept',[
             'sale'=>$sale,
             'salesItems'=>$salesItems,
