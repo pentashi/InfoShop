@@ -46,7 +46,7 @@ export default function CashCheckoutDialog({ disabled }) {
         formJson.cartItems = cartState;
         formJson.profit_amount = totalProfit;
         formJson.payment_method = 'Cash'
-        formJson.customer_id = selectedCustomer.id
+        formJson.contact_id = selectedCustomer.id
 
         axios.post('/pos/checkout', formJson)
         .then((resp) => {
@@ -164,7 +164,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         fullWidth
                         label="Payable Amount"
                         variant="outlined"
-                        name="total"
+                        name="net_total"
                         value={(cartTotal-discount).toFixed(2)}
                         sx={{ mt: "2rem", input: {textAlign: "center", fontSize:'2rem'},}}
                         slotProps={{

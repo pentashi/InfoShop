@@ -186,6 +186,7 @@ class ProductController extends Controller
             'p.image_url',
             'p.name',
             'p.discount',
+            'p.is_stock_managed',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
             'pb.cost',
             'pb.price',

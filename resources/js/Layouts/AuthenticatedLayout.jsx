@@ -120,6 +120,20 @@ const NavItem = ({href, icon:Icon, label, open, selected})=>(
           {
             minHeight: 48,
             px: 2.5,
+            "&.Mui-selected":{
+              color:'white',
+              backgroundColor: '#1976d2', // Background color when selected
+              "& .MuiListItemIcon-root": { // Target the icon within the selected state
+                color: 'white', // Icon color when selected
+              }
+            },
+            "&:hover": {
+              color:'white',
+              backgroundColor: '#5f72f5', // Background color on hover
+              "& .MuiListItemIcon-root": {
+                color: 'white', // Icon color on hover
+              },
+            },
           },
           open
             ? { justifyContent: 'initial' }

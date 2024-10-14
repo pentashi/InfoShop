@@ -32,7 +32,7 @@ export default function PaymentsCheckoutDialog({
     formData,
     is_sale=false,
 }) {
-    const { cartState, cartTotal, emptyCart } = useCart();
+    const { cartState, cartTotal, emptyCart, totalProfit } = useCart();
 
     const [discount, setDiscount] = useState(0);
     const [amount, setAmount] = useState((cartTotal - discount))
@@ -68,11 +68,14 @@ export default function PaymentsCheckoutDialog({
         formJson.contact_id = selectedContact.id;
         formJson.payments = payments;
 
-
-
-        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
+        let url='/pos/checkout';
+        if(!is_sale){
+            formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
+            url="/purchase/store" 
+        }
+        else formJson.profit_amount = totalProfit
         axios
-        .post("/purchase/store", formJson)
+        .post(url, formJson)
         .then((resp) => {
             Swal.fire({
                 title: "Success!",
@@ -84,7 +87,7 @@ export default function PaymentsCheckoutDialog({
             });
             emptyCart(); //Clear the cart from the Context API
             setDiscount(0);
-            router.visit("/purchases");
+            if(!is_sale) router.visit("/purchases");
             setOpen(false)
         })
         .catch((error) => {
