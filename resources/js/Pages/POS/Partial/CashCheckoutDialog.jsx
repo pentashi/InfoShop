@@ -75,7 +75,7 @@ export default function CashCheckoutDialog({ disabled }) {
             <Button
                 variant="contained"
                 color="success"
-                sx={{ mr: "0.5rem", paddingY: "15px", flexGrow: "1" }}
+                sx={{ paddingY: "15px", flexGrow: "1" }}
                 size="large"
                 endIcon={<PaymentsIcon />}
                 onClick={handleClickOpen}

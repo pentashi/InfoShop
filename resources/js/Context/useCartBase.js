@@ -79,6 +79,18 @@ const cartReducer = (state, action) => {
       return [];
     }
 
+    case 'HOLD_CART': {
+      const heldCarts = JSON.parse(localStorage.getItem('heldCarts')) || {};
+      const newKey = `heldCart_${Date.now()}`; // Unique key for the held cart
+      heldCarts[newKey] = [...state];
+      localStorage.setItem('heldCarts', JSON.stringify(heldCarts));
+      return []; // Clear the current cart state
+    }
+
+    case 'SET_HELD_CART_TO_CART': {
+      return [...action.payload.cart];
+    }
+
     default:
       return state;
   }
@@ -114,15 +126,40 @@ const useCartBase = (initialStateKey) => {
     });
   };
 
+  const holdCart = () => {
+    dispatch({ type: 'HOLD_CART' });
+  };
+
   const emptyCart = () => {
     dispatch({ type: 'EMPTY_CART' });
+  };
+
+
+  // Set a held cart as the current cart by retrieving the cart items using a key
+  const setHeldCartToCart = (key) => {
+    const heldCarts = JSON.parse(localStorage.getItem('heldCarts')) || {};
+    const cart = heldCarts[key] || [];
+    if (cart.length > 0) {
+      // Set the current cart to the retrieved cart
+      dispatch({ type: 'SET_HELD_CART_TO_CART', payload: { cart } });
+  
+      // Remove the held cart from localStorage
+      delete heldCarts[key];
+      localStorage.setItem('heldCarts', JSON.stringify(heldCarts));
+    }
+  };
+
+  const removeHeldItem = (key) => {
+    const heldCarts = JSON.parse(localStorage.getItem('heldCarts')) || {};
+    delete heldCarts[key];
+    localStorage.setItem('heldCarts', JSON.stringify(heldCarts));
   };
 
   useEffect(() => {
     localStorage.setItem(initialStateKey, JSON.stringify(cartState));
   }, [cartState, initialStateKey]);
 
-  return { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem };
+  return { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem, holdCart, setHeldCartToCart, removeHeldItem };
 };
 
 export default useCartBase;

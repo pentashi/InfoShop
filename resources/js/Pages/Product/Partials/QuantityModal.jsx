@@ -36,9 +36,11 @@ export default function QuantityModal({
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
-        formJson.new_batch = formState.batch_number;
+        formJson.stock_id = formState.stock_id;
+        formJson.batch_id = formState.batch_id;
+        formJson.store_id = formState.store_id;
 
-        const response = await axios.post('/productbatch/'+formState.batch_id, formJson);
+        const response = await axios.post('/quantity/store', formJson);
 
         if (response.status === 200 || response.status === 201) {
 

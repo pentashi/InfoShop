@@ -12,13 +12,26 @@ use App\Models\ProductBatch;
 use App\Models\ProductStock;
 use App\Models\PurchaseTransaction;
 
+use Illuminate\Support\Facades\DB;
+
 class PurchaseController extends Controller
 {
     public function index()
     {
-        
+        $purchases = DB::table('purchases AS pr')
+        ->select(
+            'pr.id',
+            'pr.vendor_id',            // Customer ID
+            'pr.purchase_date',              // Sale date
+            'pr.total_amount',           // Total amount (Total amount after discount [net_total - discount])
+            'pr.amount_paid', 
+            'pr.discount',                // Discount
+            'c.name', // Customer name from contacts
+        )
+        ->leftJoin('contacts AS c', 'pr.vendor_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->get();
         return Inertia::render('Purchase/Purchase', [
-            'purchases' => [],
+            'purchases' => $purchases,
         ]);
     }
 

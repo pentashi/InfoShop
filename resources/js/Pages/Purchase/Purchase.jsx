@@ -8,30 +8,38 @@ import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import { Link } from '@inertiajs/react'
+import dayjs from 'dayjs';
 
-const productColumns = (handleEdit) => [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Product Name', width: 200,
-        renderCell: (params) => (
-            <Link underline="hover" className='hover:underline' href={"/products/"+params.row.id+"/edit"}><p className='font-bold'>{params.value}</p></Link>
-        ),
-     },
-    { field: 'barcode', headerName: 'Barcode', width: 170 },
-    { field: 'batch_number', headerName: 'Batch', width: 100 },
-    { field: 'cost', headerName: 'Cost', width: 100 },
-    { field: 'price', headerName: 'Price', width: 100 },
-    { field: 'total_quantity', headerName: 'Quantity', width: 100 },
-    { field: 'created_at', headerName: 'Created At'},
-    { field: 'updated_at', headerName: 'Updated At'},
-];
+const columns = [
+    { field: 'id', headerName: 'ID', width: 100 },
+    { field: 'name', headerName: 'Vendor Name', width: 200 },
+    { field: 'discount', headerName: 'Discount', width: 200 },
+    { field: 'total_amount', headerName: 'Total Amount', width: 120 },
+    { field: 'amount_paid', headerName: 'Amount Paid', width: 120 },
+    {
+      field: 'purchase_date',
+      headerName: 'Date',
+      width: 150,
+      renderCell: (params) => {
+        // Format the date to 'YYYY-MM-DD'
+        return dayjs(params.value).format('YYYY-MM-DD');
+      },
+    },
+    // {
+    //   field: 'action',
+    //   headerName: 'Actions',
+    //   width: 120,
+    //   renderCell: (params) => (
+    //     <Button onClick={() => handlePrintReciept(params.row)} startIcon={<PrintIcon />} variant="outlined">
+    //       PRINT
+    //     </Button>
+    //   ),
+    // },
+  ];
 
 
- export default function Purchases({products, urlImage}) {
+ export default function Purchases({purchases}) {
     const auth = usePage().props.auth.user
-
-    const handleEdit = (product) => {
-        console.log(product)
-      };
 
     return (
         <AuthenticatedLayout>
@@ -48,13 +56,8 @@ const productColumns = (handleEdit) => [
                 <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
                     <DataGrid 
                     rowHeight={50}
-                    rows={products} 
-                    sx={{
-                        // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
-                        // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
-                        // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
-                      }}
-                    columns={productColumns(handleEdit)}
+                    rows={purchases} 
+                    columns={columns}
                     pageSize={5}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{

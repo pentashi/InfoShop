@@ -4,7 +4,7 @@ import useCartBase from './useCartBase';
 const SalesContext = createContext();
 
 const SalesProvider = ({ children }) => {
-  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem } = useCartBase('sales_cart');
+  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem, holdCart, setHeldCartToCart, removeHeldItem } = useCartBase('sales_cart');
 
   const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
     return cartState.reduce(
@@ -26,21 +26,24 @@ const SalesProvider = ({ children }) => {
   }, [cartState]);
 
   return (
-    <SalesContext.Provider
-      value={{
-        cartState,
-        cartTotal,
-        totalQuantity,
-        totalProfit,
-        addToCart,
-        removeFromCart,
-        updateProductQuantity,
-        emptyCart,
-        updateCartItem,
-      }}
-    >
-      {children}
-    </SalesContext.Provider>
+      <SalesContext.Provider
+          value={{
+              cartState,
+              cartTotal,
+              totalQuantity,
+              totalProfit,
+              addToCart,
+              removeFromCart,
+              updateProductQuantity,
+              emptyCart,
+              updateCartItem,
+              holdCart,
+              setHeldCartToCart,
+              removeHeldItem,
+          }}
+      >
+          {children}
+      </SalesContext.Provider>
   );
 };
 

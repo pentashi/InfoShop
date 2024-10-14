@@ -78,6 +78,14 @@ export default function PurchaseCartItems() {
                         <strong>Rs.{totalProfit.toFixed(2)}</strong>
                         </TableCell>
                     </TableRow>
+                    <TableRow>
+                        <TableCell colSpan={5} style={{ textAlign: 'right' }}>
+                        <strong>Total Items:</strong>
+                        </TableCell>
+                        <TableCell>
+                        <strong>{cartState.length}</strong>
+                        </TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>

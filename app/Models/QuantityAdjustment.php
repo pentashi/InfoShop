@@ -15,5 +15,6 @@ class QuantityAdjustment extends Model
         'adjusted_quantity',
         'reason',
         'created_by',
+        'stock_id',
     ];
 }

@@ -55,7 +55,7 @@ export default function CustomerSelect({customers}) {
           renderInput={(params) => <TextField {...params} label="Customer" />}
         />
       )}
-    <IconButton onClick={() => setOpen(true)} size="large" sx={{ ml: '1rem', bgcolor: 'success.main', width: '50px', height: '50px', color:'white','&:hover': {
+    <IconButton onClick={() => setOpen(true)}  sx={{ ml: '1rem', bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
             bgcolor: 'success.dark', // Change the background color on hover
         } }}>
         <PersonAddIcon fontSize="inherit" />

@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');
     Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchases.store');
 
-    Route::post('/quantity', [QuantityController::class, 'store'])->name('quantity.store');
+    Route::post('/quantity/store', [QuantityController::class, 'store'])->name('quantity.store');
 });
 
 require __DIR__.'/auth.php';

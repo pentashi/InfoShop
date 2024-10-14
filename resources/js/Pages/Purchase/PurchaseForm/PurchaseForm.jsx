@@ -292,7 +292,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                             size="large"
                             endIcon={<PaymentsIcon />}
                             onClick={()=>setOpenPayment(true)}
-                            
+                            disabled={cartState.length==0}
                         >
                             PAYMENTS
                         </Button>

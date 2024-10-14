@@ -7,20 +7,25 @@ import { Button, Box,Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import dayjs from 'dayjs';
 
-
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const columns = (handlePrintReciept) => [
-  { field: 'id', headerName: 'ID', width: 100 },
+  { field: 'id', headerName: 'ID', width: 80 },
   { field: 'name', headerName: 'Customer Name', width: 200 },
   { field: 'discount', headerName: 'Discount', width: 100 },
   { field: 'total_amount', headerName: 'Total Amount', width: 120 },
+  { field: 'amount_received', headerName: 'Amount Received', width: 120 },
+  { field: 'change', headerName: 'Change', width: 100,
+    renderCell: (params) => {
+      return (params.row.amount_received-params.row.total_amount).toFixed(2)
+    },
+  },
   { field: 'profit_amount', headerName: 'Profit Amount', width: 120 },
   { field: 'status', headerName: 'Status', width: 100 },
   {
     field: 'sale_date',
     headerName: 'Date',
-    width: 150,
+    width: 100,
     renderCell: (params) => {
       // Format the date to 'YYYY-MM-DD'
       return dayjs(params.value).format('YYYY-MM-DD');
@@ -76,7 +81,7 @@ export default function Sale({ sales }) {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 10,
+                  pageSize: 15,
                 },
               },
             }}

@@ -196,7 +196,6 @@ export default function PaymentsCheckoutDialog({
                                 name="net_total"
                                 label="Amount to pay"
                                 variant="outlined"
-                                readonly
                                 sx={{input:{fontWeight:'bold'}}}
                                 value={(cartTotal-discount).toFixed(2)}
                                 onFocus={(event) => {
