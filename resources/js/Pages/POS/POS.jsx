@@ -65,7 +65,7 @@ function POS({ products, customers }) {
 
     const drawer = (
         <>
-            <form action="/pos" id="posForm" method="post">
+            <form action="/pos" method="post">
                 <Toolbar sx={{ display: { xs: "none", sm: "flex" } }}>
                     <CustomerSelect customers={customers}/>
                 </Toolbar>

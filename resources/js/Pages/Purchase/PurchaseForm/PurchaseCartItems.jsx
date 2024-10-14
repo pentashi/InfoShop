@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect, useContext } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TableFooter, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import the Delete icon
 
@@ -7,12 +8,9 @@ import { usePurchase } from "@/Context/PurchaseContext";
 export default function PurchaseCartItems() {
     const {
         cartState,
-        addToCart,
         cartTotal,
-        totalQuantity,
         removeFromCart,
         updateProductQuantity,
-        emptyCart,
         totalProfit,
     } = usePurchase();
 

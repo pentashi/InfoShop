@@ -30,6 +30,7 @@ export default function PaymentsCheckoutDialog({
     setOpen,
     selectedContact,
     formData,
+    is_sale=false,
 }) {
     const { cartState, cartTotal, emptyCart } = useCart();
 
@@ -63,31 +64,33 @@ export default function PaymentsCheckoutDialog({
         const submittedFormData = new FormData(event.currentTarget);
         let formJson = Object.fromEntries(submittedFormData.entries());
         // formData = Object.fromEntries(formData);
-        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
         formJson.cartItems = cartState;
         formJson.contact_id = selectedContact.id;
         formJson.payments = payments;
 
+
+
+        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
         axios
-            .post("/purchase/store", formJson)
-            .then((resp) => {
-                Swal.fire({
-                    title: "Success!",
-                    text: resp.data.message,
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                });
-                emptyCart(); //Clear the cart from the Context API
-                setDiscount(0);
-                router.visit("/purchases");
-                setOpen(false)
-            })
-            .catch((error) => {
-                console.error("Submission failed with errors:", error);
-                console.log(formJson);
+        .post("/purchase/store", formJson)
+        .then((resp) => {
+            Swal.fire({
+                title: "Success!",
+                text: resp.data.message,
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
             });
+            emptyCart(); //Clear the cart from the Context API
+            setDiscount(0);
+            router.visit("/purchases");
+            setOpen(false)
+        })
+        .catch((error) => {
+            console.error("Submission failed with errors:", error);
+            console.log(formJson);
+        });
     };
 
      // Function to handle the addition of a payment
@@ -114,6 +117,7 @@ export default function PaymentsCheckoutDialog({
 
     return (
         <React.Fragment>
+            {console.log(is_sale)}
             <Dialog
                 fullWidth={true}
                 maxWidth={"sm"}

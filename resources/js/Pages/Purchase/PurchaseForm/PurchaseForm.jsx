@@ -30,12 +30,13 @@ import FormDialog from "@/Pages/Contact/Partial/FormDialog";
 import ProductSearch from "./ProductSearch";
 import PurchaseCartItems from "./PurchaseCartItems";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
+import PurchaseAppBar from "./PurchaseAppBar";
 
 import { usePurchase } from "@/Context/PurchaseContext";
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function PurchaseForm({ vendors, purchase, stores }) {
-    const { cartState, cartTotal, totalQuantity, removeFromCart, updateProductQuantity, emptyCart } = usePurchase();
+    const { cartState, cartTotal, } = usePurchase();
     const { selectedVendor, setSelectedVendor } = useContext(SharedContext);
     const [store, setStore] = useState("");
 
@@ -73,6 +74,10 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             setSelectedVendor(initialvendor || null);
         }
     }, [vendors]);
+
+    useEffect(() => {
+        console.log(cartState)
+    }, [cartState]);
 
     const handleStoreChange = (event) => {
         setStore(event.target.value);
@@ -125,40 +130,35 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     return (
         <AuthenticatedLayout>
             <Head title="Add Purchase" />
-            
-                <Box className="mb-10">
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link
-                            underline="hover"
-                            sx={{ display: "flex", alignItems: "center" }}
-                            color="inherit"
-                            href="/"
-                        >
-                            <HomeIcon
-                                sx={{ mr: 0.5, mb: "3px" }}
-                                fontSize="inherit"
-                            />
-                            Home
-                        </Link>
-                        <Link
-                            underline="hover"
-                            color="inherit"
-                            href="/purchases"
-                        >
-                            Purchases
-                        </Link>
-                        <Typography sx={{ color: "text.primary" }}>
-                            {purchase ? "Edit Product" : "Add Purchase"}
-                        </Typography>
-                    </Breadcrumbs>
-                </Box>
 
-                <form
+            <Box className="mb-10">
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link
+                        underline="hover"
+                        sx={{ display: "flex", alignItems: "center" }}
+                        color="inherit"
+                        href="/"
+                    >
+                        <HomeIcon
+                            sx={{ mr: 0.5, mb: "3px" }}
+                            fontSize="inherit"
+                        />
+                        Home
+                    </Link>
+                    <Link underline="hover" color="inherit" href="/purchases">
+                        Purchases
+                    </Link>
+                    <Typography sx={{ color: "text.primary" }}>
+                        {purchase ? "Edit Product" : "Add Purchase"}
+                    </Typography>
+                </Breadcrumbs>
+            </Box>
+
+            <form
                 id="purchase-form"
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
             >
-
                 <Grid container spacing={2}>
                     <Grid size={3}>
                         <FormControl fullWidth>
@@ -255,50 +255,22 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                         />
                     </Grid>
                 </Grid>
-                </form>
+            </form>
 
-                <Divider sx={{ my: "1rem" }} />
-                <ProductSearch></ProductSearch>
-                <Divider sx={{ my: "1rem" }} />
-                <PurchaseCartItems/>        
-
-                <AppBar
-                    position="fixed"
-                    variant="contained"
-                    sx={{ top: "auto", bottom: 0 }}
-                >
-                    <Toolbar>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <Link
-                            underline="hover"
-                            color="inherit"
-                            href="/purchases"
-                        >
-                            <Button
-                                variant="contained"
-                                color="warning"
-                                size="large"
-                                startIcon={<ArrowBackIosNewIcon />}
-                                sx={{ mr: "1rem" }}
-                            >
-                                BACK
-                            </Button>
-                        </Link>
-
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            color="success"
-                            size="large"
-                            endIcon={<PaymentsIcon />}
-                            onClick={()=>setOpenPayment(true)}
-                            disabled={cartState.length==0}
-                        >
-                            PAYMENTS
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <PaymentsCheckoutDialog open={openPayment} setOpen={setOpenPayment} useCart={usePurchase} selectedContact={selectedVendor} formData={purchaseForm}/>
+            <Divider sx={{ my: "1rem" }} />
+            <ProductSearch></ProductSearch>
+            <Divider sx={{ my: "1rem" }} />
+            
+            <PurchaseCartItems />
+            <PurchaseAppBar setOpenPayment={setOpenPayment}></PurchaseAppBar>
+            
+            <PaymentsCheckoutDialog
+                open={openPayment}
+                setOpen={setOpenPayment}
+                useCart={usePurchase}
+                selectedContact={selectedVendor}
+                formData={purchaseForm}
+            />
         </AuthenticatedLayout>
     );
 }

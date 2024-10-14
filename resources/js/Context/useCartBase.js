@@ -18,7 +18,6 @@ const cartReducer = (state, action) => {
         const productToAdd = { ...action.payload, quantity: action.payload.quantity };
         cart.push(productToAdd);
       }
-
       return cart;
     }
 

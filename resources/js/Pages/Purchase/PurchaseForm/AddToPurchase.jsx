@@ -57,9 +57,6 @@ export default function AddToPurchase({
 
                 // You can now proceed with using the modified formJson
                 addToCart(formJson, formJson.quantity); // Uncomment to use this function
-
-                // Reset the form and close the modal (if applicable)
-                event.target.reset();
                 handleClose();
             } else {
                 console.error('Error: Response not successful', response);
@@ -67,7 +64,6 @@ export default function AddToPurchase({
         }
         else{
             addToCart(formJson,formJson.quantity)
-            event.target.reset()
             handleClose()
         }
     };

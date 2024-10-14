@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import BackHandIcon from "@mui/icons-material/BackHand";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -10,6 +10,7 @@ import { useSales as useCart } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
 
 import HeldItemsModal from "./HeldItemsModal";
+import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 
 import Swal from "sweetalert2";
 
@@ -17,6 +18,7 @@ export default function CartFooter() {
     const { cartState, holdCart, emptyCart } = useCart();
     const { selectedCustomer } = useContext(SharedContext);
     const [heldModalOpen, setHeldModalOpen] = useState(false);
+    const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
 
     const onCartHold = () => {
         Swal.fire({
@@ -72,7 +74,7 @@ export default function CartFooter() {
                         color: "white",
                     }}
                     endIcon={<ShoppingCartIcon />}
-                    onClick={()=>setHeldModalOpen(true)}
+                    onClick={() => setHeldModalOpen(true)}
                 >
                     HELD ITEMS
                 </Button>
@@ -96,6 +98,7 @@ export default function CartFooter() {
                     disabled={
                         cartState.length === 0 || selectedCustomer === null
                     }
+                    onClick={() => setPaymentsModalOpen(true)}
                 >
                     PAYMENTS
                 </Button>
@@ -109,7 +112,17 @@ export default function CartFooter() {
                 />
             </Grid>
 
-            <HeldItemsModal modalOpen={heldModalOpen} setModalOpen={setHeldModalOpen}/>
+            <HeldItemsModal
+                modalOpen={heldModalOpen}
+                setModalOpen={setHeldModalOpen}
+            />
+            <PaymentsCheckoutDialog
+                useCart={useCart}
+                open={paymentsModalOpen}
+                setOpen={setPaymentsModalOpen}
+                selectedContact={selectedCustomer}
+                is_sale={true}
+            />
         </Grid>
     );
 }

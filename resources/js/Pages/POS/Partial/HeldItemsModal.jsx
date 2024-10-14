@@ -41,7 +41,7 @@ export default function HeldItemsModal({
     }, []);
 
     return (
-        <React.Fragment>
+        <>
             <Dialog
                 fullWidth={true}
                 maxWidth={"xs"}
@@ -85,6 +85,6 @@ export default function HeldItemsModal({
                     </Grid>
                 </DialogContent>
             </Dialog>
-        </React.Fragment>
+        </>
     );
 }
