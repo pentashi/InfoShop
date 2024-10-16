@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\PurchaseTransaction;
+use App\Models\Purchase;
 use App\Models\Contact;
 use App\Models\Sale;
 
@@ -33,24 +34,31 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
-            if($paymentMethod=='Account') {
-                $transactionData['transaction_type'] = 'account_deposit';
+            $transactionData['transaction_type'] = 'account_deposit';
+            if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 Contact::where('id', $contactId)->decrement('balance', $amount);
             }
-            else $transactionData['transaction_type'] = 'sale';
+            elseif($paymentMethod !='Account' && $request->has('transaction_id')){
+                $transactionData['transaction_type'] = 'sale';
+            }
+            else{
+                Contact::where('id', $contactId)->increment('balance', $amount);
+            }
             
             $transaction = Transaction::create($transactionData);
 
-            $sale = Sale::where('id', $saleID)->first();
-            if ($sale) {
-                // Increment the amount_received field by the given amount
-                $sale->increment('amount_received', $amount);
-            
-                // Check if the total amount received is greater than or equal to the total amount
-                if ($sale->amount_received >= $sale->total_amount) $sale->status = 'completed';
-            
-                // Save the changes to the Sale record
-                $sale->save();
+            if($request->has('transaction_id')){
+                $sale = Sale::where('id', $saleID)->first();
+                if ($sale) {
+                    // Increment the amount_received field by the given amount
+                    $sale->increment('amount_received', $amount);
+                
+                    // Check if the total amount received is greater than or equal to the total amount
+                    if ($sale->amount_received >= $sale->total_amount) $sale->status = 'completed';
+                
+                    // Save the changes to the Sale record
+                    $sale->save();
+                }
             }
 
 
@@ -95,24 +103,31 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
-            if($paymentMethod=='Account') {
-                $transactionData['transaction_type'] = 'account_deposit';
+            $transactionData['transaction_type'] = 'account_deposit';
+            if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 Contact::where('id', $contactId)->decrement('balance', $amount);
             }
-            else $transactionData['transaction_type'] = 'purchase';
+            elseif($paymentMethod !='Account' && $request->has('transaction_id')){
+                $transactionData['transaction_type'] = 'sale';
+            }
+            else{
+                Contact::where('id', $contactId)->increment('balance', $amount);
+            }
             
             $transaction = PurchaseTransaction::create($transactionData);
 
-            $purchase = Purchase::where('id', $purchaseID)->first();
-            if ($purchase) {
-                // Increment the amount_received field by the given amount
-                $purchase->increment('amount_received', $amount);
-            
-                // Check if the total amount received is greater than or equal to the total amount
-                if ($purchase->amount_paid >= $purchase->total_amount) $purchase->status = 'completed';
-            
-                // Save the changes to the Sale record
-                $purchase->save();
+            if($request->has('transaction_id')){
+                $purchase = Purchase::where('id', $purchaseID)->first();
+                if ($purchase) {
+                    // Increment the amount_received field by the given amount
+                    $purchase->increment('amount_paid', $amount);
+                
+                    // Check if the total amount received is greater than or equal to the total amount
+                    if ($purchase->amount_paid >= $purchase->total_amount) $purchase->status = 'completed';
+                
+                    // Save the changes to the Sale record
+                    $purchase->save();
+                }
             }
 
 

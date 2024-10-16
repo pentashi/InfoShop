@@ -5,43 +5,61 @@ import { Head, usePage, Link } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
 import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { router } from '@inertiajs/react'
+import AddPaymentDialog from '@/Components/AddPaymentDialog';
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 import FormDialog from './Partial/FormDialog';
 
-const columns = (handleEdit) => [
+const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 80 },
     { field: 'name', headerName: 'Name', width: 200,
       renderCell: (params) => (
-          <Link underline="hover" href='#' className='hover:underline' onClick={(event) => {event.preventDefault(); handleEdit(params.row);}}>
+          <Link underline="hover" href='#' className='hover:underline' onClick={(event) => {event.preventDefault(); handleRowClick(params.row, 'contact_edit');}}>
             <p className='font-bold'>{params.value}</p>
           </Link>
       ),
     },
+    { field: 'balance', headerName: 'Balance', width: 100,
+      renderCell: (params) => (
+        <Button
+            onClick={() => handleRowClick(params.row, "add_payment")}
+            variant="text"
+            fullWidth
+            sx={{
+                textAlign: "left",
+                fontWeight: "bold",
+                justifyContent: "flex-start",
+            }}
+        >
+            {parseFloat(params.value).toFixed(2)}
+        </Button>
+      ),
+    }, // Added balance
+    { field: 'phone', headerName: 'Phone', width: 120 },
     { field: 'email', headerName: 'Email', width: 200 },
-    { field: 'phone', headerName: 'Phone', width: 150 },
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
-    { field: 'balance', headerName: 'Balance', width: 100 }, // Added balance
     { field: 'created_at', headerName: 'Created At', width: 100 },
 ];
 
-export default function Contact({contacts, type}) {
-  const auth = usePage().props.auth.user;
+export default function Contact({contacts, type, stores}) {
   const [open, setOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
 
   const handleClickOpen = () => {
     setSelectedContact(null);
     setOpen(true);
   };
 
-  const handleEdit = (contact) => {
-    setSelectedContact(contact); // Set selected collection for editing
-    setOpen(true); // Open the dialog
+  const handleRowClick = (contact, funcmethod) => {
+    setSelectedContact(contact);
+    if(funcmethod=='contact_edit') setOpen(true);
+    else if (funcmethod=='add_payment'){
+      setPaymentModalOpen(true)
+    }
   };
 
   const handleClose = () => {
@@ -76,7 +94,7 @@ export default function Contact({contacts, type}) {
         <Box className="py-6 w-full" sx={{ display: 'grid', gridTemplateColumns: '1fr' }}>
           <DataGrid
             rows={contacts}
-            columns={columns(handleEdit)}
+            columns={columns(handleRowClick)}
             pageSize={10}
             initialState={{
               pagination: {
@@ -97,6 +115,14 @@ export default function Contact({contacts, type}) {
       </Grid>
 
       <FormDialog open={open} handleClose={handleClose} contact={selectedContact} contactType={type} onSuccess={handleFormSuccess} />
+      <AddPaymentDialog
+          open={paymentModalOpen}
+          setOpen={setPaymentModalOpen}
+          selectedContact={selectedContact?.id}
+          is_customer={type === 'customer' ? true:false}
+          stores={stores}
+      />
+
     </AuthenticatedLayout>
   );
 }

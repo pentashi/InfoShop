@@ -22,6 +22,8 @@ import CustomerSelect from "./Partial/CustomerSelect";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
+import CartItemModal from "./Partial/CartItemModal";
+
 import { SalesProvider } from "@/Context/SalesContext";
 
 const drawerWidth = 500;
@@ -75,13 +77,13 @@ function POS({ products, customers }) {
                     sx={{ height: "calc(100vh - 210px);" }}
                 >
                     {/* Cart Items - List of all items */}
-                    <CartItems></CartItems>
+                    <CartItems/>
                     {/* Cart Summary - Total and discount area */}
-                    <CartSummary></CartSummary>
+                    <CartSummary/>
                 </Box>
                 <DrawerFooter>
                     {/* Cart footer - Buttons */}
-                    <CartFooter></CartFooter>
+                    <CartFooter/>
                 </DrawerFooter>
             </form>
         </>
@@ -203,6 +205,7 @@ function POS({ products, customers }) {
                     </Drawer>
                 </Box>
             </Box>
+            
             </SalesProvider>
     );
 }

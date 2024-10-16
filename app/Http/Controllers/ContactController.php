@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use App\Models\Collection;
+use App\Models\Store;
+
 use Inertia\Inertia;
 use Inertia\Response;
 use Redirect;
-use App\Models\Collection;
-
 
 class ContactController extends Controller
 {
@@ -16,7 +17,7 @@ class ContactController extends Controller
     {
         // Fetch data from the Collection model
         $contacts = Contact::select('id', 'name','phone','email','address', 'balance','created_at')->where('id','!=','1');
-
+        $stores = Store::select('id', 'name')->get();
         // Apply the scope based on the type
         if ($type === 'customer') {
             $contacts = $contacts->customers()->get();
@@ -30,6 +31,7 @@ class ContactController extends Controller
         // Render the Inertia view with the collections data
         return Inertia::render('Contact/Contact', [
             'contacts' => $contacts,
+            'stores'=>$stores,
             'type' =>$type,
         ]);
     }

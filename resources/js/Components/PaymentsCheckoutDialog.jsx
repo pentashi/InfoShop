@@ -125,7 +125,6 @@ export default function PaymentsCheckoutDialog({
 
     return (
         <React.Fragment>
-            {console.log(is_sale)}
             <Dialog
                 fullWidth={true}
                 maxWidth={"sm"}

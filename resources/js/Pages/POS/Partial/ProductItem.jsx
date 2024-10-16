@@ -1,18 +1,20 @@
-import * as React from 'react';
+import React,{useContext} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import { Typography, Chip } from '@mui/material';
 
 import { useSales as useCart } from '@/Context/SalesContext';
+import { SharedContext } from "@/Context/SharedContext";
 
 export default function ProductItem({ product }) {
     const { name, price, image_url, quantity } = product;
-    const { cartState, addToCart } = useCart();
+    const { addToCart } = useCart();
+    const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
   return (
     <Card 
-    onClick={() => addToCart(product)}
+    onClick={() => {addToCart(product); product.quantity=1; setSelectedCartItem(product); setCartItemModalOpen(true)}}
     >
         
       <CardMedia

@@ -1,10 +1,9 @@
 import * as React from "react";
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "@inertiajs/react";
 import {
     Button,
     Box,
-    Grid2 as Grid,
     IconButton,
     Checkbox,
 } from "@mui/material";
@@ -20,7 +19,6 @@ import _ from "lodash";
 
 import AddToPurchase from "./AddToPurchase";
 
-import { SharedContext } from "@/Context/SharedContext";
 import { usePurchase } from "@/Context/PurchaseContext";
 
 export default function ProductSearch() {

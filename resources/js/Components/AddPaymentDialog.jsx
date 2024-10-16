@@ -15,6 +15,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel'
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -23,6 +24,7 @@ const initialPaymentFormState = {
     payment_method: 'Cash',
     transaction_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
     note: '',
+    store_id:1,
 };
 
 export default function AddPaymentDialog({
@@ -32,6 +34,7 @@ export default function AddPaymentDialog({
     selectedTransaction=null,
     amountLimit,
     is_customer=false,
+    stores=null,
 }) {
 
     const [paymentForm, setPaymentFormState] = useState(initialPaymentFormState);
@@ -55,14 +58,13 @@ export default function AddPaymentDialog({
         let formJson = Object.fromEntries(submittedFormData.entries());
         formJson.contact_id = selectedContact
 
-        if(selectedTransaction){
+        if(selectedTransaction !== null ){
             formJson.transaction_id = selectedTransaction.id
             formJson.store_id = selectedTransaction.store_id
         }
 
-        console.log(formJson)
         let url='/customer-transaction';
-        if(!is_customer) url="/vendor-transaction" 
+        if(!is_customer) url="/vendor-transaction"
 
         axios
         .post(url, formJson)
@@ -118,6 +120,7 @@ export default function AddPaymentDialog({
                                 name="amount"
                                 label="Amount"
                                 variant="outlined"
+                                autoFocus
                                 sx={{input:{fontWeight:'bold'}}}
                                 value={paymentForm.amount}
                                 onChange={handleFieldChange}
@@ -141,14 +144,19 @@ export default function AddPaymentDialog({
 
                         <Grid size={4}>
                         <FormControl sx={{ minWidth: 120, width:'100%' }}>
+                        <InputLabel>Payment Method</InputLabel>
                             <Select
                                 name="payment_method"
                                 value={paymentForm.payment_method}
                                 onChange={handleFieldChange}
+                                label="Payment Method"
                             >
                                 <MenuItem value={'Cash'}>Cash</MenuItem>
                                 <MenuItem value={'Cheque'}>Cheque</MenuItem>
-                                <MenuItem value={'Account'}>Account</MenuItem>
+                                {selectedTransaction===null &&(
+                                    <MenuItem value={'Account'}>Account</MenuItem>
+                                )}
+
                             </Select>
                         </FormControl>
                         </Grid>
@@ -169,6 +177,27 @@ export default function AddPaymentDialog({
                                 required
                             />
                         </Grid>
+
+                        {(selectedTransaction===null || amountLimit === undefined) && (
+                            <Grid size={12}>
+                                <FormControl sx={{ width:'100%', mt:'0.6rem' }}>
+                                    <InputLabel>Store</InputLabel>
+                                    <Select
+                                        value={paymentForm.store_id}
+                                        label="Store"
+                                        onChange={handleFieldChange}
+                                        required
+                                        name="store_id"
+                                    >
+                                        {stores?.map((store) => (
+                                            <MenuItem key={store.id} value={store.id}>
+                                                {store.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        )}
                     </Grid>
 
                     <Divider sx={{py:'0.5rem'}}></Divider>
@@ -190,8 +219,7 @@ export default function AddPaymentDialog({
                         fullWidth
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
-                        // onClick={handleClose}
-                        disabled={paymentForm.amount == 0 || paymentForm.amount > amountLimit}
+                        disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit)}
                     >
                         ADD PAYMENT
                     </Button>

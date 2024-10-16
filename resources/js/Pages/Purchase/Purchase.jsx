@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
 
 const columns = (handleRowClick) => [
-    { field: 'id', headerName: 'ID', width: 100 },
+    { field: 'id', headerName: 'ID', width: 80 },
     { field: 'name', headerName: 'Vendor Name', width: 200 },
     { field: 'discount', headerName: 'Discount', width: 100 },
     { field: 'total_amount', headerName: 'Total Amount', width: 120 },
@@ -37,11 +37,16 @@ const columns = (handleRowClick) => [
     {
       field: 'purchase_date',
       headerName: 'Date',
-      width: 150,
+      width: 120,
       renderCell: (params) => {
         // Format the date to 'YYYY-MM-DD'
         return dayjs(params.value).format('YYYY-MM-DD');
       },
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 100,
     },
   ];
 
@@ -93,7 +98,7 @@ const columns = (handleRowClick) => [
               selectedTransaction={selectedTransaction}
               selectedContact={selectedContact}
               amountLimit={amountLimit}
-              is_customer={true}
+              is_customer={false}
           />
         </AuthenticatedLayout>
     );

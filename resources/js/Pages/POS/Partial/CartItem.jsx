@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext} from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import {Avatar, Box, Typography, TextField, IconButton } from '@mui/material';
+import {Avatar, Box, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
 import CartItemModal from './CartItemModal';
 
 import { useSales as useCart } from '@/Context/SalesContext';
+import { SharedContext } from "@/Context/SharedContext";
 
 export default function CartItems() {
   const { cartState, removeFromCart } = useCart();
-  const [cartItemModalOpen, setCartItemModalOpen] = useState(false)
-  const [selectedCartItem, setSelectedCartItem] = useState(null)
+  const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
@@ -62,7 +62,7 @@ export default function CartItems() {
           <Divider variant="inset" component="li" />
         </React.Fragment>
       ))}
-      <CartItemModal cartItemModalOpen={cartItemModalOpen} setCartItemModalOpen={setCartItemModalOpen} selectedCartItem={selectedCartItem}></CartItemModal>
+      <CartItemModal/>
     </List>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
     Box,
     Divider,
@@ -16,9 +16,12 @@ import axios from "axios";
 import _ from "lodash";
 
 import { useSales as useCart } from "@/Context/SalesContext";
+import { SharedContext } from "@/Context/SharedContext";
 
 export default function SearchBox() {
-    const { cartState, addToCart } = useCart();
+    const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
+
+    const { addToCart } = useCart();
     const [loading, setLoading] = useState(false);
     const [search_query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
@@ -38,6 +41,8 @@ export default function SearchBox() {
                     setLoading(false);
                     if (barcodeChecked && response.data.products.length === 1) {
                         addToCart(response.data.products[0]);
+                        setSelectedCartItem(response.data.products[0])
+                        setCartItemModalOpen(true)
                     }
                 })
                 .catch((error) => {
@@ -94,14 +99,17 @@ export default function SearchBox() {
                               " | Rs." +
                               option.price
                     }
-                    getOptionKey={(option) => option.id}
-                    onChange={(event, newValue) => {
+                    getOptionKey={(option) => option.id+option.batch_id}
+                    onChange={(event, product) => {
                         if (
-                            newValue &&
-                            typeof newValue === "object" &&
-                            newValue.id
+                            product &&
+                            typeof product === "object" &&
+                            product.id
                         ) {
-                            addToCart(newValue); // Add product to cart
+                            addToCart(product); // Add product to cart
+                            product.quantity = 1
+                            setSelectedCartItem(product)
+                            setCartItemModalOpen(true)
                         }
                     }}
                     renderInput={(params) => (

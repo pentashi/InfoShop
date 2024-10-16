@@ -15,16 +15,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from "@mui/material/InputAdornment";
 
 import { useSales } from "@/Context/SalesContext";
+import { SharedContext } from "@/Context/SharedContext";
 
-export default function CartItemModal({
-    cartItemModalOpen,
-    setCartItemModalOpen,
-    selectedCartItem
-}) {
+export default function CartItemModal() {
     const [showCost, setShowCost] = React.useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
 
     const { updateCartItem } = useSales();
+    const { cartItemModalOpen, setCartItemModalOpen, selectedCartItem, setSelectedCartItem } = useContext(SharedContext);
     const [formState, setFormState] = useState({
         id:'',
         batch_id: "",
@@ -80,6 +78,7 @@ export default function CartItemModal({
                 fullWidth={true}
                 maxWidth={"sm"}
                 open={cartItemModalOpen}
+                disableRestoreFocus
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 PaperProps={{
@@ -91,7 +90,7 @@ export default function CartItemModal({
                     {"EDIT CART"}
                 </DialogTitle>
                 <IconButton
-                    aria-label="close"
+                    aria-label="close"              
                     onClick={handleClose}
                     sx={(theme) => ({
                         position: "absolute",
@@ -123,11 +122,18 @@ export default function CartItemModal({
                         <Grid size={6}>
                             <TextField
                                 fullWidth
+                                id='quantity'
                                 type="number"
                                 name="quantity"
                                 label="Quantity"
                                 variant="outlined"
                                 autoFocus
+                                // inputRef={quantityFieldRef}
+                                inputRef={(input) => {
+                                    if(input != null) {
+                                       input.focus();
+                                    }
+                                  }}
                                 value={formState.quantity}
                                 onChange={handleInputChange}
                                 sx={{
@@ -142,9 +148,9 @@ export default function CartItemModal({
                                     inputLabel: {
                                         shrink: true,
                                     },
-                                    input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                    },
+                                    input:{
+                                        autoFocus:true,
+                                    }
                                 }}
                             />
                         </Grid>

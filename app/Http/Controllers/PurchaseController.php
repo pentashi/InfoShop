@@ -23,13 +23,16 @@ class PurchaseController extends Controller
         ->select(
             'pr.id',
             'pr.contact_id',            // Customer ID
-            'pr.purchase_date',              // Sale date
+            'pr.purchase_date',              // Purchase date
             'pr.total_amount',           // Total amount (Total amount after discount [net_total - discount])
             'pr.amount_paid', 
             'pr.discount',                // Discount
+            'pr.store_id',
+            'pr.status',
             'c.name', // Customer name from contacts
         )
         ->leftJoin('contacts AS c', 'pr.contact_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->orderBy('pr.id','desc')
         ->get();
         return Inertia::render('Purchase/Purchase', [
             'purchases' => $purchases,

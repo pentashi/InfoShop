@@ -199,6 +199,9 @@ class ProductController extends Controller
         if($is_purchase==0){
             $products = $products->where('ps.store_id', 1);
         }
+        else{
+            $products = $products->whereNotNull('ps.store_id');;
+        }
 
         if ($barcodeChecked) {
             $products = $products->where('p.barcode', 'like', "$search_query"); // Assuming 'barcode' is the field name
