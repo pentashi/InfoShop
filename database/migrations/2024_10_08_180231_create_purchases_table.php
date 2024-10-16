@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->integer('store_id'); // Store ID (link to the store making the purchase)
-            $table->integer('vendor_id'); // Vendor ID (link to the supplier providing the products)
+            $table->integer('contact_id'); // Vendor ID (link to the supplier providing the products)
             $table->timestamp('purchase_date')->useCurrent(); // Date of purchase
             $table->string('reference_no');
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)

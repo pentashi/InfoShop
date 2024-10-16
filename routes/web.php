@@ -14,6 +14,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\QuantityController;
+use App\Http\Controllers\TransactionController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -72,6 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchases.store');
 
     Route::post('/quantity/store', [QuantityController::class, 'store'])->name('quantity.store');
+
+    Route::post('/customer-transaction', [TransactionController::class, 'storeCustomerTransaction']);
+    Route::post('/vendor-transaction', [TransactionController::class, 'storeVendorTransaction']);
 });
 
 require __DIR__.'/auth.php';

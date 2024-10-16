@@ -12,7 +12,7 @@ class Transaction extends Model
     protected $fillable = [
         'sales_id',          // Unique identifier for the sale
         'store_id',         // ID of the store
-        'customer_id',      // ID of the customer
+        'contact_id',      // ID of the customer
         'transaction_date', // Date and time of the transaction
         'amount',           // Amount paid
         'payment_method',   // Payment method

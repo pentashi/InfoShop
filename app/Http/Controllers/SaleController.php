@@ -15,7 +15,7 @@ class SaleController extends Controller
         $sales = DB::table('Sales AS s')
         ->select(
             's.id',
-            's.customer_id',            // Customer ID
+            's.contact_id',            // Customer ID
             's.sale_date',              // Sale date
             's.total_amount',           // Total amount (Total amount after discount [net_total - discount])
             's.discount',                // Discount
@@ -23,8 +23,10 @@ class SaleController extends Controller
             's.profit_amount',          // Profit amount
             's.status',                  // Sale status
             'c.name', // Customer name from contacts
+            's.store_id',
         )
-        ->leftJoin('contacts AS c', 's.customer_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->leftJoin('contacts AS c', 's.contact_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->orderBy('s.id', 'desc')
         ->get();
 
         return Inertia::render('Sale/Sale', [
@@ -36,7 +38,7 @@ class SaleController extends Controller
         $sale = DB::table('Sales AS s')
         ->select(
             's.id',
-            's.customer_id',            // Customer ID
+            's.contact_id',            // Customer ID
             's.sale_date',              // Sale date
             's.total_amount',           // Total amount (Total amount after discount [net_total - discount])
             's.discount',                // Discount
@@ -45,7 +47,7 @@ class SaleController extends Controller
             's.status',                  // Sale status
             'c.name', // Customer name from contacts
         )
-        ->leftJoin('contacts AS c', 's.customer_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->leftJoin('contacts AS c', 's.contact_id', '=', 'c.id') // Join with contacts table using customer_id
         ->where('s.id','=',$id)
         ->get();
 

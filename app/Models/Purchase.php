@@ -11,7 +11,7 @@ class Purchase extends Model
 
     protected $fillable = [
         'store_id',
-        'vendor_id',
+        'contact_id',
         'purchase_date',
         'total_amount', //Net total (total after discount)
         'discount',

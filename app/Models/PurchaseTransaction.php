@@ -11,7 +11,7 @@ class PurchaseTransaction extends Model
 
     protected $fillable = [
         'store_id',
-        'vendor_id',
+        'contact_id',
         'transaction_date',
         'amount',
         'payment_method',

@@ -66,7 +66,7 @@ class POSController extends Controller
         try{
             $sale = Sale::create([
                 'store_id' => 1, // Assign appropriate store ID
-                'customer_id' => $customerID, // Assign appropriate customer ID
+                'contact_id' => $customerID, // Assign appropriate customer ID
                 'sale_date' => now(), // Current date and time
                 'total_amount' => $total, //Net total (total after discount)
                 'discount' => $discount,
@@ -80,7 +80,7 @@ class POSController extends Controller
                 $transaction = Transaction::create([
                     'sales_id' => $sale->id,
                     'store_id' => $sale->store_id,
-                    'customer_id' => $sale->customer_id,
+                    'contact_id' => $sale->contact_id,
                     'transaction_date' => $sale->sale_date, // Current date and time
                     'amount' => $total,
                     'payment_method' => $paymentMethod,
@@ -96,7 +96,7 @@ class POSController extends Controller
                         $transactionData = [
                             'sales_id' => $sale->id,
                             'store_id' => $sale->store_id,
-                            'customer_id' => $sale->customer_id,
+                            'contact_id' => $sale->contact_id,
                             'transaction_date' => $sale->sale_date,
                             'amount' => $payment['amount'],
                             'payment_method' => $payment['payment_method'],
@@ -106,7 +106,7 @@ class POSController extends Controller
                         if ($payment['payment_method'] == 'Account') {
                             // Set transaction type to 'account_deposit' for account payments
                             $transactionData['transaction_type'] = 'account_deposit';
-                            Contact::where('id', $sale->customer_id)->decrement('balance', $payment['amount']);
+                            Contact::where('id', $sale->contact_id)->decrement('balance', $payment['amount']);
                         } else {
                             // Set transaction type to 'sale' for other payment methods
                             $transactionData['transaction_type'] = 'sale';

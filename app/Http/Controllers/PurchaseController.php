@@ -22,14 +22,14 @@ class PurchaseController extends Controller
         $purchases = DB::table('purchases AS pr')
         ->select(
             'pr.id',
-            'pr.vendor_id',            // Customer ID
+            'pr.contact_id',            // Customer ID
             'pr.purchase_date',              // Sale date
             'pr.total_amount',           // Total amount (Total amount after discount [net_total - discount])
             'pr.amount_paid', 
             'pr.discount',                // Discount
             'c.name', // Customer name from contacts
         )
-        ->leftJoin('contacts AS c', 'pr.vendor_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->leftJoin('contacts AS c', 'pr.contact_id', '=', 'c.id') // Join with contacts table using customer_id
         ->get();
         return Inertia::render('Purchase/Purchase', [
             'purchases' => $purchases,
@@ -65,7 +65,7 @@ class PurchaseController extends Controller
             // Create a new purchase record
             $purchase = Purchase::create([
                 'store_id' => $validatedData['store_id'] ?? 1,
-                'vendor_id' => $validatedData['contact_id'],
+                'contact_id' => $validatedData['contact_id'],
                 'purchase_date' => $validatedData['purchase_date'],
                 'total_amount' => $validatedData['net_total'], //Total after discount
                 'discount' => $validatedData['discount'] ?? 0, // Optional, defaults to 0
@@ -125,7 +125,7 @@ class PurchaseController extends Controller
                     $transactionData = [
                         'purchase_id' => $purchase->id,
                         'store_id' => $purchase->store_id,
-                        'vendor_id' => $purchase->vendor_id,
+                        'contact_id' => $purchase->contact_id,
                         'transaction_date' => now(),
                         'amount' => $payment['amount'], // Amount from the payment array
                         'payment_method' => $payment['payment_method'],
@@ -135,7 +135,7 @@ class PurchaseController extends Controller
                     if ($payment['payment_method'] == 'Account') {
                         // Set transaction type to 'account_deposit' for account payments
                         $transactionData['transaction_type'] = 'account_deposit';
-                        Contact::where('id', $purchase->vendor_id)->decrement('balance', $payment['amount']);
+                        Contact::where('id', $purchase->contact_id)->decrement('balance', $payment['amount']);
                     } else {
                         // Set transaction type to 'sale' for other payment methods
                         $transactionData['transaction_type'] = 'purchase';

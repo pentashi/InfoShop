@@ -1,9 +1,6 @@
 import React, { useRef } from 'react';
-import { useState } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage,Link } from '@inertiajs/react';
-import Grid from '@mui/material/Grid2';
-import { Button, Box,Typography, Breadcrumbs, IconButton, Paper, Card, CardMedia,ListItem, ListItemText, List, Divider } from '@mui/material';
+import { Head } from '@inertiajs/react';
+import { Button, Box,Typography, Paper, Card, CardMedia,Divider } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';

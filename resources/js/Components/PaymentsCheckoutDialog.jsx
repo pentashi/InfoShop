@@ -4,6 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import Menu from "@mui/material/Menu";
 import {
     IconButton,
     TextField,
@@ -21,8 +22,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { router } from "@inertiajs/react";
 import axios from "axios";
 import Swal from "sweetalert2";
-
-import Menu from "@mui/material/Menu";
 
 export default function PaymentsCheckoutDialog({
     useCart,

@@ -11,7 +11,7 @@ class Sale extends Model
 
     protected $fillable = [
         'store_id',        // Store ID
-        'customer_id',     // Customer ID
+        'contact_id',     // Customer ID
         'sale_date',       // Sale date
         'total_amount',    //Net total (total after discount)
         'discount',        // Discount

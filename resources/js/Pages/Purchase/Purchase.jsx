@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import { useState } from 'react';
 import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 import Grid from '@mui/material/Grid2';
 import { Button, Box } from '@mui/material';
@@ -10,12 +11,29 @@ import Typography from '@mui/material/Typography';
 import { Link } from '@inertiajs/react'
 import dayjs from 'dayjs';
 
-const columns = [
+import AddPaymentDialog from '@/Components/AddPaymentDialog';
+
+const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'name', headerName: 'Vendor Name', width: 200 },
-    { field: 'discount', headerName: 'Discount', width: 200 },
+    { field: 'discount', headerName: 'Discount', width: 100 },
     { field: 'total_amount', headerName: 'Total Amount', width: 120 },
-    { field: 'amount_paid', headerName: 'Amount Paid', width: 120 },
+    { field: 'amount_paid', headerName: 'Amount Paid', width: 120,
+        renderCell: (params) => (
+            <Button
+                onClick={() => handleRowClick(params.row, "add_payment")}
+                variant="text"
+                fullWidth
+                sx={{
+                    textAlign: "left",
+                    fontWeight: "bold",
+                    justifyContent: "flex-start",
+                }}
+            >
+                {parseFloat(params.value).toFixed(2)}
+            </Button>
+          ),
+    },
     {
       field: 'purchase_date',
       headerName: 'Date',
@@ -25,21 +43,22 @@ const columns = [
         return dayjs(params.value).format('YYYY-MM-DD');
       },
     },
-    // {
-    //   field: 'action',
-    //   headerName: 'Actions',
-    //   width: 120,
-    //   renderCell: (params) => (
-    //     <Button onClick={() => handlePrintReciept(params.row)} startIcon={<PrintIcon />} variant="outlined">
-    //       PRINT
-    //     </Button>
-    //   ),
-    // },
   ];
 
 
  export default function Purchases({purchases}) {
-    const auth = usePage().props.auth.user
+    const [selectedTransaction, setSelectedTransaction] = useState(null)
+    const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+    const [selectedContact, setSelectedContact] = useState(null)
+    const [amountLimit, setAmountLimit] = useState(0)
+
+  const handleRowClick = (purchase) => {
+    const amountLimit = parseFloat(purchase.total_amount) - parseFloat(purchase.amount_paid)
+    setSelectedTransaction(purchase)
+    setSelectedContact(purchase.contact_id)
+    setAmountLimit(amountLimit)
+    setPaymentModalOpen(true)
+  };
 
     return (
         <AuthenticatedLayout>
@@ -57,7 +76,7 @@ const columns = [
                     <DataGrid 
                     rowHeight={50}
                     rows={purchases} 
-                    columns={columns}
+                    columns={columns(handleRowClick)}
                     pageSize={5}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
@@ -68,6 +87,14 @@ const columns = [
                     />
                 </Box>
             </Grid>
+            <AddPaymentDialog
+              open={paymentModalOpen}
+              setOpen={setPaymentModalOpen}
+              selectedTransaction={selectedTransaction}
+              selectedContact={selectedContact}
+              amountLimit={amountLimit}
+              is_customer={true}
+          />
         </AuthenticatedLayout>
     );
 }
