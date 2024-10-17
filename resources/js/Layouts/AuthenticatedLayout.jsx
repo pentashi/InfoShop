@@ -27,6 +27,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CustomerIcon from '@mui/icons-material/PeopleAlt';
 import VendorIcon from '@mui/icons-material/ContactEmergency';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import { SharedProvider } from '@/Context/SharedContext';
 import { PurchaseProvider } from '@/Context/PurchaseContext';
@@ -228,6 +229,7 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")}/>
           <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")}/>
           <NavItem href="/stores" icon={StoreIcon} label="Stores" open={open} selected={isSelected("/stores")} />
+          <NavItem href="/settings" icon={SettingsIcon} label="Settings" open={open} selected={isSelected("/settings")} />
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
 
           </List>

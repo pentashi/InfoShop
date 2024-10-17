@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Sale;
+use App\Models\Setting;
 
 use Illuminate\Support\Facades\DB;
 
@@ -35,6 +36,8 @@ class SaleController extends Controller
     }
 
     public function reciept($id){
+        $settings = Setting::all();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
         $sale = DB::table('Sales AS s')
         ->select(
             's.id',
@@ -45,9 +48,11 @@ class SaleController extends Controller
             's.amount_received',         // Amount received
             's.profit_amount',          // Profit amount
             's.status',                  // Sale status
+            'stores.address',
             'c.name', // Customer name from contacts
         )
         ->leftJoin('contacts AS c', 's.contact_id', '=', 'c.id') // Join with contacts table using customer_id
+        ->join('stores', 's.store_id','=','stores.id')
         ->where('s.id','=',$id)
         ->get();
 
@@ -64,6 +69,7 @@ class SaleController extends Controller
         return Inertia::render('Sale/Reciept',[
             'sale'=>$sale,
             'salesItems'=>$salesItems,
+            'settings'=>$settingArray,
         ]);
     }
 }

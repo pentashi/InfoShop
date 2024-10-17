@@ -84,6 +84,7 @@ class POSController extends Controller
                     'transaction_date' => $sale->sale_date, // Current date and time
                     'amount' => $total,
                     'payment_method' => $paymentMethod,
+                    'transaction_type'=>'sale'
                 ]);
                 $sale->status = 'completed';
                 $sale->save();

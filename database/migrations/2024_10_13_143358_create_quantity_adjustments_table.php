@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('reason')->nullable(); // Optional reason for the adjustment
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
+
+            $table->foreign('batch_id')->references('id')->on('product_batches');
+            $table->foreign('stock_id')->references('id')->on('product_stocks');
         });
     }
 

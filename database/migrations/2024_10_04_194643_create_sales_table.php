@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->integer('store_id'); // Store ID without foreign key constraint
-            $table->integer('contact_id');
+            $table->unsignedBigInteger('store_id'); // Store ID without foreign key constraint
+            $table->unsignedBigInteger('contact_id');
             $table->timestamp('sale_date')->useCurrent(); // Sale date
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)
             $table->decimal('discount', 10, 2)->default(0); // Discount
@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('status'); //['completed', 'pending', 'refunded']
             $table->text('note')->nullable();
             $table->timestamps();
+
+            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

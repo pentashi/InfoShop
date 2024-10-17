@@ -13,7 +13,7 @@ import { styled } from '@mui/material/styles';
 
 import { useReactToPrint } from 'react-to-print';
 
-export default function Reciept({ sale, salesItems }) {
+export default function Reciept({ sale, salesItems, settings }) {
     const contentRef = useRef(null);
 
     const reactToPrintFn = useReactToPrint({ contentRef });
@@ -44,11 +44,11 @@ export default function Reciept({ sale, salesItems }) {
                             <CardMedia
                             component="img"
                             height="140"
-                            image="https://placehold.co/400"
+                            image={window.location.origin + '/' +settings.shop_logo}
                             />
                         </Card>
-                        <Typography variant="h5" color="initial" sx={{mt:'1rem'}}>One Shop</Typography>
-                        <Typography variant='h6' color="initial">One Shop</Typography>
+                        <Typography variant="h5" color="initial" sx={{mt:'0.5rem'}}>{settings.shop_name}</Typography>
+                        <Typography variant='h6' sx={{fontSize:'1rem'}} color="initial">{sale[0].address}</Typography>
                     </Box>
                     <Divider
                         sx={{
@@ -144,7 +144,7 @@ export default function Reciept({ sale, salesItems }) {
                             my: "1rem",
                         }}
                     />
-                    <Typography align="center" variant="body1" color="initial">Thank you</Typography>
+                    <Typography align="center" variant="body1" color="initial">{settings.sale_receipt_note}</Typography>
 
                 </div>
             </RecieptContainer>

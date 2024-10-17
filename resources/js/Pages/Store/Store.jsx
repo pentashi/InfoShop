@@ -15,24 +15,20 @@ import FormDialog from './Partial/FormDialog';
 
   const columns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Store Name', width: 200 },
-    { field: 'address', headerName: 'Address', width: 250 },
+    { field: 'name', headerName: 'Store Name', width: 200,
+      renderCell: (params) => (
+        <Button
+          onClick={() => handleEdit(params.row)}
+          variant="text"
+          sx={{fontWeight:'bold'}}
+        >
+          {params.value}
+        </Button>
+      ),
+    },
+    { field: 'address', headerName: 'Address', width: 300 },
     { field: 'contact_number', headerName: 'Contact Number', width: 180 },
     { field: 'created_at', headerName: 'Created At', width: 200 },
-    {
-        field: 'action',
-        headerName: 'Actions',
-        // width: auto,
-        renderCell: (params) => (
-          <Button
-            onClick={() => handleEdit(params.row)}
-            startIcon={<EditIcon />}
-            variant="outlined"
-          >
-            Edit
-          </Button>
-        ),
-      },
   ];
 
  export default function Store({stores,session}) {

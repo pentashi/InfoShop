@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('product_batches', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('product_id'); // Using unsignedInteger for product_id
+            $table->unsignedBigInteger('product_id'); // Using unsignedInteger for product_id
             $table->string('batch_number')->default('DEFAULT'); // Default batch code
             $table->date('expiry_date')->nullable(); // Nullable expiry date
             $table->decimal('cost', 10, 2); // Cost price
             $table->decimal('price', 10, 2); // Sale price
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

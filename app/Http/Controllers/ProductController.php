@@ -46,7 +46,7 @@ class ProductController extends Controller
         $products = $this->getProducts();
         $stores = Store::select('id', 'name')->get();
 
-         // Render the 'Dashboard' component with data
+         // Render the 'Products' component with data
         return Inertia::render('Product/Product', [
             'products' => $products,
             'stores'=>$stores,

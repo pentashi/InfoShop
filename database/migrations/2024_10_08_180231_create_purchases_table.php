@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-            $table->integer('store_id'); // Store ID (link to the store making the purchase)
-            $table->integer('contact_id'); // Vendor ID (link to the supplier providing the products)
+            $table->unsignedBigInteger('store_id'); // Store ID (link to the store making the purchase)
+            $table->unsignedBigInteger('contact_id'); // Vendor ID (link to the supplier providing the products)
             $table->timestamp('purchase_date')->useCurrent(); // Date of purchase
             $table->string('reference_no');
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)
@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('status'); //['completed', 'pending', 'canceled']
             $table->text('note')->nullable(); // Optional notes on the purchase
             $table->timestamps();
+
+            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

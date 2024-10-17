@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('product_stocks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('store_id'); // Foreign key for the store
-            $table->unsignedInteger('batch_id'); // Foreign key for the product batch
+            $table->unsignedBigInteger('store_id'); // Foreign key for the store
+            $table->unsignedBigInteger('batch_id'); // Foreign key for the product batch
             $table->decimal('quantity', 10, 2)->default(0.00); // Quantity of stock available (decimal type)
             $table->timestamps();
 
-            $table->index('store_id');
-            $table->index('batch_id');
+            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('batch_id')->references('id')->on('product_batches');
         });
     }
 

@@ -253,7 +253,7 @@ export default function Product({ product, collection }) {
                                 labelId="product-unit-label"
                                 id="product_unit"
                                 value={productFormData.unit}
-                                label="Type"
+                                label="Product Unit"
                                 onChange={handleChange}
                                 name="unit"
                             >
