@@ -21,6 +21,7 @@ const columns = (handleEdit) => [
   {
     field: 'action',
     headerName: 'Actions',
+    width:150,
     renderCell: (params) => (
       <Button onClick={() => handleEdit(params.row)} startIcon={<EditIcon />} variant="outlined">
         Edit

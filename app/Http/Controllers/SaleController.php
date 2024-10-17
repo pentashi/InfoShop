@@ -28,7 +28,7 @@ class SaleController extends Controller
         )
         ->leftJoin('contacts AS c', 's.contact_id', '=', 'c.id') // Join with contacts table using customer_id
         ->orderBy('s.id', 'desc')
-        ->get();
+        ->paginate(25);
 
         return Inertia::render('Sale/Sale', [
             'sales' => $sales,

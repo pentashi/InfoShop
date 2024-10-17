@@ -188,7 +188,6 @@ export default function Product({ products, stores }) {
                     sx={{ display: "grid", gridTemplateColumns: "1fr" }}
                 >
                     <DataGrid
-                        rowHeight={50}
                         rows={productsState}
                         sx={
                             {

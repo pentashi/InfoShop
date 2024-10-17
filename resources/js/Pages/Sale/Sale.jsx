@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, Link } from '@inertiajs/react';
+import { Head, usePage, Link, router } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia'
 import Grid from '@mui/material/Grid2';
 import { Button, Box,Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
+import RefreshIcon from '@mui/icons-material/Refresh';
+
 import dayjs from 'dayjs';
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
+import CustomPagination from '@/Components/CustomPagination';
 
 const columns = (handleRowClick) => [
   { field: 'id', headerName: 'ID', width: 80 },
@@ -62,24 +66,67 @@ const columns = (handleRowClick) => [
   },
 ];
 
-export default function Sale({ sales }) {
+export default function Sale({ sales}) {
   const [selectedTransaction, setSelectedTransaction] = useState(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [selectedContact, setSelectedContact] = useState(null)
   const [amountLimit, setAmountLimit] = useState(0)
+  const [salesView, setSalesView] = useState(sales.data)
 
   const handleRowClick = (sale) => {
+  //   const sale_index = salesView.findIndex(item => item.id === sale.id);
+  //   if (sale_index !== -1) {
+
+  //     const updatedData = [
+  //       ...salesView.slice(0, sale_index),
+  //       {
+  //           ...salesView[sale_index],
+  //           ['amount_received']: '10000'
+  //       },
+  //       ...salesView.slice(sale_index + 1)
+  //   ];
+  
+  //     setSalesView(updatedData)
+  // } else {
+  //     console.log("Item not found");
+  // }
+  
+    
     const amountLimit = parseFloat(sale.total_amount) - parseFloat(sale.amount_received)
-    setSelectedTransaction(sale)
-    setSelectedContact(sale.contact_id)
-    setAmountLimit(amountLimit)
-    setPaymentModalOpen(true)
+      setSelectedTransaction(sale)
+      setSelectedContact(sale.contact_id)
+      setAmountLimit(amountLimit)
+      setPaymentModalOpen(true)
+    };
+
+    const refreshSales=()=>{
+      
+    } 
+
+    const handleChange = (event, page) => {
+      const selectedPage = sales.links.find(item => item.label === page.toString());
+      if (selectedPage && selectedPage.url) {
+        // Use Inertia.js to visit the selected page URL
+        // For example: Inertia.visit(selectedPage.url);
+        
+        router.visit(selectedPage.url, { method: 'get' })
+      }
+    };
+
+    const prevUrl = sales.links.find((item) => item.label === "&laquo; Previous")?.url;
+  const nextUrl = sales.links.find((item) => item.label === "Next &raquo;")?.url;
+
+  const CustomFooter = () => {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Pagination sales={paginationData} />
+      </div>
+    );
   };
 
   return (
       <AuthenticatedLayout>
           <Head title="Sales" />
-
           <Grid
               container
               spacing={2}
@@ -92,9 +139,9 @@ export default function Sale({ sales }) {
                   </Typography>
               </Grid>
               <Grid size={4} container justifyContent="end">
-                  {/* <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>
-            Add Collection
-          </Button> */}
+                  <Button variant="contained" onClick={refreshSales}>
+                  <RefreshIcon/>
+                  </Button>
               </Grid>
 
               <Box
@@ -102,7 +149,7 @@ export default function Sale({ sales }) {
                   sx={{ display: "grid", gridTemplateColumns: "1fr" }}
               >
                   <DataGrid
-                      rows={sales}
+                      rows={salesView}
                       columns={columns(handleRowClick)}
                       slots={{ toolbar: GridToolbar }}
                       slotProps={{
@@ -110,16 +157,28 @@ export default function Sale({ sales }) {
                               showQuickFilter: true,
                           },
                       }}
-                      initialState={{
-                          pagination: {
-                              paginationModel: {
-                                  pageSize: 15,
-                              },
-                          },
-                      }}
+                      components={{ footer: CustomFooter }}
+                      // initialState={{
+                      //   pagination: {
+                      //     paginationModel: { pageSize: 25, page: 0 },
+                      //   },
+                      // }}
+                      // pageSizeOptions={[25,]}
+                      // initialState={{
+                      //     pagination: {
+                      //         paginationModel: {
+                      //             pageSize: 15,
+                      //         },
+                      //     },
+                      // }}
                   />
               </Box>
           </Grid>
+                 <CustomPagination
+                dataLinks={sales.links}
+                dataLastPage={sales.last_page}
+              ></CustomPagination>
+
           <AddPaymentDialog
               open={paymentModalOpen}
               setOpen={setPaymentModalOpen}

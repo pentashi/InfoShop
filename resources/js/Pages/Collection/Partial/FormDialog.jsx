@@ -90,7 +90,7 @@ export default function FormDialog({ open, handleClose, collection }) {
             label="Collection Name"
             type="text"
             fullWidth
-            variant="standard"
+            variant="outlined"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -120,7 +120,7 @@ export default function FormDialog({ open, handleClose, collection }) {
             label="Description"
             type="text"
             fullWidth
-            variant="standard"
+            variant="outlined"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
