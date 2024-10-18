@@ -153,28 +153,51 @@ class TransactionController extends Controller
         }
     }
 
-    public function getPayments($type){
-        if($type==='sales'){
-            return Transaction::select('transactions.id', 'sales_id as reference_id', 'store_id', 'contact_id', 'contacts.name as contact_name', 'transaction_date', 'amount', 'payment_method', 'transactions.transaction_type')
+    public function getPayments($type, $filters){
+        $query = ($type === 'sales') ? Transaction::query() : PurchaseTransaction::query();
+
+        $query->select(
+                ($type === 'sales' ? 'transactions.id' : 'purchase_transactions.id'),
+                ($type === 'sales' ? 'sales_id as reference_id' : 'purchase_id as reference_id'),
+                'store_id',
+                'contact_id',
+                'contacts.name as contact_name',
+                'transaction_date',
+                'amount',
+                'payment_method',
+                'transaction_type'
+            )
             ->join('contacts', 'contact_id', '=', 'contacts.id')
-            ->orderBy('transaction_date', 'desc')
-            ->paginate(25);
+            ->orderBy('transaction_date', 'desc');
+
+        if(isset($filters['contact_id'])){
+            $query->where('contact_id', $filters['contact_id']);
         }
-        else{
-            return PurchaseTransaction::select('purchase_transactions.id', 'purchase_id as reference_id', 'store_id', 'contact_id', 'contacts.name as contact_name', 'transaction_date', 'amount', 'payment_method', 'transaction_type')
-            ->join('contacts', 'contact_id', '=', 'contacts.id')
-            ->orderBy('transaction_date', 'desc')
-            ->paginate(25);
+
+        if(isset($filters['payment_method']) && $filters['payment_method'] !== 'All'){
+            $query->where('payment_method', $filters['payment_method']);
         }
+
+        if(isset($filters['start_date']) && isset($filters['end_date'])){
+            $query->whereBetween('transaction_date', [$filters['start_date'], $filters['end_date']]);
+        }
+        $results = $query->paginate(25);
+        $results->appends($filters);
+        return $results;
     }
 
     public function viewPayments(Request $request, $type='sales'){
-        $transactions = $this->getPayments($type);
+        $filters = $request->only(['contact_id', 'payment_method', 'start_date', 'end_date']);
+        $transactions = $this->getPayments($type, $filters);
+
+        if($type==='sales') $contacts = Contact::select('id', 'name','balance')->customers()->get();
+        else $contacts = Contact::select('id', 'name','balance')->vendors()->get();
 
         return Inertia::render('Payment/Payment', [
             'payments' => $transactions,
             'transactionType'=>$type,
             'pageLabel'=>'Payments',
+            'contacts'=>$contacts,
         ]);
     }
 }

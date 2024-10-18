@@ -80,12 +80,7 @@ export default function Contact({contacts, type, stores}) {
       <Head title={type[0].toUpperCase()+ type.slice(1)+'s'} />
 
       <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
-        <Grid size={8}>
-          <Typography variant="h4" component="h2">
-          {type[0].toUpperCase()+ type.slice(1)+'s'}
-          </Typography>
-        </Grid>
-        <Grid size={4} container justifyContent="end">
+        <Grid size={12} container justifyContent="end">
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>
             Add {type[0].toUpperCase()+ type.slice(1)}
           </Button>

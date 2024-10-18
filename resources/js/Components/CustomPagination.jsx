@@ -3,18 +3,15 @@ import { router } from '@inertiajs/react';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 
-const CustomPagination = ({ dataLinks, dataLastPage }) => {
+const CustomPagination = ({ dataLinks, dataLastPage, refreshTable }) => {
     const handleChange = (event, page) => {
         const selectedPage = dataLinks.find(item => item.label === page.toString());
         if (selectedPage && selectedPage.url) {
-          // Use Inertia.js to visit the selected page URL
-          // For example: Inertia.visit(selectedPage.url);
-          
-          router.visit(selectedPage.url, { method: 'get' })
+          refreshTable(selectedPage.url)
         }
       };
   
-      const prevUrl = dataLinks.find((item) => item.label === "&laquo; Previous")?.url;
+    const prevUrl = dataLinks.find((item) => item.label === "&laquo; Previous")?.url;
     const nextUrl = dataLinks.find((item) => item.label === "Next &raquo;")?.url;
 
   return (

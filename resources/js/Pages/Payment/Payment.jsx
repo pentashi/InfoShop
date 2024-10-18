@@ -14,7 +14,9 @@ import {
     TextField,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
+import Select2 from "react-select";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
@@ -47,21 +49,42 @@ const columns = (handleRowClick) => [
     },
 ];
 
-export default function Payment({ payments, transactionType }) {
-    const [paymentsView, setPaymentsView] = useState(payments.data);
+export default function Payment({ payments, transactionType, contacts }) {
+    const [dataPayments, setDataPayments] = useState(payments);
     const [paymentSelect, setPaymentSelect] = useState(transactionType);
     const [paymentMethod, setPaymentMethod] = useState("All");
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [selectedContact, setSelectedContact] = useState("");
 
     const handleRowClick = () => {};
 
-    const refreshPayments = () => {};
+    const refreshPayments = (url) => {
+        const options = {
+            preserveState: true, // Preserves the current component's state
+            preserveScroll: true, // Preserves the current scroll position
+            only: ["payments"], // Only reload specified properties
+            onSuccess: (response) => {
+                setDataPayments(response.props.payments);
+            },
+        };
+        router.get(url,{
+            contact_id: selectedContact?.id,
+            payment_method: paymentMethod,
+            start_date: startDate,
+            end_date: endDate,
+        },
+        options);
+    };
 
     const handleSelectPayments = (type) => {
         setPaymentSelect(type);
         if (type == "sales") router.get("/payments/sales?page=1");
         if (type == "purchases") router.get("/payments/purchases?page=1");
+    };
+
+    const handleContactChange = (selectedOption) => {
+        setSelectedContact(selectedOption);
     };
 
     return (
@@ -72,9 +95,10 @@ export default function Payment({ payments, transactionType }) {
                 spacing={2}
                 alignItems="center"
                 sx={{ width: "100%" }}
+                justifyContent={'center'}
+                size={12}
             >
-                <Grid size={12} container justifyContent="end">
-                <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+                    <FormControl sx={{ minWidth: "210px" }} >
                         <InputLabel>Select payments</InputLabel>
                         <Select
                             value={paymentSelect}
@@ -91,7 +115,26 @@ export default function Payment({ payments, transactionType }) {
                             </MenuItem>
                         </Select>
                     </FormControl>
-                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+
+                    <FormControl sx={{ minWidth: "240px" }} >
+                        <Select2
+                            className="w-full"
+                            placeholder="Select a contact..."
+                            styles={{
+                                control: (baseStyles, state) => ({
+                                    ...baseStyles,
+                                    height: "55px",
+                                }),
+                            }}
+                            options={contacts} // Options to display in the dropdown
+                            onChange={handleContactChange} // Triggered when an option is selected
+                            isClearable // Allow the user to clear the selected option
+                            getOptionLabel={(option) => option.name}
+                            getOptionValue={(option) => option.id}
+                        ></Select2>
+                    </FormControl>
+       
+                    <FormControl sx={{ minWidth: "210px" }}> 
                         <InputLabel>Select Payment Method</InputLabel>
                         <Select
                             value={paymentMethod}
@@ -105,7 +148,8 @@ export default function Payment({ payments, transactionType }) {
                             <MenuItem value={"Cheque"}>Cheque</MenuItem>
                         </Select>
                     </FormControl>
-                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+
+                    <FormControl>
                         <TextField
                             label="Start Date"
                             name="start_date"
@@ -122,9 +166,29 @@ export default function Payment({ payments, transactionType }) {
                             required
                         />
                     </FormControl>
-                    <Button variant="contained" onClick={refreshPayments}>
-                        <RefreshIcon />
+     
+                    <FormControl>
+                        <TextField
+                            label="End Date"
+                            name="end_date"
+                            placeholder="End Date"
+                            fullWidth
+                            type="date"
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            required
+                        />
+                    </FormControl>
+ 
+                    <Button variant="contained" onClick={()=>refreshPayments(window.location.pathname)} sx={{height:'100%'}}>
+                        <FindReplaceIcon />
                     </Button>
+
                 </Grid>
 
                 <Box
@@ -132,7 +196,7 @@ export default function Payment({ payments, transactionType }) {
                     sx={{ display: "grid", gridTemplateColumns: "1fr" }}
                 >
                     <DataGrid
-                        rows={paymentsView}
+                        rows={dataPayments?.data}
                         columns={columns(handleRowClick)}
                         slots={{ toolbar: GridToolbar }}
                         slotProps={{
@@ -142,10 +206,10 @@ export default function Payment({ payments, transactionType }) {
                         }}
                     />
                 </Box>
-            </Grid>
             <CustomPagination
-                dataLinks={payments.links}
-                dataLastPage={payments.last_page}
+                dataLinks={dataPayments?.links}
+                refreshTable = {refreshPayments}
+                dataLastPage={dataPayments?.last_page}
             ></CustomPagination>
         </AuthenticatedLayout>
     );
