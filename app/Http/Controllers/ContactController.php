@@ -33,6 +33,7 @@ class ContactController extends Controller
             'contacts' => $contacts,
             'stores'=>$stores,
             'type' =>$type,
+            'pageLabel'=>$type.'s',
         ]);
     }
 

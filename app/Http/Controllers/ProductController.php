@@ -50,6 +50,7 @@ class ProductController extends Controller
         return Inertia::render('Product/Product', [
             'products' => $products,
             'stores'=>$stores,
+            'pageLabel'=>'Products',
         ]);
     }
 

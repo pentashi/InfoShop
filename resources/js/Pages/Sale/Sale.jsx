@@ -15,7 +15,12 @@ import AddPaymentDialog from '@/Components/AddPaymentDialog';
 import CustomPagination from '@/Components/CustomPagination';
 
 const columns = (handleRowClick) => [
-  { field: 'id', headerName: 'ID', width: 80 },
+  { field: 'id', headerName: 'ID', width: 80,
+    renderCell: (params) => {
+      // Format the date to 'YYYY-MM-DD'
+      return '#'+((params.value).toString()).padStart(4,"0");
+    },
+  },
   { field: 'name', headerName: 'Customer Name', width: 200 },
   { field: 'discount', headerName: 'Discount', width: 100 },
   { field: 'total_amount', headerName: 'Total Amount', width: 120 },

@@ -17,31 +17,10 @@ import { Inertia } from '@inertiajs/inertia'
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
 
-
-let timeout = null
-
-router.on('start', () => {
-  timeout = setTimeout(() => NProgress.start(), 250)
-})
-
-router.on('progress', (event) => {
-  if (NProgress.isStarted() && event.detail.progress.percentage) {
-    NProgress.set((event.detail.progress.percentage / 100) * 0.9)
-  }
-})
-
-router.on('finish', (event) => {
-  clearTimeout(timeout)
-  if (!NProgress.isStarted()) {
-    return
-  } else if (event.detail.visit.completed) {
-    NProgress.done()
-  } else if (event.detail.visit.interrupted) {
-    NProgress.set(0)
-  } else if (event.detail.visit.cancelled) {
-    NProgress.done()
-    NProgress.remove()
-  }
+InertiaProgress.init({
+  color:'#0a0a0a',
+  includeCSS: true,
+  showSpinner: true,
 })
 
 createInertiaApp({
@@ -58,10 +37,9 @@ createInertiaApp({
             </PurchaseProvider>
         );
     },
-    progress: {
-        color: '#4B5563',
-        delay: 250,
-        includeCSS: true,
-        showSpinner: true,
-    },
+    // progress: {
+    //     color: '#00c455',
+    //     showSpinner: true,
+    // },
+    progress: false,
 });

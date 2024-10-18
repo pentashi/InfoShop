@@ -21,3 +21,17 @@
 #btn-manage-stock button.MuiButtonBase-root.MuiToggleButtonGroup-grouped.MuiToggleButtonGroup-groupedHorizontal.MuiToggleButton-root.Mui-selected.MuiToggleButton-fullWidth.MuiToggleButton-sizeMedium.MuiToggleButton-primary.p-5.css-uobg7u-MuiButtonBase-root-MuiToggleButton-root {
   padding: 15px;
 }
+
+#nprogress .bar {
+  z-index: 2000!important;
+  height: 5px!important;
+}
+
+#nprogress .spinner{
+  z-index: 2000!important;
+}
+
+#nprogress .spinner-icon{
+  width: 40px !important;
+  height: 40px!important;
+}

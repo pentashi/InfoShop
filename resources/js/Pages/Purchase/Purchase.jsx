@@ -70,10 +70,7 @@ const columns = (handleRowClick) => [
             <Head title="Purchases" />
 
             <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
-                <Grid size={8}>
-                    <Typography variant="h4" component="h2">Purchases</Typography>
-                </Grid>
-                <Grid size={4} container justifyContent='end'>
+                <Grid size={12} container justifyContent='end'>
                     <Link href="/purchase/create"><Button variant="contained" startIcon={<AddIcon />}> Add Purchase</Button></Link>
                 </Grid>
 

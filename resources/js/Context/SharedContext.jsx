@@ -10,6 +10,7 @@ export const SharedProvider = ({ children }) => {
 
     const [cartItemModalOpen, setCartItemModalOpen] = useState(false)
     const [selectedCartItem, setSelectedCartItem] = useState(null)
+    const [selectedLabel, setSelectedLabel] = useState('');
 
     return (
         <SharedContext.Provider
@@ -21,7 +22,9 @@ export const SharedProvider = ({ children }) => {
                 cartItemModalOpen,
                 setCartItemModalOpen,
                 selectedCartItem,
-                setSelectedCartItem
+                setSelectedCartItem,
+                selectedLabel,
+                setSelectedLabel
             }}
         >
             {children}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use App\Models\Transaction;
 use App\Models\PurchaseTransaction;
 use App\Models\Purchase;
@@ -150,5 +151,30 @@ class TransactionController extends Controller
             // Return error response
             return response()->json(['error' => 'Trnsaction failed'], 500);
         }
+    }
+
+    public function getPayments($type){
+        if($type==='sales'){
+            return Transaction::select('transactions.id', 'sales_id as reference_id', 'store_id', 'contact_id', 'contacts.name as contact_name', 'transaction_date', 'amount', 'payment_method', 'transactions.transaction_type')
+            ->join('contacts', 'contact_id', '=', 'contacts.id')
+            ->orderBy('transaction_date', 'desc')
+            ->paginate(25);
+        }
+        else{
+            return PurchaseTransaction::select('purchase_transactions.id', 'purchase_id as reference_id', 'store_id', 'contact_id', 'contacts.name as contact_name', 'transaction_date', 'amount', 'payment_method', 'transaction_type')
+            ->join('contacts', 'contact_id', '=', 'contacts.id')
+            ->orderBy('transaction_date', 'desc')
+            ->paginate(25);
+        }
+    }
+
+    public function viewPayments(Request $request, $type='sales'){
+        $transactions = $this->getPayments($type);
+
+        return Inertia::render('Payment/Payment', [
+            'payments' => $transactions,
+            'transactionType'=>$type,
+            'pageLabel'=>'Payments',
+        ]);
     }
 }

@@ -14,6 +14,7 @@ class SettingController extends Controller
          // Render the 'Settings' component with data
          return Inertia::render('Settings/Settings', [
             'settings' => $settingArray,
+            'pageLabel'=>'Settings',
         ]);
     }
 

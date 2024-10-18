@@ -36,6 +36,7 @@ class PurchaseController extends Controller
         ->get();
         return Inertia::render('Purchase/Purchase', [
             'purchases' => $purchases,
+            'pageLabel'=>'Purchases',
         ]);
     }
 
@@ -47,6 +48,7 @@ class PurchaseController extends Controller
             'products' => [],
             'vendors'=>$contacts,
             'stores'=>$stores,
+            'pageLabel'=>'New Purchase',
         ]);
     }
 

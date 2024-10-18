@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, usePage, router  } from '@inertiajs/react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -28,9 +28,9 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import CustomerIcon from '@mui/icons-material/PeopleAlt';
 import VendorIcon from '@mui/icons-material/ContactEmergency';
 import SettingsIcon from '@mui/icons-material/Settings';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
-import { SharedProvider } from '@/Context/SharedContext';
-import { PurchaseProvider } from '@/Context/PurchaseContext';
+import { SharedContext } from "@/Context/SharedContext";
 
 const drawerWidth = 240;
 
@@ -168,12 +168,14 @@ const NavItem = ({href, icon:Icon, label, open, selected})=>(
 );
 
 export default function Authenticated({ header, children, ...props }) {
+
     const user = usePage().props.auth.user;
-    const pathname = usePage().url
+    const pageLabel = usePage().props.pageLabel;
+    const pathname = usePage().url;
 
     const theme = useTheme();
     const [open, setOpen] = React.useState(true);
-  
+
     const handleDrawerOpen = () => {
       setOpen(true);
     };
@@ -183,11 +185,13 @@ export default function Authenticated({ header, children, ...props }) {
     };
 
     //Logic to selected menu item
-    const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
+    // const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
+    const isSelected = (href) => {
+      const baseHref = href.split('?')[0]; // Extract the base path by removing query parameters
+      return pathname === baseHref || pathname.startsWith(baseHref);
+  };
   
     return (
-      <SharedProvider> {/* SharedProvider Context API: commonly used states */}
-      <PurchaseProvider>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>
@@ -206,8 +210,8 @@ export default function Authenticated({ header, children, ...props }) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              OneShop
+            <Typography variant="h5" noWrap component="div" sx={{textTransform:'capitalize'}}>
+              OneShop | {pageLabel}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -220,16 +224,17 @@ export default function Authenticated({ header, children, ...props }) {
           <Divider />
           <List>
 
-          <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")}/>
-          <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")}/>
-          <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")}/>
-          <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")} />
+          <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")} />
+          <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")} />
+          <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")} />
+          <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")} />
+          <NavItem href="/payments/sales" icon={PaymentsIcon} label="Payments" open={open} selected={isSelected("/payments")} />
+          <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")} />
+          <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")}  />
           <NavItem href="/customers" icon={CustomerIcon} label="Customers" open={open} selected={isSelected("/customers")} />
-          <NavItem href="/vendors" icon={VendorIcon} label="Vendors" open={open} selected={isSelected("/vendors")} />
-          <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")}/>
-          <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")}/>
+          <NavItem href="/vendors" icon={VendorIcon} label="Vendors" open={open} selected={isSelected("/vendors")} />    
           <NavItem href="/stores" icon={StoreIcon} label="Stores" open={open} selected={isSelected("/stores")} />
-          <NavItem href="/settings" icon={SettingsIcon} label="Settings" open={open} selected={isSelected("/settings")} />
+          <NavItem href="/settings" icon={SettingsIcon} label="Settings" open={open} selected={isSelected("/settings")}/>
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
 
           </List>
@@ -241,7 +246,5 @@ export default function Authenticated({ header, children, ...props }) {
           </Box>
         </Box>
       </Box>
-      </PurchaseProvider>
-      </SharedProvider>
     );
 }

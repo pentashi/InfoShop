@@ -32,6 +32,7 @@ class SaleController extends Controller
 
         return Inertia::render('Sale/Sale', [
             'sales' => $sales,
+            'pageLabel'=>'Sales',
         ]);
     }
 

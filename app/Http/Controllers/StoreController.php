@@ -15,6 +15,7 @@ class StoreController extends Controller
         $stores = Store::select('id','name', 'address', 'contact_number', 'created_at')->get();
         return Inertia::render('Store/Store', [
             'stores' => $stores,
+            'pageLabel'=>'Stores',
         ]);
     }
 

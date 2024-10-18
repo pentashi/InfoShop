@@ -9,11 +9,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // $user = Auth::user();
-
          // Render the 'Dashboard' component with data
         return Inertia::render('Dashboard', [
-            'user' => 'Hello',
+            'pageLabel'=>'Dashboard'
         ]);
     }
 }

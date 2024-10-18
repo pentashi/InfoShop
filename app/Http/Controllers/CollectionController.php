@@ -18,6 +18,7 @@ class CollectionController extends Controller
         // Render the Inertia view with the collections data
         return Inertia::render('Collection/Collection', [
             'collections' => $collections,
+            'pageLabel'=>'Collections',
         ]);
     }
 
