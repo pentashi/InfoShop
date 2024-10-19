@@ -67,7 +67,6 @@ export default function Expense({ expenses, stores }) {
                 justifyContent={"end"}
                 size={12}
             >
-
                 <FormControl>
                     <TextField
                         label="Start Date"
@@ -115,7 +114,7 @@ export default function Expense({ expenses, stores }) {
 
                 <Button
                     variant="contained"
-                    onClick={() =>setExpenseModalOpen(true)}
+                    onClick={() => setExpenseModalOpen(true)}
                     sx={{ height: "100%" }}
                     startIcon={<AddCircleIcon />}
                     size="large"
@@ -140,7 +139,7 @@ export default function Expense({ expenses, stores }) {
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={'end'}>
+            <Grid size={12} container justifyContent={"end"}>
                 <CustomPagination
                     dataLinks={dataExpenses?.links}
                     refreshTable={refreshExpenses}
@@ -148,7 +147,12 @@ export default function Expense({ expenses, stores }) {
                 ></CustomPagination>
             </Grid>
 
-            <ExpenseDialog open={expenseModalOpen} setOpen={setExpenseModalOpen} stores={stores}/>
+            <ExpenseDialog
+                open={expenseModalOpen}
+                setOpen={setExpenseModalOpen}
+                stores={stores}
+                refreshExpenses={refreshExpenses}
+            />
         </AuthenticatedLayout>
     );
 }

@@ -11,13 +11,22 @@ class ExpenseController extends Controller
 {
 
     public function getExpenses($filters){
-        return Expense::orderBy('expense_date', 'desc')->paginate(25);
+        $query = Expense::query();
+        $query= $query->orderBy('expense_date', 'desc');
+        if(isset($filters['start_date']) && isset($filters['end_date'])){
+            $query->whereBetween('expense_date', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $results = $query->paginate(25);
+        $results->appends($filters);
+        return $results;
     }
 
     public function index(Request $request){
         $filters = $request->only(['start_date', 'end_date']);
         $stores = Store::select('id', 'name')->get();
         $expenses = $this->getExpenses($filters);
+
         return Inertia::render('Expense/Expense', [
             'expenses' => $expenses,
             'stores'=>$stores,

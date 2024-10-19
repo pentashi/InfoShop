@@ -30,6 +30,7 @@ export default function ExpenseDialog({
     open,
     setOpen,
     stores,
+    refreshExpenses
 }) {
 
     const [expensesForm, setPaymentFormState] = useState(initialPaymentFormState);
@@ -65,6 +66,7 @@ export default function ExpenseDialog({
                 timer: 2000,
                 timerProgressBar: true,
             });
+            refreshExpenses(window.location.pathname)
             setOpen(false)
         })
         .catch((error) => {
