@@ -18,7 +18,8 @@ class Sale extends Model
         'amount_received',  // Amount received
         'profit_amount',   // Profit amount
         'status',          // Sale status ['completed', 'pending', 'refunded']
-        'note',            // Note
+        'note',        // Note
+        'created_by',
     ];
 
     public function getUpdatedAtAttribute($value)

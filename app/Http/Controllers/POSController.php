@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Contact;
 use App\Models\ProductStock;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +62,7 @@ class POSController extends Controller
         $paymentMethod = $request->input('payment_method', 'none');
         $customerID = $request->input('contact_id');
         $payments = $request->payments;
+        $createdBy = Auth::id();
 
         DB::beginTransaction();
         try{
@@ -74,10 +76,11 @@ class POSController extends Controller
                 'profit_amount' => $profitAmount,
                 'status' => 'pending', // Or 'pending', or other status as needed
                 'note' => $note,
+                'created_by'=>$createdBy,
             ]);
 
             if($paymentMethod=='Cash'){
-                $transaction = Transaction::create([
+                Transaction::create([
                     'sales_id' => $sale->id,
                     'store_id' => $sale->store_id,
                     'contact_id' => $sale->contact_id,
@@ -117,7 +120,7 @@ class POSController extends Controller
                         $amountReceived += $payment['amount'];
 
                         // Create the transaction
-                        $transaction = Transaction::create($transactionData);
+                        Transaction::create($transactionData);
                     }
                 }
 

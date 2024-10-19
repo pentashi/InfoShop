@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Sale;
+use App\Models\SaleItem;
 use App\Models\Setting;
 use App\Models\Contact;
+use App\Models\User;
 
-use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -61,38 +62,40 @@ class SaleController extends Controller
     public function reciept($id){
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $sale = DB::table('Sales AS s')
-        ->select(
-            's.id',
-            's.contact_id',            // Customer ID
-            's.sale_date',              // Sale date
-            's.total_amount',           // Total amount (Total amount after discount [net_total - discount])
-            's.discount',                // Discount
-            's.amount_received',         // Amount received
-            's.profit_amount',          // Profit amount
-            's.status',                  // Sale status
+        $sale = Sale::select(
+            'sales.id',
+            'contact_id',            // Customer ID
+            'sale_date',              // Sale date
+            'total_amount',           // Total amount (Total amount after discount [net_total - discount])
+            'discount',                // Discount
+            'amount_received',         // Amount received
+            'profit_amount',          // Profit amount
+            'status',                  // Sale status
             'stores.address',
-            'c.name', // Customer name from contacts
+            'contacts.name', // Customer name from contacts
+            'created_by',
         )
-        ->leftJoin('contacts AS c', 's.contact_id', '=', 'c.id') // Join with contacts table using customer_id
-        ->join('stores', 's.store_id','=','stores.id')
-        ->where('s.id','=',$id)
-        ->get();
+        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
+        ->join('stores', 'sales.store_id','=','stores.id')
+        ->where('sales.id',$id)
+        ->first();
 
-        $salesItems = DB::table('sale_items AS si')
-        ->select(
-            'si.quantity',
-            'si.unit_price',
-            'p.name',
+        $user = User::find($sale->created_by);
+
+        $salesItems = SaleItem::select(
+            'sale_items.quantity',
+            'sale_items.unit_price',
+            'products.name',
         )
-        ->leftJoin('products AS p', 'si.product_id', '=', 'p.id') // Join with contacts table using customer_id
-        ->where('si.id','=',$id)
+        ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
+        ->where('sale_items.sale_id',$id)
         ->get();
         
         return Inertia::render('Sale/Reciept',[
             'sale'=>$sale,
             'salesItems'=>$salesItems,
             'settings'=>$settingArray,
+            'user_name'=>$user->name,
         ]);
     }
 }

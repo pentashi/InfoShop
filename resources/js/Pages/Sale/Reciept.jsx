@@ -13,7 +13,7 @@ import { styled } from '@mui/material/styles';
 
 import { useReactToPrint } from 'react-to-print';
 
-export default function Reciept({ sale, salesItems, settings }) {
+export default function Reciept({ sale, salesItems, settings, user_name }) {
     const contentRef = useRef(null);
 
     const reactToPrintFn = useReactToPrint({ contentRef });
@@ -48,7 +48,7 @@ export default function Reciept({ sale, salesItems, settings }) {
                             />
                         </Card>
                         <Typography variant="h5" color="initial" sx={{mt:'0.5rem'}}>{settings.shop_name}</Typography>
-                        <Typography variant='h6' sx={{fontSize:'1rem'}} color="initial">{sale[0].address}</Typography>
+                        <Typography variant='h6' sx={{fontSize:'1rem'}} color="initial">{sale.address}</Typography>
                     </Box>
                     <Divider
                         sx={{
@@ -58,9 +58,9 @@ export default function Reciept({ sale, salesItems, settings }) {
                         }}
                     />
                     <Box className="flex items-start flex-col">
-                        <p>Order: #{String(sale[0].id).padStart(4, '0')}</p>
-                        <p>Date: {sale[0].sale_date}</p>
-                        <p>Client: {sale[0].name}</p>
+                        <p>Order: #{String(sale.id).padStart(4, '0')}</p>
+                        <p>Date: {sale.sale_date} By: {user_name}</p>
+                        <p>Client: {sale.name}</p>
                     </Box>
                     <Divider
                         sx={{
@@ -98,44 +98,36 @@ export default function Reciept({ sale, salesItems, settings }) {
                             <TableRow sx={{ border: 'none' }}>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} colSpan={3} align="right"><strong>Total:</strong></TableCell>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} align="right">
-                                Rs.{(parseFloat(sale[0].total_amount) + parseFloat(sale[0].discount)).toFixed(2)}
+                                Rs.{(parseFloat(sale.total_amount) + parseFloat(sale.discount)).toFixed(2)}
                             </TableCell>
                             </TableRow>
                             <TableRow sx={{ border: 'none' }}>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} colSpan={3} align="right"><strong>Discount:</strong></TableCell>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} align="right">
-                                Rs.{sale[0].discount}
+                                Rs.{sale.discount}
                             </TableCell>
                             </TableRow>
                             <TableRow sx={{ border: 'none' }}>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} colSpan={3} align="right"><strong>Subtotal:</strong></TableCell>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} align="right">
-                                Rs.{(parseFloat(sale[0].total_amount)).toFixed(2)}
+                                Rs.{(parseFloat(sale.total_amount)).toFixed(2)}
                             </TableCell>
                             </TableRow>
                             <TableRow sx={{ border: 'none' }}>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} colSpan={3} align="right"><strong>Amount Received:</strong></TableCell>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} align="right">
-                                Rs.{sale[0].amount_received}
+                                Rs.{sale.amount_received}
                             </TableCell>
                             </TableRow>
                             <TableRow sx={{ border: 'none' }}>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} colSpan={3} align="right"><strong>Change:</strong></TableCell>
                             <TableCell sx={{ padding: 0, borderBottom: 'none' }} align="right">
-                                Rs.{(parseFloat(sale[0].amount_received) - parseFloat(sale[0].total_amount)).toFixed(2)}
+                                Rs.{(parseFloat(sale.amount_received) - parseFloat(sale.total_amount)).toFixed(2)}
                             </TableCell>
                             </TableRow>
                             </TableBody>
                         </Table>
                     </TableContainer>
-
-                    {/* <Box className="flex items-end flex-col mt-2">
-                        <p>Total: Rs.{(parseFloat(sale[0].total_amount)+parseFloat(sale[0].discount)).toFixed(2)}</p>
-                        <p>Discount: Rs.{sale[0].discount}</p>
-                        <p>Subtotal: Rs.{(parseFloat(sale[0].total_amount)).toFixed(2)}</p>
-                        <p>Amount recieved: Rs.{sale[0].amount_received}</p>
-                        <p>Change: Rs.{(parseFloat(sale[0].amount_received)-parseFloat(sale[0].total_amount)).toFixed(2)}</p>
-                    </Box> */}
 
                     <Divider
                         sx={{
