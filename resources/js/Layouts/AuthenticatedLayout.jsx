@@ -29,6 +29,7 @@ import CustomerIcon from '@mui/icons-material/PeopleAlt';
 import VendorIcon from '@mui/icons-material/ContactEmergency';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import { SharedContext } from "@/Context/SharedContext";
 
@@ -226,10 +227,11 @@ export default function Authenticated({ header, children, ...props }) {
 
           <NavItem href="/dashboard" icon={DashboardIcon} label="Dashboard" open={open} selected={isSelected("/dashboard")} />
           <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")} />
+          <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")} />
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")} />
           <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")} />
           <NavItem href="/payments/sales" icon={PaymentsIcon} label="Payments" open={open} selected={isSelected("/payments")} />
-          <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")} />
+          <NavItem href="/expenses" icon={AccountBalanceWalletIcon} label="Expenses" open={open} selected={isSelected("/expenses")} />
           <NavItem href="/collections" icon={AccountTreeIcon} label="Collections" open={open} selected={isSelected("/collections")}  />
           <NavItem href="/customers" icon={CustomerIcon} label="Customers" open={open} selected={isSelected("/customers")} />
           <NavItem href="/vendors" icon={VendorIcon} label="Vendors" open={open} selected={isSelected("/vendors")} />    

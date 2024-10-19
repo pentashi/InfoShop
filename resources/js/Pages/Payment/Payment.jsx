@@ -95,122 +95,126 @@ export default function Payment({ payments, transactionType, contacts }) {
                 spacing={2}
                 alignItems="center"
                 sx={{ width: "100%" }}
-                justifyContent={'center'}
+                justifyContent={"center"}
                 size={12}
             >
-                    <FormControl sx={{ minWidth: "210px" }} >
-                        <InputLabel>Select payments</InputLabel>
-                        <Select
-                            value={paymentSelect}
-                            label="Select payments"
-                            onChange={(e) =>
-                                handleSelectPayments(e.target.value)
-                            }
-                            required
-                            name="payment_type"
-                        >
-                            <MenuItem value={"sales"}>Sales Payment</MenuItem>
-                            <MenuItem value={"purchases"}>
-                                Purchase Payment
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
+                <FormControl sx={{ minWidth: "210px" }}>
+                    <InputLabel>Select payments</InputLabel>
+                    <Select
+                        value={paymentSelect}
+                        label="Select payments"
+                        onChange={(e) => handleSelectPayments(e.target.value)}
+                        required
+                        name="payment_type"
+                    >
+                        <MenuItem value={"sales"}>Sales Payment</MenuItem>
+                        <MenuItem value={"purchases"}>
+                            Purchase Payment
+                        </MenuItem>
+                    </Select>
+                </FormControl>
 
-                    <FormControl sx={{ minWidth: "240px" }} >
-                        <Select2
-                            className="w-full"
-                            placeholder="Select a contact..."
-                            styles={{
-                                control: (baseStyles, state) => ({
-                                    ...baseStyles,
-                                    height: "55px",
-                                }),
-                            }}
-                            options={contacts} // Options to display in the dropdown
-                            onChange={handleContactChange} // Triggered when an option is selected
-                            isClearable // Allow the user to clear the selected option
-                            getOptionLabel={(option) => option.name}
-                            getOptionValue={(option) => option.id}
-                        ></Select2>
-                    </FormControl>
-       
-                    <FormControl sx={{ minWidth: "210px" }}> 
-                        <InputLabel>Select Payment Method</InputLabel>
-                        <Select
-                            value={paymentMethod}
-                            label="Select Payment Method"
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                            required
-                            name="payment_method"
-                        >
-                            <MenuItem value={"All"}>All</MenuItem>
-                            <MenuItem value={"Cash"}>Cash</MenuItem>
-                            <MenuItem value={"Cheque"}>Cheque</MenuItem>
-                        </Select>
-                    </FormControl>
+                <FormControl sx={{ minWidth: "240px" }}>
+                    <Select2
+                        className="w-full"
+                        placeholder="Select a contact..."
+                        styles={{
+                            control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                height: "55px",
+                            }),
+                        }}
+                        options={contacts} // Options to display in the dropdown
+                        onChange={handleContactChange} // Triggered when an option is selected
+                        isClearable // Allow the user to clear the selected option
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.id}
+                    ></Select2>
+                </FormControl>
 
-                    <FormControl>
-                        <TextField
-                            label="Start Date"
-                            name="start_date"
-                            placeholder="Start Date"
-                            fullWidth
-                            type="date"
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            required
-                        />
-                    </FormControl>
-     
-                    <FormControl>
-                        <TextField
-                            label="End Date"
-                            name="end_date"
-                            placeholder="End Date"
-                            fullWidth
-                            type="date"
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            required
-                        />
-                    </FormControl>
- 
-                    <Button variant="contained" onClick={()=>refreshPayments(window.location.pathname)} sx={{height:'100%'}}>
-                        <FindReplaceIcon />
-                    </Button>
+                <FormControl sx={{ minWidth: "210px" }}>
+                    <InputLabel>Select Payment Method</InputLabel>
+                    <Select
+                        value={paymentMethod}
+                        label="Select Payment Method"
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        required
+                        name="payment_method"
+                    >
+                        <MenuItem value={"All"}>All</MenuItem>
+                        <MenuItem value={"Cash"}>Cash</MenuItem>
+                        <MenuItem value={"Cheque"}>Cheque</MenuItem>
+                    </Select>
+                </FormControl>
 
-                </Grid>
-
-                <Box
-                    className="py-6 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr" }}
-                >
-                    <DataGrid
-                        rows={dataPayments?.data}
-                        columns={columns(handleRowClick)}
-                        slots={{ toolbar: GridToolbar }}
+                <FormControl>
+                    <TextField
+                        label="Start Date"
+                        name="start_date"
+                        placeholder="Start Date"
+                        fullWidth
+                        type="date"
                         slotProps={{
-                            toolbar: {
-                                showQuickFilter: true,
+                            inputLabel: {
+                                shrink: true,
                             },
                         }}
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        required
                     />
-                </Box>
-            <CustomPagination
-                dataLinks={dataPayments?.links}
-                refreshTable = {refreshPayments}
-                dataLastPage={dataPayments?.last_page}
-            ></CustomPagination>
+                </FormControl>
+
+                <FormControl>
+                    <TextField
+                        label="End Date"
+                        name="end_date"
+                        placeholder="End Date"
+                        fullWidth
+                        type="date"
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        required
+                    />
+                </FormControl>
+
+                <Button
+                    variant="contained"
+                    onClick={() => refreshPayments(window.location.pathname)}
+                    sx={{ height: "100%" }}
+                >
+                    <FindReplaceIcon />
+                </Button>
+            </Grid>
+
+            <Box
+                className="py-6 w-full"
+                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+            >
+                <DataGrid
+                    rows={dataPayments?.data}
+                    columns={columns(handleRowClick)}
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{
+                        toolbar: {
+                            showQuickFilter: true,
+                        },
+                    }}
+                    hideFooter
+                />
+            </Box>
+            <Grid size={12} container justifyContent={'end'}>
+                <CustomPagination
+                    dataLinks={dataPayments?.links}
+                    refreshTable={refreshPayments}
+                    dataLastPage={dataPayments?.last_page}
+                ></CustomPagination>
+            </Grid>
         </AuthenticatedLayout>
     );
 }

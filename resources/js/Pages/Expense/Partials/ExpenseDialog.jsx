@@ -21,23 +21,18 @@ import Swal from "sweetalert2";
 
 const initialPaymentFormState = {
     amount: 0,
-    payment_method: 'Cash',
-    transaction_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
-    note: '',
+    expense_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
+    description: '',
     store_id:1,
 };
 
-export default function AddPaymentDialog({
+export default function ExpenseDialog({
     open,
     setOpen,
-    selectedContact,
-    selectedTransaction=null,
-    amountLimit,
-    is_customer=false,
-    stores=null,
+    stores,
 }) {
 
-    const [paymentForm, setPaymentFormState] = useState(initialPaymentFormState);
+    const [expensesForm, setPaymentFormState] = useState(initialPaymentFormState);
 
     const handleClose = () => {
         setOpen(false);
@@ -46,7 +41,7 @@ export default function AddPaymentDialog({
     const handleFieldChange = (event) => {
         const { name, value } = event.target;
         setPaymentFormState({
-            ...paymentForm,
+            ...expensesForm,
             [name]: value,
         });
     };
@@ -56,15 +51,8 @@ export default function AddPaymentDialog({
 
         const submittedFormData = new FormData(event.currentTarget);
         let formJson = Object.fromEntries(submittedFormData.entries());
-        formJson.contact_id = selectedContact
 
-        if(selectedTransaction !== null ){
-            formJson.transaction_id = selectedTransaction.id
-            formJson.store_id = selectedTransaction.store_id
-        }
-
-        let url='/customer-transaction';
-        if(!is_customer) url="/vendor-transaction"
+        let url='/expense';
 
         axios
         .post(url, formJson)
@@ -98,7 +86,7 @@ export default function AddPaymentDialog({
                     onSubmit: handleSubmit,
                 }}
             >
-                <DialogTitle id="alert-dialog-title">ADD PAYMENTS</DialogTitle>
+                <DialogTitle id="alert-dialog-title">ADD EXPENSE</DialogTitle>
                 <IconButton
                     aria-label="close"
                     onClick={handleClose}
@@ -112,8 +100,21 @@ export default function AddPaymentDialog({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
+                    <Grid container size={12}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label={"Description"}
+                        name="description"
+                        multiline
+                        value={expensesForm.note}
+                        onChange={handleFieldChange}
+                        sx={{mb:'1.5rem'}}
+                        required
+                    />
+                    </Grid>
                     <Grid container spacing={2}>
-                        <Grid size={4}>
+                        <Grid size={6}>
                         <TextField
                                 fullWidth
                                 type="number"
@@ -122,7 +123,7 @@ export default function AddPaymentDialog({
                                 variant="outlined"
                                 autoFocus
                                 sx={{input:{fontWeight:'bold'}}}
-                                value={paymentForm.amount}
+                                value={expensesForm.amount}
                                 onChange={handleFieldChange}
                                 onFocus={(event) => {
                                     event.target.select();
@@ -142,29 +143,10 @@ export default function AddPaymentDialog({
                             />
                         </Grid>
 
-                        <Grid size={4}>
-                        <FormControl sx={{ minWidth: 120, width:'100%' }}>
-                        <InputLabel>Payment Method</InputLabel>
-                            <Select
-                                name="payment_method"
-                                value={paymentForm.payment_method}
-                                onChange={handleFieldChange}
-                                label="Payment Method"
-                            >
-                                <MenuItem value={'Cash'}>Cash</MenuItem>
-                                <MenuItem value={'Cheque'}>Cheque</MenuItem>
-                                {selectedTransaction===null &&(
-                                    <MenuItem value={'Account'}>Account</MenuItem>
-                                )}
-
-                            </Select>
-                        </FormControl>
-                        </Grid>
-
-                        <Grid size={4}>
+                           <Grid size={6}>
                             <TextField
                                 label="Date"
-                                name="transaction_date"
+                                name="expense_date"
                                 fullWidth
                                 type="date"
                                 slotProps={{
@@ -172,46 +154,35 @@ export default function AddPaymentDialog({
                                         shrink: true,
                                     },
                                 }}
-                                value={paymentForm.transaction_date}
+                                value={expensesForm.expense_date}
                                 onChange={handleFieldChange}
                                 required
                             />
                         </Grid>
 
-                        {(selectedTransaction===null || amountLimit === undefined) && (
-                            <Grid size={12}>
-                                <FormControl sx={{ width:'100%', mt:'0.6rem' }}>
-                                    <InputLabel>Store</InputLabel>
-                                    <Select
-                                        value={paymentForm.store_id}
-                                        label="Store"
-                                        onChange={handleFieldChange}
-                                        required
-                                        name="store_id"
-                                    >
-                                        {stores?.map((store) => (
-                                            <MenuItem key={store.id} value={store.id}>
-                                                {store.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        )}
+                        <Grid size={12}>
+                            <FormControl sx={{ width:'100%', mt:'0.6rem' }}>
+                                <InputLabel>Store</InputLabel>
+                                <Select
+                                    value={expensesForm.store_id}
+                                    label="Store"
+                                    onChange={handleFieldChange}
+                                    required
+                                    name="store_id"
+                                >
+                                    {stores?.map((store) => (
+                                        <MenuItem key={store.id} value={store.id}>
+                                            {store.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                     </Grid>
 
                     <Divider sx={{py:'0.5rem'}}></Divider>
 
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label={"Note"}
-                        name="note"
-                        multiline
-                        sx={{ mt: "1rem" }}
-                        value={paymentForm.note}
-                        onChange={handleFieldChange}
-                    />
+                    
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -219,9 +190,9 @@ export default function AddPaymentDialog({
                         fullWidth
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
-                        disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit)}
+                        disabled={expensesForm.amount == 0 }
                     >
-                        ADD PAYMENT
+                        ADD EXPENSE
                     </Button>
                 </DialogActions>
             </Dialog>

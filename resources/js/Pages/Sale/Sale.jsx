@@ -4,14 +4,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link, router } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia'
 import Grid from '@mui/material/Grid2';
-import { Button, Box,Typography } from '@mui/material';
+import { Button, Box,Typography, IconButton } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import RefreshIcon from '@mui/icons-material/Refresh';
-
+import PaymentsIcon from '@mui/icons-material/Payments';
 import dayjs from 'dayjs';
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
+import ViewPaymentDetailsDialog from '@/Components/ViewPaymentDetailsDialog';
 import CustomPagination from '@/Components/CustomPagination';
 
 const columns = (handleRowClick) => [
@@ -60,13 +61,18 @@ const columns = (handleRowClick) => [
   {
     field: 'action',
     headerName: 'Actions',
-    width: 120,
+    width: 150,
     renderCell: (params) => (
+      <>
       <Link href={'/reciept/'+params.row.id}>
-        <Button startIcon={<PrintIcon />} variant="outlined">
-          PRINT
-        </Button>
+        <IconButton color="primary">
+        <PrintIcon />
+        </IconButton>
       </Link>
+      <IconButton sx={{ml:'0.3rem'}} color="primary" onClick={() => handleRowClick(params.row, "view_payments")}>
+        <PaymentsIcon />
+      </IconButton>
+      </>
     ),
   },
 ];
@@ -74,35 +80,22 @@ const columns = (handleRowClick) => [
 export default function Sale({ sales}) {
   const [selectedTransaction, setSelectedTransaction] = useState(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+  const [viewPaymentsModalOpen, setViewPaymentsModalOpen] = useState(false)
   const [selectedContact, setSelectedContact] = useState(null)
   const [amountLimit, setAmountLimit] = useState(0)
   const [salesView, setSalesView] = useState(sales.data)
 
-  const handleRowClick = (sale) => {
-  //   const sale_index = salesView.findIndex(item => item.id === sale.id);
-  //   if (sale_index !== -1) {
-
-  //     const updatedData = [
-  //       ...salesView.slice(0, sale_index),
-  //       {
-  //           ...salesView[sale_index],
-  //           ['amount_received']: '10000'
-  //       },
-  //       ...salesView.slice(sale_index + 1)
-  //   ];
-  
-  //     setSalesView(updatedData)
-  // } else {
-  //     console.log("Item not found");
-  // }
-  
-    
-    const amountLimit = parseFloat(sale.total_amount) - parseFloat(sale.amount_received)
-      setSelectedTransaction(sale)
-      setSelectedContact(sale.contact_id)
-      setAmountLimit(amountLimit)
-      setPaymentModalOpen(true)
-    };
+  const handleRowClick = (sale, action) => {
+      setSelectedTransaction(sale);
+      if (action == "add_payment") {
+          const amountLimit = parseFloat(sale.total_amount) - parseFloat(sale.amount_received);
+          setSelectedContact(sale.contact_id);
+          setAmountLimit(amountLimit);
+          setPaymentModalOpen(true);
+      } else if (action == "view_payments") {
+        setViewPaymentsModalOpen(true)
+      }
+  };
 
     const refreshSales=()=>{
       
@@ -110,10 +103,7 @@ export default function Sale({ sales}) {
 
     const handleChange = (event, page) => {
       const selectedPage = sales.links.find(item => item.label === page.toString());
-      if (selectedPage && selectedPage.url) {
-        // Use Inertia.js to visit the selected page URL
-        // For example: Inertia.visit(selectedPage.url);
-        
+      if (selectedPage && selectedPage.url) {       
         router.visit(selectedPage.url, { method: 'get' })
       }
     };
@@ -138,12 +128,7 @@ export default function Sale({ sales}) {
               alignItems="center"
               sx={{ width: "100%" }}
           >
-              <Grid size={8}>
-                  <Typography variant="h4" component="h2">
-                      Sales
-                  </Typography>
-              </Grid>
-              <Grid size={4} container justifyContent="end">
+              <Grid size={12} container justifyContent="end">
                   <Button variant="contained" onClick={refreshSales}>
                   <RefreshIcon/>
                   </Button>
@@ -191,6 +176,12 @@ export default function Sale({ sales}) {
               selectedContact={selectedContact}
               amountLimit={amountLimit}
               is_customer={true}
+          />
+          <ViewPaymentDetailsDialog
+            open = {viewPaymentsModalOpen}
+            setOpen = {setViewPaymentsModalOpen}
+            type={'sale'}
+            selectedTransaction={selectedTransaction?.id}
           />
       </AuthenticatedLayout>
   );

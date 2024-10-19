@@ -200,4 +200,14 @@ class TransactionController extends Controller
             'contacts'=>$contacts,
         ]);
     }
+
+    public function findPayments(Request $request, $type){
+        $transaction_id = $request->transaction_id;
+        $query = ($type === 'sale') ? Transaction::query() : PurchaseTransaction::query();
+        $query = $query->select('amount', 'payment_method', 'transaction_date');
+        $query = ($type === 'sale') ? $query->where('sales_id', $transaction_id) : $query->where('purchase_id', $transaction_id);
+
+        $results = $query->get ();
+        return response()->json(['payments' => $results,]);
+    }
 }

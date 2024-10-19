@@ -16,6 +16,7 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\QuantityController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ExpenseController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -78,9 +79,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer-transaction', [TransactionController::class, 'storeCustomerTransaction']);
     Route::post('/vendor-transaction', [TransactionController::class, 'storeVendorTransaction']);
     Route::get('/payments/{type}', [TransactionController::class, 'viewPayments']); //It will be purchases or sales
+    Route::post('/getpayments/{type}', [TransactionController::class, 'findPayments']); //It will be purchases or sales
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+    Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
 });
 
 require __DIR__.'/auth.php';
