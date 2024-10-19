@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
+    Route::post('/expense/{id}/delete',[ExpenseController::class, 'delete'])->name('expenses.delete');
 });
 
 require __DIR__.'/auth.php';

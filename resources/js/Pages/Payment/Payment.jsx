@@ -13,7 +13,6 @@ import {
     MenuItem,
     TextField,
 } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import Select2 from "react-select";

@@ -154,9 +154,6 @@ export default function Product({ products, stores }) {
                 sx={{ width: "100%" }}
             >
                 <Grid size={8} container alignItems={"center"}>
-                    <Typography variant="h4" component="h2">
-                        Products
-                    </Typography>
                     <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
                         <InputLabel>Store</InputLabel>
                         <Select

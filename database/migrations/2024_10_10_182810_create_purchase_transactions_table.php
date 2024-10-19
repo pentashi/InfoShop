@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('purchase_id')->nullable();
             $table->unsignedBigInteger('contact_id');
-            $table->dateTime('transaction_date');
+            $table->date('transaction_date');
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
             $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account_deposit'

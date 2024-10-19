@@ -55,12 +55,7 @@ export default function Collection({ collections }) {
       <Head title="Collection" />
 
       <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
-        <Grid size={8}>
-          <Typography variant="h4" component="h2">
-            Collection
-          </Typography>
-        </Grid>
-        <Grid size={4} container justifyContent="end">
+        <Grid size={12} container justifyContent="end">
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>
             Add Collection
           </Button>

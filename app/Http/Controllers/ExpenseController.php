@@ -46,4 +46,17 @@ class ExpenseController extends Controller
             'message'=>"Expense added successfully",
         ], 200);
     }
+
+    public function delete($id)
+    {
+        $expense = Expense::find($id);
+
+        if (!$expense) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
+
+        $expense->delete();
+
+        return response()->json(['message' => 'Expense deleted successfully'], 200);
+    }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sales_id')->nullable(); // Unique identifier for the sale
             $table->unsignedBigInteger('store_id'); // ID of the store
             $table->unsignedBigInteger('contact_id'); // ID of the customer
-            $table->timestamp('transaction_date'); // Date and time of the transaction
+            $table->date('transaction_date'); // Date and time of the transaction
             $table->decimal('amount', 10, 2); // amount paid
             $table->string('payment_method'); // Payment method
             $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account_deposit'

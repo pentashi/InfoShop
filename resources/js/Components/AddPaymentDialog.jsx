@@ -35,6 +35,7 @@ export default function AddPaymentDialog({
     amountLimit,
     is_customer=false,
     stores=null,
+    refreshTable
 }) {
 
     const [paymentForm, setPaymentFormState] = useState(initialPaymentFormState);
@@ -77,6 +78,7 @@ export default function AddPaymentDialog({
                 timer: 2000,
                 timerProgressBar: true,
             });
+            refreshTable(window.location.pathname)
             setOpen(false)
         })
         .catch((error) => {
@@ -156,7 +158,6 @@ export default function AddPaymentDialog({
                                 {selectedTransaction===null &&(
                                     <MenuItem value={'Account'}>Account</MenuItem>
                                 )}
-
                             </Select>
                         </FormControl>
                         </Grid>

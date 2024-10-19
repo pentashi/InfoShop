@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('store_id'); // Store ID (link to the store making the purchase)
             $table->unsignedBigInteger('contact_id'); // Vendor ID (link to the supplier providing the products)
-            $table->timestamp('purchase_date')->useCurrent(); // Date of purchase
+            $table->date('purchase_date')->useCurrent(); // Date of purchase
             $table->string('reference_no');
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)
             $table->decimal('discount', 10, 2)->default(0); // Discount applied on the purchase
