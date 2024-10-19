@@ -14,7 +14,8 @@ export default function BatchModal({
     setBatchModalOpen,
     selectedBatch,
     products,
-    setProducts
+    setProducts,
+    selectedProduct
 }) {
 
     const initialFormState = {
@@ -41,6 +42,7 @@ export default function BatchModal({
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.new_batch = formState.batch_number;
+        formJson.id = selectedProduct.id
 
         let response;
         if(isNew) {response = await axios.post('/storebatch/', formJson);}

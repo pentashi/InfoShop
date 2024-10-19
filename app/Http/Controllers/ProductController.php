@@ -178,24 +178,24 @@ class ProductController extends Controller
 
     public function searchProduct(Request $request){
         $search_query = $request->input('search_query');
-        $barcodeChecked = filter_var($request->input('barcodeChecked'), FILTER_VALIDATE_BOOLEAN);
         $is_purchase = $request->input('is_purchase',0);
 
-        $products = DB::table('Products AS p')
-        ->select(
-            'p.id',
-            'p.image_url',
-            'p.name',
-            'p.discount',
-            'p.is_stock_managed',
+        $products = Product::select(
+            'products.id',
+            'products.image_url',
+            'products.name',
+            'products.discount',
+            'products.is_stock_managed',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
             'pb.cost',
             'pb.price',
             'pb.id AS batch_id',
             'ps.quantity', // Only keeping the summed quantity from product_stocks
         )
-        ->leftJoin('product_batches AS pb', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
-        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id'); // Join with product_stocks using batch_id
+        ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
+        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
+        ->where('barcode', 'like', '%' . $search_query . '%')
+        ->orWhere('name', 'like', '%' . $search_query . '%');
 
         if($is_purchase==0){
             $products = $products->where('ps.store_id', 1);
@@ -203,16 +203,10 @@ class ProductController extends Controller
         else{
             $products = $products->whereNotNull('ps.store_id');;
         }
-
-        if ($barcodeChecked) {
-            $products = $products->where('p.barcode', 'like', "$search_query"); // Assuming 'barcode' is the field name
-        } else {
-            $products = $products->where('p.name', 'like', "%$search_query%"); // Search by product name
-        }
       
         $products = $products
         ->groupBy(
-        'p.id',
+        'products.id',
         'pb.id', 
         'pb.batch_number', 
         'ps.quantity',

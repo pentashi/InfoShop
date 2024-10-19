@@ -122,6 +122,9 @@ class POSController extends Controller
                         // Create the transaction
                         Transaction::create($transactionData);
                     }
+                    else if($payment['payment_method'] == 'Credit'){
+                        Contact::where('id', $sale->contact_id)->decrement('balance', $payment['amount']);
+                    }
                 }
 
                 if($amountReceived >= $total) $sale->status = 'completed';

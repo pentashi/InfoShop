@@ -43,13 +43,13 @@ export default function PurchaseCartItems() {
                 <TableBody>
                     {cartState.map((item) => (
                         <TableRow key={item.batch_id}>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.batch_number}</TableCell>
-                            <TableCell>{parseFloat(item.price).toFixed(2)}</TableCell>
-                            <TableCell> {item.quantity} </TableCell>
-                            <TableCell>{parseFloat(item.cost).toFixed(2)}</TableCell> 
-                            <TableCell>{(parseFloat(item.cost)*parseFloat(item.quantity)).toFixed(2)}</TableCell>
-                            <TableCell>
+                            <TableCell sx={{padding:'10px 10px'}}>{item.name}</TableCell>
+                            <TableCell sx={{padding:'7px 10px'}}>{item.batch_number}</TableCell>
+                            <TableCell sx={{padding:'7px 10px'}}>{parseFloat(item.price).toFixed(2)}</TableCell>
+                            <TableCell sx={{padding:'7px 10px'}}> {item.quantity} </TableCell>
+                            <TableCell sx={{padding:'7px 10px'}}>{parseFloat(item.cost).toFixed(2)}</TableCell> 
+                            <TableCell sx={{padding:'7px 10px'}}>{(parseFloat(item.cost)*parseFloat(item.quantity)).toFixed(2)}</TableCell>
+                            <TableCell sx={{padding:'7px 10px'}}>
                                 <IconButton 
                                     aria-label="delete" 
                                     onClick={() => handleRemoveItem(item)} 

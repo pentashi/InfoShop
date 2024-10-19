@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, IconButton, FormControl, TextField, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, Box, IconButton, FormControl, TextField, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PaymentsIcon from "@mui/icons-material/Payments";
@@ -25,7 +25,13 @@ const columns = (handleRowClick) => [
             return "#" + params.value.toString().padStart(4, "0");
         },
     },
-    { field: "name", headerName: "Customer Name", width: 200 },
+    { field: "name", headerName: "Customer Name", width: 200,
+        renderCell: (params) => (
+            <Tooltip title={''+params.row.balance} arrow>
+                <Button>{params.value}</Button>
+            </Tooltip>
+        ),
+     },
     { field: "discount", headerName: "Discount", width: 100 },
     { field: "total_amount", headerName: "Total Amount", width: 120 },
     {

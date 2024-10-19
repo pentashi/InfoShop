@@ -31,22 +31,24 @@ class TransactionController extends Controller
             'transaction_date' => $transactionDate,
             'amount' => $amount,
             'payment_method' => $paymentMethod,
+            'note'=>$note,
         ];
 
         DB::beginTransaction();
         try{
             $transactionData['transaction_type'] = 'account_deposit';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
-                Contact::where('id', $contactId)->decrement('balance', $amount);
+                
             }
             elseif($paymentMethod !='Account' && $request->has('transaction_id')){
                 $transactionData['transaction_type'] = 'sale';
+                Contact::where('id', $contactId)->increment('balance', $amount);
             }
             else{
                 Contact::where('id', $contactId)->increment('balance', $amount);
             }
             
-            $transaction = Transaction::create($transactionData);
+            Transaction::create($transactionData);
 
             if($request->has('transaction_id')){
                 $sale = Sale::where('id', $saleID)->first();
@@ -100,22 +102,24 @@ class TransactionController extends Controller
             'transaction_date' => $transactionDate,
             'amount' => $amount,
             'payment_method' => $paymentMethod,
+            'note'=>$note,
         ];
 
         DB::beginTransaction();
         try{
             $transactionData['transaction_type'] = 'account_deposit';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
-                Contact::where('id', $contactId)->decrement('balance', $amount);
+                
             }
             elseif($paymentMethod !='Account' && $request->has('transaction_id')){
-                $transactionData['transaction_type'] = 'sale';
+                $transactionData['transaction_type'] = 'purchase';
+                Contact::where('id', $contactId)->increment('balance', $amount);
             }
             else{
                 Contact::where('id', $contactId)->increment('balance', $amount);
             }
             
-            $transaction = PurchaseTransaction::create($transactionData);
+            PurchaseTransaction::create($transactionData);
 
             if($request->has('transaction_id')){
                 $purchase = Purchase::where('id', $purchaseID)->first();

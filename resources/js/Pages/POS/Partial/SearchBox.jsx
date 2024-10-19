@@ -4,14 +4,10 @@ import {
     Divider,
     IconButton,
     TextField,
-    Checkbox,
     Autocomplete,
     CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
-import { blue } from "@mui/material/colors";
 import axios from "axios";
 import _ from "lodash";
 
@@ -26,7 +22,6 @@ export default function SearchBox() {
     const [search_query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
     const [inputValue, setInputValue] = useState("");
-    const [barcodeChecked, setBarcodeChecked] = useState(true);
 
     const handleSearchQuery = (search_query) => {
         setQuery(search_query);
@@ -34,12 +29,12 @@ export default function SearchBox() {
             setLoading(true);
             axios
                 .get(`/products/search`, {
-                    params: { search_query, barcodeChecked },
+                    params: { search_query },
                 }) // Send both parameters
                 .then((response) => {
                     setOptions(response.data.products); // Set options with response products
                     setLoading(false);
-                    if (barcodeChecked && response.data.products.length === 1) {
+                    if (response.data.products.length === 1) {
                         addToCart(response.data.products[0]);
                         setSelectedCartItem(response.data.products[0])
                         setCartItemModalOpen(true)
@@ -49,20 +44,6 @@ export default function SearchBox() {
                     console.error(error); // Log any errors
                     setLoading(false);
                 });
-        }
-    };
-
-    const handleBarcodeChange = (event) => {
-        setBarcodeChecked(event.target.checked); // Update the checked state
-    };
-
-    const handleKeyDown = (event) => {
-        // Check if the Enter key is pressed
-        if (event.key === "Enter") {
-            if (barcodeChecked) {
-                setInputValue("");
-                setQuery("");
-            }
         }
     };
 
@@ -84,7 +65,7 @@ export default function SearchBox() {
                 <Autocomplete
                     fullWidth
                     freeSolo
-                    options={barcodeChecked ? [] : options}
+                    options={options}
                     inputValue={inputValue}
                     onInputChange={(event, value) => {
                         setInputValue(value);
@@ -117,7 +98,6 @@ export default function SearchBox() {
                             {...params}
                             fullWidth
                             placeholder="Search product..."
-                            onKeyDown={handleKeyDown}
                             onChange={(event) =>
                                 handleSearchQuery(event.target.value)
                             }
@@ -137,6 +117,8 @@ export default function SearchBox() {
                         />
                     )}
                 />
+                
+                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
                 <IconButton
                     type="button"
                     sx={{ p: "10px" }}
@@ -144,28 +126,7 @@ export default function SearchBox() {
                 >
                     <SearchIcon />
                 </IconButton>
-                <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-                <IconButton color="white" sx={{ p: "10px" }}>
-                    <Checkbox
-                        icon={<QrCodeScannerOutlinedIcon />}
-                        checkedIcon={<QrCodeScannerIcon />}
-                        checked={barcodeChecked}
-                        onChange={handleBarcodeChange}
-                        sx={{
-                            color: "default", // Unchecked color
-                            "&.Mui-checked": {
-                                color: "white", // Checked icon color
-                                backgroundColor: blue[900], // Background color when checked
-                                "&:hover": {
-                                    backgroundColor: blue[800], // Background on hover while checked
-                                },
-                            },
-                            "& .MuiSvgIcon-root": {
-                                fontSize: 28, // Customize icon size
-                            },
-                        }}
-                    />
-                </IconButton>
+                
             </Box>
         </>
     );

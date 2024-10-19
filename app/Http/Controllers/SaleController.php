@@ -24,7 +24,8 @@ class SaleController extends Controller
             'amount_received',         // Amount received
             'profit_amount',          // Profit amount
             'status',                  // Sale status
-            'contacts.name', // Customer name from contacts
+            'contacts.name',
+            'contacts.balance',
             'store_id',
         )
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')

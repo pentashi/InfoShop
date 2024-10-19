@@ -4,14 +4,9 @@ import { Link } from "@inertiajs/react";
 import {
     Button,
     Box,
-    IconButton,
-    Checkbox,
 } from "@mui/material";
 
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import QrCodeScannerOutlinedIcon from "@mui/icons-material/QrCodeScannerOutlined";
-import { blue } from "@mui/material/colors";
 
 import Select2 from "react-select";
 import axios from "axios";
@@ -23,8 +18,6 @@ import { usePurchase } from "@/Context/PurchaseContext";
 
 export default function ProductSearch() {
     const { addToCart } = usePurchase();
-
-    const [barcodeChecked, setBarcodeChecked] = useState(true);
 
     const [productOptions, setProductOptions] = useState([]); // Stores the options from the API
     const [selectedProductOption, setSelectedProductOption] = useState(null); // Stores the selected option
@@ -42,7 +35,7 @@ export default function ProductSearch() {
 
         axios
             .get(`/products/search`, {
-                params: { search_query, barcodeChecked, is_purchase },
+                params: { search_query, is_purchase },
             }) // Send input as a query to your API
             .then((response) => {
                 const products = response.data.products;
@@ -60,8 +53,8 @@ export default function ProductSearch() {
 
     // Create the debounced function only once
     const debouncedFetchProducts = useCallback(
-        _.debounce((search_query, currentBarcodeChecked) => {
-            fetchProducts(search_query, currentBarcodeChecked);
+        _.debounce((search_query) => {
+            fetchProducts(search_query);
         }, 500),
         []
     );
@@ -77,9 +70,7 @@ export default function ProductSearch() {
     const handleInputChange = (newValue) => {
         setInputValue(newValue); // Update the input value state
         // Trigger fetch only if barcode is not checked
-        if (!barcodeChecked) {
-            debouncedFetchProducts(newValue, barcodeChecked); // Fetch products based on the new input value
-        }
+        debouncedFetchProducts(newValue); // Fetch products based on the new input value
     };
 
     // Handle selection change (when the user selects an option from the dropdown)
@@ -94,15 +85,9 @@ export default function ProductSearch() {
     const handleKeyPress = (event) => {
         if (event.key === "Enter") {
             event.preventDefault(); // Prevent default form submission
-            if (barcodeChecked) {
                 // Trigger fetch only if barcode is not checked
-                debouncedFetchProducts(event.target.value, barcodeChecked); // Manually trigger fetching products
-            }
+            debouncedFetchProducts(event.target.value); // Manually trigger fetching products
         }
-    };
-
-    const handleBarcodeChange = (event) => {
-        setBarcodeChecked(event.target.checked); // Update the checked state
     };
 
     return (
@@ -141,32 +126,11 @@ export default function ProductSearch() {
                 getOptionValue={(option) => option.batch_id}
             ></Select2>
 
-            <IconButton color="white" sx={{ p: "10px" }}>
-                <Checkbox
-                    icon={<QrCodeScannerOutlinedIcon />}
-                    checkedIcon={<QrCodeScannerIcon />}
-                    checked={barcodeChecked}
-                    onChange={handleBarcodeChange}
-                    sx={{
-                        color: "default", // Unchecked color
-                        "&.Mui-checked": {
-                            color: "white", // Checked icon color
-                            backgroundColor: blue[900], // Background color when checked
-                            "&:hover": {
-                                backgroundColor: blue[800], // Background on hover while checked
-                            },
-                        },
-                        "& .MuiSvgIcon-root": {
-                            fontSize: 25, // Customize icon size
-                        },
-                    }}
-                />
-            </IconButton>
             <Link href="/products/create">
                 <Button
                     variant="contained"
                     size="large"
-                    sx={{ minWidth: "200px" }}
+                    sx={{ minWidth: "200px", ml:'1rem' }}
                     startIcon={<AddBoxIcon />}
                 >
                     Add Product

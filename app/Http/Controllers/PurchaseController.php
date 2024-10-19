@@ -172,7 +172,9 @@ class PurchaseController extends Controller
                     $purchaseAmountPaid += $payment['amount'];
 
                     // Create the transaction
-                    $transaction = PurchaseTransaction::create($transactionData);
+                    PurchaseTransaction::create($transactionData);
+                }else if($payment['payment_method'] == 'Credit'){
+                    Contact::where('id', $purchase->contact_id)->decrement('balance', $payment['amount']);
                 }
             }
             if($purchaseAmountPaid >= $purchase->total_amount) $purchase->status = 'completed';

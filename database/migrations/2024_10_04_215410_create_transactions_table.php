@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2); // amount paid
             $table->string('payment_method'); // Payment method
             $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account_deposit'
+            $table->string('note')->nullable();
             $table->timestamps();
 
             $table->foreign('sales_id')->references('id')->on('sales');

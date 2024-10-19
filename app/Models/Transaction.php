@@ -17,5 +17,6 @@ class Transaction extends Model
         'amount',           // Amount paid
         'payment_method',   // Payment method
         'transaction_type',
+        'note',
     ];
 }

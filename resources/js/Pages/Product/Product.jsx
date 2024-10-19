@@ -210,6 +210,7 @@ export default function Product({ products, stores }) {
                 selectedBatch={selectedProduct}
                 products={productsState}
                 setProducts={setProductsState}
+                selectedProduct={selectedProduct}
             />
             <QuantityModal
                 modalOpen={quantityModalOpen}

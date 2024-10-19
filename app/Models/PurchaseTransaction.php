@@ -17,5 +17,6 @@ class PurchaseTransaction extends Model
         'payment_method',
         'purchase_id',
         'transaction_type',
+        'note',
     ];
 }
