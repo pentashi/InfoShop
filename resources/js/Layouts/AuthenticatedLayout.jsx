@@ -2,10 +2,11 @@ import React, { useState, useContext } from 'react';
 import { Link, usePage, router  } from '@inertiajs/react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Grid from "@mui/material/Grid2"
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
+import { Tooltip, List } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -30,8 +31,9 @@ import VendorIcon from '@mui/icons-material/ContactEmergency';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-import { SharedContext } from "@/Context/SharedContext";
+import oneshopLogo from './oneshop-logo.png';
 
 const drawerWidth = 240;
 
@@ -171,6 +173,7 @@ const NavItem = ({href, icon:Icon, label, open, selected})=>(
 export default function Authenticated({ header, children, ...props }) {
 
     const user = usePage().props.auth.user;
+    const shop_name = usePage().props.settings.shop_name;
     const pageLabel = usePage().props.pageLabel;
     const pathname = usePage().url;
 
@@ -211,16 +214,33 @@ export default function Authenticated({ header, children, ...props }) {
             >
               <MenuIcon />
             </IconButton>
+            <Grid container spacing={2} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
             <Typography variant="h5" noWrap component="div" sx={{textTransform:'capitalize'}}>
-              OneShop | {pageLabel}
+              {shop_name} | {pageLabel}
             </Typography>
+            <Tooltip title="Logout" arrow>
+            <IconButton
+                    color="white"
+                    size='large'
+                    onClick={(e) => router.post("logout")}
+                >
+                    <LogoutIcon fontSize="large" sx={{color:'white'}}/>
+                </IconButton>
+                </Tooltip>
+            </Grid>
+            
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
+            <Grid container width={'100%'} alignItems={'center'} justifyContent={'space-between'} paddingLeft={'0.5rem'}>
+            <img src={oneshopLogo} className="h-8"></img>
+
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
+            </Grid>
+            
           </DrawerHeader>
           <Divider />
           <List>

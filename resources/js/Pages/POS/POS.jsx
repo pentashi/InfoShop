@@ -26,7 +26,7 @@ import CartItemModal from "./Partial/CartItemModal";
 
 import { SalesProvider } from "@/Context/SalesContext";
 
-const drawerWidth = 500;
+const drawerWidth = 530;
 
 const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",

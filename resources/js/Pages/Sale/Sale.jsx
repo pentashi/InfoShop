@@ -239,7 +239,6 @@ export default function Sale({ sales, contacts }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={"end"}>
-                {console.log(dataSales)}
                 <CustomPagination
                     dataLinks={dataSales?.links}
                     refreshTable={refreshSales}

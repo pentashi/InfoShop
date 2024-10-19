@@ -14,10 +14,11 @@ import {
     List,
     ListItem,
     ListItemText,
-    ListItemButton
+    ListItemButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from '@mui/icons-material/Delete';
+import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from "@mui/material/InputAdornment";
 import { router } from "@inertiajs/react";
 import axios from "axios";
@@ -123,6 +124,15 @@ export default function PaymentsCheckoutDialog({
         setPayments(newPayments);
     };
 
+    const discountPercentage=()=>{
+        if (discount < 0 || discount > 100) {
+            alert("Discount must be between 0 and 100");
+            return;
+        }
+        const discountAmount = (cartTotal * discount) / 100;
+        setDiscount(discountAmount);
+    }
+
     return (
         <React.Fragment>
             <Dialog
@@ -192,6 +202,13 @@ export default function PaymentsCheckoutDialog({
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 Rs.
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment:(
+                                            <InputAdornment position="start">
+                                                <IconButton color="primary" onClick={discountPercentage}>
+                                                  <PercentIcon fontSize="small"></PercentIcon>
+                                                </IconButton>
                                             </InputAdornment>
                                         ),
                                     },

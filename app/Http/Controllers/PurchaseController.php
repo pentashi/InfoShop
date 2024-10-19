@@ -17,26 +17,48 @@ use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
-    public function index()
-    {
-        $purchases = DB::table('purchases AS pr')
-        ->select(
-            'pr.id',
-            'pr.contact_id',            // Customer ID
-            'pr.purchase_date',              // Purchase date
-            'pr.total_amount',           // Total amount (Total amount after discount [net_total - discount])
-            'pr.amount_paid', 
-            'pr.discount',                // Discount
-            'pr.store_id',
-            'pr.status',
-            'c.name', // Customer name from contacts
+
+    public function getPurchases($filters){
+        $query = Purchase::query();
+        $query->select(
+            'purchases.id',
+            'contact_id',            // Customer ID
+            'purchase_date',              // Purchase date
+            'total_amount',           // Total amount (Total amount after discount [net_total - discount])
+            'amount_paid', 
+            'discount',                // Discount
+            'store_id',
+            'status',
+            'contacts.name',
         )
-        ->leftJoin('contacts AS c', 'pr.contact_id', '=', 'c.id') // Join with contacts table using customer_id
-        ->orderBy('pr.id','desc')
-        ->get();
+        ->leftJoin('contacts', 'purchases.contact_id', '=', 'contacts.id')
+        ->orderBy('purchase_date', 'desc');
+
+        if(isset($filters['contact_id'])){
+            $query->where('contact_id', $filters['contact_id']);
+        }
+
+        if(isset($filters['status']) && $filters['status'] !== 'all'){
+            $query->where('status', $filters['status']);
+        }
+
+        if(isset($filters['start_date']) && isset($filters['end_date'])){
+            $query->whereBetween('purchase_date', [$filters['start_date'], $filters['end_date']]);
+        }
+        $results = $query->paginate(25);
+        $results->appends($filters);
+        return $results;
+    }
+
+    public function index(Request $request)
+    {
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'status']);
+        $contacts = Contact::select('id', 'name','balance')->vendors()->get();
+        $purchases = $this->getPurchases($filters);
         return Inertia::render('Purchase/Purchase', [
             'purchases' => $purchases,
             'pageLabel'=>'Purchases',
+            'contacts'=>$contacts,
         ]);
     }
 

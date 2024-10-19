@@ -1,4 +1,5 @@
-import Checkbox from '@/Components/Checkbox';
+
+import Checkbox from '@mui/material/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';

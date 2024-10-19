@@ -7,6 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import { Box, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';
 import { router } from '@inertiajs/react';
 import axios from "axios";
@@ -69,6 +70,15 @@ export default function CashCheckoutDialog({ disabled }) {
             console.log(formJson);
         });
     };
+
+    const discountPercentage=()=>{
+        if (discount < 0 || discount > 100) {
+            alert("Discount must be between 0 and 100");
+            return;
+        }
+        const discountAmount = (cartTotal * discount) / 100;
+        setDiscount(discountAmount);
+    }
 
     return (
         <React.Fragment>
@@ -153,6 +163,13 @@ export default function CashCheckoutDialog({ disabled }) {
                             },
                             input:{
                                 startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                endAdornment:(
+                                    <InputAdornment position="start">
+                                        <IconButton color="primary" onClick={discountPercentage}>
+                                          <PercentIcon fontSize="large"></PercentIcon>
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
                             }
                         }}
                     />

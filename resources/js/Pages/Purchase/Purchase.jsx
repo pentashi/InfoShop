@@ -1,25 +1,39 @@
-import * as React from 'react';
+import * as React from "react";
 
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
-import { DataGrid, GridToolbar} from '@mui/x-data-grid';
-import Grid from '@mui/material/Grid2';
-import { Button, Box, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import PaymentsIcon from '@mui/icons-material/Payments';
-import { Link } from '@inertiajs/react'
-import dayjs from 'dayjs';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head, router, Link } from "@inertiajs/react";
+import { useState } from "react";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Grid from "@mui/material/Grid2";
+import {
+    Button,
+    Box,
+    IconButton,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TextField,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import PaymentsIcon from "@mui/icons-material/Payments";
+import FindReplaceIcon from "@mui/icons-material/FindReplace";
+import dayjs from "dayjs";
+import Select2 from "react-select";
 
-import AddPaymentDialog from '@/Components/AddPaymentDialog';
-import ViewPaymentDetailsDialog from '@/Components/ViewPaymentDetailsDialog';
+import AddPaymentDialog from "@/Components/AddPaymentDialog";
+import ViewPaymentDetailsDialog from "@/Components/ViewPaymentDetailsDialog";
+import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
-    { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'name', headerName: 'Vendor Name', width: 200 },
-    { field: 'discount', headerName: 'Discount', width: 100 },
-    { field: 'total_amount', headerName: 'Total Amount', width: 120 },
-    { field: 'amount_paid', headerName: 'Amount Paid', width: 120,
+    { field: "id", headerName: "ID", width: 80 },
+    { field: "name", headerName: "Vendor Name", width: 200 },
+    { field: "discount", headerName: "Discount", width: 100 },
+    { field: "total_amount", headerName: "Total Amount", width: 120 },
+    {
+        field: "amount_paid",
+        headerName: "Amount Paid",
+        width: 120,
         renderCell: (params) => (
             <Button
                 onClick={() => handleRowClick(params.row, "add_payment")}
@@ -33,94 +47,229 @@ const columns = (handleRowClick) => [
             >
                 {parseFloat(params.value).toFixed(2)}
             </Button>
-          ),
+        ),
     },
     {
-      field: 'purchase_date',
-      headerName: 'Date',
-      width: 120,
-      renderCell: (params) => {
-        // Format the date to 'YYYY-MM-DD'
-        return dayjs(params.value).format('YYYY-MM-DD');
-      },
+        field: "purchase_date",
+        headerName: "Date",
+        width: 120,
+        renderCell: (params) => {
+            // Format the date to 'YYYY-MM-DD'
+            return dayjs(params.value).format("YYYY-MM-DD");
+        },
     },
     {
-      field: 'status',
-      headerName: 'Status',
-      width: 100,
+        field: "status",
+        headerName: "Status",
+        width: 100,
     },
     {
-      field: 'action',
-      headerName: 'Actions',
-      width: 150,
-      renderCell: (params) => (
-        <>
-        <IconButton sx={{ml:'0.3rem'}} color="primary" onClick={() => handleRowClick(params.row, "view_payments")}>
-          <PaymentsIcon />
-        </IconButton>
-        </>
-      ),
+        field: "action",
+        headerName: "Actions",
+        width: 150,
+        renderCell: (params) => (
+            <>
+                <IconButton
+                    sx={{ ml: "0.3rem" }}
+                    color="primary"
+                    onClick={() => handleRowClick(params.row, "view_payments")}
+                >
+                    <PaymentsIcon />
+                </IconButton>
+            </>
+        ),
     },
-  ];
+];
 
+export default function Purchases({ purchases, contacts }) {
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
+    const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+    const [viewPaymentsModalOpen, setViewPaymentsModalOpen] = useState(false);
+    const [selectedContact, setSelectedContact] = useState(null);
+    const [amountLimit, setAmountLimit] = useState(0);
 
- export default function Purchases({purchases}) {
-    const [selectedTransaction, setSelectedTransaction] = useState(null)
-    const [paymentModalOpen, setPaymentModalOpen] = useState(false)
-    const [viewPaymentsModalOpen, setViewPaymentsModalOpen] = useState(false)
-    const [selectedContact, setSelectedContact] = useState(null)
-    const [amountLimit, setAmountLimit] = useState(0)
+    const [dataPurchases, setDataPurchases] = useState(purchases);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [status, setStatus] = useState("all");
+    const [selectedFilterContact, setSelectedFilterContact] = useState(null);
 
-  const handleRowClick = (purchase, action) => {
-      setSelectedTransaction(purchase);
-      if (action == "add_payment") {
-          const amountLimit = parseFloat(purchase.total_amount) - parseFloat(purchase.amount_paid);
-          setSelectedContact(purchase.contact_id);
-          setAmountLimit(amountLimit);
-          setPaymentModalOpen(true);
-      } else if (action == "view_payments") {
-          setViewPaymentsModalOpen(true);
-      }
-  };
+    const handleRowClick = (purchase, action) => {
+        setSelectedTransaction(purchase);
+        if (action == "add_payment") {
+            const amountLimit =
+                parseFloat(purchase.total_amount) -
+                parseFloat(purchase.amount_paid);
+            setSelectedContact(purchase.contact_id);
+            setAmountLimit(amountLimit);
+            setPaymentModalOpen(true);
+        } else if (action == "view_payments") {
+            setViewPaymentsModalOpen(true);
+        }
+    };
+
+    const refreshPurchases = (url) => {
+        const options = {
+            preserveState: true, // Preserves the current component's state
+            preserveScroll: true, // Preserves the current scroll position
+            only: ["purchases"], // Only reload specified properties
+            onSuccess: (response) => {
+                setDataPurchases(response.props.purchases);
+            },
+        };
+        router.get(
+            url,
+            {
+                start_date: startDate,
+                end_date: endDate,
+                contact_id: selectedFilterContact?.id,
+                status: status,
+            },
+            options
+        );
+    };
+
+    const handleContactChange = (selectedOption) => {
+        setSelectedFilterContact(selectedOption);
+    };
 
     return (
         <AuthenticatedLayout>
             <Head title="Purchases" />
 
-            <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
-                <Grid size={12} container justifyContent='end'>
-                    <Link href="/purchase/create"><Button variant="contained" startIcon={<AddIcon />}> Add Purchase</Button></Link>
-                </Grid>
+            <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                justifyContent={'end'}
+                sx={{ width: "100%" }}
+            >
+                <FormControl sx={{ minWidth: "240px" }}>
+                    <Select2
+                        className="w-full"
+                        placeholder="Select a contact..."
+                        styles={{
+                            control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                height: "55px",
+                            }),
+                        }}
+                        options={contacts} // Options to display in the dropdown
+                        onChange={handleContactChange} // Triggered when an option is selected
+                        isClearable // Allow the user to clear the selected option
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.id}
+                    ></Select2>
+                </FormControl>
 
-                <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
-                    <DataGrid 
-                    rowHeight={50}
-                    rows={purchases} 
-                    columns={columns(handleRowClick)}
-                    pageSize={5}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                        showQuickFilter: true,
-                        },
-                    }}
+                <FormControl sx={{ minWidth: "200px" }}>
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                        value={status}
+                        label="Status"
+                        onChange={(e) => setStatus(e.target.value)}
+                        required
+                        name="status"
+                    >
+                        <MenuItem value={"all"}>All</MenuItem>
+                        <MenuItem value={"completed"}>Completed</MenuItem>
+                        <MenuItem value={"pending"}>Pending</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl>
+                    <TextField
+                        label="Start Date"
+                        name="start_date"
+                        placeholder="Start Date"
+                        fullWidth
+                        type="date"
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        required
+                    />
+                </FormControl>
+
+                <FormControl>
+                    <TextField
+                        label="End Date"
+                        name="end_date"
+                        placeholder="End Date"
+                        fullWidth
+                        type="date"
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        required
+                    />
+                </FormControl>
+                <Button
+                    variant="contained"
+                    onClick={() => refreshPurchases(window.location.pathname)}
+                    size="large"
+                >
+                    <FindReplaceIcon />
+                </Button>
+                <Link href="/purchase/create">
+                    <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={<AddIcon />}
+                    >
+                        Add Purchase
+                    </Button>
+                </Link>
+
+                <Box
+                    className="py-6 w-full"
+                    sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                >
+                    <DataGrid
+                        rowHeight={50}
+                        rows={dataPurchases.data}
+                        columns={columns(handleRowClick)}
+                        pageSize={5}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                            },
+                        }}
+                        hideFooter
                     />
                 </Box>
             </Grid>
+            <Grid size={12} container justifyContent={"end"}>
+                <CustomPagination
+                    dataLinks={dataPurchases?.links}
+                    refreshTable={refreshPurchases}
+                    dataLastPage={dataPurchases?.last_page}
+                ></CustomPagination>
+            </Grid>
             <AddPaymentDialog
-              open={paymentModalOpen}
-              setOpen={setPaymentModalOpen}
-              selectedTransaction={selectedTransaction}
-              selectedContact={selectedContact}
-              amountLimit={amountLimit}
-              is_customer={false}
-          />
-          <ViewPaymentDetailsDialog
-            open = {viewPaymentsModalOpen}
-            setOpen = {setViewPaymentsModalOpen}
-            type={'purchase'}
-            selectedTransaction={selectedTransaction?.id}
-          />
+                open={paymentModalOpen}
+                setOpen={setPaymentModalOpen}
+                selectedTransaction={selectedTransaction}
+                selectedContact={selectedContact}
+                amountLimit={amountLimit}
+                is_customer={false}
+                refreshTable={refreshPurchases}
+            />
+            <ViewPaymentDetailsDialog
+                open={viewPaymentsModalOpen}
+                setOpen={setViewPaymentsModalOpen}
+                type={"purchase"}
+                selectedTransaction={selectedTransaction?.id}
+            />
         </AuthenticatedLayout>
     );
 }

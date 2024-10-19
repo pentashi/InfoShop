@@ -53,7 +53,7 @@ export default function CartFooter() {
                 size="auto"
                 sx={{ width: "100%" }}
                 display="flex"
-                justifyContent="space-between"
+                justifyContent="center"
             >
                 <Button
                     variant="contained"
