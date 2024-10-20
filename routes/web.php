@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -84,6 +85,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
     Route::post('/expense/{id}/delete',[ExpenseController::class, 'delete'])->name('expenses.delete');
+
+    Route::get('/link-storage', function () {
+        Artisan::call('storage:link');
+    });
 });
 
 require __DIR__.'/auth.php';
