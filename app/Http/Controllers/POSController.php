@@ -19,11 +19,14 @@ class POSController extends Controller
 {
     public function index()
     {
+        $imageUrl = 'storage/';
+        if (app()->environment('production')) $imageUrl='public/storage/';
+
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
 
         $products = Product::select(
             'products.id',
-            'products.image_url',
+            DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
             'products.name',
             'products.discount',
             'products.is_stock_managed',

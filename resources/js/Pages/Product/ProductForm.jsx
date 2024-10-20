@@ -108,7 +108,7 @@ export default function Product({ product, collection }) {
                 sku: product.sku || "",
                 barcode: product.barcode || "",
                 featured_image: product.image_url
-                    ? "/storage/" + product.image_url
+                    ? product.image_url
                     : "https://placehold.co/600x400", // Reset file input on edit
                 unit: product.unit || "PC",
                 alert_quantity: product.alert_quantity || 0,

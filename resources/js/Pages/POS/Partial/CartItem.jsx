@@ -22,7 +22,7 @@ export default function CartItems() {
         <React.Fragment key={item.id + item.batch_number}>
           <ListItem alignItems="center">
             <ListItemAvatar>
-              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={'/storage/'+item.image_url} />
+              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url} />
             </ListItemAvatar>
             <ListItemText
               primary={

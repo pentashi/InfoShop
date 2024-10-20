@@ -180,12 +180,15 @@ class ProductController extends Controller
     }
 
     public function searchProduct(Request $request){
+        $imageUrl = 'storage/';
+        if (app()->environment('production')) $imageUrl='public/storage/';
+
         $search_query = $request->input('search_query');
         $is_purchase = $request->input('is_purchase',0);
 
         $products = Product::select(
             'products.id',
-            'products.image_url',
+            DB::raw("CONCAT('{$imageUrl}', p.image_url) AS image_url"),
             'products.name',
             'products.discount',
             'products.is_stock_managed',

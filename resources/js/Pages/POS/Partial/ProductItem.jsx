@@ -19,7 +19,7 @@ export default function ProductItem({ product }) {
         
       <CardMedia
         sx={{ height: 120 }}
-        image={'/storage/'+image_url}
+        image={image_url}
         title={name}
       />
       <CardContent sx={{paddingBottom:'10px!important'}}>
