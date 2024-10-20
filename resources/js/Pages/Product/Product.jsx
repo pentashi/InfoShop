@@ -30,7 +30,7 @@ const productColumns = (handleProductEdit) => [
         renderCell: (params) =>
             params.value ? ( // Check if params.value is not null
                 <img
-                    src={"storage/" + params.value} // Use the value from the image_url field
+                    src={params.value} // Use the value from the image_url field
                     style={{
                         width: "100%",
                         height: "100%",

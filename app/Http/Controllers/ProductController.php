@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     public function getProducts($store_id=0){
+        $imageUrl = 'storage/';
+        if (app()->environment('production')) $imageUrl='public/storage/';
+
         return DB::table('product_batches AS pb')
         ->select(
             'p.id',
             'ps.id as stock_id',
             'pb.id AS batch_id',
-            'p.image_url',
+            DB::raw("CONCAT('{$imageUrl}', p.image_url) AS image_url"),
             'p.name',
             'p.barcode',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
