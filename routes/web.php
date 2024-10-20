@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 use App\Http\Controllers\DashboardController;
@@ -58,12 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 
-    Route::get('/customers', function () {
-        return app(ContactController::class)->index('customer'); // Pass 'customer' as a parameter
-    })->name('customers.index');
-    Route::get('/vendors', function () {
-        return app(ContactController::class)->index('vendor'); // Pass 'customer' as a parameter
-    })->name('vendors.index');
+    Route::get('/customers', [ContactController::class, 'index'])->defaults('type', 'customer')->name('customers.index');
+    Route::get('/vendors', [ContactController::class, 'index'])->defaults('type', 'vendor')->name('vendors.index');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
     Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contacts.update');
 

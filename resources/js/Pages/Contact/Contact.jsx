@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
-import { Button, Box } from '@mui/material';
+import { Button, Box, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import Typography from '@mui/material/Typography';
-import { router } from '@inertiajs/react'
-import AddPaymentDialog from '@/Components/AddPaymentDialog';
-
+import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 import FormDialog from './Partial/FormDialog';
+import CustomPagination from '@/Components/CustomPagination';
+import AddPaymentDialog from '@/Components/AddPaymentDialog';
 
 const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -49,6 +48,9 @@ export default function Contact({contacts, type, stores}) {
   const [selectedContact, setSelectedContact] = useState(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
 
+  const [dataContacts, setDataContacts] = useState(contacts);
+  const [searchQuery, setSearchQuery] = useState('')
+
   const handleClickOpen = () => {
     setSelectedContact(null);
     setOpen(true);
@@ -74,13 +76,51 @@ export default function Contact({contacts, type, stores}) {
       })
   };
 
+  const refreshContacts = (url) => {
+    const options = {
+        preserveState: true, // Preserves the current component's state
+        preserveScroll: true, // Preserves the current scroll position
+        only: ["contacts"], // Only reload specified properties
+        onSuccess: (response) => {
+            setDataContacts(response.props.contacts);
+        },
+    };
+    router.get(
+        url,
+        {
+            search_query:searchQuery
+        },
+        options
+    );
+};
+
   return (
     <AuthenticatedLayout>
         {/* Capitalize first letter of type and add s at the end */}
       <Head title={type[0].toUpperCase()+ type.slice(1)+'s'} />
 
       <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
-        <Grid size={12} container justifyContent="end">
+        <Grid size={12} spacing={2} container justifyContent="end">
+          <TextField
+          sx={{minWidth:'300px'}}
+              name="search_query"
+              label="Search"
+              variant="outlined"
+              value={searchQuery}
+              onChange={(e)=>setSearchQuery(e.target.value)}
+              required
+              onFocus={(event) => {
+                  event.target.select();
+              }}
+              slotProps={{
+                  inputLabel: {
+                      shrink: true,
+                  },
+              }}
+          />
+          <Button variant="contained" onClick={()=>refreshContacts(window.location.pathname)} size="large">
+                    <FindReplaceIcon />
+          </Button>
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>
             Add {type[0].toUpperCase()+ type.slice(1)}
           </Button>
@@ -88,16 +128,8 @@ export default function Contact({contacts, type, stores}) {
 
         <Box className="py-6 w-full" sx={{ display: 'grid', gridTemplateColumns: '1fr' }}>
           <DataGrid
-            rows={contacts}
+            rows={dataContacts.data}
             columns={columns(handleRowClick)}
-            pageSize={10}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
             slots={{ toolbar: GridToolbar }}
             getRowId={(row) => row.id}
             slotProps={{
@@ -105,8 +137,16 @@ export default function Contact({contacts, type, stores}) {
                 showQuickFilter: true,
               },
             }}
+            hideFooter
           />
         </Box>
+        <Grid size={12} container justifyContent={"end"}>
+                <CustomPagination
+                    dataLinks={dataContacts?.links}
+                    refreshTable={refreshContacts}
+                    dataLastPage={dataContacts?.last_page}
+                ></CustomPagination>
+            </Grid>
       </Grid>
 
       <FormDialog open={open} handleClose={handleClose} contact={selectedContact} contactType={type} onSuccess={handleFormSuccess} />
@@ -116,6 +156,7 @@ export default function Contact({contacts, type, stores}) {
           selectedContact={selectedContact?.id}
           is_customer={type === 'customer' ? true:false}
           stores={stores}
+          refreshTable={refreshContacts}
       />
 
     </AuthenticatedLayout>

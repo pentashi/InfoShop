@@ -23,6 +23,7 @@ export default function ViewPaymentDetailsDialog({
     const [payments, setPayments] = useState([]);
 
     const handleClose = () => {
+        
         setOpen(false);
     };
 

@@ -4,30 +4,46 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
-use App\Models\Collection;
 use App\Models\Store;
+use Illuminate\Database\Eloquent\Builder;
 
 use Inertia\Inertia;
-use Inertia\Response;
-use Redirect;
 
 class ContactController extends Controller
 {
-    public function index($type)
-    {
+
+    public function getContacts($type, $filters){
         // Fetch data from the Collection model
         $contacts = Contact::select('id', 'name','phone','email','address', 'balance','created_at')->where('id','!=','1');
-        $stores = Store::select('id', 'name')->get();
+        
+        if (!empty($filters['search_query'])) {
+            $searchTerm = $filters['search_query'];
+            
+            $contacts = $contacts->where(function (Builder $query) use ($searchTerm) {
+                $query->where('name', 'LIKE', '%'.$searchTerm.'%')
+                      ->orWhere('phone', 'LIKE', '%'.$searchTerm.'%')
+                      ->orWhere('email', 'LIKE', '%'.$searchTerm.'%')
+                      ->orWhere('address', 'LIKE', '%'.$searchTerm.'%');
+            });
+        }
+        
         // Apply the scope based on the type
         if ($type === 'customer') {
-            $contacts = $contacts->customers()->get();
+            $contacts = $contacts->customers()->paginate(25);
         } elseif ($type === 'vendor') {
-            $contacts = $contacts->vendors()->get(); // Assuming you have a vendors scope
-        } else {
-            // Optionally handle other types or default behavior
-            $contacts = $contacts->get();
+            $contacts = $contacts->vendors()->paginate(25); // Assuming you have a vendors scope
         }
+        $contacts->appends($filters);
+        return $contacts;
+    }
 
+    public function index(Request $request, $type)
+    {
+        $filters = $request->only(['search_query']);
+
+        $contacts = $this->getContacts($type, $filters);
+
+        $stores = Store::select('id', 'name')->get();
         // Render the Inertia view with the collections data
         return Inertia::render('Contact/Contact', [
             'contacts' => $contacts,
