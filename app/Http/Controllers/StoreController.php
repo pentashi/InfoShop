@@ -6,7 +6,7 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Redirect;
+use Illuminate\Support\Facades\Redirect;
 
 class StoreController extends Controller
 {

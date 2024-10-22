@@ -19,6 +19,7 @@ use App\Http\Controllers\QuantityController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -85,6 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
     Route::post('/expense/{id}/delete',[ExpenseController::class, 'delete'])->name('expenses.delete');
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/user', [UserController::class, 'store'])->name('user.store');
+    Route::post('/user/{id}', [UserController::class, 'update'])->name('user.update');
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');
