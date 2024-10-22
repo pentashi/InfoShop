@@ -51,6 +51,7 @@ class POSController extends Controller
             'pb.id', 
             'ps.quantity'
             )
+        ->limit(20)
         ->get();
    
         return Inertia::render('POS/POS', [

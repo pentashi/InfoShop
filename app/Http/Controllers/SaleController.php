@@ -99,4 +99,47 @@ class SaleController extends Controller
             'user_name'=>$user->name,
         ]);
     }
+
+    public function getSoldItems($filters){
+        $query = SaleItem::query();
+        $query->select(
+            'sale_items.id',
+            'sale_items.sale_id',
+            'sale_items.product_id',
+            'sale_items.quantity',
+            'sale_items.unit_price',
+            'sale_items.unit_cost',
+            'sale_items.discount',
+            'products.name as product_name',
+            'sales.sale_date',
+            'contacts.name as contact_name',
+            'contacts.balance',
+        )
+        ->join('products', 'sale_items.product_id', '=', 'products.id')
+        ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+        ->join('contacts', 'sales.contact_id', '=', 'contacts.id')
+        ->orderBy('sale_date', 'desc');
+
+        if(isset($filters['contact_id'])){
+            $query->where('sales.contact_id', $filters['contact_id']);
+        }
+
+        if(isset($filters['start_date']) && isset($filters['end_date'])){
+            $query->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
+        }
+        $results = $query->paginate(25);
+        $results->appends($filters);
+        return $results;
+    }
+
+    public function solditems(Request $request){
+        $filters = $request->only(['contact_id', 'start_date', 'end_date']);
+        $soldItems = $this->getSoldItems($filters);
+        $contacts = Contact::select('id', 'name','balance')->customers()->get();
+        return Inertia::render('SoldItem/SoldItem',[
+            'sold_items'=>$soldItems,
+            'contacts'=>$contacts,
+            'pageLabel'=>'Sold Items',
+        ]);
+    }
 }

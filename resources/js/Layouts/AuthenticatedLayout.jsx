@@ -249,6 +249,7 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")} />
           <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")} />
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")} />
+          <NavItem href="/sold-items" icon={PaidIcon} label="Sold Items" open={open} selected={isSelected("/sold-items")} />
           <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")} />
           <NavItem href="/payments/sales" icon={PaymentsIcon} label="Payments" open={open} selected={isSelected("/payments")} />
           <NavItem href="/expenses" icon={AccountBalanceWalletIcon} label="Expenses" open={open} selected={isSelected("/expenses")} />

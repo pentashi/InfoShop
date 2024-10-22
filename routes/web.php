@@ -21,12 +21,11 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ExpenseController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect('login');
+    // return Inertia::render('Welcome', [
+    //     'canLogin' => Route::has('login'),
+    //     'canRegister' => Route::has('register'),
+    // ]);
 });
 
 // Route::get('/dashboard', function () {
@@ -67,6 +66,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
+    Route::get('/sold-items', [SaleController::class, 'solditems'])->name('sales.items');
 
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');

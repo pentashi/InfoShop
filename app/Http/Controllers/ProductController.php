@@ -188,7 +188,7 @@ class ProductController extends Controller
 
         $products = Product::select(
             'products.id',
-            DB::raw("CONCAT('{$imageUrl}', p.image_url) AS image_url"),
+            DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
             'products.name',
             'products.discount',
             'products.is_stock_managed',
@@ -216,6 +216,12 @@ class ProductController extends Controller
         'pb.id', 
         'pb.batch_number', 
         'ps.quantity',
+        'products.image_url',
+        'products.name',
+        'products.discount',
+        'products.is_stock_managed',
+        'pb.cost',
+        'pb.price',
         )
         ->limit(5)->get();
         
