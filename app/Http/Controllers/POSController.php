@@ -103,27 +103,25 @@ class POSController extends Controller
             }
             else{
                 foreach ($payments as $payment) {
+
+                    $transactionData = [
+                        'sales_id' => $sale->id,
+                        'store_id' => $sale->store_id,
+                        'contact_id' => $sale->contact_id,
+                        'transaction_date' => $sale->sale_date,
+                        'amount' => $payment['amount'],
+                        'payment_method' => $payment['payment_method'],
+                    ];
+
                     // Check if the payment method is not 'Credit'
                     if ($payment['payment_method'] != 'Credit') {
-                        // Prepare transaction data
-                        $transactionData = [
-                            'sales_id' => $sale->id,
-                            'store_id' => $sale->store_id,
-                            'contact_id' => $sale->contact_id,
-                            'transaction_date' => $sale->sale_date,
-                            'amount' => $payment['amount'],
-                            'payment_method' => $payment['payment_method'],
-                        ];
-
                         // Determine transaction type based on the payment method
                         if ($payment['payment_method'] == 'Account') {
-                            // Set transaction type to 'account_deposit' for account payments
-                            $transactionData['transaction_type'] = 'account_deposit';
+                            // Set transaction type to 'account' for account payments
+                            $transactionData['transaction_type'] = 'account';
                             Contact::where('id', $sale->contact_id)->decrement('balance', $payment['amount']);
-                        } else {
-                            // Set transaction type to 'sale' for other payment methods
-                            $transactionData['transaction_type'] = 'sale';
-                        }
+
+                        } else { $transactionData['transaction_type'] = 'sale';}
 
                         // Update the total amount received
                         $amountReceived += $payment['amount'];
@@ -132,6 +130,8 @@ class POSController extends Controller
                         Transaction::create($transactionData);
                     }
                     else if($payment['payment_method'] == 'Credit'){
+                        $transactionData['transaction_type'] = 'sale';
+                        Transaction::create($transactionData);
                         Contact::where('id', $sale->contact_id)->decrement('balance', $payment['amount']);
                     }
                 }

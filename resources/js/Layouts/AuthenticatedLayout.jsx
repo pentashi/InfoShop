@@ -32,6 +32,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import PeopleIcon from '@mui/icons-material/People';
 
 import oneshopLogo from './oneshop-logo.png';
 
@@ -249,7 +251,7 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/pos" icon={PointOfSaleIcon} label="POS" open={open} selected={isSelected("/pos")} />
           <NavItem href="/products" icon={InventoryIcon} label="Products" open={open} selected={isSelected("/products")} />
           <NavItem href="/sales" icon={PaidIcon} label="Sales" open={open} selected={isSelected("/sales")} />
-          <NavItem href="/sold-items" icon={PaidIcon} label="Sold Items" open={open} selected={isSelected("/sold-items")} />
+          <NavItem href="/sold-items" icon={ShoppingCartCheckoutIcon} label="Sold Items" open={open} selected={isSelected("/sold-items")} />
           <NavItem href="/purchases" icon={AddShoppingCartIcon} label="Purchases" open={open} selected={isSelected("/purchases")} />
           <NavItem href="/payments/sales" icon={PaymentsIcon} label="Payments" open={open} selected={isSelected("/payments")} />
           <NavItem href="/expenses" icon={AccountBalanceWalletIcon} label="Expenses" open={open} selected={isSelected("/expenses")} />
@@ -259,6 +261,7 @@ export default function Authenticated({ header, children, ...props }) {
           <NavItem href="/stores" icon={StoreIcon} label="Stores" open={open} selected={isSelected("/stores")} />
           <NavItem href="/settings" icon={SettingsIcon} label="Settings" open={open} selected={isSelected("/settings")}/>
           <NavItem href="/profile" icon={ManageAccountsIcon} label="Profile" open={open} selected={isSelected("/profile")} />
+          <NavItem href="/users" icon={PeopleIcon} label="Users" open={open} selected={isSelected("/users")} />
 
           </List>
         </Drawer>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('transaction_date');
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
-            $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account_deposit'
+            $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account'
             $table->string('note')->nullable();
             $table->timestamps();
 

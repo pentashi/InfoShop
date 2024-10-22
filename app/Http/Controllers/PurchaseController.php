@@ -147,21 +147,21 @@ class PurchaseController extends Controller
             
             $purchaseAmountPaid = 0;
             foreach ($payments as $payment) {
+                $transactionData = [
+                    'purchase_id' => $purchase->id,
+                    'store_id' => $purchase->store_id,
+                    'contact_id' => $purchase->contact_id,
+                    'transaction_date' => now(),
+                    'amount' => $payment['amount'], // Amount from the payment array
+                    'payment_method' => $payment['payment_method'],
+                ];
+
                 if($payment['payment_method'] != 'Credit')
                 {
-                    $transactionData = [
-                        'purchase_id' => $purchase->id,
-                        'store_id' => $purchase->store_id,
-                        'contact_id' => $purchase->contact_id,
-                        'transaction_date' => now(),
-                        'amount' => $payment['amount'], // Amount from the payment array
-                        'payment_method' => $payment['payment_method'],
-                    ];
-
                     // Determine transaction type based on the payment method
                     if ($payment['payment_method'] == 'Account') {
-                        // Set transaction type to 'account_deposit' for account payments
-                        $transactionData['transaction_type'] = 'account_deposit';
+                        // Set transaction type to 'account' for account payments
+                        $transactionData['transaction_type'] = 'account';
                         Contact::where('id', $purchase->contact_id)->decrement('balance', $payment['amount']);
                     } else {
                         // Set transaction type to 'sale' for other payment methods
@@ -174,6 +174,8 @@ class PurchaseController extends Controller
                     // Create the transaction
                     PurchaseTransaction::create($transactionData);
                 }else if($payment['payment_method'] == 'Credit'){
+                    $transactionData['transaction_type'] = 'purchase';
+                    PurchaseTransaction::create($transactionData);
                     Contact::where('id', $purchase->contact_id)->decrement('balance', $payment['amount']);
                 }
             }

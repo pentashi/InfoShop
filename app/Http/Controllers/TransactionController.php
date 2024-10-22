@@ -36,7 +36,7 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
-            $transactionData['transaction_type'] = 'account_deposit';
+            $transactionData['transaction_type'] = 'account';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 
             }
@@ -107,7 +107,7 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
-            $transactionData['transaction_type'] = 'account_deposit';
+            $transactionData['transaction_type'] = 'account';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 
             }
