@@ -5,7 +5,7 @@ import FormDialog from '@/Pages/Contact/Partial/FormDialog';
 
 import { SharedContext } from '@/Context/SharedContext';
 
-export default function CustomerSelect({customers}) {
+export default function CartItemsTop({customers}) {
   const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState(customers)
   const { selectedCustomer, setSelectedCustomer} = useContext(SharedContext); 

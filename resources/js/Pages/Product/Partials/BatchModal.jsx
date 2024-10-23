@@ -13,8 +13,7 @@ export default function BatchModal({
     batchModalOpen,
     setBatchModalOpen,
     selectedBatch,
-    products,
-    setProducts,
+    refreshProducts,
     selectedProduct
 }) {
 
@@ -49,30 +48,7 @@ export default function BatchModal({
         else {response = await axios.post('/productbatch/'+formState.batch_id, formJson);}
 
         if (response.status === 200 || response.status === 201) {
-
-            if(!isNew){
-                // Use map to update the product inside the products array
-                const updatedProducts = products.map((product) => {
-                    // Check if this is the product we want to update
-                    if (product.batch_id === formState.batch_id) {
-                        // Return the updated product with new values from formState
-                        return {
-                            ...product, // Keep other fields the same
-                            cost: parseFloat(formState.cost).toFixed(2),
-                            price: parseFloat(formState.price).toFixed(2),
-                            batch_number: formState.batch_number,
-                            expiry_date: formState.expiry_date,
-                            is_active: formState.is_active,
-                        };
-                    }
-                    // Return the product as is if it doesn't match the batch_id
-                    return product;
-                });
-
-                // Update the products state with the updated product list
-                setProducts(updatedProducts);
-            }
-
+            refreshProducts()
             Swal.fire({
                 title: "Success!",
                 text: response.data.message,
@@ -313,7 +289,6 @@ export default function BatchModal({
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
-                        // onClick={handleClose}
                     >
                         {isNew ? "SAVE BATCH" : "UPDATE BATCH"}
                     </Button>

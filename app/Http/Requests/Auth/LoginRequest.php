@@ -67,7 +67,7 @@ class LoginRequest extends FormRequest
                 ->first();
 
     // If user is found and password matches
-    if ($user && Auth::attempt(['id' => $user->id, 'password' => $this->input('password')], $this->boolean('remember'))) {
+    if ($user && Auth::attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
         RateLimiter::clear($this->throttleKey());
         return; // Authentication successful
     }

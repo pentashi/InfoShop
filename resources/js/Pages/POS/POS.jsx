@@ -18,13 +18,13 @@ import HomeIcon from "@mui/icons-material/Home";
 
 import ProductItem from "./Partial/ProductItem";
 import CartItems from "./Partial/CartItem";
-import CustomerSelect from "./Partial/CustomerSelect";
+import CustomerSelect from "./Partial/CartItemsTop";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
-import CartItemModal from "./Partial/CartItemModal";
 
 import { SalesProvider } from "@/Context/SalesContext";
+import CartItemsTop from "./Partial/CartItemsTop";
 
 const drawerWidth = 530;
 
@@ -180,7 +180,7 @@ function POS({ products, customers }) {
                         anchor="right"
                     >
                         <DrawerHeader>
-                            <CustomerSelect customers={customers}/>
+                            <CartItemsTop customers={customers}/>
                             <IconButton onClick={handleDrawerClose}>
                                 <ChevronLeftIcon />
                             </IconButton>

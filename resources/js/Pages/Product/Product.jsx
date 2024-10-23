@@ -6,19 +6,20 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
     Button,
     Box,
-    Typography,
     Grid2 as Grid,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
+    TextField
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { Link } from "@inertiajs/react";
-import axios from 'axios';
+import { Link, router } from "@inertiajs/react";
+import FindReplaceIcon from "@mui/icons-material/FindReplace";
 
 import BatchModal from "./Partials/BatchModal";
 import QuantityModal from "./Partials/QuantityModal";
+import CustomPagination from "@/Components/CustomPagination";
 import { useState } from "react";
 
 const productColumns = (handleProductEdit) => [
@@ -120,8 +121,10 @@ export default function Product({ products, stores }) {
     const [batchModalOpen, setBatchModalOpen] = useState(false);
     const [quantityModalOpen, setQuantityModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState(false);
-    const [productsState, setProductsState] = useState(products);
+    const [dataProducts, setDataProducts] = useState(products);
     const [selectedStore, setSelectedStore] = useState(0);
+    const [selectedStatus, setSelectedStatus] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('')
 
     const handleProductEdit = (product, type) => {
         setSelectedProduct(product);
@@ -130,19 +133,35 @@ export default function Product({ products, stores }) {
         type === 'qty' && setQuantityModalOpen(true);
     };
 
-    const fetchProducts = async(store_id=0)=>{
-        try {
-            const response = await axios.get(`/getproducts/${store_id}`);  // Request to your backend
-            setProductsState(response.data.products);  // Update products state with response data
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
+    const handleStoreChange =(e)=>{
+        const newStore = e.target.value;
+        setSelectedStore(newStore);
     }
 
-    const handleStoreChange =(e)=>{
-        setSelectedStore(e.target.value)
-        fetchProducts(e.target.value)
+    const handleStatusChange =(e)=>{
+        const newStatus = e.target.value;
+        setSelectedStatus(newStatus);
     }
+
+    const refreshProducts = (url=window.location.pathname) => {
+        const options = {
+            preserveState: true, // Preserves the current component's state
+            preserveScroll: true, // Preserves the current scroll position
+            only: ["products"], // Only reload specified properties
+            onSuccess: (response) => {
+                setDataProducts(response.props.products);
+            },
+        };
+        router.get(
+            url,
+            {
+                store:selectedStore, 
+                search_query:searchQuery,
+                status:selectedStatus
+            },
+            options
+        );
+    };
 
     return (
         <AuthenticatedLayout>
@@ -153,8 +172,8 @@ export default function Product({ products, stores }) {
                 alignItems="center"
                 sx={{ width: "100%" }}
             >
-                <Grid size={8} container alignItems={"center"}>
-                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+                <Grid size={12} container alignItems={"center"} justifyContent={'end'} width={'100%'}>
+                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px",}}>
                         <InputLabel>Store</InputLabel>
                         <Select
                             value={selectedStore}
@@ -171,9 +190,41 @@ export default function Product({ products, stores }) {
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
-                <Grid size={4} container justifyContent="end">
-                    <Link href="/products/create">
+                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+                        <InputLabel>Store</InputLabel>
+                        <Select
+                            value={selectedStatus}
+                            label="Status"
+                            onChange={handleStatusChange}
+                            required
+                            name="status"
+                        >
+                            <MenuItem value={1}>Active</MenuItem>
+                            <MenuItem value={0}>Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                    sx={{minWidth:'300px', ml: "0.5rem",}}
+                        name="search_query"
+                        label="Search"
+                        variant="outlined"
+                          value={searchQuery}
+                          onChange={(e)=>setSearchQuery(e.target.value)}
+                          placeholder="Barcode or Name"
+                        required
+                        onFocus={(event) => {
+                            event.target.select();
+                        }}
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                    />
+                    <Button variant="contained" onClick={()=>refreshProducts(window.location.pathname)} size="large">
+                    <FindReplaceIcon />
+          </Button>
+          <Link href="/products/create">
                         <Button variant="contained" startIcon={<AddIcon />}>
                             Add Product
                         </Button>
@@ -185,14 +236,7 @@ export default function Product({ products, stores }) {
                     sx={{ display: "grid", gridTemplateColumns: "1fr" }}
                 >
                     <DataGrid
-                        rows={productsState}
-                        sx={
-                            {
-                                // '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
-                                // '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '10px' },
-                                // '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
-                            }
-                        }
+                        rows={dataProducts.data}
                         columns={productColumns(handleProductEdit)}
                         slots={{ toolbar: GridToolbar }}
                         getRowId={(row) => row.id + row.batch_number+row.store_id}
@@ -201,23 +245,33 @@ export default function Product({ products, stores }) {
                                 showQuickFilter: true,
                             },
                         }}
+                        hideFooter
                     />
                 </Box>
+                <Grid size={12} container justifyContent={"end"}>
+                <CustomPagination
+                    dataLinks={dataProducts?.links}
+                    refreshTable={refreshProducts}
+                    dataLastPage={dataProducts?.last_page}
+                ></CustomPagination>
+            </Grid>
             </Grid>
             <BatchModal
                 batchModalOpen={batchModalOpen}
                 setBatchModalOpen={setBatchModalOpen}
                 selectedBatch={selectedProduct}
-                products={productsState}
-                setProducts={setProductsState}
+                products={dataProducts.data}
+                setProducts={setDataProducts}
+                refreshProducts={refreshProducts}
                 selectedProduct={selectedProduct}
             />
             <QuantityModal
                 modalOpen={quantityModalOpen}
                 setModalOpen={setQuantityModalOpen}
                 selectedStock={selectedProduct}
-                products={productsState}
-                setProducts={setProductsState}
+                products={dataProducts.data}
+                setProducts={setDataProducts}
+                refreshProducts={refreshProducts}
                 stores={stores}
             />
         </AuthenticatedLayout>

@@ -13,8 +13,7 @@ export default function QuantityModal({
     modalOpen,
     setModalOpen,
     selectedStock,
-    products,
-    setProducts,
+    refreshProducts,
     stores,
 }) {
 
@@ -44,22 +43,7 @@ export default function QuantityModal({
 
         if (response.status === 200 || response.status === 201) {
 
-            // Use map to update the product inside the products array
-            // const updatedProducts = products.map((product) => {
-            //     // Check if this is the product we want to update
-            //     if (product.batch_id === formState.batch_id) {
-            //         // Return the updated product with new values from formState
-            //         return {
-            //             ...product, // Keep other fields the same
-            //             cost: parseFloat(formState.cost).toFixed(2),
-            //         };
-            //     }
-            //     // Return the product as is if it doesn't match the batch_id
-            //     return product;
-            // });
-
-            // Update the products state with the updated product list
-            // setProducts(updatedProducts);
+            refreshProducts()
 
             Swal.fire({
                 title: "Success!",

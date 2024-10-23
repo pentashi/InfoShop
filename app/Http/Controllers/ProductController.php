@@ -14,39 +14,62 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function getProducts($store_id=0){
+    public function getProducts($filters){
         $imageUrl = 'storage/';
         if (app()->environment('production')) $imageUrl='public/storage/';
 
-        return DB::table('product_batches AS pb')
-        ->select(
-            'p.id',
-            'ps.id as stock_id',
-            'pb.id AS batch_id',
-            DB::raw("CONCAT('{$imageUrl}', p.image_url) AS image_url"),
-            'p.name',
-            'p.barcode',
-            DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
-            DB::raw("COALESCE(pb.expiry_date, 'N/A') AS expiry_date"),
-            'pb.cost',
-            'pb.price',
-            'pb.is_active',
-            DB::raw("COALESCE(ps.quantity, '0') AS quantity"),
-            'ps.store_id',
-            'p.created_at',
-            'p.updated_at'
+        $query = ProductBatch::query();
+        $query->select(
+            'products.id',
+            'product_stocks.id as stock_id',
+            'product_batches.id AS batch_id',
+            DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
+            'products.name',
+            'products.barcode',
+            DB::raw("COALESCE(product_batches.batch_number, 'N/A') AS batch_number"),
+            DB::raw("COALESCE(product_batches.expiry_date, 'N/A') AS expiry_date"),
+            'product_batches.cost',
+            'product_batches.price',
+            'product_batches.is_active',
+            DB::raw("COALESCE(product_stocks.quantity, '0') AS quantity"),
+            'product_stocks.store_id',
+            'products.created_at',
+            'products.updated_at'
         )
-        ->leftJoin('products AS p', 'p.id', '=', 'pb.product_id') // Join with product_batches using product_id
-        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->when($store_id != 0, function ($query) use ($store_id) {
-            // Add the condition only if $storeId is not 0 (i.e. specific store)
-            return $query->where('ps.store_id', '=', $store_id);
-        })->get();
+        ->leftJoin('products', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
+        ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id'); // Join with product_stocks using batch_id
+
+        // Apply filters based on the status
+        if (isset($filters['status']) && $filters['status'] == 1) {
+            // If status is 1, filter by store_id and status
+            $query->where('product_batches.is_active', 1); // Assuming 1 means active
+            if ($filters['store'] != 0) {
+                $query->where('product_stocks.store_id', $filters['store']);
+            }
+        } else if(isset($filters['status'])) {
+            // If status is not 1, only filter by status
+            $query->where('product_batches.is_active', $filters['status']);
+        }
+        else $query->where('product_batches.is_active', 1);
+
+        // Apply search query if provided
+        if (!empty($filters['search_query'])) {
+            $query->where(function ($query) use ($filters) {
+                $query->where('products.barcode', 'LIKE', '%' . $filters['search_query'] . '%')
+                    ->orWhere('products.name', 'LIKE', '%' . $filters['search_query'] . '%');
+            });
+        }
+
+        $results = $query->paginate(25);
+        $results->appends($filters);
+        return $results;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->getProducts();
+        $filters = $request->only(['store', 'search_query', 'status']);
+
+        $products = $this->getProducts($filters);
         $stores = Store::select('id', 'name')->get();
 
          // Render the 'Products' component with data
@@ -192,36 +215,36 @@ class ProductController extends Controller
             'products.name',
             'products.discount',
             'products.is_stock_managed',
-            DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
-            'pb.cost',
-            'pb.price',
-            'pb.id AS batch_id',
-            'ps.quantity', // Only keeping the summed quantity from product_stocks
+            DB::raw("COALESCE(product_batches.batch_number, 'N/A') AS batch_number"),
+            'product_batches.cost',
+            'product_batches.price',
+            'product_batches.id AS batch_id',
+            'product_stocks.quantity', // Only keeping the summed quantity from product_stocks
         )
-        ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
-        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
+        ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
+        ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
         ->where('barcode', 'like', '%' . $search_query . '%')
         ->orWhere('name', 'like', '%' . $search_query . '%');
 
         if($is_purchase==0){
-            $products = $products->where('ps.store_id', 1);
+            $products = $products->where('product_stocks.store_id', 1);
         }
         else{
-            $products = $products->whereNotNull('ps.store_id');;
+            $products = $products->whereNotNull('product_stocks.store_id');;
         }
       
         $products = $products
         ->groupBy(
         'products.id',
-        'pb.id', 
-        'pb.batch_number', 
-        'ps.quantity',
+        'product_batches.id', 
+        'product_batches.batch_number', 
+        'product_stocks.quantity',
         'products.image_url',
         'products.name',
         'products.discount',
         'products.is_stock_managed',
-        'pb.cost',
-        'pb.price',
+        'product_batches.cost',
+        'product_batches.price',
         )
         ->limit(5)->get();
         
