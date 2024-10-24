@@ -26,6 +26,7 @@ return new class extends Migration
             $table->decimal('alert_quantity', 10, 2)->default(5); // Minimum stock threshold for alerts
             $table->boolean('is_stock_managed')->default(true); // Indicates if stock management is enabled
             $table->boolean('is_active')->default(true); // Product Active Status, default to true
+            $table->boolean('is_featured')->default(false); // Product Featured Status, default to false
             $table->timestamps();
         });
     }

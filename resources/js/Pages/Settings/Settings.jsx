@@ -93,7 +93,7 @@ export default function Setting({ settings }) {
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
             >
-            <Grid container>
+            <Grid container flex flexDirection={'column'} spacing={2}>
                 <Grid size={12}>
                     <Accordion defaultExpanded>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -113,9 +113,9 @@ export default function Setting({ settings }) {
                             />
 
                             <Box sx={{display:'flex', width:'100%', justifyContent:'start', mt:'2rem'}}>
-                            <Card sx={{ width: { xs: "100%", sm: 350 } }}>
+                            <Card sx={{ width: { xs: "100%", sm: 250 } }}>
                                 <CardMedia
-                                    sx={{ height: 250, contain:'content' }}
+                                    sx={{ height: 200, contain:'content' }}
                                     image={settingFormData.shop_logo}
                                     title="shop logo"
                                 />
@@ -144,14 +144,14 @@ export default function Setting({ settings }) {
                     </Accordion>
                     <Accordion>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            SALE INFORMATION
+                            RECEIPT PRINT
                         </AccordionSummary>
                         <AccordionDetails>
                             <Box sx={{display:'flex', width:'100%', justifyContent:'center'}}>
                             <TextField
                                 fullWidth
                                 variant="outlined"
-                                label={"Sale receipt note"}
+                                label={"Receipt note"}
                                 name="sale_receipt_note"
                                 multiline
                                 required
@@ -161,10 +161,10 @@ export default function Setting({ settings }) {
                             />
                             </Box>
                         </AccordionDetails>
-                        <AccordionActions>
-                            <Button type="submit">UPDATE</Button>
-                        </AccordionActions>
                     </Accordion>
+                </Grid>
+                <Grid size={12} justifyContent={'end'} sx={{display:'flex'}}>
+                    <Button type="submit" variant="outlined" size="large" color="success">UPDATE</Button>
                 </Grid>
             </Grid>
             </form>

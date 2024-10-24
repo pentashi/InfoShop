@@ -69,7 +69,7 @@ export default function Product({ product, collection }) {
         featured_image: "https://placehold.co/600x400", // For file input
         unit: "PC",
         quantity: 0,
-        alert_quantity: 0,
+        alert_quantity: 5,
         is_stock_managed: 1,
         is_active: 1,
         brand_id: "",
@@ -202,23 +202,21 @@ export default function Product({ product, collection }) {
                         </Typography>
                     </Breadcrumbs>
                 </Box>
-                <Box className="sm:columns-1 md:columns-2 mb-4">
-                    {/* Barcode */}
-                    <div className="mb-3">
-                        <TextField
-                            label="Barcode"
-                            id="barcode"
-                            name="barcode"
-                            fullWidth
-                            required
-                            value={productFormData.barcode}
-                            onChange={handleChange}
-                        />
-                    </div>
 
-                    {/* SKU */}
-                    <div className="mb-3">
+                <Grid container spacing={2}>
+                    <Grid size={3}>
                         <TextField
+                                label="Barcode"
+                                id="barcode"
+                                name="barcode"
+                                fullWidth
+                                required
+                                value={productFormData.barcode}
+                                onChange={handleChange}
+                            />
+                    </Grid>
+                    <Grid size={3}>
+                    <TextField
                             label="SKU"
                             id="sku"
                             name="sku"
@@ -226,10 +224,9 @@ export default function Product({ product, collection }) {
                             onChange={handleChange}
                             fullWidth
                         />
-                    </div>
-
-                    <div className="mb-3">
-                        <TextField
+                    </Grid>
+                    <Grid size={4}>
+                    <TextField
                             label="Product Name"
                             id="product-name"
                             name="name"
@@ -238,10 +235,9 @@ export default function Product({ product, collection }) {
                             value={productFormData.name}
                             onChange={handleChange}
                         />
-                    </div>
-
-                    <div>
-                        <FormControl
+                    </Grid>
+                    <Grid size={2}>
+                    <FormControl
                             fullWidth
                             style={{ marginTop: "0", marginBottom: "0" }}
                             margin="dense"
@@ -262,6 +258,12 @@ export default function Product({ product, collection }) {
                                 <MenuItem value={"Meter"}>Meter</MenuItem>
                             </Select>
                         </FormControl>
+                    </Grid>
+                </Grid>
+                <Box className="sm:columns-1 md:columns-2 mb-4">
+                   
+                    <div>
+                        
                     </div>
                 </Box>
 
@@ -281,7 +283,6 @@ export default function Product({ product, collection }) {
                                 name="cost"
                                 type="number"
                                 fullWidth
-                                min={0}
                                 required
                                 slotProps={{
                                     input: {
@@ -293,13 +294,18 @@ export default function Product({ product, collection }) {
 
                         {/* Price */}
                         <div className="mb-3">
-                            <TextField
+                        <TextField
                                 label="Price"
                                 id="price"
                                 name="price"
                                 type="number"
                                 fullWidth
                                 required
+                                slotProps={{
+                                    input: {
+                                        min: 0,
+                                    },
+                                }}
                             />
                         </div>
 
@@ -310,7 +316,6 @@ export default function Product({ product, collection }) {
                                 id="quantity"
                                 name="quantity"
                                 type="number"
-                                min="0"
                                 fullWidth
                                 required
                             />

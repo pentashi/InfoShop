@@ -11,12 +11,13 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    TextField
+    TextField, Typography, Chip
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, router } from "@inertiajs/react";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
-
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import BatchModal from "./Partials/BatchModal";
 import QuantityModal from "./Partials/QuantityModal";
 import CustomPagination from "@/Components/CustomPagination";
@@ -113,7 +114,26 @@ const productColumns = (handleProductEdit) => [
         ),
     },
     { field: "created_at", headerName: "Created At" },
-    { field: "updated_at", headerName: "Updated At" },
+    {
+        field: "is_featured",
+        headerName: "Featured",
+        renderCell: (params) => {
+            if (params.value === 1) {
+                return (
+                    <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100%' }}>
+                        <StarIcon color="primary" />
+                    </Box>
+                );
+            }
+            else{
+                return (
+                    <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100%' }}>
+                        <StarBorderIcon color="primary" />
+                    </Box>
+                );
+            }
+        },
+    },
 ];
 
 export default function Product({ products, stores }) {
@@ -248,7 +268,8 @@ export default function Product({ products, stores }) {
                         hideFooter
                     />
                 </Box>
-                <Grid size={12} container justifyContent={"end"}>
+                <Grid size={12} spacing={2} container justifyContent={"end"}>
+                    <Chip size="large" label={'Total Items :'+dataProducts.total} color="primary" />
                 <CustomPagination
                     dataLinks={dataProducts?.links}
                     refreshTable={refreshProducts}

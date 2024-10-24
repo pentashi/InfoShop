@@ -21,7 +21,8 @@ class Product extends Model
         'is_active',
         'brand_id',
         'category_id',
-        'discount'
+        'discount',
+        'is_featured'
     ];
 
     // Accessor for formatted updated_at date

@@ -22,6 +22,7 @@ class ProductController extends Controller
         $query->select(
             'products.id',
             'product_stocks.id as stock_id',
+            'product_batches.is_featured',
             'product_batches.id AS batch_id',
             DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
             'products.name',
@@ -147,7 +148,7 @@ class ProductController extends Controller
             'price' => $request->price,
         ]);
 
-        $productStock = ProductStock::create([
+        ProductStock::create([
             'store_id' => 1,
             'batch_id' => $productBatch->id, // Use the batch ID from the created ProductBatch
             'quantity' => $request->quantity,
@@ -289,6 +290,7 @@ class ProductController extends Controller
             'price' => $validatedData['price'],
             'expiry_date'=>$request->expiry_date,
             'is_active'=>$request->is_active ?? 0,
+            'is_featured'=>$request->is_featured ?? 0,
         ]);
 
         return response()->json([

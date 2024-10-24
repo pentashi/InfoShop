@@ -39,6 +39,7 @@ class POSController extends Controller
         ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
         ->where('ps.store_id', 1) //Get store ID from session.
+        ->where('pb.is_featured',1)
         ->groupBy(
             'products.id',
             'products.image_url', // Added this

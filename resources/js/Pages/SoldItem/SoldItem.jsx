@@ -3,10 +3,8 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, IconButton, FormControl, TextField, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
+import { Button, Box, FormControl, TextField,Tooltip } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import PaymentsIcon from "@mui/icons-material/Payments";
 import Select2 from "react-select";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -30,7 +28,7 @@ const columns = (handleRowClick) => [
         ),
      },
     { field: "product_name", headerName: "Product Name", width: 200,},
-    { field: "quantity", headerName: "Product Name", width: 100,},
+    { field: "quantity", headerName: "Quantity", width: 100,},
     { field: "discount", headerName: "Discount", width: 100 },
     { field: "unit_cost", headerName: "Cost", width: 100 },
     { field: "unit_price", headerName: "Price", width: 100 },

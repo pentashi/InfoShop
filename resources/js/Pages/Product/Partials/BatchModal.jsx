@@ -74,6 +74,7 @@ export default function BatchModal({
             batch_number: batch.batch_number,
             expiry_date: batch.expiry_date,
             is_active: batch.is_active === 1 ? true : false,
+            is_featured: batch.is_featured === 1 ? true : false,
         }));
     };
 
@@ -97,7 +98,12 @@ export default function BatchModal({
                     ...prevState,
                     is_active: e.target.checked, // Update is_active based on the checkbox state
                 };
-            } else {
+            }else if (name === 'is_featured') {
+                return {
+                    ...prevState,
+                    is_featured: e.target.checked, // Update is_active based on the checkbox state
+                };
+            }else {
                 return {
                     ...prevState,
                     [name]: value, // For other inputs, update based on their name
@@ -262,7 +268,7 @@ export default function BatchModal({
                             />
                         </Grid>
                         <Grid
-                            size={12}
+                            size={6}
                             sx={{ justifyContent: "center", mt: "1rem" }}
                             container
                             direction="row"
@@ -278,6 +284,26 @@ export default function BatchModal({
                                     />
                                 }
                                 label="Is batch active? "
+                                labelPlacement="top"
+                            />
+                        </Grid>
+                        <Grid
+                            size={6}
+                            sx={{ justifyContent: "center", mt: "1rem" }}
+                            container
+                            direction="row"
+                        >
+                            <FormControlLabel
+                                value="1"
+                                control={
+                                    <Switch
+                                        color="primary"
+                                        name="is_featured"
+                                        onChange={handleInputChange}
+                                        checked={formState.is_featured}
+                                    />
+                                }
+                                label="Is featured? "
                                 labelPlacement="top"
                             />
                         </Grid>

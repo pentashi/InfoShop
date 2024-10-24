@@ -16,5 +16,6 @@ class ProductBatch extends Model
         'cost',      // The cost price of this batch
         'price',      // The sale price of this batch
         'is_active',
+        'is_featured',
     ];
 }

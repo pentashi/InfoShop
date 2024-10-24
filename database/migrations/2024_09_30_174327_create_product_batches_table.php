@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('cost', 10, 2); // Cost price
             $table->decimal('price', 10, 2); // Sale price
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
 
             $table->foreign('product_id')->references('id')->on('products');
