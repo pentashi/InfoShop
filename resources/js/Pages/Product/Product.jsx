@@ -22,6 +22,7 @@ import BatchModal from "./Partials/BatchModal";
 import QuantityModal from "./Partials/QuantityModal";
 import CustomPagination from "@/Components/CustomPagination";
 import { useState } from "react";
+import numeral from "numeral";
 
 const productColumns = (handleProductEdit) => [
     // { field: "id", headerName: "ID", width: 70 },
@@ -93,8 +94,15 @@ const productColumns = (handleProductEdit) => [
             </Button>
         ),
     },
-    { field: "cost", headerName: "Cost", width: 100 },
+    { field: "cost", headerName: "Cost", width: 100},
     { field: "price", headerName: "Price", width: 100 },
+    { field: "valuation", headerName: "Valuation", width: 100,
+        renderCell: (params) => {
+            const price = params.row.price;
+            const quantity =  params.row.quantity;
+            return numeral(price*quantity).format('0,0.00');
+        },
+     },
     {
         field: "quantity",
         headerName: "Quantity",
@@ -109,7 +117,7 @@ const productColumns = (handleProductEdit) => [
                 underline="hover"
                 onClick={() => handleProductEdit(params.row, 'qty')}
             >
-                {params.value.toFixed(2)}
+                {numeral(params.value).format('0,0.00')}
             </Button>
         ),
     },
@@ -265,6 +273,15 @@ export default function Product({ products, stores }) {
                                 showQuickFilter: true,
                             },
                         }}
+                        initialState={{
+                            columns: {
+                              columnVisibilityModel: {
+                                // Hide columns status and traderName, the other columns will remain visible
+                                cost: false,
+                                created_at:false
+                              },
+                            },
+                          }}
                         hideFooter
                     />
                 </Box>
