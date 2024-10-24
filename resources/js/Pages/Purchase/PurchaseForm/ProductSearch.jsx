@@ -121,7 +121,7 @@ export default function ProductSearch() {
                 isClearable // Allow the user to clear the selected option
                 noOptionsMessage={() => "No products found"}
                 getOptionLabel={(option) =>
-                    option.name + " | " + option.batch_number
+                    option.name + " | " + option.batch_number + " | " + option.barcode+ " | " + option.sku+" | " + option.quantity
                 }
                 getOptionValue={(option) => option.batch_id}
             ></Select2>

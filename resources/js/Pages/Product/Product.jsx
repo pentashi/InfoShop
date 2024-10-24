@@ -11,7 +11,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    TextField, Typography, Chip
+    TextField, Chip
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Link, router } from "@inertiajs/react";
@@ -25,7 +25,6 @@ import { useState } from "react";
 import numeral from "numeral";
 
 const productColumns = (handleProductEdit) => [
-    // { field: "id", headerName: "ID", width: 70 },
     {
         field: "image_url",
         headerName: "Image",

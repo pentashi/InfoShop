@@ -76,6 +76,10 @@ export default function SearchBox() {
                             ? option
                             : option.name +
                               " | " +
+                            option.barcode +
+                              " | " +
+                            option.sku +
+                              " | " +
                               option.batch_number +
                               " | Rs." +
                               option.price

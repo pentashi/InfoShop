@@ -214,6 +214,8 @@ class ProductController extends Controller
             'products.id',
             DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
             'products.name',
+            'products.barcode',
+            'products.sku',
             'products.discount',
             'products.is_stock_managed',
             DB::raw("COALESCE(product_batches.batch_number, 'N/A') AS batch_number"),
@@ -225,13 +227,14 @@ class ProductController extends Controller
         ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
         ->where('barcode', 'like', '%' . $search_query . '%')
+        ->orWhere('sku', 'like', '%' . $search_query . '%')
         ->orWhere('name', 'like', '%' . $search_query . '%');
 
         if($is_purchase==0){
             $products = $products->where('product_stocks.store_id', 1);
         }
         else{
-            $products = $products->whereNotNull('product_stocks.store_id');;
+            $products = $products->whereNotNull('product_stocks.store_id');
         }
       
         $products = $products
@@ -246,8 +249,10 @@ class ProductController extends Controller
         'products.is_stock_managed',
         'product_batches.cost',
         'product_batches.price',
+        'products.barcode',
+        'products.sku',
         )
-        ->limit(5)->get();
+        ->limit(10)->get();
         
         return response()->json([
             'products' => $products,
