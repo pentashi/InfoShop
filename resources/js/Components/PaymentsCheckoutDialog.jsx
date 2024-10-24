@@ -67,12 +67,10 @@ export default function PaymentsCheckoutDialog({
         formJson.cartItems = cartState;
         formJson.contact_id = selectedContact.id;
         formJson.payments = payments;
+        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
 
         let url='/pos/checkout';
-        if(!is_sale){
-            formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
-            url="/purchase/store" 
-        }
+        if(!is_sale){ url="/purchase/store"}
         else formJson.profit_amount = totalProfit
         axios
         .post(url, formJson)

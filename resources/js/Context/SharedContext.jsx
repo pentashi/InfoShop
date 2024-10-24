@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react';
-
+import dayjs from 'dayjs';
 // Create SharedContext
 export const SharedContext = createContext();
 
@@ -11,6 +11,7 @@ export const SharedProvider = ({ children }) => {
     const [cartItemModalOpen, setCartItemModalOpen] = useState(false)
     const [selectedCartItem, setSelectedCartItem] = useState(null)
     const [selectedLabel, setSelectedLabel] = useState('');
+    const [saleDate, setSaleDate] = useState(dayjs().format('YYYY-MM-DD'));
 
     return (
         <SharedContext.Provider
@@ -24,7 +25,9 @@ export const SharedProvider = ({ children }) => {
                 selectedCartItem,
                 setSelectedCartItem,
                 selectedLabel,
-                setSelectedLabel
+                setSelectedLabel,
+                saleDate,
+                setSaleDate
             }}
         >
             {children}

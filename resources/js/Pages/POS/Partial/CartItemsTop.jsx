@@ -1,5 +1,5 @@
 import React,{useState, useEffect, useContext} from 'react';
-import {Box, IconButton, Autocomplete,TextField} from '@mui/material';
+import {Box, IconButton, Autocomplete,TextField, FormControl, Grid2 as Grid} from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FormDialog from '@/Pages/Contact/Partial/FormDialog';
 
@@ -8,7 +8,7 @@ import { SharedContext } from '@/Context/SharedContext';
 export default function CartItemsTop({customers}) {
   const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState(customers)
-  const { selectedCustomer, setSelectedCustomer} = useContext(SharedContext); 
+  const { selectedCustomer, setSelectedCustomer, saleDate, setSaleDate} = useContext(SharedContext); 
 
   const handleClose = () => {
     setOpen(false);
@@ -40,8 +40,9 @@ export default function CartItemsTop({customers}) {
 
   return (
   
-    <Box sx={{width:'100%', paddingY:'10px'}} className="flex items-center">
+    <Box sx={{width:'100%', paddingY:'12px'}} className="flex items-center">
       {Array.isArray(customerList) && (
+        <FormControl fullWidth>
         <Autocomplete
           disablePortal
           options={customerList}
@@ -54,8 +55,29 @@ export default function CartItemsTop({customers}) {
           }} 
           renderInput={(params) => <TextField {...params} label="Customer" />}
         />
+        </FormControl>
       )}
-    <IconButton onClick={() => setOpen(true)}  sx={{ ml: '1rem', bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
+
+      <FormControl fullWidth sx={{ml:'0.5rem', maxWidth:'150px'}}>
+          <TextField
+              label="Sale Date"
+              name="sale_date"
+              placeholder="Sale Date"
+              fullWidth
+              type="date"
+              slotProps={{
+                  inputLabel: {
+                      shrink: true,
+                  },
+              }}
+              value={saleDate}
+              onChange={(e) => setSaleDate(e.target.value)}
+              required
+          />
+      </FormControl>
+      
+      
+    <IconButton onClick={() => setOpen(true)}  sx={{ ml: '0.5rem', bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
             bgcolor: 'success.dark', // Change the background color on hover
         } }}>
         <PersonAddIcon fontSize="inherit" />

@@ -70,6 +70,7 @@ class POSController extends Controller
         $cartItems = $request->input('cartItems');
         $paymentMethod = $request->input('payment_method', 'none');
         $customerID = $request->input('contact_id');
+        $saleDate = $request->input('sale_date');
         $payments = $request->payments;
         $createdBy = Auth::id();
 
@@ -78,7 +79,7 @@ class POSController extends Controller
             $sale = Sale::create([
                 'store_id' => 1, // Assign appropriate store ID
                 'contact_id' => $customerID, // Assign appropriate customer ID
-                'sale_date' => now(), // Current date and time
+                'sale_date' => $saleDate, // Current date and time
                 'total_amount' => $total, //Net total (total after discount)
                 'discount' => $discount,
                 'amount_received' => $amountReceived,

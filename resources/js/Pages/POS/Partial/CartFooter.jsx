@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 
 export default function CartFooter() {
     const { cartState, holdCart, emptyCart } = useCart();
-    const { selectedCustomer } = useContext(SharedContext);
+    const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [heldModalOpen, setHeldModalOpen] = useState(false);
     const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
 
@@ -122,6 +122,7 @@ export default function CartFooter() {
                 setOpen={setPaymentsModalOpen}
                 selectedContact={selectedCustomer}
                 is_sale={true}
+                formData={{sale_date:saleDate}}
             />
         </Grid>
     );

@@ -18,7 +18,7 @@ import { SharedContext } from "@/Context/SharedContext";
 
 export default function CashCheckoutDialog({ disabled }) {
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
-    const {selectedCustomer} = useContext(SharedContext); 
+    const {selectedCustomer, saleDate} = useContext(SharedContext); 
 
     const [discount, setDiscount] = useState(0);
     const [amountRecieved, setAmountRecieved]=useState(0);
@@ -46,6 +46,7 @@ export default function CashCheckoutDialog({ disabled }) {
         const formJson = Object.fromEntries(formData.entries());
         formJson.cartItems = cartState;
         formJson.profit_amount = totalProfit;
+        formJson.sale_date = saleDate;
         formJson.payment_method = 'Cash'
         formJson.contact_id = selectedCustomer.id
 

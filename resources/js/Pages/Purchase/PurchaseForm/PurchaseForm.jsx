@@ -26,6 +26,7 @@ import ProductSearch from "./ProductSearch";
 import PurchaseCartItems from "./PurchaseCartItems";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 import PurchaseAppBar from "./PurchaseAppBar";
+import dayjs from 'dayjs';
 
 import { usePurchase } from "@/Context/PurchaseContext";
 import { SharedContext } from "@/Context/SharedContext";
@@ -108,7 +109,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     const [purchaseForm, setPurchaseForm] = useState({
         store_id: stores[0].id,
         reference_no: '',
-        purchase_date: new Date().toISOString().split("T")[0], // default to today's date
+        purchase_date: dayjs().format('YYYY-MM-DD'), // default to today's date
     });
 
       // Handle changes for store, reference_no, and purchase_date
