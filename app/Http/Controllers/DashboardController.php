@@ -8,6 +8,9 @@ use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\SaleItem;
 use App\Models\Contact;
+use App\Models\Sale;
+use App\Models\Transaction;
+use App\Models\Expense;
 
 use Illuminate\Support\Facades\DB;
 
@@ -32,5 +35,17 @@ class DashboardController extends Controller
             'pageLabel'=>'Dashboard',
             'data'=>$data,
         ]);
+    }
+
+    public function getDashboardSummary(Request $request){
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $data['total_sales'] = Sale::whereBetween('sale_date', [$startDate, $endDate])->sum('total_amount');
+        $data['cash_in'] = Transaction::where('payment_method','cash')->whereBetween('transaction_date', [$startDate, $endDate])->sum('amount');
+        $data['expenses'] = Expense::whereBetween('expense_date', [$startDate, $endDate])->sum('amount');
+        return response()->json([
+            'summary'=>$data,
+        ], 200);
     }
 }

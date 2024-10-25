@@ -1,35 +1,62 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import {
+    Card,
+    CardContent,
     Typography,
     Grid2 as Grid,
     TextField,
     FormControl,
     ListItem,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Divider
 } from "@mui/material";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import dayjs from "dayjs";
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PaidIcon from "@mui/icons-material/Paid";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import axios from "axios";
+import numeral from "numeral";
 
 export default function Dashboard({ data }) {
     const auth = usePage().props.auth.user;
     const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
+
+    const [cash_in, setCashIn] = useState(0)
+    const [total_sales, setTotalSales] = useState(0)
+    const [expenses, setExpenses] = useState(0)
+
+    const refreshSummary = async () => {
+        try {
+            const response = await axios.post('/dashboard/summary', {
+                start_date:startDate,
+                end_date:endDate
+            });
+            const { cash_in, total_sales, expenses } = response.data.summary;
+            setCashIn(cash_in);
+            setTotalSales(total_sales);
+            setExpenses(expenses);
+        } catch (error) {
+            console.error("Error fetching summary:", error);
+        }
+    };
+
+    useEffect(() => {
+        refreshSummary(); // Call on component mount
+    }, []); // Empty dependency array means this runs once on mount
+
+    useEffect(() => {
+        refreshSummary(); // Call whenever startDate or endDate changes
+    }, [startDate, endDate]);
+
     return (
         <AuthenticatedLayout
             header={
@@ -169,7 +196,7 @@ export default function Dashboard({ data }) {
                         </Grid>
 
                         <List>
-                            <ListItem secondaryAction={"0.00"}>
+                            <ListItem secondaryAction={numeral(total_sales).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
                                         <PaidIcon />
@@ -179,7 +206,7 @@ export default function Dashboard({ data }) {
                             </ListItem>
                             <Divider />
 
-                            <ListItem secondaryAction={"0.00"}>
+                            <ListItem secondaryAction={numeral(cash_in).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
                                         <PaymentsIcon />
@@ -189,7 +216,7 @@ export default function Dashboard({ data }) {
                             </ListItem>
                             <Divider />
 
-                            <ListItem secondaryAction={"0.00"}>
+                            <ListItem secondaryAction={numeral(expenses).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
                                         <AccountBalanceWalletIcon />
