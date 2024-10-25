@@ -44,11 +44,12 @@ export default function Setting({ settings }) {
         shop_logo: settings.shop_logo,
         sale_receipt_note: settings.sale_receipt_note,
         shop_name: settings.shop_name,
+        sale_print_padding_right: settings.sale_print_padding_right,
     });
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        console.log(file)
+        console.log(file);
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -66,7 +67,7 @@ export default function Setting({ settings }) {
         const submittedFormData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(submittedFormData.entries());
 
-        router.post('settings', formJson, {
+        router.post("settings", formJson, {
             forceFormData: true,
             onSuccess: (resp) => {
                 Swal.fire({
@@ -93,80 +94,148 @@ export default function Setting({ settings }) {
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
             >
-            <Grid container flex flexDirection={'column'} spacing={2}>
-                <Grid size={12}>
-                    <Accordion defaultExpanded>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            SHOP INFORMATION
-                        </AccordionSummary>
-                        <AccordionDetails>
-                        <TextField
-                                fullWidth
-                                variant="outlined"
-                                label={"Shop name"}
-                                name="shop_name"
-                                multiline
-                                required
-                                sx={{ mt: "1rem" }}
-                                value={settingFormData.shop_name}
-                                onChange={handleChange}
-                            />
-
-                            <Box sx={{display:'flex', width:'100%', justifyContent:'start', mt:'2rem'}}>
-                            <Card sx={{ width: { xs: "100%", sm: 250 } }}>
-                                <CardMedia
-                                    sx={{ height: 200, contain:'content' }}
-                                    image={settingFormData.shop_logo}
-                                    title="shop logo"
-                                />
-
-                                <CardActions className="mt-0">
-                                    {/* <Box sx={{ flexGrow: 1 }} /> */}
-                                    <Button
-                                        component="label"
-                                        role={undefined}
-                                        variant="contained"
-                                        tabIndex={-1}
-                                        startIcon={<CloudUploadIcon />}
-                                        fullWidth
+                <Box
+                    sx={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <Grid container spacing={2} width={"60%"}>
+                        <Grid size={12}>
+                            <Accordion defaultExpanded>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    SHOP INFORMATION
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            width: "100%",
+                                            justifyContent: "start",
+                                            mt: "1rem",
+                                        }}
                                     >
-                                        Upload shop logo
-                                        <VisuallyHiddenInput
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            name="shop_logo"
-                                        />
-                                    </Button>
-                                </CardActions>
-                            </Card>
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            RECEIPT PRINT
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Box sx={{display:'flex', width:'100%', justifyContent:'center'}}>
-                            <TextField
-                                fullWidth
+                                        <Card
+                                            sx={{
+                                                width: { xs: "100%", sm: 250 },
+                                            }}
+                                        >
+                                            <CardMedia
+                                                sx={{
+                                                    height: 200,
+                                                    contain: "content",
+                                                }}
+                                                image={
+                                                    settingFormData.shop_logo
+                                                }
+                                                title="shop logo"
+                                            />
+
+                                            <CardActions className="mt-0">
+                                                {/* <Box sx={{ flexGrow: 1 }} /> */}
+                                                <Button
+                                                    component="label"
+                                                    role={undefined}
+                                                    variant="contained"
+                                                    tabIndex={-1}
+                                                    startIcon={
+                                                        <CloudUploadIcon />
+                                                    }
+                                                    fullWidth
+                                                >
+                                                    Upload shop logo
+                                                    <VisuallyHiddenInput
+                                                        type="file"
+                                                        onChange={
+                                                            handleFileChange
+                                                        }
+                                                        name="shop_logo"
+                                                    />
+                                                </Button>
+                                            </CardActions>
+                                        </Card>
+                                    </Box>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        label={"Shop name"}
+                                        name="shop_name"
+                                        multiline
+                                        required
+                                        sx={{ mt: "2rem" }}
+                                        value={settingFormData.shop_name}
+                                        onChange={handleChange}
+                                    />
+                                </AccordionDetails>
+                            </Accordion>
+                            <Accordion defaultExpanded>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    RECEIPT PRINT
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Grid container
+                                        sx={{
+                                            display: "flex",
+                                            width: "100%",
+                                        }}
+                                    >
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Receipt note"}
+                                                name="sale_receipt_note"
+                                                multiline
+                                                required
+                                                sx={{ mt: "1rem" }}
+                                                value={
+                                                    settingFormData.sale_receipt_note
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={4}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Padding Right"}
+                                                name="sale_print_padding_right"
+                                                multiline
+                                                required
+                                                sx={{ mt: "1rem" }}
+                                                value={
+                                                    settingFormData.sale_print_padding_right
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Grid>
+                        <Grid
+                            size={12}
+                            justifyContent={"end"}
+                            sx={{ display: "flex" }}
+                        >
+                            <Button
+                                type="submit"
                                 variant="outlined"
-                                label={"Receipt note"}
-                                name="sale_receipt_note"
-                                multiline
-                                required
-                                sx={{ mt: "1rem" }}
-                                value={settingFormData.sale_receipt_note}
-                                onChange={handleChange}
-                            />
-                            </Box>
-                        </AccordionDetails>
-                    </Accordion>
-                </Grid>
-                <Grid size={12} justifyContent={'end'} sx={{display:'flex'}}>
-                    <Button type="submit" variant="outlined" size="large" color="success">UPDATE</Button>
-                </Grid>
-            </Grid>
+                                size="large"
+                                color="success"
+                            >
+                                UPDATE
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
             </form>
         </AuthenticatedLayout>
     );

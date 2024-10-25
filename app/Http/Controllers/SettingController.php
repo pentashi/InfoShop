@@ -25,24 +25,23 @@ class SettingController extends Controller
             'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $saleReceiptNote = $request->input('sale_receipt_note');
-        $shopName = $request->input('shop_name');
-        $setting = Setting::updateOrCreate(
-            ['meta_key' => 'sale_receipt_note'],
-            ['meta_value' => $saleReceiptNote]
-        );
+        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right']);
 
-        Setting::updateOrCreate(
-            ['meta_key' => 'shop_name'],
-            ['meta_value' => $shopName]
-        );
+        foreach ($settingsData as $metaKey => $metaValue) {
+            if ($metaValue !== null) { // Ensure the value is not null before updating
+                Setting::updateOrCreate(
+                    ['meta_key' => $metaKey],
+                    ['meta_value' => $metaValue]
+                );
+            }
+        }
 
         // Handle image upload if a file is present
         if ($request->hasFile('shop_logo')) {
             $image = $request->file('shop_logo');
             
             $folderPath = 'uploads/' . date('Y') . '/' . date('m') . '/';
-            $imageUrl = $request->file('shop_logo')->store($folderPath, 'public');
+            $imageUrl = $image->store($folderPath, 'public');
 
             // Update the 'shop_logo' setting in the database with the image path
             Setting::updateOrCreate(
