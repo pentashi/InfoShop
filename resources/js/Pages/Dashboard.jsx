@@ -67,8 +67,8 @@ export default function Dashboard({ data }) {
         >
             <Head title="Dashboard" />
 
-            <Grid container spacing={2} sx={{ display: "flex" }} width={"100%"}>
-                <Grid size={3}>
+            <Grid container spacing={2} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }} width={"100%"}>
+                <Grid item size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#77E4C8' }}>
                         <CardContent>
                             <Typography
@@ -81,14 +81,14 @@ export default function Dashboard({ data }) {
                             >
                                 Total items
                             </Typography>
-                            <Typography variant="h4" component="div">
+                            <Typography variant="h5" component="div">
                                 {data.totalItems}
                             </Typography>
                             <span>{data.totalQuantities} QTY</span>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={3}>
+                <Grid item size={{xs:12, sm:6, md:3}}>
                     <Card item sx={{ height: "100%", backgroundColor:'#FDFFE2' }}>
                         <CardContent>
                             <Typography
@@ -101,13 +101,13 @@ export default function Dashboard({ data }) {
                             >
                                 Total valuation
                             </Typography>
-                            <Typography variant="h4" component="div">
+                            <Typography variant="h5" component="div">
                                 Rs. {data.totalValuation}
                             </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={3}>
+                <Grid item size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#FAE7F3' }}>
                         <CardContent>
                             <Typography
@@ -120,13 +120,13 @@ export default function Dashboard({ data }) {
                             >
                                 Sold Items
                             </Typography>
-                            <Typography variant="h4" component="div">
+                            <Typography variant="h5" component="div">
                                 {data.soldItems}
                             </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={3}>
+                <Grid item size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#D1E9F6' }}>
                         <CardContent>
                             <Typography
@@ -139,7 +139,7 @@ export default function Dashboard({ data }) {
                             >
                                 Customer balance
                             </Typography>
-                            <Typography variant="h4" component="div">
+                            <Typography variant="h5" component="div">
                                 {data.customerBalance}
                             </Typography>
                         </CardContent>
@@ -147,18 +147,18 @@ export default function Dashboard({ data }) {
                 </Grid>
             </Grid>
 
-            <Grid container size={6} sx={{ mt: "3rem" }}>
-                <Card sx={{ height: "100%" }}>
+            <Grid container size={{xs:12, sm:12, md:4}} sx={{ mt: "3rem", width:'100%' }}>
+                <Card sx={{width:'100%' }} >
                     <CardContent>
-                        <Grid container spacing={2}>
-                            <Grid>
-                                <FormControl>
+                        <Grid container display="flex" spacing={2} width={'100%'}>
+                            <Grid item size={6}>
+                                <FormControl sx={{width:'100%'}}>
                                     <TextField
                                         label="Start Date"
                                         name="start_date"
                                         placeholder="Start Date"
-                                        fullWidth
                                         type="date"
+                                        fullWidth
                                         slotProps={{
                                             inputLabel: {
                                                 shrink: true,
@@ -169,17 +169,18 @@ export default function Dashboard({ data }) {
                                             setStartDate(e.target.value)
                                         }
                                         required
+                                        
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid>
-                                <FormControl>
+                            <Grid item size={6}>
+                                <FormControl sx={{width:'100%'}}>
                                     <TextField
                                         label="End Date"
                                         name="end_date"
                                         placeholder="End Date"
-                                        fullWidth
                                         type="date"
+                                        fullWidth
                                         slotProps={{
                                             inputLabel: {
                                                 shrink: true,
