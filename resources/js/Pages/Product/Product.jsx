@@ -14,6 +14,7 @@ import {
     TextField, Chip
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 import { Link, router } from "@inertiajs/react";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import StarIcon from '@mui/icons-material/Star';
@@ -139,6 +140,17 @@ const productColumns = (handleProductEdit) => [
                     </Box>
                 );
             }
+        },
+    },
+    {
+        field: "action",
+        headerName: "Action",
+        renderCell: (params) => {
+            return (
+                <Link href={`/product/${params.row.batch_id}/barcode`}>
+                    <QrCode2Icon color="primary" />
+                </Link>
+            );
         },
     },
 ];

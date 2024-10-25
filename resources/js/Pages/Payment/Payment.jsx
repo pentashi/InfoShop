@@ -21,7 +21,11 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
-    { field: "id", headerName: "ID", width: 80 },
+    { field: "id", headerName: "ID", width: 80,
+        renderCell: (params) => {
+            return params.value.toString().padStart(4, "0");
+        },
+    },
     { field: "contact_name", headerName: "Customer Name", width: 200 },
     {
         field: "reference_id",

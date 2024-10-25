@@ -311,4 +311,17 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function getBarcode($batch_id)
+    {
+        $product = ProductBatch::select('products.name', 'products.barcode', 'product_batches.price')
+        ->join('products', 'product_batches.product_id', '=', 'products.id')
+        ->where('product_batches.id', $batch_id)
+        ->first();
+
+         // Render the 'Products' component with data
+        return Inertia::render('Product/Barcode', [
+            'product' => $product,
+        ]);
+    }
+
 }
