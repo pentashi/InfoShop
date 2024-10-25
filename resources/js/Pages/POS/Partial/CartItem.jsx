@@ -11,6 +11,7 @@ import CartItemModal from './CartItemModal';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
+import productplaceholder from "./../product-placeholder.webp";
 
 export default function CartItems() {
   const { cartState, removeFromCart } = useCart();
@@ -22,7 +23,7 @@ export default function CartItems() {
         <React.Fragment key={item.id + item.batch_number}>
           <ListItem alignItems="center">
             <ListItemAvatar>
-              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url} />
+              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url?item.image_url:productplaceholder} />
             </ListItemAvatar>
             <ListItemText
               primary={

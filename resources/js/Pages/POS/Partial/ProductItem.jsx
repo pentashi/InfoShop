@@ -2,10 +2,11 @@ import React,{useContext} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import { Typography, Chip } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
+import productplaceholder from "./../product-placeholder.webp";
 
 export default function ProductItem({ product }) {
     const { name, price, image_url, quantity } = product;
@@ -19,7 +20,7 @@ export default function ProductItem({ product }) {
         
       <CardMedia
         sx={{ height: 120 }}
-        image={image_url}
+        image={image_url?image_url:productplaceholder}
         title={name}
       />
       <CardContent sx={{paddingBottom:'10px!important'}}>
@@ -27,8 +28,6 @@ export default function ProductItem({ product }) {
             {name} - ({quantity})
         </Typography>
         <div className='flex justify-center mt-1'>
-            {/* <Chip label={price} color='primary' size='large' />
-             */}
              <p className='font-extrabold'>{price}</p>
         </div>
       </CardContent>
