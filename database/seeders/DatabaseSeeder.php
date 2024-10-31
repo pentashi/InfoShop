@@ -1,8 +1,10 @@
 <?php
 
 namespace Database\Seeders;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use App\Models\Store;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,10 +18,22 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Admin',
+            'user_name'=>'admin',
+            'user_role'=>'admin',
             'email' => 'test@example.com',
+            'password' => Hash::make('8236'),
         ]);
 
-        $this->call(ContactSeeder::class);
+        Store::create([
+            'name' => 'One Shop store',
+            'address'=>'Your address',
+            'contact_number'=>'00000001',
+        ]);
+
+        $this->call([
+            ContactSeeder::class,
+            SettingSeeder::class,
+        ]);
     }
 }
