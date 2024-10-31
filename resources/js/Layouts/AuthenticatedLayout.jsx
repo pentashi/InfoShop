@@ -31,7 +31,7 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import PeopleIcon from "@mui/icons-material/People";
-import Tooltip from "@mui/material/Tooltip"
+import Tooltip from "@mui/material/Tooltip";
 
 import oneshopLogo from "./oneshop-logo.png";
 const drawerWidth = 240;
@@ -264,22 +264,39 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         onClick={handleDrawerToggle}
                         sx={{ mr: 2, display: { sm: "none" } }}
                     >
-                        <MenuIcon fontSize="large"/>
+                        <MenuIcon fontSize="large" />
                     </IconButton>
-                    <Grid container spacing={2} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
-            <Typography variant="h5" noWrap component="div" sx={{textTransform:'capitalize'}}>
-              {shop_name} | {pageLabel}
-            </Typography>
-            <Tooltip title="Logout" arrow>
-            <IconButton
-                    color="white"
-                    size='large'
-                    onClick={(e) => router.post("logout")}
-                >
-                    <LogoutIcon fontSize="large" sx={{color:'white'}}/>
-                </IconButton>
-                </Tooltip>
-            </Grid>
+                    <Grid
+                        container
+                        spacing={2}
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                        width={"100%"}
+                        display={'flex'}
+                        flexDirection={{xs:'column',sm:'row'}}
+                    >
+                        <Typography
+                            variant="h5"
+                            noWrap
+                            component="div"
+                            sx={{ textTransform: "capitalize" }}
+                        >
+                            {shop_name} | {pageLabel}
+                        </Typography>
+                        <Tooltip title="Logout" arrow>
+                            <IconButton
+                                color="white"
+                                size="large"
+                                onClick={(e) => router.post("logout")}
+                                sx={{display: { xs: "none", sm:'block' } }}
+                            >
+                                <LogoutIcon
+                                    fontSize="large"
+                                    sx={{ color: "white" }}
+                                />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
                 </Toolbar>
             </AppBar>
             <Box
