@@ -24,7 +24,8 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
-
+            $table->softDeletes();
+            
             $table->foreign('store_id')->references('id')->on('stores');
             $table->foreign('contact_id')->references('id')->on('contacts');
             $table->foreign('created_by')->references('id')->on('users');

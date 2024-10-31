@@ -20,7 +20,9 @@ return new class extends Migration
             $table->decimal('unit_price', 10, 2); // Purchase price per unit
             $table->decimal('unit_cost', 10, 2); // Cost price per unit (if different from unit price, e.g., after tax)
             $table->decimal('discount', 10, 2)->default(0);
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('purchase_id')->references('id')->on('purchases');
             $table->foreign('product_id')->references('id')->on('products');

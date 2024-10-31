@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('amount', 10, 2);
             $table->date('expense_date');
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('store_id')->references('id')->on('stores');
         });

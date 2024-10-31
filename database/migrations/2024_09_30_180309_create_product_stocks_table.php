@@ -16,7 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id'); // Foreign key for the store
             $table->unsignedBigInteger('batch_id'); // Foreign key for the product batch
             $table->decimal('quantity', 10, 2)->default(0.00); // Quantity of stock available (decimal type)
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('store_id')->references('id')->on('stores');
             $table->foreign('batch_id')->references('id')->on('product_batches');

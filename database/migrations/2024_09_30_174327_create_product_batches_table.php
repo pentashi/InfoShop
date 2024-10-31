@@ -20,7 +20,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2); // Sale price
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('product_id')->references('id')->on('products');
         });

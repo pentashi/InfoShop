@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name'); // Creates the name column
             $table->string('address'); // Creates the address column
             $table->string('contact_number'); 
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -21,10 +21,10 @@ return new class extends Migration
             $table->decimal('balance', 10, 2)->default(0.00); // Account balance
             $table->decimal('loyalty_points', 10, 2)->nullable(); // Loyalty points for customers (nullable for vendors)
             $table->enum('type', ['customer', 'vendor']); // Type column to distinguish between customer and vendor
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
-
-        Artisan::call('db:seed --class=ContactSeeder');
     }
 
     /**

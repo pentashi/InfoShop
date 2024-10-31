@@ -23,7 +23,9 @@ return new class extends Migration
             $table->string('payment_status'); //['paid', 'partial', 'pending', 'overdue']
             $table->string('status'); //['completed', 'pending', 'canceled']
             $table->text('note')->nullable(); // Optional notes on the purchase
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('store_id')->references('id')->on('stores');
             $table->foreign('contact_id')->references('id')->on('contacts');

@@ -21,7 +21,9 @@ return new class extends Migration
             $table->string('payment_method'); // Payment method
             $table->string('transaction_type'); // 'purchase', 'opening_balance', 'account'
             $table->string('note')->nullable();
+            $table->integer('created_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('sales_id')->references('id')->on('sales');
             $table->foreign('store_id')->references('id')->on('stores');

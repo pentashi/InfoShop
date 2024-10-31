@@ -15,8 +15,10 @@ class SettingSeeder extends Seeder
     {
         $settings = [
             ['meta_key' => 'shop_name', 'meta_value' => 'One shop'],
-            ['meta_key' => 'shop_logo', 'meta_value' => ''],
+            ['meta_key' => 'shop_logo', 'meta_value' => 'oneshop-logo.png'],
             ['meta_key' => 'sale_reciept_note', 'meta_value' => 'Thank you'],
+            ['meta_key' => 'sale_print_padding_right', 'meta_value' => '35'],
+
         ];
 
         Setting::insert($settings);

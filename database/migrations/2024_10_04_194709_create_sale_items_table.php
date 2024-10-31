@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('unit_cost', 10, 2); // Cost price per unit
             $table->decimal('discount', 10, 2)->default(0); // Discount applied to this item
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('sale_id')->references('id')->on('sales');
             $table->foreign('product_id')->references('id')->on('products');
