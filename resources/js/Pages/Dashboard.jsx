@@ -140,7 +140,7 @@ export default function Dashboard({ data }) {
                                 Customer balance
                             </Typography>
                             <Typography variant="h5" component="div">
-                                {data.customerBalance}
+                                Rs. {data.customerBalance}
                             </Typography>
                         </CardContent>
                     </Card>

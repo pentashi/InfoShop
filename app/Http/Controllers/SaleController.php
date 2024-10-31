@@ -74,7 +74,7 @@ class SaleController extends Controller
             'status',                  // Sale status
             'stores.address',
             'contacts.name', // Customer name from contacts
-            'created_by',
+            'sales.created_by',
         )
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
         ->join('stores', 'sales.store_id','=','stores.id')

@@ -98,7 +98,7 @@ const productColumns = (handleProductEdit) => [
     { field: "price", headerName: "Price", width: 100 },
     { field: "valuation", headerName: "Valuation", width: 100,
         renderCell: (params) => {
-            const price = params.row.price;
+            const price = params.row.cost;
             const quantity =  params.row.quantity;
             return numeral(price*quantity).format('0,0.00');
         },
