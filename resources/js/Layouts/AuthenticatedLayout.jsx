@@ -68,7 +68,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
         return pathname === baseHref || pathname.startsWith(baseHref);
     };
 
-    const NavItem = ({ href, icon: Icon, label, open, selected }) => (
+    const NavItem = ({ href, icon: Icon, label, open, selected, onClick }) => (
         <Link href={href}>
             <ListItem disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -97,6 +97,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             ? { justifyContent: "initial" }
                             : { justifyContent: "center" },
                     ]}
+                    onClick={onClick}
                 >
                     <ListItemIcon
                         sx={[
@@ -237,6 +238,16 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     label="Users"
                     open={open}
                     selected={isSelected("/users")}
+                />
+                <NavItem
+                    href={'#'}
+                    icon={LogoutIcon}
+                    label="Logout"
+                    open={open}
+                    onClick={(e) => {
+                        e.preventDefault(); // Prevent default link behavior
+                        router.post("logout"); // Call your logout function here
+                    }}
                 />
             </List>
         </div>

@@ -69,13 +69,6 @@ export default function Contact({contacts, type, stores}) {
     setOpen(false);
   };
 
-//   Reload the table after form success
-  const handleFormSuccess = (contact) => {
-    router.reload({
-        only: ['contacts'],
-      })
-  };
-
   const refreshContacts = (url) => {
     const options = {
         preserveState: true, // Preserves the current component's state
@@ -92,73 +85,99 @@ export default function Contact({contacts, type, stores}) {
         },
         options
     );
-};
+  };
+
+  //   Reload the table after form success
+  const handleFormSuccess = (contact) => {
+    refreshContacts(window.location.pathname)
+  };
 
   return (
-    <AuthenticatedLayout>
-        {/* Capitalize first letter of type and add s at the end */}
-      <Head title={type[0].toUpperCase()+ type.slice(1)+'s'} />
+      <AuthenticatedLayout>
+          {/* Capitalize first letter of type and add s at the end */}
+          <Head title={type[0].toUpperCase() + type.slice(1) + "s"} />
 
-      <Grid container spacing={2} alignItems="center" sx={{ width: '100%' }}>
-        <Grid size={12} spacing={2} container justifyContent="end">
-          <TextField
-          sx={{minWidth:'300px'}}
-              name="search_query"
-              label="Search"
-              variant="outlined"
-              value={searchQuery}
-              onChange={(e)=>setSearchQuery(e.target.value)}
-              required
-              onFocus={(event) => {
-                  event.target.select();
-              }}
-              slotProps={{
-                  inputLabel: {
-                      shrink: true,
-                  },
-              }}
+          <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              sx={{ width: "100%" }}
+          >
+              <Grid size={12} spacing={2} container justifyContent="end">
+                  <TextField
+                      sx={{ minWidth: "300px" }}
+                      name="search_query"
+                      label="Search"
+                      variant="outlined"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      required
+                      onFocus={(event) => {
+                          event.target.select();
+                      }}
+                      slotProps={{
+                          inputLabel: {
+                              shrink: true,
+                          },
+                      }}
+                  />
+                  <Button
+                      variant="contained"
+                      onClick={() => refreshContacts(window.location.pathname)}
+                      size="large"
+                  >
+                      <FindReplaceIcon />
+                  </Button>
+                  <Button
+                      variant="contained"
+                      startIcon={<AddIcon />}
+                      onClick={handleClickOpen}
+                  >
+                      Add {type[0].toUpperCase() + type.slice(1)}
+                  </Button>
+              </Grid>
+
+              <Box
+                  className="py-6 w-full"
+                  sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+              >
+                  <DataGrid
+                      rows={dataContacts.data}
+                      columns={columns(handleRowClick)}
+                      slots={{ toolbar: GridToolbar }}
+                      getRowId={(row) => row.id}
+                      slotProps={{
+                          toolbar: {
+                              showQuickFilter: true,
+                          },
+                      }}
+                      hideFooter
+                  />
+              </Box>
+              <Grid size={12} container justifyContent={"end"}>
+                  <CustomPagination
+                      dataLinks={dataContacts?.links}
+                      refreshTable={refreshContacts}
+                      dataLastPage={dataContacts?.last_page}
+                  ></CustomPagination>
+              </Grid>
+          </Grid>
+
+          <FormDialog
+              open={open}
+              handleClose={handleClose}
+              contact={selectedContact}
+              contactType={type}
+              onSuccess={handleFormSuccess}
           />
-          <Button variant="contained" onClick={()=>refreshContacts(window.location.pathname)} size="large">
-                    <FindReplaceIcon />
-          </Button>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>
-            Add {type[0].toUpperCase()+ type.slice(1)}
-          </Button>
-        </Grid>
-
-        <Box className="py-6 w-full" sx={{ display: 'grid', gridTemplateColumns: '1fr' }}>
-          <DataGrid
-            rows={dataContacts.data}
-            columns={columns(handleRowClick)}
-            slots={{ toolbar: GridToolbar }}
-            getRowId={(row) => row.id}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-              },
-            }}
-            hideFooter
+          <AddPaymentDialog
+              open={paymentModalOpen}
+              setOpen={setPaymentModalOpen}
+              selectedContact={selectedContact?.id}
+              is_customer={type === "customer" ? true : false}
+              stores={stores}
+              refreshTable={refreshContacts}
           />
-        </Box>
-        <Grid size={12} container justifyContent={"end"}>
-                <CustomPagination
-                    dataLinks={dataContacts?.links}
-                    refreshTable={refreshContacts}
-                    dataLastPage={dataContacts?.last_page}
-                ></CustomPagination>
-            </Grid>
-      </Grid>
-
-      <FormDialog open={open} handleClose={handleClose} contact={selectedContact} contactType={type} onSuccess={handleFormSuccess} />
-      <AddPaymentDialog
-          open={paymentModalOpen}
-          setOpen={setPaymentModalOpen}
-          selectedContact={selectedContact?.id}
-          is_customer={type === 'customer' ? true:false}
-          stores={stores}
-          refreshTable={refreshContacts}
-      />
-
-    </AuthenticatedLayout>
+      </AuthenticatedLayout>
   );
 }

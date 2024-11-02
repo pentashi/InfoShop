@@ -34,7 +34,6 @@ import { SharedContext } from "@/Context/SharedContext";
 export default function PurchaseForm({ vendors, purchase, stores }) {
     const { cartState, cartTotal, } = usePurchase();
     const { selectedVendor, setSelectedVendor } = useContext(SharedContext);
-    const [store, setStore] = useState("");
 
     const [open, setOpen] = useState(false);
     const [vendorList, setvendorList] = useState(vendors);
@@ -74,10 +73,6 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     useEffect(() => {
         console.log(cartState)
     }, [cartState]);
-
-    const handleStoreChange = (event) => {
-        setStore(event.target.value);
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -258,7 +253,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             
             <PurchaseCartItems />
 
-            <PurchaseAppBar setOpenPayment={setOpenPayment}></PurchaseAppBar>
+            <PurchaseAppBar setOpenPayment={setOpenPayment} selectedVendor={selectedVendor}></PurchaseAppBar>
             
             <PaymentsCheckoutDialog
                 open={openPayment}

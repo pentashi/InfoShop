@@ -230,7 +230,7 @@ export default function Product({ products, stores }) {
                         </Select>
                     </FormControl>
                     <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
-                        <InputLabel>Store</InputLabel>
+                        <InputLabel>Status</InputLabel>
                         <Select
                             value={selectedStatus}
                             label="Status"
