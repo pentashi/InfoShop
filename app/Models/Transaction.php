@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Userstamps;
 
 class Transaction extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Userstamps;
 
     protected $fillable = [
         'sales_id',          // Unique identifier for the sale

@@ -129,6 +129,9 @@ export default function Setting({ settings }) {
                                                 sx={{
                                                     height: 200,
                                                     contain: "content",
+                                                    padding:"8px",
+                                                    backgroundSize:'contain',
+                                                    backgroundOrigin:'content-box',
                                                 }}
                                                 image={
                                                     settingFormData.shop_logo

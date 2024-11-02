@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Userstamps;
 
 class Purchase extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Userstamps;
 
     protected $fillable = [
         'store_id',
