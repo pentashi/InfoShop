@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Head, Link } from "@inertiajs/react";
 import {
     AppBar,
@@ -15,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
+import Swal from "sweetalert2";
 
 import ProductItem from "./Partial/ProductItem";
 import CartItems from "./Partial/CartItem";
@@ -46,7 +47,7 @@ const DrawerFooter = styled("div")(({ theme }) => ({
     zIndex: "999",
 }));
 
-function POS({ products, customers }) {
+function POS({ products, customers, currentStore }) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -64,6 +65,19 @@ function POS({ products, customers }) {
             setMobileOpen(!mobileOpen);
         }
     };
+
+    useEffect(() => {
+        Swal.fire({
+            title: currentStore,
+            icon: "success",
+            showConfirmButton: false,
+            position: "bottom-start",
+            timer: 2000,
+            timerProgressBar: true,
+            toast: true,
+        });
+      },
+    );
 
     const drawer = (
         <>

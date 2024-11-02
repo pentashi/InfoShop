@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Contact;
 use App\Models\ProductStock;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class POSController extends Controller
         if (app()->environment('production')) $imageUrl='public/storage/';
 
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
-
+        $currentStore = Store::find(session('store_id'));
         $products = Product::select(
             'products.id',
             DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
@@ -59,6 +60,7 @@ class POSController extends Controller
             'products' => $products,
             'urlImage' =>url('storage/'),
             'customers'=>$contacts,
+            'currentStore'=>$currentStore->name,
         ]);
     }
 
