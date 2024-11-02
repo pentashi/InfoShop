@@ -12,9 +12,11 @@ class StoreController extends Controller
 {
     public function index()
     {
+        $currentStoreId = session('store_id');
         $stores = Store::select('id','name', 'address', 'contact_number', 'created_at')->get();
         return Inertia::render('Store/Store', [
             'stores' => $stores,
+            'current_store_id' => $currentStoreId,
             'pageLabel'=>'Stores',
         ]);
     }
@@ -51,6 +53,20 @@ class StoreController extends Controller
 
         // Redirect with success message
         return Redirect::route('store')->with('success', 'Store updated successfully!');
+    }
+
+    public function changeSelectedStore(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'store_id' => 'required|integer|exists:stores,id', // Ensure store_id is valid
+        ]);
+
+        // Set the store_id in the session
+        session(['store_id' => $request->store_id]);
+
+        // Optionally return a response
+        return response()->json(['message' => 'Store ID updated successfully.']);
     }
 
 }

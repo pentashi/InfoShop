@@ -135,7 +135,6 @@ class TransactionController extends Controller
                 }
             }
 
-
             DB::commit();
             return response()->json([
                 'message'=>"Payment added successfully",

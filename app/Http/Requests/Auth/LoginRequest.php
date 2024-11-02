@@ -54,31 +54,32 @@ class LoginRequest extends FormRequest
     // }
 
     public function authenticate(): void
-{
-    $this->ensureIsNotRateLimited();
+    {
+        $this->ensureIsNotRateLimited();
 
-    // Retrieve the input for email or username
-    $credentials = $this->only('email', 'password');
-    $usernameOrEmail = $this->input('email'); // Assuming the input field is still named 'email'
+        // Retrieve the input for email or username
+        $credentials = $this->only('email', 'password');
+        $usernameOrEmail = $this->input('email'); // Assuming the input field is still named 'email'
 
-    // Check if the input is an email or username
-    $user = User::where('email', $usernameOrEmail)
-                ->orWhere('user_name', $usernameOrEmail)
-                ->first();
+        // Check if the input is an email or username
+        $user = User::where('email', $usernameOrEmail)
+                    ->orWhere('user_name', $usernameOrEmail)
+                    ->first();
 
-    // If user is found and password matches
-    if ($user && Auth::attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
-        RateLimiter::clear($this->throttleKey());
-        return; // Authentication successful
+        // If user is found and password matches
+        if ($user && Auth::attempt(['email' => $user->email, 'password' => $this->input('password')], $this->boolean('remember'))) {
+            session(['store_id' => $user->store_id]);
+            RateLimiter::clear($this->throttleKey());
+            return; // Authentication successful
+        }
+
+        // If authentication fails
+        RateLimiter::hit($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
     }
-
-    // If authentication fails
-    RateLimiter::hit($this->throttleKey());
-
-    throw ValidationException::withMessages([
-        'email' => trans('auth.failed'),
-    ]);
-}
 
     /**
      * Ensure the login request is not rate limited.

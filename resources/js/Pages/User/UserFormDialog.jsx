@@ -5,13 +5,14 @@ import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, S
 import Swal from 'sweetalert2';
 
 
-export default function UserFormDialog({ open, handleClose, user }) {
+export default function UserFormDialog({ open, handleClose, user, stores }) {
     const [formState, setFormState] = useState({
       name: '',
       email: '',
       password: '',
       user_name: '',
       user_role: '',
+      store_id:'',
     });
   
     useEffect(() => {
@@ -22,6 +23,7 @@ export default function UserFormDialog({ open, handleClose, user }) {
           password: '', // Password should not be pre-filled for security reasons
           user_name: user.user_name || '',
           user_role: user.user_role || '',
+          store_id: user.store_id || '',
         });
       } else {
         setFormState({
@@ -30,6 +32,7 @@ export default function UserFormDialog({ open, handleClose, user }) {
           password: '',
           user_name: '',
           user_role: 'user',
+          store_id: stores[0].id,
         });
       }
     }, [user]);
@@ -173,6 +176,23 @@ export default function UserFormDialog({ open, handleClose, user }) {
               {/* Add more roles as needed */}
             </Select>
           </FormControl>
+
+          <FormControl sx={{ width:'100%', mt:'1rem' }}>
+            <InputLabel>Store</InputLabel>
+            <Select
+                value={formState.store_id}
+                label="Store"
+                onChange={handleChange}
+                required
+                name="store_id"
+            >
+                {stores?.map((store) => (
+                    <MenuItem key={store.id} value={store.id}>
+                        {store.name}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

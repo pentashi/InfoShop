@@ -5,15 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Store;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
     public function index(){
-        $users=User::all();
+        $stores = Store::select('id', 'name')->get();
+        $users=User::select('users.id','users.name','user_name', 'user_role', 'email', 'stores.name as store_name', 'users.created_at', 'store_id')->leftJoin('stores','stores.id','=','users.store_id')->get();
         return Inertia::render('User/User',[
             'users'=>$users,
+            'stores'=>$stores,
             'pageLabel'=>'Users',
         ]);
     }
@@ -36,6 +39,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password), // Hash the password
             'user_name' => $request->user_name,
             'user_role' => $request->user_role,
+            'store_id' => $request->store_id,
         ]);
 
         return Redirect::route('users.index');
@@ -60,6 +64,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->user_name = $request->user_name;
         $user->user_role = $request->user_role;
+        $user->store_id= $request->store_id;
 
         // Only update the password if it is provided
         if ($request->filled('password')) {

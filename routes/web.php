@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/stores', [StoreController::class, 'index'])->name('store');
     Route::post('/store', [StoreController::class, 'store']);
     Route::put('/store/{id}', [StoreController::class, 'update']);
+    Route::post('/change-store', [StoreController::class, 'changeSelectedStore'])->name('change.store');
 
     Route::get('/collections', [CollectionController::class, 'index'])->name('collection');
     Route::post('/collection', [CollectionController::class, 'store']);

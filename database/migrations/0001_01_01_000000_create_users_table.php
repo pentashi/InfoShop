@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->boolean('is_active')->default(true);
+            $table->integer('store_id')->default(1)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

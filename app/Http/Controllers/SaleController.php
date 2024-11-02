@@ -10,7 +10,6 @@ use App\Models\Setting;
 use App\Models\Contact;
 use App\Models\User;
 
-
 class SaleController extends Controller
 {
     public function getSales($filters){

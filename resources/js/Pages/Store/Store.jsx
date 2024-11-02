@@ -5,33 +5,15 @@ import { Head, usePage } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
 import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { router } from '@inertiajs/react'
 
 import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 
 import FormDialog from './Partial/FormDialog';
 
-
-  const columns = (handleEdit) => [
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Store Name', width: 200,
-      renderCell: (params) => (
-        <Button
-          onClick={() => handleEdit(params.row)}
-          variant="text"
-          sx={{fontWeight:'bold'}}
-        >
-          {params.value}
-        </Button>
-      ),
-    },
-    { field: 'address', headerName: 'Address', width: 300 },
-    { field: 'contact_number', headerName: 'Contact Number', width: 180 },
-    { field: 'created_at', headerName: 'Created At', width: 200 },
-  ];
-
- export default function Store({stores,session}) {
+ export default function Store({stores,current_store_id}) {
     const auth = usePage().props.auth.user
     const [open, setOpen] = useState(false);
     const [selectedStore, setSelectedStore] = useState(null);
@@ -51,7 +33,48 @@ import FormDialog from './Partial/FormDialog';
         setOpen(false);
     };
 
-   
+    const columns = (handleEdit) => [
+      { field: 'id', headerName: 'ID', width: 50 },
+      { field: 'name', headerName: 'Store Name', width: 250,
+        renderCell: (params) => (
+          <Button
+            onClick={() => handleEdit(params.row)}
+            variant="text"
+            sx={{fontWeight:'bold'}}
+          >
+            {params.value}
+          </Button>
+        ),
+      },
+      { field: 'address', headerName: 'Address', width: 300 },
+      { field: 'contact_number', headerName: 'Contact Number', width: 180 },
+      { field: 'created_at', headerName: 'Created At', width: 120 },
+      { headerName: 'Current store', width: 130,
+          renderCell: (params) => (
+            <Button
+                onClick={params.row.id === current_store_id ? undefined : () => changeSelectedStore(params.row.id)}
+                variant={params.row.id === current_store_id ? 'contained' : 'text'}
+                color={params.row.id === current_store_id ? 'success' : 'primary'}
+                sx={{ fontWeight: 'bold' }}
+            >
+                {params.row.id === current_store_id ? 'Selected' : 'Select'} {/* Change text based on condition */}
+            </Button>
+          ),
+      },
+    ];
+
+    const changeSelectedStore = async (newStoreId) => {
+      try {
+          const response = await axios.post('/change-store', {
+              store_id: newStoreId,
+          });
+          console.log(response.data.message); // Handle success message
+          router.reload({ only: ['stores', 'current_store_id'] })
+      } catch (error) {
+          console.error('Error changing store ID:', error.response.data); // Handle error
+      }
+  };
+
     return (
         <AuthenticatedLayout>
           

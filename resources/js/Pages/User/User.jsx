@@ -28,10 +28,11 @@ import FormDialog from './UserFormDialog';
     { field: 'user_name', headerName: 'User Name', width: 150 },
     { field: 'user_role', headerName: 'User Role', width: 150 },
     { field: 'email', headerName: 'Email', width: 150 },
+    { field: 'store_name', headerName: 'Store', width: 150 },
     { field: 'created_at', headerName: 'Created At', width: 200 },
   ];
 
- export default function User({users}) {
+ export default function User({users, stores}) {
     const auth = usePage().props.auth.user
     const [open, setOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -79,7 +80,7 @@ import FormDialog from './UserFormDialog';
                   </Box>
                 </Grid>
 
-                <FormDialog open={open} handleClose={handleClose} user={selectedUser} />
+                <FormDialog open={open} handleClose={handleClose} stores={stores} user={selectedUser} />
             
         </AuthenticatedLayout>
     );

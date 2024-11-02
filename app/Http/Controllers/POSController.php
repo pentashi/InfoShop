@@ -78,7 +78,7 @@ class POSController extends Controller
         DB::beginTransaction();
         try{
             $sale = Sale::create([
-                'store_id' => 1, // Assign appropriate store ID
+                'store_id' => session('store_id'), // Assign appropriate store ID
                 'contact_id' => $customerID, // Assign appropriate customer ID
                 'sale_date' => $saleDate, // Current date and time
                 'total_amount' => $total, //Net total (total after discount)
