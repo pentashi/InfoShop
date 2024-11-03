@@ -54,7 +54,7 @@ const cartReducer = (state, action) => {
         cart[existingProductIndex].quantity = action.payload.newQuantity;
 
         // If quantity becomes 0 or less, remove the item from the cart
-        if (action.payload.newQuantity <= 0) {
+        if (action.payload.newQuantity == 0) {
           cart.splice(existingProductIndex, 1);
         }
       }

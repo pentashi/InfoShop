@@ -232,7 +232,7 @@ class ProductController extends Controller
         ->orWhere('name', 'like', '%' . $search_query . '%');
 
         if($is_purchase==0){
-            $products = $products->where('product_stocks.store_id', 1);
+            $products = $products->where('product_stocks.store_id', session('store_id'));
         }
         else{
             $products = $products->whereNotNull('product_stocks.store_id');

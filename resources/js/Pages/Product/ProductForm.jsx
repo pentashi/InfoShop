@@ -386,7 +386,7 @@ export default function Product({ product, collection }) {
                     More Information
                 </Typography>
 
-                <Box sx={{ flexGrow: 1 }} className="pb-10 mt-4">
+                <Box sx={{ flexGrow: 1 }} className="pb-16 mt-4">
                     <Grid container spacing={2}>
                         <Grid size={{ xs: 12, md: 4 }}>
                             <div className="mb-3">

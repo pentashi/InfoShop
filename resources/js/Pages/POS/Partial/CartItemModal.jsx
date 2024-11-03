@@ -177,7 +177,7 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                     input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                        startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                     },
                                 }}
                             />
@@ -204,7 +204,7 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                     input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                        startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                     },
                                 }}
                             />
@@ -232,6 +232,7 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                     input: {
+                                        startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                         endAdornment: <InputAdornment position="end">
                                         <IconButton
                                           aria-label="toggle cost visibility"

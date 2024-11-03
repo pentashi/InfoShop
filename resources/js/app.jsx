@@ -11,10 +11,6 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 import { InertiaProgress } from '@inertiajs/progress';
 
-import NProgress from 'nprogress'
-import { router } from '@inertiajs/react'
-import { Inertia } from '@inertiajs/inertia'
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
 
 InertiaProgress.init({

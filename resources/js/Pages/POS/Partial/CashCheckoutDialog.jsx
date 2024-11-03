@@ -67,8 +67,16 @@ export default function CashCheckoutDialog({ disabled }) {
             // setOpen(false)           
         })
         .catch((error) => {
-            console.error("Submission failed with errors:", error);
-            console.log(formJson);
+            // console.error("Submission failed with errors:", error);
+            Swal.fire({
+                title: "Failed!",
+                text: error.response.data.error,
+                icon: "error",
+                showConfirmButton: true,
+                // timer: 2000,
+                // timerProgressBar: true,
+            });
+            console.log(error);
         });
     };
 

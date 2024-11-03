@@ -82,8 +82,13 @@ export default function AddPaymentDialog({
             setOpen(false)
         })
         .catch((error) => {
-            console.error("Submission failed with errors:", error);
-            console.log(formJson);
+            Swal.fire({
+                title: "Failed!",
+                text: error.response.data.error,
+                icon: "error",
+                showConfirmButton: true,
+            });
+            console.log(error);
         });
     };
 

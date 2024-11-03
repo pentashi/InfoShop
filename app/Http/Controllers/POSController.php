@@ -39,15 +39,15 @@ class POSController extends Controller
         )
         ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->where('ps.store_id', 1) //Get store ID from session.
+        ->where('ps.store_id', session('store_id')) //Get store ID from session.
         ->where('pb.is_featured',1)
         ->groupBy(
             'products.id',
-            'products.image_url', // Added this
-            'products.name',      // Added this
-            'products.discount',  // Added this
-            'products.is_stock_managed', // Added this
-            DB::raw("COALESCE(pb.batch_number, 'N/A')"), // Ensure this is matched as well
+            'products.image_url',
+            'products.name',
+            'products.discount',
+            'products.is_stock_managed',
+            DB::raw("COALESCE(pb.batch_number, 'N/A')"),
             'pb.cost', 
             'pb.price', 
             'pb.id', 

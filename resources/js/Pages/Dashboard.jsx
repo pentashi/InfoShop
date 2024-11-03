@@ -68,7 +68,7 @@ export default function Dashboard({ data }) {
             <Head title="Dashboard" />
 
             <Grid container spacing={2} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }} width={"100%"}>
-                <Grid item size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#77E4C8' }}>
                         <CardContent>
                             <Typography
@@ -88,8 +88,8 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item size={{xs:12, sm:6, md:3}}>
-                    <Card item sx={{ height: "100%", backgroundColor:'#FDFFE2' }}>
+                <Grid size={{xs:12, sm:6, md:3}}>
+                    <Card sx={{ height: "100%", backgroundColor:'#FDFFE2' }}>
                         <CardContent>
                             <Typography
                                 gutterBottom
@@ -107,7 +107,7 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#FAE7F3' }}>
                         <CardContent>
                             <Typography
@@ -126,7 +126,7 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:12, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#D1E9F6' }}>
                         <CardContent>
                             <Typography
@@ -151,7 +151,7 @@ export default function Dashboard({ data }) {
                 <Card sx={{width:'100%' }} >
                     <CardContent>
                         <Grid container display="flex" spacing={2} width={'100%'}>
-                            <Grid item size={6}>
+                            <Grid size={6}>
                                 <FormControl sx={{width:'100%'}}>
                                     <TextField
                                         label="Start Date"
@@ -173,7 +173,7 @@ export default function Dashboard({ data }) {
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid item size={6}>
+                            <Grid size={6}>
                                 <FormControl sx={{width:'100%'}}>
                                     <TextField
                                         label="End Date"

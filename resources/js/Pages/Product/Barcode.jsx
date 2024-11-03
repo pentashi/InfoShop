@@ -8,11 +8,11 @@ export default function ProoductBarcode({ product }) {
     return (
         <>
             <Head title="Barcode" />
-            <div style={{textAlign:'center', maxWidth:'200px'}}>
-                <strong>{shop_name}</strong>
-                <Barcode value={product.barcode} height={50} width={2}/>
-                <p>{product.name}</p>
-                <p>{product.price}</p>
+            <div style={{textAlign:'center', maxWidth:'250px', display:"flex", alignItems:'center', flexDirection:'column'}}>
+                <p style={{fontSize:'18px', fontWeight:'bold', }}>{shop_name}</p>
+                <p style={{fontSize:'23px', fontWeight:'bold', marginTop:'-5px', marginBottom:'-5px'}}>{product.price}</p>
+                <Barcode style={{marginTop:'-10px'}} value={product.barcode} height={40} width={2}/>
+                <p style={{marginTop:'-5px'}}>{product.name}</p>
             </div>
         </>
     );

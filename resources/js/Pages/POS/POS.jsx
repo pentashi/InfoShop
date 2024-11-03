@@ -159,7 +159,6 @@ function POS({ products, customers, currentStore }) {
                     <Grid container spacing={2}>
                         {products.map((product) => (
                             <Grid
-                                item
                                 key={product.id+product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
                                 sx={{ cursor: "pointer" }}
