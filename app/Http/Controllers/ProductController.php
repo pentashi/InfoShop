@@ -107,7 +107,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'sku' => 'nullable|string|unique:products',
-            'barcode' => 'nullable|string',
+            'barcode' => 'nullable|string|unique:products',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000', // Image validation
             'unit' => 'nullable|string|max:100',
             'quantity' => 'required|numeric|min:0',
@@ -165,7 +165,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'sku' => 'nullable|string|unique:products,sku,' . $id, // Ensure SKU is unique except for the current product
-            'barcode' => 'nullable|string',
+            'barcode' => 'nullable|string|unique:products,barcode,'. $id,
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000', // Image validation
             'unit' => 'nullable|string|max:100',
             'alert_quantity' => 'nullable|numeric|min:0',
@@ -175,6 +175,9 @@ class ProductController extends Controller
             'category_id' => 'nullable|exists:collections,id',
         ]);
 
+        DB::beginTransaction();
+
+        try {
         // Find the product by ID, or fail if it doesn't exist
         $product = Product::findOrFail($id);
 
@@ -200,8 +203,17 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
         ]);
 
+        DB::commit();
+
         // Return a response, or redirect to a specific page
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
+        } catch (\Exception $e) {
+            // Rollback the transaction if something failed
+            DB::rollBack();
+
+            // Return an error response
+            return redirect()->back()->withErrors(['error' => 'Failed to update product: ' . $e->getMessage()]);
+        }
     }
 
     public function searchProduct(Request $request){

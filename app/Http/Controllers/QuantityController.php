@@ -26,24 +26,18 @@ class QuantityController extends Controller
         DB::beginTransaction();
 
         try {
-            // Retrieve the stock if stock_id is provided
-            if ($validated['stock_id']) {
-                $productStock = ProductStock::find($validated['stock_id']);
+            // Attempt to find existing ProductStock by store_id and batch_id
+            $productStock = ProductStock::where('store_id', $validated['store_id'])
+                ->where('batch_id', $validated['batch_id'])
+                ->first();
 
-                // If stock doesn't exist, return error
-                if (!$productStock) {
-                    return response()->json(['error' => 'Product stock not found.'], 404);
-                }
-
-                // Save the previous quantity before adjustment
+            if ($productStock) {
+                // If stock exists, update the quantity
                 $previousQuantity = $productStock->quantity;
-
-                // Update the stock quantity by adding the new quantity
                 $productStock->quantity += $validated['quantity'];
                 $productStock->save();
-
             } else {
-                // If stock_id is null, create a new ProductStock record
+                // If stock doesn't exist, create a new ProductStock record
                 $productStock = ProductStock::create([
                     'store_id' => $validated['store_id'],
                     'batch_id' => $validated['batch_id'],
@@ -61,7 +55,6 @@ class QuantityController extends Controller
                 'previous_quantity' => $previousQuantity,
                 'adjusted_quantity' => $validated['quantity'],
                 'reason' => $validated['reason'],
-                'created_by' => auth()->id(), // Assuming the user is authenticated
             ]);
 
             $quantityAdjustment->save();

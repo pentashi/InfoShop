@@ -160,8 +160,13 @@ export default function Product({ product, collection }) {
                 });
             },
             onError: (errors) => {
-                console.error("Submission failed with errors:", errors);
-                console.log(formJson);
+                const errorMessages = Object.values(errors).flat().join(' | ');
+            Swal.fire({
+                title: 'Error!',
+                text: errorMessages || 'An unexpected error occurred.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+              });
             },
         });
     };

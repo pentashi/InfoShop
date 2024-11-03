@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use Redirect;
 
 class CollectionController extends Controller
 {
@@ -32,7 +30,7 @@ class CollectionController extends Controller
         ]);
 
         // 4. Save the data to the database
-        $collection = Collection::create($validatedData);
+        Collection::create($validatedData);
 
         return redirect()->route('collection')->with('success', 'Collection created successfully!');
     }

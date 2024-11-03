@@ -42,9 +42,7 @@ export default function QuantityModal({
         const response = await axios.post('/quantity/store', formJson);
 
         if (response.status === 200 || response.status === 201) {
-
             refreshProducts()
-
             Swal.fire({
                 title: "Success!",
                 text: response.data.message,
@@ -53,7 +51,7 @@ export default function QuantityModal({
                 timer: 2000,
                 timerProgressBar: true,
             });
-
+            setFormState(initialFormState)
             handleClose();
         } else {
             console.error('Error: Response not successful', response);
@@ -66,12 +64,12 @@ export default function QuantityModal({
             ...prevState,
             batch_id: stock.batch_id,
             stock_id: stock.stock_id,
+            store_id:stock.store_id,
         }));
     };
 
     // Update selectedBatch when products change
     useEffect(() => {
-
         if (selectedStock) {
             updateFormStateFromProduct(selectedStock); // Reuse the function to update state
         }
@@ -155,31 +153,29 @@ export default function QuantityModal({
                                 }}
                             />
                         </Grid>
-                        {formState.stock_id==null &&(
-                            <Grid size={12} sx={{ mt: "0.6rem" }}>
-                                <FormControl
-                                    sx={{ minWidth: "200px", width: "100%" }}
+                        <Grid size={12} sx={{ mt: "0.6rem" }}>
+                            <FormControl
+                                sx={{ minWidth: "200px", width: "100%" }}
+                            >
+                                <InputLabel>Store</InputLabel>
+                                <Select
+                                    value={formState.store_id}
+                                    label="Store"
+                                    onChange={handleInputChange}
+                                    required
+                                    name="store_id"
                                 >
-                                    <InputLabel>Store</InputLabel>
-                                    <Select
-                                        value={formState.store_id}
-                                        label="Store"
-                                        onChange={handleInputChange}
-                                        required
-                                        name="store_id"
-                                    >
-                                        {stores.map((store) => (
-                                            <MenuItem
-                                                key={store.id}
-                                                value={store.id}
-                                            >
-                                                {store.name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        )}
+                                    {stores.map((store) => (
+                                        <MenuItem
+                                            key={store.id}
+                                            value={store.id}
+                                        >
+                                            {store.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                         <Grid size={12} sx={{ mt: "0.6rem" }}>
                             <TextField
                                 fullWidth
@@ -211,7 +207,6 @@ export default function QuantityModal({
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
-                        // onClick={handleClose}
                     >
                         {"UPDATE QUANTITY"}
                     </Button>

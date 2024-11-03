@@ -79,8 +79,6 @@ export default function UserFormDialog({ open, handleClose, user, stores }) {
                 timerProgressBar: true,
                 // toast: true,
               });
-
-        //   console.error('Submission failed with errors:', );
         },
       });
     };
