@@ -100,4 +100,10 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::get('/install', function(){
+    Artisan::call('migrate');
+    Artisan::call('db:seed');
+    return 'Migration executed successfully!';
+});
+
 require __DIR__.'/auth.php';
