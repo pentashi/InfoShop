@@ -39,7 +39,7 @@ export default function FormDialog({ open, handleClose, collection }) {
 
     // Determine the endpoint based on whether we are editing or adding
     const endpoint = collection ? `/collection/${collection.id}` : '/collection';
-    const method = collection ? 'put' : 'post'; // Use PUT for editing, POST for new
+    const method = 'post';
 
     // Send form data via Inertia
     router[method](endpoint, formJson, {

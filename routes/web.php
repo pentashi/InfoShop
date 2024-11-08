@@ -43,12 +43,12 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/stores', [StoreController::class, 'index'])->name('store');
     Route::post('/store', [StoreController::class, 'store']);
-    Route::put('/store/{id}', [StoreController::class, 'update']);
+    Route::post('/store/{id}', [StoreController::class, 'update']);
     Route::post('/change-store', [StoreController::class, 'changeSelectedStore'])->name('change.store');
 
     Route::get('/collections', [CollectionController::class, 'index'])->name('collection');
     Route::post('/collection', [CollectionController::class, 'store']);
-    Route::put('/collection/{id}', [CollectionController::class, 'update']);
+    Route::post('/collection/{id}', [CollectionController::class, 'update']);
 
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');
+        return 'Linked with storage';
     });
 });
 

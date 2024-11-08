@@ -60,8 +60,12 @@ class SaleController extends Controller
     }
 
     public function reciept($id){
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
         $sale = Sale::select(
             'sales.id',
             'contact_id',            // Customer ID

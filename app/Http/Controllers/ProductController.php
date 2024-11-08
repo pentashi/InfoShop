@@ -94,8 +94,12 @@ class ProductController extends Controller
 
     public function find($id)
     {
+        $imageUrl = 'storage/';
+        if (app()->environment('production')) $imageUrl='public/storage/';
+
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $product = Product::findOrFail($id);
+        $product->image_url = asset($imageUrl. $product->image_url);
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
@@ -124,7 +128,7 @@ class ProductController extends Controller
 
         $imageUrl = null;
         if ($request->hasFile('featured_image')) {
-            $folderPath = 'uploads/' . date('Y') . '/' . date('m') . '/';
+            $folderPath = 'uploads/' . date('Y') . '/' . date('m');
             $imageUrl = $request->file('featured_image')->store($folderPath, 'public'); // Store the image in the public disk
         }
 

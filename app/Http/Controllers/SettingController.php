@@ -9,8 +9,12 @@ use App\Models\Setting;
 class SettingController extends Controller
 {
     public function index(){
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
          // Render the 'Settings' component with data
          return Inertia::render('Settings/Settings', [
             'settings' => $settingArray,
@@ -40,7 +44,7 @@ class SettingController extends Controller
         if ($request->hasFile('shop_logo')) {
             $image = $request->file('shop_logo');
             
-            $folderPath = 'uploads/' . date('Y') . '/' . date('m') . '/';
+            $folderPath = 'uploads/' . date('Y') . '/' . date('m');
             $imageUrl = $image->store($folderPath, 'public');
 
             // Update the 'shop_logo' setting in the database with the image path
