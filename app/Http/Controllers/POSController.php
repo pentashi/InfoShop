@@ -25,6 +25,11 @@ class POSController extends Controller
 
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
         $currentStore = Store::find(session('store_id'));
+
+        if (!$currentStore) {
+            return redirect()->route('store'); // Adjust the route name as necessary
+        }
+
         $products = Product::select(
             'products.id',
             DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
@@ -55,7 +60,8 @@ class POSController extends Controller
             )
         ->limit(20)
         ->get();
-   
+        
+
         return Inertia::render('POS/POS', [
             'products' => $products,
             'urlImage' =>url('storage/'),

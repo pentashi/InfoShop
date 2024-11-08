@@ -88,6 +88,7 @@ class ProductController extends Controller
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
+            'pageLabel'=>'Product Details',
         ]);
     }
 
@@ -99,6 +100,7 @@ class ProductController extends Controller
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
             'product'=>$product,
+            'pageLabel'=>'Product Details',
         ]);
     }
 
