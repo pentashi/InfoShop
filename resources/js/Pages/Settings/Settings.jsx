@@ -103,7 +103,7 @@ export default function Setting({ settings }) {
                         flexDirection: "column",
                     }}
                 >
-                    <Grid container spacing={2} width={"60%"}>
+                    <Grid container spacing={2} width={{xs:'100%', sm:'60%'}}>
                         <Grid size={12}>
                             <Accordion defaultExpanded>
                                 <AccordionSummary

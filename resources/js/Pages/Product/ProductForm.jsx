@@ -209,7 +209,7 @@ export default function Product({ product, collection }) {
                 </Box>
 
                 <Grid container spacing={2}>
-                    <Grid size={3}>
+                    <Grid size={{xs:6, sm:3}}>
                         <TextField
                                 label="Barcode"
                                 id="barcode"
@@ -218,9 +218,10 @@ export default function Product({ product, collection }) {
                                 required
                                 value={productFormData.barcode}
                                 onChange={handleChange}
+                                
                             />
                     </Grid>
-                    <Grid size={3}>
+                    <Grid size={{xs:6, sm:3}}>
                     <TextField
                             label="SKU"
                             id="sku"
@@ -230,7 +231,7 @@ export default function Product({ product, collection }) {
                             fullWidth
                         />
                     </Grid>
-                    <Grid size={4}>
+                    <Grid size={{xs:12, sm:4}}>
                     <TextField
                             label="Product Name"
                             id="product-name"
@@ -241,7 +242,7 @@ export default function Product({ product, collection }) {
                             onChange={handleChange}
                         />
                     </Grid>
-                    <Grid size={2}>
+                    <Grid size={{xs:12, sm:2}}>
                     <FormControl
                             fullWidth
                             style={{ marginTop: "0", marginBottom: "0" }}
@@ -279,7 +280,7 @@ export default function Product({ product, collection }) {
                     </Typography>
                 </Box>
                 {!product && (
-                    <Box className="sm:columns-1 md:columns-5 mb-3 mt-4">
+                    <Box className="sm:columns-1 md:columns-5 xs:columns-2 mb-3 mt-4">
                         {/* Cost */}
                         <div className="mb-3">
                             <TextField

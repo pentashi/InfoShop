@@ -40,7 +40,7 @@ export default function CartItemsTop({customers}) {
 
   return (
   
-    <Box sx={{width:'100%', paddingY:'12px'}} className="flex items-center">
+    <Box sx={{width:'100%', paddingY:'15px', paddingTop:'20px'}} className="flex items-center">
       {Array.isArray(customerList) && (
         <FormControl fullWidth>
         <Autocomplete

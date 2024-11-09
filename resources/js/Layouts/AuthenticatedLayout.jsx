@@ -290,7 +290,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             variant="h5"
                             noWrap
                             component="div"
-                            sx={{ textTransform: "capitalize" }}
+                            sx={{ textTransform: "capitalize", fontSize:{xs:'1.2rem', sm:'1.5rem'} }}
                         >
                             {shop_name} | {pageLabel}
                         </Typography>

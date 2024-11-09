@@ -211,8 +211,9 @@ export default function Product({ products, stores }) {
                 alignItems="center"
                 sx={{ width: "100%" }}
             >
-                <Grid size={12} container alignItems={"center"} justifyContent={'end'} width={'100%'}>
-                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px",}}>
+                <Grid size={12} spacing={2} container alignItems={"center"} justifyContent={{xs:'center', sm:'end'}} width={'100%'}>
+                    <Grid size={{xs:6, sm:'auto'}}>
+                    <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
                         <InputLabel>Store</InputLabel>
                         <Select
                             value={selectedStore}
@@ -229,7 +230,10 @@ export default function Product({ products, stores }) {
                             ))}
                         </Select>
                     </FormControl>
-                    <FormControl sx={{ ml: "0.5rem", minWidth: "200px" }}>
+                    </Grid>
+
+                    <Grid size={{xs:6, sm:'auto'}}>
+                    <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
                         <InputLabel>Status</InputLabel>
                         <Select
                             value={selectedStatus}
@@ -242,8 +246,12 @@ export default function Product({ products, stores }) {
                             <MenuItem value={0}>Inactive</MenuItem>
                         </Select>
                     </FormControl>
+                    </Grid>
+                    
+                    
                     <TextField
-                    sx={{minWidth:'300px', ml: "0.5rem",}}
+                    sx={{minWidth:'300px', width: { xs: '100%', sm: 'auto' }}}
+                    fullWidth
                         name="search_query"
                         label="Search"
                         variant="outlined"

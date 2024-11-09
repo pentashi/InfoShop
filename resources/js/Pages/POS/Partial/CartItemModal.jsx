@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef} from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -35,6 +35,7 @@ export default function CartItemModal() {
     });
 
     const handleClose = () => {
+        setSelectedCartItem(null);
         setCartItemModalOpen(false);
     };
 
@@ -122,18 +123,10 @@ export default function CartItemModal() {
                         <Grid size={6}>
                             <TextField
                                 fullWidth
-                                id='quantity'
                                 type="number"
                                 name="quantity"
                                 label="Quantity"
                                 variant="outlined"
-                                autoFocus
-                                // inputRef={quantityFieldRef}
-                                inputRef={(input) => {
-                                    if(input != null) {
-                                       input.focus();
-                                    }
-                                  }}
                                 value={formState.quantity}
                                 onChange={handleInputChange}
                                 sx={{
@@ -144,13 +137,11 @@ export default function CartItemModal() {
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
+                                autoFocus
                                 slotProps={{
                                     inputLabel: {
                                         shrink: true,
                                     },
-                                    input:{
-                                        autoFocus:true,
-                                    }
                                 }}
                             />
                         </Grid>

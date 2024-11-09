@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
@@ -7,14 +7,16 @@ import { Button, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
-import { router } from '@inertiajs/react'
+import { router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 
 import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 
 import FormDialog from './Partial/FormDialog';
 
- export default function Store({stores,current_store_id}) {
+ export default function Store({stores,current_store_id, message}) {
     const auth = usePage().props.auth.user
+    const currentStore = usePage().props.current_store
     const [open, setOpen] = useState(false);
     const [selectedStore, setSelectedStore] = useState(null);
 
@@ -73,11 +75,21 @@ import FormDialog from './Partial/FormDialog';
       } catch (error) {
           console.error('Error changing store ID:', error.response.data); // Handle error
       }
-  };
+    };
+
+    useEffect(() => {
+        if (currentStore == null) {
+            Swal.fire({
+                title: 'Please select a store',
+                icon: 'info', // You can change this to 'success', 'error', etc.
+                confirmButtonText: 'Okay'
+            });
+        }
+    }, []);
 
     return (
         <AuthenticatedLayout>
-          
+          {console.log('Props:', usePage())}
             <Head title="Store" />
                 <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
                     <Grid size={8}>

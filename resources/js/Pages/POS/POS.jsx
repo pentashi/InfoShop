@@ -88,7 +88,7 @@ function POS({ products, customers, currentStore }) {
                 <Divider />
                 <Box
                     className="flex flex-col overflow-auto"
-                    sx={{ height: "calc(100vh - 210px);" }}
+                    sx={{ height: "calc(100vh - 230px);" }}
                 >
                     {/* Cart Items - List of all items */}
                     <CartItems/>
