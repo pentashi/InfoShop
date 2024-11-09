@@ -45,7 +45,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         itemsHeader:{
             fontSize: "13px",
             padding: 0, 
+            fontWeight:'bold',
             py: 1,
+            pt:0,
+        },
+        itemsCells:{
+            fontSize: "13px",
+            padding: 0,
+            py: 1,
+            pt:0,
         },
         printArea:{
             paddingRight:parseFloat(settings.sale_print_padding_right),
@@ -57,7 +65,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
             <Head title="Sale Reciept" />
             <Box className="flex justify-center mt-10">
                 <RecieptContainer square={false}>
-                    <Box className="flex justify-between">
+                    <Box className="flex justify-between mb-3">
                         <Button
                             onClick={() => window.history.back()}
                             variant="outlined"
@@ -73,8 +81,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                             Print
                         </Button>
                     </Box>
-                    <div id="print-area" ref={contentRef} className="p-3" style={styles.printArea}>
-                        <Box className="flex justify-center items-center mt-8 flex-col">
+                    <div id="print-area" ref={contentRef} className="p-0" style={styles.printArea}>
+                        <Box className="flex justify-center items-center mt-0 flex-col">
                             <Card sx={{ width: 110, boxShadow: 0 }}>
                                 <CardMedia
                                     component="img"
@@ -161,24 +169,24 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     {salesItems.map((item, index) => (
                                         <TableRow key={index}>
                                             <TableCell
-                                                sx={styles.itemsHeader}
+                                                sx={styles.itemsCells}
                                             >
                                                 {item.name}
                                             </TableCell>
                                             <TableCell
-                                                sx={styles.itemsHeader}
+                                                sx={styles.itemsCells}
                                                 align="right"
                                             >
                                                 {item.quantity}
                                             </TableCell>
                                             <TableCell
-                                                sx={styles.itemsHeader}
+                                                sx={styles.itemsCells}
                                                 align="right"
                                             >
                                                 {item.unit_price}
                                             </TableCell>
                                             <TableCell
-                                                sx={styles.itemsHeader}
+                                                sx={styles.itemsCells}
                                                 align="right"
                                             >
                                                 {(

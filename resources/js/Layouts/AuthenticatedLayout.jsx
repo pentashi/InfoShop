@@ -280,7 +280,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     <Grid
                         container
                         spacing={2}
-                        alignItems={"center"}
+                        alignItems={{sm:"center", xs:'start'}}
                         justifyContent={"space-between"}
                         width={"100%"}
                         display={'flex'}

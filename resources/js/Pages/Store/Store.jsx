@@ -16,7 +16,6 @@ import FormDialog from './Partial/FormDialog';
 
  export default function Store({stores,current_store_id, message}) {
     const auth = usePage().props.auth.user
-    const currentStore = usePage().props.current_store
     const [open, setOpen] = useState(false);
     const [selectedStore, setSelectedStore] = useState(null);
 
@@ -51,7 +50,7 @@ import FormDialog from './Partial/FormDialog';
       { field: 'address', headerName: 'Address', width: 300 },
       { field: 'contact_number', headerName: 'Contact Number', width: 180 },
       { field: 'created_at', headerName: 'Created At', width: 120 },
-      { headerName: 'Current store', width: 130,
+      { field: 'current_store', headerName: 'Current store', width: 130,
           renderCell: (params) => (
             <Button
                 onClick={params.row.id === current_store_id ? undefined : () => changeSelectedStore(params.row.id)}
@@ -78,7 +77,7 @@ import FormDialog from './Partial/FormDialog';
     };
 
     useEffect(() => {
-        if (currentStore == null) {
+        if (current_store_id == null) {
             Swal.fire({
                 title: 'Please select a store',
                 icon: 'info', // You can change this to 'success', 'error', etc.
@@ -89,7 +88,6 @@ import FormDialog from './Partial/FormDialog';
 
     return (
         <AuthenticatedLayout>
-          {console.log('Props:', usePage())}
             <Head title="Store" />
                 <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
                     <Grid size={8}>

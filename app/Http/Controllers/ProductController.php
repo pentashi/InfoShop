@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\ProductStock;
 use App\Models\Store;
+use App\Models\Setting;
 
 use Illuminate\Support\Facades\DB;
 
@@ -337,9 +338,16 @@ class ProductController extends Controller
         ->where('product_batches.id', $batch_id)
         ->first();
 
+        $settings = Setting::whereIn('meta_key', [
+            'show_barcode_store',
+            'show_barcode_product_price',
+            'show_barcode_product_name'
+        ])->get();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
          // Render the 'Products' component with data
         return Inertia::render('Product/Barcode', [
             'product' => $product,
+            'barcode_settings'=>$settingArray,
         ]);
     }
 

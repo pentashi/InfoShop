@@ -11,6 +11,8 @@ import Box from "@mui/material/Box";
 import CardActions from "@mui/material/CardActions";
 import CardMedia from "@mui/material/CardMedia";
 import TextField from "@mui/material/TextField";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 
@@ -36,7 +38,7 @@ export default function Setting({ settings }) {
         const { name, value, type, checked } = e.target;
         setSettingFormData({
             ...settingFormData,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: checked ? 'on' : 'off',
         });
     };
 
@@ -45,6 +47,9 @@ export default function Setting({ settings }) {
         sale_receipt_note: settings.sale_receipt_note,
         shop_name: settings.shop_name,
         sale_print_padding_right: settings.sale_print_padding_right,
+        show_barcode_store: settings.show_barcode_store,
+        show_barcode_product_price: settings.show_barcode_product_price,
+        show_barcode_product_name: settings.show_barcode_product_name,
     });
 
     const handleFileChange = (e) => {
@@ -218,6 +223,31 @@ export default function Setting({ settings }) {
                                                 }
                                                 onChange={handleChange}
                                             />
+                                        </Grid>
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                            <Accordion defaultExpanded>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    BARCODE PRINT
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Grid container
+                                        sx={{
+                                            display: "flex",
+                                            width: "100%",
+                                        }}
+                                    >
+                                        <Grid size={6}>
+                                            <FormControlLabel control={<Switch name="show_barcode_store" value={settingFormData.show_barcode_store} onChange={handleChange} checked={settingFormData.show_barcode_store === 'on'}/>} label="STORE NAME" />
+                                        </Grid>
+                                        <Grid size={6}>
+                                            <FormControlLabel control={<Switch name="show_barcode_product_price" value={settingFormData.show_barcode_product_price} onChange={handleChange} checked={settingFormData.show_barcode_product_price === 'on'}/>} label="PRODUCT PRICE" />
+                                        </Grid>
+                                        <Grid size={6}>
+                                            <FormControlLabel control={<Switch name="show_barcode_product_name" value={settingFormData.show_barcode_product_name} onChange={handleChange} checked={settingFormData.show_barcode_product_name === 'on'}/>} label="PRODUCT NAME" />
                                         </Grid>
                                     </Grid>
                                 </AccordionDetails>

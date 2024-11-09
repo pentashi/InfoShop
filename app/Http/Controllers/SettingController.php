@@ -29,7 +29,11 @@ class SettingController extends Controller
             'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right']);
+        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right','show_barcode_store','show_barcode_product_price','show_barcode_product_name']);
+
+        $settingsData['show_barcode_store'] = $request->has('show_barcode_store') ? 'on' : 'off';
+        $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';
+        $settingsData['show_barcode_product_name'] = $request->has('show_barcode_product_name') ? 'on' : 'off';
 
         foreach ($settingsData as $metaKey => $metaValue) {
             if ($metaValue !== null) { // Ensure the value is not null before updating
@@ -38,6 +42,8 @@ class SettingController extends Controller
                     ['meta_value' => $metaValue]
                 );
             }
+
+            
         }
 
         // Handle image upload if a file is present
