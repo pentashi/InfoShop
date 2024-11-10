@@ -71,7 +71,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
     }, [vendors]);
 
     useEffect(() => {
-        console.log(cartState)
+
     }, [cartState]);
 
     const handleSubmit = (event) => {

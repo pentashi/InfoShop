@@ -17,6 +17,8 @@ class Store extends Model
         'name',
         'address',
         'contact_number',
+        'sale_prefix',
+        'current_sale_number',
     ];
 
     // Accessor for formatted updated_at date

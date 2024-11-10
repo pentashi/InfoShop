@@ -118,7 +118,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                         />
                         <Box className="flex items-start flex-col">
                             <p style={styles.receiptTopText}>
-                                Order: #{String(sale.id).padStart(4, "0")}
+                                Order: {sale.sale_prefix+'/'+sale.invoice_number}
                             </p>
                             <p style={styles.receiptTopText}>
                                 Date: {sale.sale_date} By: {user_name}

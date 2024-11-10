@@ -16,20 +16,21 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Admin',
-            'user_name'=>'admin',
-            'user_role'=>'admin',
-            'email' => 'test@example.com',
-            'store_id' => 1,
-            'password' => Hash::make('8236'),
-        ]);
-
         Store::create([
             'name' => 'One Shop store',
             'address'=>'Your address',
             'contact_number'=>'00000001',
+            'sale_prefix'=>'',
+            'current_sale_number'=>0,
+        ]);
+        
+        User::factory()->create([
+            'name' => 'Admin',
+            'user_name'=>'admin',
+            'user_role'=>'admin',
+            'email' => 'admin@clearcodeweb.xyz.lk',
+            'store_id' => 1,
+            'password' => Hash::make('8236'),
         ]);
 
         $this->call([

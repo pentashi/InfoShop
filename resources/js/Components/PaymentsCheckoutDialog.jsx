@@ -16,6 +16,7 @@ import {
     ListItemText,
     ListItemButton,
 } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PercentIcon from '@mui/icons-material/Percent';
@@ -33,6 +34,7 @@ export default function PaymentsCheckoutDialog({
     is_sale=false,
 }) {
     const { cartState, cartTotal, emptyCart, totalProfit } = useCart();
+    const [loading, setLoading] = useState(false);
 
     const [discount, setDiscount] = useState(0);
     const [amount, setAmount] = useState((cartTotal - discount))
@@ -60,6 +62,9 @@ export default function PaymentsCheckoutDialog({
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        
+        if (loading) return;
+        setLoading(true);
 
         const submittedFormData = new FormData(event.currentTarget);
         let formJson = Object.fromEntries(submittedFormData.entries());
@@ -85,17 +90,21 @@ export default function PaymentsCheckoutDialog({
             });
             emptyCart(); //Clear the cart from the Context API
             setDiscount(0);
+            setPayments([])
             if(!is_sale) router.visit("/purchases");
             setOpen(false)
         })
         .catch((error) => {
+            const errorMessages = JSON.stringify(error.response, Object.getOwnPropertyNames(error));
             Swal.fire({
                 title: "Failed!",
-                text: error.response.data.error,
+                text: errorMessages,
                 icon: "error",
                 showConfirmButton: true,
             });
             console.log(error);
+        }).finally(() => {
+            setLoading(false); // Reset submitting state
         });
     };
 
@@ -110,8 +119,8 @@ export default function PaymentsCheckoutDialog({
         else if (amount) {
             const newPayment = { payment_method: paymentMethod, amount: parseFloat(amount) };
             setPayments([...payments, newPayment]);
-
-            setAmount(0); // Clear the amount input after adding
+            const newBalance = netTotal - balance;
+            setAmount(newBalance > 0 ? newBalance : 0); // Clear the amount input after adding
         }
         handlePaymentClose()
     };
@@ -137,7 +146,7 @@ export default function PaymentsCheckoutDialog({
     }
 
     return (
-        <React.Fragment>
+        <>
             <Dialog
                 fullWidth={true}
                 maxWidth={"sm"}
@@ -369,12 +378,12 @@ export default function PaymentsCheckoutDialog({
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
                         // onClick={handleClose}
-                        disabled={amountRecieved - (cartTotal - discount) < 0} //amountRecieved-(cartTotal-discount)
+                        disabled={amountRecieved - (cartTotal - discount) < 0 || loading || amountRecieved > (cartTotal - discount)} //amountRecieved-(cartTotal-discount)
                     >
-                        PAY
+                        {loading ? 'Loading...' : 'PAY'}
                     </Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
+        </>
     );
 }

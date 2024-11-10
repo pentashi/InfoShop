@@ -66,18 +66,18 @@ function POS({ products, customers, currentStore }) {
         }
     };
 
-    useEffect(() => {
-        Swal.fire({
-            title: currentStore,
-            icon: "success",
-            showConfirmButton: false,
-            position: "bottom-start",
-            timer: 2000,
-            timerProgressBar: true,
-            toast: true,
-        });
-      },
-    );
+    // useEffect(() => {
+    //     Swal.fire({
+    //         title: currentStore,
+    //         icon: "success",
+    //         showConfirmButton: false,
+    //         position: "bottom-start",
+    //         timer: 2000,
+    //         timerProgressBar: true,
+    //         toast: true,
+    //     });
+    //   },
+    // );
 
     const drawer = (
         <>

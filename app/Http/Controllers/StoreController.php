@@ -13,7 +13,7 @@ class StoreController extends Controller
     public function index()
     {
         $currentStoreId = session('store_id');
-        $stores = Store::select('id','name', 'address', 'contact_number', 'created_at')->get();
+        $stores = Store::select('id','name', 'address', 'contact_number', 'created_at','sale_prefix', 'current_sale_number')->get();
         return Inertia::render('Store/Store', [
             'stores' => $stores,
             'current_store_id' => $currentStoreId,
@@ -28,10 +28,12 @@ class StoreController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'contact_number' => 'required|string|max:50',
+            'sale_prefix' => 'max:5',
+            'current_sale_number' => 'required|integer|min:0',
         ]);
 
         // 4. Save the data to the database
-        $store = Store::create($validatedData);
+        Store::create($validatedData);
 
         return Redirect::route('store')->with('success', 'Store created successfully!');
     }
@@ -41,11 +43,12 @@ class StoreController extends Controller
         // Find the store by ID
         $store = Store::findOrFail($id);
 
-        // Validate the incoming request
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'contact_number' => 'required|string|max:50',
+            'sale_prefix' => 'max:5',
+            'current_sale_number' => 'required|integer|min:0',
         ]);
 
         // Update the store record

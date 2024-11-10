@@ -8,25 +8,46 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Swal from 'sweetalert2';
+import { Grid2 as Grid } from '@mui/material';
 
+export default function FormDialog({ open, handleClose, store }) {
 
-export default function FormDialog({ open, handleClose,store }) {
-
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
+  const [formState, setFormState] = useState({
+    name: '',
+    address: '',
+    contact_number: '',
+    sale_prefix: '',
+    current_sale_number: '',
+  });
 
   useEffect(() => {
     if (store) {
-      setName(store.name || '');
-      setAddress(store.address || '');
-      setContactNumber(store.contact_number || '');
-    } else {
-      setName('');
-      setAddress('');
-      setContactNumber('');
+      setFormState({
+        name: store.name || '',
+        address: store.address || '',
+        contact_number: store.contact_number || '',
+        sale_prefix: store.sale_prefix || '',
+        current_sale_number: store.current_sale_number || '',
+      });
+    }else {
+      // Optional: Reset to initial state if store is not provided
+      setFormState({
+        name: '',
+        address: '',
+        contact_number: '',
+        sale_prefix: '',
+        current_sale_number: '',
+      });
     }
   }, [store]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -67,7 +88,8 @@ export default function FormDialog({ open, handleClose,store }) {
       <Dialog
         open={open}
         onClose={handleClose}
-
+        fullWidth={true}
+        maxWidth={"sm"}
         PaperProps={{
           component: 'form',
           onSubmit: handleSubmit,
@@ -75,51 +97,69 @@ export default function FormDialog({ open, handleClose,store }) {
       >
         <DialogTitle>Store Information</DialogTitle>
         <DialogContent>
+          <Grid container flexDirection={'column'} spacing={2.6}>
            {/* Store Name */}
           <TextField
-            className="py-8"
+          sx={{mt:'0.5rem'}}
             autoFocus
             required
-            margin="dense"
-            id="name"
             name="name"
             label="Store name"
             type="text"
             fullWidth
-            variant="standard"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            value={formState.name}
+            onChange={handleChange}
           />
 
           {/* Store Address */}
           <TextField
-            className="py-8"
             required
-            margin="dense"
-            id="address"
             name="address"
             label="Store Address"
             type="text"
             fullWidth
-            variant="standard"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            variant="outlined"
+            value={formState.address}
+            onChange={handleChange}
           />
           
           {/* Store Contact Number */}
           <TextField
-            className="py-8"
             required
-            margin="dense"
-            id="contact_number"
             name="contact_number"
             label="Contact Number"
             type="text"
             fullWidth
-            variant="standard"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
+            variant="outlined"
+            value={formState.contact_number}
+            onChange={handleChange}
           />
+
+          {/* Store Sale Prefix */}
+          <TextField
+          required
+            name="sale_prefix"
+            label="Sale Prefeix"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formState.sale_prefix}
+            onChange={handleChange}
+          />
+
+          {/* Store Current Sale Number */}
+          <TextField
+            required
+            name="current_sale_number"
+            label="Current Sale Number"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={formState.current_sale_number}
+            onChange={handleChange}
+          />
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

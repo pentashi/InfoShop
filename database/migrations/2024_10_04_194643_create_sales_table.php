@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('invoice_number')->nullable()->unique();
             $table->unsignedBigInteger('store_id'); // Store ID without foreign key constraint
             $table->unsignedBigInteger('contact_id');
             $table->date('sale_date'); // Sale date
@@ -20,7 +21,7 @@ return new class extends Migration
             $table->decimal('discount', 10, 2)->default(0); // Discount
             $table->decimal('amount_received', 10, 2); // Amount received
             $table->decimal('profit_amount', 10, 2)->default(0);
-            $table->string('status'); //['completed', 'pending', 'refunded']
+            $table->string('status')->default('pending'); //['completed', 'pending', 'refunded']
             $table->text('note')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();

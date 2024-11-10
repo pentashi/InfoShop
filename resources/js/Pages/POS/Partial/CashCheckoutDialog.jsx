@@ -19,6 +19,7 @@ import { SharedContext } from "@/Context/SharedContext";
 export default function CashCheckoutDialog({ disabled }) {
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
     const {selectedCustomer, saleDate} = useContext(SharedContext); 
+    const [loading, setLoading] = useState(false);
 
     const [discount, setDiscount] = useState(0);
     const [amountRecieved, setAmountRecieved]=useState(0);
@@ -41,7 +42,9 @@ export default function CashCheckoutDialog({ disabled }) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-    
+        if (loading) return;
+        setLoading(true);
+
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.cartItems = cartState;
@@ -64,7 +67,7 @@ export default function CashCheckoutDialog({ disabled }) {
             setAmountRecieved(0)
             setDiscount(0)
             router.visit('/reciept/'+resp.data.sale_id)
-            // setOpen(false)           
+            setOpen(false)
         })
         .catch((error) => {
             // console.error("Submission failed with errors:", error);
@@ -77,6 +80,8 @@ export default function CashCheckoutDialog({ disabled }) {
                 // timerProgressBar: true,
             });
             console.log(error);
+        }).finally(() => {
+            setLoading(false); // Reset submitting state
         });
     };
 
@@ -90,7 +95,7 @@ export default function CashCheckoutDialog({ disabled }) {
     }
 
     return (
-        <React.Fragment>
+        <>
             <Button
                 variant="contained"
                 color="success"
@@ -236,12 +241,12 @@ export default function CashCheckoutDialog({ disabled }) {
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
                         // onClick={handleClose}
-                        disabled={(amountRecieved - (cartTotal - discount)) < 0} //amountRecieved-(cartTotal-discount) 
+                        disabled={(amountRecieved - (cartTotal - discount)) < 0 || loading} //amountRecieved-(cartTotal-discount) 
                     >
-                        PAY
+                        {loading ? 'Loading...' : 'PAY'}
                     </Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
+        </>
     );
 }

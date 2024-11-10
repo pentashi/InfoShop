@@ -20,6 +20,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -95,16 +96,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/user', [UserController::class, 'store'])->name('user.store');
     Route::post('/user/{id}', [UserController::class, 'update'])->name('user.update');
 
+    // Route::get('reports/daily',[ReportController::class, 'getDailyReport'])->name('reports.daily');
+    Route::get('reports/dailycash',[ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
+    Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
+
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');
         return 'Linked with storage';
     });
 });
 
-Route::get('/install', function(){
-    Artisan::call('migrate');
-    Artisan::call('db:seed');
-    return 'Migration executed successfully!';
-});
+// Route::get('/install', function(){
+//     Artisan::call('migrate');
+//     Artisan::call('db:seed');
+//     return 'Migration executed successfully!';
+// });
 
 require __DIR__.'/auth.php';

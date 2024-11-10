@@ -23,8 +23,8 @@
         "@emotion/react": "^11.13.3",
         "@emotion/styled": "^11.13.0",
         "@inertiajs/progress": "^0.2.7",
-        "@mui/icons-material": "^6.1.1",
-        "@mui/material": "^6.1.1",
+        "@mui/icons-material": "^6.1.6",
+        "@mui/material": "^6.1.6",
         "@mui/x-data-grid": "^7.18.0",
         "@mui/x-date-pickers": "^7.18.0",
         "dayjs": "^1.11.13",
@@ -33,7 +33,7 @@
         "numeral": "^2.0.6",
         "react-barcode": "^1.5.3",
         "react-select": "^5.8.1",
-        "react-to-print": "^3.0.1",
-        "sweetalert2": "^11.14.1"
+        "react-to-print": "^3.0.2",
+        "sweetalert2": "^11.14.5"
     }
 }

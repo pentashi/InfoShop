@@ -78,6 +78,8 @@ class SaleController extends Controller
             'stores.address',
             'contacts.name', // Customer name from contacts
             'sales.created_by',
+            'invoice_number',
+            'stores.sale_prefix'
         )
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
         ->join('stores', 'sales.store_id','=','stores.id')

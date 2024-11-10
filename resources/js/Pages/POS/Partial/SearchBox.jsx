@@ -5,7 +5,6 @@ import {
     IconButton,
     TextField,
     Autocomplete,
-    CircularProgress,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
@@ -17,7 +16,7 @@ import { SharedContext } from "@/Context/SharedContext";
 export default function SearchBox() {
     const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
-    const { addToCart } = useCart();
+    const { addToCart, cartState } = useCart();
     const [loading, setLoading] = useState(false);
     const [search_query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
@@ -34,9 +33,23 @@ export default function SearchBox() {
                 .then((response) => {
                     setOptions(response.data.products); // Set options with response products
                     setLoading(false);
+
                     if (response.data.products.length === 1) {
-                        addToCart(response.data.products[0]);
-                        setSelectedCartItem(response.data.products[0])
+                        const product = response.data.products;
+                        const existingProductIndex = cartState.findIndex(
+                            (item) =>
+                              item.id === product[0].id &&
+                              item.batch_number === product[0].batch_number
+                        );
+
+                        if (existingProductIndex !== -1) {
+                            product[0].quantity = cartState[existingProductIndex].quantity
+                        }
+                        else{
+                            product[0].quantity = 1;
+                            addToCart(product[0]);
+                        }                 
+                        setSelectedCartItem(product[0])
                         setCartItemModalOpen(true)
                     }
                 })
@@ -105,6 +118,9 @@ export default function SearchBox() {
                             onChange={(event) =>
                                 handleSearchQuery(event.target.value)
                             }
+                            onFocus={(event) => {
+                                event.target.select();
+                            }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": {

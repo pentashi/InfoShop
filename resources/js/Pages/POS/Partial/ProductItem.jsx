@@ -25,10 +25,11 @@ export default function ProductItem({ product }) {
       />
       <CardContent sx={{paddingBottom:'10px!important'}}>
         <Typography variant="subtitle1" component="div" className='text-center' sx={{lineHeight:'1.2rem'}}>
-            {name} - ({quantity})
+            {name}
+             {/* - ({quantity}) */}
         </Typography>
         <div className='flex justify-center mt-1'>
-             <p className='font-extrabold'>{price}</p>
+             <p className='font-extrabold'>RS.{price}</p>
         </div>
       </CardContent>
     </Card>

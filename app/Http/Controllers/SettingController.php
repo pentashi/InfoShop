@@ -42,8 +42,6 @@ class SettingController extends Controller
                     ['meta_value' => $metaValue]
                 );
             }
-
-            
         }
 
         // Handle image upload if a file is present

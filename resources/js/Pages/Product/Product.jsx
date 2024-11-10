@@ -167,7 +167,6 @@ export default function Product({ products, stores }) {
 
     const handleProductEdit = (product, type) => {
         setSelectedProduct(product);
-        console.log(product)
         type === 'batch' && setBatchModalOpen(true);
         type === 'qty' && setQuantityModalOpen(true);
     };

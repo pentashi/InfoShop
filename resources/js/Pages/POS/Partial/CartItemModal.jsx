@@ -79,7 +79,7 @@ export default function CartItemModal() {
                 fullWidth={true}
                 maxWidth={"sm"}
                 open={cartItemModalOpen}
-                disableRestoreFocus
+                disableRestoreFocus={true}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 PaperProps={{

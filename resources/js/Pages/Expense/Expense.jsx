@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head,router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
@@ -9,6 +9,7 @@ import {
     FormControl,
     TextField,
     IconButton,
+    Chip
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -16,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import axios from "axios";
+import numeral from "numeral";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
@@ -50,6 +52,7 @@ const columns = (handleRowClick) => [
 
 export default function Expense({ expenses, stores }) {
     const [dataExpenses, setDataExpenses] = useState(expenses);
+    const [totalExpense, setTotalExpense] = useState(0)
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [expenseModalOpen, setExpenseModalOpen] = useState(false)
@@ -103,6 +106,14 @@ export default function Expense({ expenses, stores }) {
         },
         options);
     };
+
+    //Get total expenses
+    useEffect(() => {
+        const total = Object.values(dataExpenses.data).reduce((accumulator, current) => {
+            return accumulator + parseFloat(current.amount);
+        }, 0);
+        setTotalExpense(total);
+    }, [dataExpenses]);
 
     return (
         <AuthenticatedLayout>
@@ -188,6 +199,7 @@ export default function Expense({ expenses, stores }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={"end"}>
+            <Chip size="large" label={'Total:'+numeral(totalExpense).format('0,0')} color="primary" />
                 <CustomPagination
                     dataLinks={dataExpenses?.links}
                     refreshTable={refreshExpenses}

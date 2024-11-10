@@ -32,6 +32,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import PeopleIcon from "@mui/icons-material/People";
 import Tooltip from "@mui/material/Tooltip";
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 
 import oneshopLogo from "./oneshop-logo.png";
 const drawerWidth = 240;
@@ -69,7 +70,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
     };
 
     const NavItem = ({ href, icon: Icon, label, open, selected, onClick }) => (
-        <Link href={href}>
+        <Link preserveScroll href={href}>
             <ListItem disablePadding sx={{ display: "block" }}>
                 <ListItemButton
                     selected={selected}
@@ -177,6 +178,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     selected={isSelected("/purchases")}
                 />
                 <NavItem
+                    href="/reports/dailycash"
+                    icon={ContentPasteIcon}
+                    label="Daily Cash"
+                    open={open}
+                    selected={isSelected("/reports/dailycash")}
+                />
+                <NavItem
                     href="/payments/sales"
                     icon={PaymentsIcon}
                     label="Payments"
@@ -190,13 +198,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/expenses")}
                 />
-                <NavItem
-                    href="/collections"
-                    icon={AccountTreeIcon}
-                    label="Collections"
-                    open={open}
-                    selected={isSelected("/collections")}
-                />
+                
                 <NavItem
                     href="/customers"
                     icon={CustomerIcon}
@@ -217,6 +219,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     label="Stores"
                     open={open}
                     selected={isSelected("/stores")}
+                />
+                <NavItem
+                    href="/collections"
+                    icon={AccountTreeIcon}
+                    label="Collections"
+                    open={open}
+                    selected={isSelected("/collections")}
                 />
                 <NavItem
                     href="/settings"
@@ -343,6 +352,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         },
                     }}
                     open
+                    scroll-region
                 >
                     {drawer}
                 </Drawer>
