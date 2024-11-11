@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use App\Traits\Userstamps;
 use App\Models\CashLog;
 
@@ -13,8 +16,10 @@ class Expense extends Model
     use HasFactory;
     use SoftDeletes;
     use Userstamps;
+    use LogsActivity;
 
     protected $fillable = ['description', 'amount', 'expense_date', 'store_id'];
+    protected static $recordEvents = ['deleted'];
 
     protected static function booted()
     {
@@ -48,5 +53,13 @@ class Expense extends Model
             'description' => $this->description,  // Copy the description
             'store_id' => $this->store_id,  // Store ID from expense
         ]);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['description', 'amount', 'expense_date', 'store_id'])
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) => "Expense has been {$eventName}");
     }
 }
