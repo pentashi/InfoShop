@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
@@ -12,10 +12,12 @@ import {
     Select,
     MenuItem,
     TextField,
+    Chip,
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import Select2 from "react-select";
+import numeral from "numeral";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
@@ -59,7 +61,7 @@ export default function Payment({ payments, transactionType, contacts }) {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedContact, setSelectedContact] = useState("");
-
+    const [totalAmount, setTotalAmount] = useState(0)
     const handleRowClick = () => {};
 
     const refreshPayments = (url) => {
@@ -89,6 +91,13 @@ export default function Payment({ payments, transactionType, contacts }) {
     const handleContactChange = (selectedOption) => {
         setSelectedContact(selectedOption);
     };
+
+    useEffect(() => {
+        const total = Object.values(dataPayments.data).reduce((accumulator, current) => {
+            return accumulator + parseFloat(current.amount);
+        }, 0);
+        setTotalAmount(total);
+    }, [dataPayments]);
 
     return (
         <AuthenticatedLayout>
@@ -212,6 +221,7 @@ export default function Payment({ payments, transactionType, contacts }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={'end'}>
+            <Chip size="large" label={'Total:'+numeral(totalAmount).format('0,0')} color="primary" />
                 <CustomPagination
                     dataLinks={dataPayments?.links}
                     refreshTable={refreshPayments}

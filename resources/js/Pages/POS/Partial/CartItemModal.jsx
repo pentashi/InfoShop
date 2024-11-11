@@ -8,6 +8,7 @@ import {
     IconButton,
     TextField,
     Grid2 as Grid,
+    Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from '@mui/icons-material/Visibility';
@@ -20,6 +21,7 @@ import { SharedContext } from "@/Context/SharedContext";
 export default function CartItemModal() {
     const [showCost, setShowCost] = React.useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
+    const quantityInputRef = useRef(null);
 
     const { updateCartItem } = useSales();
     const { cartItemModalOpen, setCartItemModalOpen, selectedCartItem, setSelectedCartItem } = useContext(SharedContext);
@@ -63,6 +65,10 @@ export default function CartItemModal() {
 
     }, [selectedCartItem]);
 
+    useEffect(() => {
+        quantityInputRef.current?.focus();
+      }, [quantityInputRef.current]);
+
     // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -79,7 +85,8 @@ export default function CartItemModal() {
                 fullWidth={true}
                 maxWidth={"sm"}
                 open={cartItemModalOpen}
-                disableRestoreFocus={true}
+                // disableRestoreFocus={true}
+                autoFocus={true}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 PaperProps={{
@@ -129,6 +136,7 @@ export default function CartItemModal() {
                                 variant="outlined"
                                 value={formState.quantity}
                                 onChange={handleInputChange}
+                                inputRef={quantityInputRef}
                                 sx={{
                                     mt: "0.5rem",
                                     input: { fontSize: "1rem" },
@@ -143,7 +151,7 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                 }}
-                            />
+                            />                            
                         </Grid>
                         
                         <Grid size={6}>

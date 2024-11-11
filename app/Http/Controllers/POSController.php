@@ -94,6 +94,7 @@ class POSController extends Controller
                 'amount_received' => $amountReceived,
                 'profit_amount' => $profitAmount,
                 'status' => 'pending', // Or 'pending', or other status as needed
+                'payment_status'=>'pending',
                 'note' => $note,
                 'created_by'=>$createdBy,
             ]);
@@ -109,6 +110,7 @@ class POSController extends Controller
                     'transaction_type'=>'sale'
                 ]);
                 $sale->status = 'completed';
+                $sale->payment_status = 'completed';
                 $sale->save();
             }
             else{
@@ -146,7 +148,10 @@ class POSController extends Controller
                     }
                 }
 
-                if($amountReceived >= $total) $sale->status = 'completed';
+                if($amountReceived >= $total) {
+                    $sale->payment_status = 'completed';
+                    $sale->status = 'completed';
+                }
 
                 $sale->amount_received = $amountReceived;
                 $sale->save();
@@ -161,6 +166,7 @@ class POSController extends Controller
                     'unit_price' => $item['price'], // Sale price per unit
                     'unit_cost' => $item['cost'], // Cost price per unit
                     'discount' => $item['discount'], // Discount applied to this item
+                    'sale_date'=>$sale->sale_date,
                 ]);
         
                 if($item['is_stock_managed'] ==1){

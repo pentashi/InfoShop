@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('expiry_date')->nullable(); // Nullable expiry date
             $table->decimal('cost', 10, 2); // Cost price
             $table->decimal('price', 10, 2); // Sale price
+            $table->decimal('discount',10)->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->integer('created_by')->nullable();

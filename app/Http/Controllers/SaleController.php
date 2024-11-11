@@ -22,7 +22,8 @@ class SaleController extends Controller
             'discount',                // Discount
             'amount_received',         // Amount received
             'profit_amount',          // Profit amount
-            'status',                  // Sale status
+            'status',
+            'payment_status',
             'contacts.name',
             'contacts.balance',
             'store_id',

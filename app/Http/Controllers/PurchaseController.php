@@ -97,6 +97,7 @@ class PurchaseController extends Controller
                 'total_amount' => $validatedData['net_total'], //Total after discount
                 'discount' => $validatedData['discount'] ?? 0, // Optional, defaults to 0
                 'amount_paid' => $request->amount_paid ?? 0,
+                'profit_amount'=> $request->profit_amount ?? 0,
                 'payment_status' => $validatedData['payment_status'] ?? 'pending',
                 'status' => $validatedData['status'] ?? 'pending',
                 'reference_no' => $validatedData['reference_no'] ?? null, // Optional

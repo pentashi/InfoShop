@@ -7,11 +7,14 @@ use Inertia\Inertia;
 use App\Models\CashLog;
 use App\Models\Store;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
     public function getDailyCashReport(Request $request){
         $transaction_date = $request->only(['transaction_date']);
+
+        if(empty($transaction_date)) $transaction_date = Carbon::today()->toDateString();
 
         $stores = Store::select('id', 'name')->get();
         $cashLogs = CashLog::where('transaction_date',$transaction_date)

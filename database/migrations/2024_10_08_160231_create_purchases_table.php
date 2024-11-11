@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('reference_no');
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)
             $table->decimal('discount', 10, 2)->default(0); // Discount applied on the purchase
+            $table->decimal('profit_amount', 10, 2)->default(0)->nullable(); // Profit expected from the purchase
             $table->decimal('amount_paid', 10, 2); // Amount paid so far
             $table->string('payment_status'); //['paid', 'partial', 'pending', 'overdue']
             $table->string('status'); //['completed', 'pending', 'canceled']

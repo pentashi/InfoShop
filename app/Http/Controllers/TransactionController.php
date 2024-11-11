@@ -57,7 +57,10 @@ class TransactionController extends Controller
                     $sale->increment('amount_received', $amount);
                 
                     // Check if the total amount received is greater than or equal to the total amount
-                    if ($sale->amount_received >= $sale->total_amount) $sale->status = 'completed';
+                    if ($sale->amount_received >= $sale->total_amount) {
+                        $sale->status = 'completed';
+                        $sale->payment_status = 'completed';
+                    }
                 
                     // Save the changes to the Sale record
                     $sale->save();

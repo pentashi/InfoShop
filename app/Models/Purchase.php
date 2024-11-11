@@ -24,6 +24,7 @@ class Purchase extends Model
         'status',
         'reference_no',
         'note',
+        'profit_amount',
     ];
 
 }

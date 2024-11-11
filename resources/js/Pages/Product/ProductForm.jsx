@@ -456,7 +456,6 @@ export default function Product({ product, collection }) {
                                 <CardMedia
                                     sx={{ height: 300 }}
                                     image={productFormData.featured_image}
-                                    title="green iguana"
                                 />
 
                                 <CardActions className="mt-0">

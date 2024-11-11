@@ -23,6 +23,7 @@ class Sale extends Model
         'amount_received',  // Amount received
         'profit_amount',   // Profit amount
         'status',          // Sale status ['completed', 'pending', 'refunded']
+        'payment_status',
         'note',        // Note
         'created_by',
     ];

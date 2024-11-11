@@ -21,5 +21,6 @@ class ProductBatch extends Model
         'price',      // The sale price of this batch
         'is_active',
         'is_featured',
+        'discount'
     ];
 }

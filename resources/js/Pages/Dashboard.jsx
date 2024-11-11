@@ -67,8 +67,8 @@ export default function Dashboard({ data }) {
         >
             <Head title="Dashboard" />
 
-            <Grid container spacing={2} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }} width={"100%"}>
-                <Grid size={{xs:12, sm:6, md:2}}>
+            <Grid container spacing={2} sx={{ display: "flex", flexDirection:'row' }} width={"100%"}>
+                <Grid size={{xs:6, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#77E4C8' }}>
                         <CardContent>
                             <Typography
@@ -88,7 +88,7 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:6, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#FDFFE2' }}>
                         <CardContent>
                             <Typography
@@ -107,7 +107,7 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:6, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#FAE7F3' }}>
                         <CardContent>
                             <Typography
@@ -126,7 +126,7 @@ export default function Dashboard({ data }) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{xs:12, sm:6, md:3}}>
+                <Grid size={{xs:6, sm:6, md:3}}>
                     <Card sx={{ height: "100%", backgroundColor:'#D1E9F6' }}>
                         <CardContent>
                             <Typography
@@ -148,7 +148,7 @@ export default function Dashboard({ data }) {
             </Grid>
 
             <Grid container size={{xs:12, sm:8, md:4}} sx={{ mt: "3rem"}}>
-                <Grid>
+                <Grid size={{xs:12, sm:8, md:4}}>
                 <Card sx={{width:'100%' }} >
                     <CardContent>
                         <Grid container display="flex" spacing={2} width={'100%'}>

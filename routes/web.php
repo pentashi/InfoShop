@@ -104,6 +104,29 @@ Route::middleware('auth')->group(function () {
         Artisan::call('storage:link');
         return 'Linked with storage';
     });
+
+    Route::get('/backup', function () {
+        try {
+            // Call the Artisan command
+            Artisan::call('backup:run');
+    
+            // Get the output of the command
+            $output = Artisan::output();
+    
+            // You can check the output or return a success message
+            return response()->json([
+                'success' => true,
+                'message' => 'Backup completed!',
+                'output' => $output
+            ]);
+        } catch (\Exception $e) {
+            // Catch any exceptions and return an error message
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ], 500);
+        }
+        });
 });
 
 // Route::get('/install', function(){

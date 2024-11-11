@@ -48,7 +48,7 @@ export default function CashCheckoutDialog({ disabled }) {
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.cartItems = cartState;
-        formJson.profit_amount = totalProfit;
+        formJson.profit_amount = totalProfit-discount; //total profit is from the sale items, but we apply discount for the bill also
         formJson.sale_date = saleDate;
         formJson.payment_method = 'Cash'
         formJson.contact_id = selectedCustomer.id

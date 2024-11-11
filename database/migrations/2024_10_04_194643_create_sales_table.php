@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('amount_received', 10, 2); // Amount received
             $table->decimal('profit_amount', 10, 2)->default(0);
             $table->string('status')->default('pending'); //['completed', 'pending', 'refunded']
+            $table->string('payment_status')->default('pending');
             $table->text('note')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();

@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'One Shop store',
             'address'=>'Your address',
             'contact_number'=>'00000001',
-            'sale_prefix'=>'',
+            'sale_prefix'=>'OS',
             'current_sale_number'=>0,
         ]);
         

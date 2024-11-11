@@ -33,6 +33,7 @@ const columns = (handleRowClick) => [
     { field: "unit_cost", headerName: "Cost", width: 100 },
     { field: "unit_price", headerName: "Price", width: 100 },
     {
+        field:'total',
         headerName: "Total",
         width: 100,
         renderCell: (params) => {

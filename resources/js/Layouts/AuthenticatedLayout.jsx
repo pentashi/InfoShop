@@ -352,7 +352,6 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         },
                     }}
                     open
-                    scroll-region
                 >
                     {drawer}
                 </Drawer>
