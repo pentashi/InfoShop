@@ -1,6 +1,5 @@
 import * as React from "react";
 import Accordion from "@mui/material/Accordion";
-import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -15,6 +14,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
+import { Select, MenuItem, Typography, FormControl, InputLabel } from '@mui/material';
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
@@ -33,24 +33,63 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export default function Setting({ settings }) {
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setSettingFormData({
-            ...settingFormData,
-            [name]: checked ? 'on' : 'off',
-        });
-    };
+const fontOptions = [
+    { label: "Arial", fontFamily: "Arial, sans-serif" },
+    { label: "Helvetica", fontFamily: "Helvetica, sans-serif" },
+    { label: "Times New Roman", fontFamily: "'Times New Roman', serif" },
+    { label: "Georgia", fontFamily: "Georgia, serif" },
+    { label: "Courier New", fontFamily: "'Courier New', monospace" },
+    { label: "Verdana", fontFamily: "Verdana, sans-serif" },
+    { label: "Tahoma", fontFamily: "Tahoma, sans-serif" },
+    { label: "Trebuchet MS", fontFamily: "'Trebuchet MS', sans-serif" },
+    { label: "Comic Sans MS", fontFamily: "'Comic Sans MS', cursive" },
+    { label: "OCR A Extended", fontFamily: "'OCR A Extended', monospace" },
+    { label: "Monaco", fontFamily: "Monaco, monospace" },
+    { label: "Lucida Console", fontFamily: "'Lucida Console', monospace" },
+    { label: "Consolas", fontFamily: "Consolas, monospace" },
+    { label: "Bitstream Vera Sans Mono", fontFamily: "'Bitstream Vera Sans Mono', monospace" },
+    { label: "DejaVu Sans Mono", fontFamily: "'DejaVu Sans Mono', monospace" },
+    { label: "Inconsolata", fontFamily: "'Inconsolata', monospace" },
+    { label: "Source Code Pro", fontFamily: "'Source Code Pro', monospace" },
+    { label: "Fira Code", fontFamily: "'Fira Code', monospace" },
+    { label: "Droid Sans Mono", fontFamily: "'Droid Sans Mono', monospace" },
+    { label: "Ubuntu Mono", fontFamily: "'Ubuntu Mono', monospace" },
+    { label: "PT Mono", fontFamily: "'PT Mono', monospace" },
+    { label: "Noto Mono", fontFamily: "'Noto Mono', monospace" },
+    { label: "Hack", fontFamily: "'Hack', monospace" },
+    { label: "Tisa Mono", fontFamily: "'Tisa Mono', monospace" },
+    { label: "Space Mono", fontFamily: "'Space Mono', monospace" },
+];
 
+
+export default function Setting({ settings }) {
     const [settingFormData, setSettingFormData] = useState({
         shop_logo: settings.shop_logo,
         sale_receipt_note: settings.sale_receipt_note,
         shop_name: settings.shop_name,
         sale_print_padding_right: settings.sale_print_padding_right,
+        sale_print_padding_left: settings.sale_print_padding_left,
+        sale_print_font: settings.sale_print_font,
         show_barcode_store: settings.show_barcode_store,
         show_barcode_product_price: settings.show_barcode_product_price,
         show_barcode_product_name: settings.show_barcode_product_name,
     });
+
+    const handleFontChange = (event) => {
+        const selectedFontFamily = event.target.value;
+        setSettingFormData({
+            ...settingFormData,
+            sale_print_font: selectedFontFamily,
+        });
+    };
+    
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setSettingFormData({
+            ...settingFormData,
+            [name]: type === 'checkbox' ? (checked ? 'on' : 'off') : value,
+        });
+    };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -192,6 +231,7 @@ export default function Setting({ settings }) {
                                             display: "flex",
                                             width: "100%",
                                         }}
+                                        spacing={3}
                                     >
                                         <Grid size={12}>
                                             <TextField
@@ -201,14 +241,13 @@ export default function Setting({ settings }) {
                                                 name="sale_receipt_note"
                                                 multiline
                                                 required
-                                                sx={{ mt: "1rem" }}
                                                 value={
                                                     settingFormData.sale_receipt_note
                                                 }
                                                 onChange={handleChange}
                                             />
                                         </Grid>
-                                        <Grid size={4}>
+                                        <Grid size={3}>
                                             <TextField
                                                 fullWidth
                                                 variant="outlined"
@@ -216,12 +255,44 @@ export default function Setting({ settings }) {
                                                 name="sale_print_padding_right"
                                                 multiline
                                                 required
-                                                sx={{ mt: "1rem" }}
                                                 value={
                                                     settingFormData.sale_print_padding_right
                                                 }
                                                 onChange={handleChange}
                                             />
+                                        </Grid>
+                                        <Grid size={3}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Padding Left"}
+                                                name="sale_print_padding_left"
+                                                multiline
+                                                required
+                                                value={
+                                                    settingFormData.sale_print_padding_left
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={6}>
+                                        <FormControl fullWidth>
+                                    <InputLabel>Choose Font for Receipt</InputLabel>
+                                    <Select
+                                    name="sale_print_font"
+                                        label="Choose Font for Receipt"
+                                        value={settingFormData.sale_print_font}
+                                        onChange={handleFontChange}
+                                    >
+                                        {fontOptions.map((option) => (
+                                            <MenuItem key={option.fontFamily} value={option.fontFamily}>
+                                                <Typography style={{ fontFamily: option.fontFamily }}>
+                                                    {option.label}
+                                                </Typography>
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                                         </Grid>
                                     </Grid>
                                 </AccordionDetails>

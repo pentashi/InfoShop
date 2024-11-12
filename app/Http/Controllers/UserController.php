@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Store;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -27,9 +28,9 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:4',
             'user_name' => 'required|string|max:255',
-            'user_role' => 'required|string|max:255',
+            'user_role' => 'required|string|exists:roles,name',
         ]);
 
         // Create a new user
@@ -41,6 +42,8 @@ class UserController extends Controller
             'user_role' => $request->user_role,
             'store_id' => $request->store_id,
         ]);
+
+        $user->assignRole($request->user_role);
 
         return Redirect::route('users.index');
     }
@@ -54,9 +57,9 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8', // Password is optional for update
+            'password' => 'nullable|string|min:4', // Password is optional for update
             'user_name' => 'required|string|max:255',
-            'user_role' => 'required|string|max:255',
+            'user_role' => 'required|string|exists:roles,name',
         ]);
 
         // Update user details
@@ -70,6 +73,8 @@ class UserController extends Controller
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
+
+        $user->syncRoles($request->user_role);
 
         $user->save();
 

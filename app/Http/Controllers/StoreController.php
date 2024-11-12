@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -50,6 +52,24 @@ class StoreController extends Controller
             'sale_prefix' => 'max:5',
             'current_sale_number' => 'required|integer|min:0',
         ]);
+
+        // Log activity for sale_prefix if it has changed
+        if ($store->sale_prefix != $request->sale_prefix) {
+            activity()
+                ->performedOn($store)
+                ->causedBy(Auth::user())
+                ->withProperties(['old_sale_prefix' => $store->sale_prefix, 'new_sale_prefix' => $request->sale_prefix])
+                ->log('Updated sale prefix');
+        }
+
+        // Log activity for current_sale_number if it has changed
+        if ($store->current_sale_number != $request->current_sale_number) {
+            activity()
+                ->performedOn($store)
+                ->causedBy(Auth::user())
+                ->withProperties(['old_sale_number' => $store->current_sale_number, 'new_sale_number' => $request->current_sale_number])
+                ->log('Updated current sale number');
+        }
 
         // Update the store record
         $store->update($validatedData);

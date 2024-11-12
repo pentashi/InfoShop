@@ -76,4 +76,22 @@ class ReportController extends Controller
             'message' => "Transaction added successfully",
         ], 200);
     }
+
+    public function getContactStatement(Request $request){
+        $transaction_date = $request->only(['transaction_date']);
+
+        if(empty($transaction_date)) $transaction_date = Carbon::today()->toDateString();
+
+        $stores = Store::select('id', 'name')->get();
+        $cashLogs = CashLog::where('transaction_date',$transaction_date)
+        ->select('transaction_date','description', 'amount','source','contacts.name')
+        ->leftJoin('contacts', 'cash_logs.contact_id', '=', 'contacts.id') 
+        ->get();
+
+        return Inertia::render('Report/ContactStatement', [
+            'stores'=>$stores,
+            'logs'=>$cashLogs,
+            'pageLabel'=>'Contact Statements',
+        ]);
+    }
 }

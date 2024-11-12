@@ -106,13 +106,14 @@ export default function UserFormDialog({ open, handleClose, user, stores }) {
             fullWidth
             variant="outlined"
             value={formState.user_name}
+            autoFocus
             onChange={handleChange}
           />
 
           {/* User Name */}
           <TextField
             className="py-8"
-            autoFocus
+            
             required
             margin="dense"
             id="name"
@@ -169,6 +170,7 @@ export default function UserFormDialog({ open, handleClose, user, stores }) {
               onChange={handleChange}
               required
             >
+              <MenuItem value="super admin">Super Admin</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="user">User</MenuItem>
               {/* Add more roles as needed */}

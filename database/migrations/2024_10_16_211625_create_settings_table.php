@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('meta_key')->unique();
             $table->text('meta_value')->nullable();
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->timestamps();
         });
     }

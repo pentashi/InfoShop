@@ -29,34 +29,48 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
     const RecieptContainer = styled(Paper)(({ theme }) => ({
         width: "500px",
         padding: theme.spacing(3),
-        ...theme.typography.body2,
         textAlign: "center",
+    }));
+
+    const RecieptPrintContainer = styled(Paper)(({ theme }) => ({
+        width: "100%",
+        fontFamily: settings.sale_print_font,
+        textAlign: "center",
+        boxShadow: "none",
     }));
 
     const styles = {
         receiptTopText: {
             fontSize: '13px',
+            fontWeight:'bold',
+            fontFamily: settings.sale_print_font,
         },
         receiptSummaryText: {
             fontSize: '13px',
             padding: 0,
+            fontWeight:'bold',
             borderBottom: "none",
+            fontFamily: settings.sale_print_font,
         },
         itemsHeader:{
             fontSize: "13px",
             padding: 0, 
             fontWeight:'bold',
+            fontFamily: settings.sale_print_font,
             py: 1,
             pt:0,
         },
         itemsCells:{
             fontSize: "13px",
             padding: 0,
+            fontWeight:'500',
             py: 1,
-            pt:0,
+            verticalAlign: "middle",
+            fontFamily: settings.sale_print_font,
         },
         printArea:{
             paddingRight:parseFloat(settings.sale_print_padding_right),
+            paddingLeft:parseFloat(settings.sale_print_padding_left),
         }
     };
 
@@ -82,11 +96,11 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                         </Button>
                     </Box>
                     <div id="print-area" ref={contentRef} className="p-0" style={styles.printArea}>
+                    <RecieptPrintContainer square={false}>
                         <Box className="flex justify-center items-center mt-0 flex-col">
-                            <Card sx={{ width: 110, boxShadow: 0 }}>
+                            <Card sx={{ width: 160, boxShadow: 0 }}>
                                 <CardMedia
                                     component="img"
-                                    height="120"
                                     image={
                                         window.location.origin +
                                         "/" +
@@ -96,23 +110,24 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                             </Card>
                             <Typography
                                 variant="h5"
-                                sx={{ fontSize: "20px" }}
+                                sx={{ fontSize: "20px", fontFamily: settings.sale_print_font,}}
                                 color="initial"
+                                
                             >
                                 {settings.shop_name}
                             </Typography>
                             <Typography
                                 variant="h6"
-                                sx={{ fontSize: "15px" }}
+                                sx={{ fontSize: "15px", fontFamily: settings.sale_print_font,}}
                                 color="initial"
                             >
-                                {sale.address}
+                                {sale.address+', '+sale.contact_number}
                             </Typography>
                         </Box>
                         <Divider
                             sx={{
                                 borderBottom: "1px dashed",
-                                borderColor: "grey.500",
+                                borderColor: "grey.700",
                                 my: "1rem",
                             }}
                         />
@@ -130,7 +145,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                         <Divider
                             sx={{
                                 borderBottom: "1px dashed",
-                                borderColor: "grey.500",
+                                borderColor: "grey.700",
                                 my: "1rem",
                             }}
                         />
@@ -214,7 +229,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            <strong>Total:</strong>
+                                            Total:
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
@@ -233,7 +248,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            <strong>Discount:</strong>
+                                            Discount:
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
@@ -248,7 +263,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            <strong>Subtotal:</strong>
+                                            Subtotal:
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
@@ -266,7 +281,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            <strong>Amount Received:</strong>
+                                            Amount Received:
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
@@ -281,7 +296,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            <strong>Change:</strong>
+                                            Change:
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
@@ -303,7 +318,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                         <Divider
                             sx={{
                                 borderBottom: "1px dashed",
-                                borderColor: "grey.500",
+                                borderColor: "grey.700",
                                 my: "1rem",
                             }}
                         />
@@ -311,9 +326,11 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                             align="center"
                             variant="body1"
                             color="initial"
+                            sx={styles.receiptSummaryText}
                         >
                             {settings.sale_receipt_note}
                         </Typography>
+                        </RecieptPrintContainer>
                     </div>
                 </RecieptContainer>
             </Box>

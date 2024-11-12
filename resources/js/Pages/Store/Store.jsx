@@ -89,10 +89,7 @@ import FormDialog from './Partial/FormDialog';
     return (
         <AuthenticatedLayout>
             <Head title="Store" />
-                <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
-                    <Grid size={8}>
-                        <Typography variant="h4" component="h2">Store</Typography>
-                    </Grid>
+                <Grid container spacing={2} alignItems='center' justifyContent={'end'} sx={{ width: "100%", mt:2}}>
                     <Grid size={4} container justifyContent='end'>
                         <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>Add Store</Button>
                     </Grid>
