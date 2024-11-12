@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             'current_sale_number'=>0,
         ]);
 
-        $superAdminRole = Role::firstOrCreate(['name' => 'super admin']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
 

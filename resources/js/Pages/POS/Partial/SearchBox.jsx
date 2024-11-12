@@ -66,7 +66,7 @@ export default function SearchBox() {
                 elevation={0}
                 sx={{
                     p: "2px 2px",
-                    ml: "2rem",
+                    ml: {sm:"2rem", xs:'0.5rem'},
                     display: "flex",
                     alignItems: "center",
                     width: "100%",

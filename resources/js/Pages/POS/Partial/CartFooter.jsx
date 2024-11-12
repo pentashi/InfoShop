@@ -47,61 +47,72 @@ export default function CartFooter() {
     };
 
     return (
-        <Grid container sx={{ width: "100%", pt: "0.8rem" }} spacing={1}>
+        <Grid container sx={{ pt: "0.8rem" }} spacing={1}>
             <Grid
                 container
-                size="auto"
-                sx={{ width: "100%" }}
-                display="flex"
-                justifyContent="center"
+                spacing={1}
+                flexDirection={'row'}
             >
+                <Grid size={6}>
                 <Button
                     variant="contained"
                     color="warning"
-                    sx={{ paddingY: "12px" }}
                     endIcon={<BackHandIcon />}
                     disabled={
                         cartState.length === 0 || selectedCustomer === null
                     }
                     onClick={onCartHold}
+                    size="large"
+                    fullWidth
                 >
                     HOLD
                 </Button>
+                </Grid>
+                
+                <Grid size={6}>
                 <Button
                     sx={{
-                        paddingY: "12px",
                         bgcolor: "text.primary",
                         color: "white",
                     }}
                     endIcon={<ShoppingCartIcon />}
                     onClick={() => setHeldModalOpen(true)}
+                    size="large"
+                    fullWidth
                 >
                     HELD ITEMS
                 </Button>
+                </Grid>
+                <Grid size={6}>
                 <Button
                     variant="contained"
                     color="error"
-                    sx={{ paddingY: "12px" }}
                     endIcon={<DeleteForeverIcon />}
                     disabled={
                         cartState.length === 0 || selectedCustomer === null
                     }
                     onClick={onCartEmpty}
+                    size="large"
+                    fullWidth
                 >
                     EMPTY
                 </Button>
+                </Grid>
 
+                <Grid size={6}>
                 <Button
                     variant="contained"
-                    sx={{ paddingY: "12px" }}
                     endIcon={<AddCardIcon />}
                     disabled={
                         cartState.length === 0 || selectedCustomer === null
                     }
                     onClick={() => setPaymentsModalOpen(true)}
+                    size="large"
+                    fullWidth
                 >
                     PAYMENTS
                 </Button>
+                </Grid>
             </Grid>
 
             <Grid container sx={{ width: "100%" }}>

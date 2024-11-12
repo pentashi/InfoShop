@@ -39,26 +39,8 @@ export default function CartItemsTop({customers}) {
 }, [customers]);
 
   return (
-  
-    <Box sx={{width:'100%', paddingY:'15px', paddingTop:'20px'}} className="flex items-center">
-      {Array.isArray(customerList) && (
-        <FormControl fullWidth>
-        <Autocomplete
-          disablePortal
-          options={customerList}
-          fullWidth
-          value={selectedCustomer || null}
-          getOptionKey={(option) => option.id}
-          getOptionLabel={(option) => typeof option === 'string' ? option : option.name+' | '+parseFloat(option.balance).toFixed(2)}
-          onChange={(event, newValue) => {
-            setSelectedCustomer(newValue)
-          }} 
-          renderInput={(params) => <TextField {...params} label="Customer" />}
-        />
-        </FormControl>
-      )}
-
-      <FormControl fullWidth sx={{ml:'0.5rem', maxWidth:'150px'}}>
+    <Grid sx={{ width:'100%', marginY:{xs:'1rem', sm:'1.2rem'}, }} container spacing={2} flexDirection={{xs:'column-reverse', sm:'row'}} >
+      <Grid size={{xs:12, sm:4 }} width={'100%'}>
           <TextField
               label="Sale Date"
               name="sale_date"
@@ -73,16 +55,39 @@ export default function CartItemsTop({customers}) {
               value={saleDate}
               onChange={(e) => setSaleDate(e.target.value)}
               required
+              size='small'
           />
-      </FormControl>
+      </Grid>
       
-      
-    <IconButton onClick={() => setOpen(true)}  sx={{ ml: '0.5rem', bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
+<Grid size={{xs:12, sm:8 }} container alignItems={'center'} width={'100%'} display={'flex'}>
+  <Grid size={10}>
+  {Array.isArray(customerList) && (
+        <Autocomplete
+          disablePortal
+          options={customerList}
+          fullWidth
+          value={selectedCustomer || null}
+          getOptionKey={(option) => option.id}
+          getOptionLabel={(option) => typeof option === 'string' ? option : option.name+' | '+parseFloat(option.balance).toFixed(2)}
+          onChange={(event, newValue) => {
+            setSelectedCustomer(newValue)
+          }}
+          size='small'
+          renderInput={(params) => <TextField {...params} label="Customer" />}
+        />
+      )} 
+  </Grid>
+     
+      <Grid size={2}>
+      <IconButton onClick={() => setOpen(true)}  sx={{ bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
             bgcolor: 'success.dark', // Change the background color on hover
         } }}>
         <PersonAddIcon fontSize="inherit" />
     </IconButton>
+      </Grid>
+</Grid>
+      
     <FormDialog open={open} handleClose={handleClose} onSuccess={handleFormSuccess} contactType={'customer'} />
-    </Box>
+    </Grid>
   );
 }

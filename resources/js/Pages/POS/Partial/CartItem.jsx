@@ -21,15 +21,15 @@ export default function CartItems() {
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
       {cartState.map((item) => (
         <React.Fragment key={item.id + item.batch_number}>
-          <ListItem alignItems="center">
-            <ListItemAvatar>
+          <ListItem alignItems="center" sx={{padding:{sm:1, xs:0}, paddingY:1}}>
+            <ListItemAvatar sx={{display:{xs:'none', sm:'block'}}}>
               <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url?item.image_url:productplaceholder} />
             </ListItemAvatar>
             <ListItemText
               primary={
                 <Typography
                   component="h5"
-                  sx={{ fontWeight: 'bold', cursor:'pointer' }}  // Makes the text bold
+                  sx={{ fontWeight: 'bold', cursor:'pointer', fontSize:{sm:'1rem', xs:'0.9rem'} }}  // Makes the text bold
                   className='hover:underline'
                   onClick={()=>{setSelectedCartItem(item); setCartItemModalOpen(true);}}
                 >

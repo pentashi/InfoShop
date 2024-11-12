@@ -18,10 +18,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 
 const initialPaymentFormState = {
     amount: 0,
-    expense_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
+    expense_date: dayjs().format("YYYY-MM-DD"), // Today's date in 'YYYY-MM-DD' format
     description: '',
     store_id:1,
 };

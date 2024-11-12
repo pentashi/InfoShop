@@ -19,7 +19,7 @@ export default function CartSummary() {
             />
             <ListItem
                 secondaryAction={
-                    <Typography variant="h5" color="initial">
+                    <Typography variant="h5" color="initial" sx={{fontSize:{sm:'1rem', xs:'1.2rem'}}}>
                         {cartState.length} | Qty. {totalQuantity}
                     </Typography>
                 }
@@ -28,7 +28,7 @@ export default function CartSummary() {
             </ListItem>
             <ListItem
                 secondaryAction={
-                    <Typography variant="h5" color="initial">
+                    <Typography variant="h5" color="initial" sx={{fontSize:{sm:'1rem', xs:'1.2rem'}}}>
                         {/* Rs.{(cartTotal-discount).toFixed(2)} */}
                          Rs.{(cartTotal).toFixed(2)}
                     </Typography>
