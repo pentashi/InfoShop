@@ -29,6 +29,7 @@ export default function BatchModal({
 
     const [isNew, setIsNew] = useState(false)
     const [formState, setFormState] = useState(initialFormState);
+    const [loading, setLoading] = useState(false)
 
     const handleClose = () => {
         setIsNew(false)
@@ -38,30 +39,62 @@ export default function BatchModal({
 
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
+        if (loading) return;
+        setLoading(true);
+
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.new_batch = formState.batch_number;
         formJson.id = selectedProduct.id
 
-        let response;
-        if(isNew) {response = await axios.post('/storebatch/', formJson);}
-        else {response = await axios.post('/productbatch/'+formState.batch_id, formJson);}
+        let url='/storebatch';
+        if(!isNew) url='/productbatch/'+formState.batch_id
 
-        if (response.status === 200 || response.status === 201) {
-            refreshProducts()
+        // let response;
+        // if(isNew) {response = await axios.post('/storebatch/', formJson);}
+        // else {response = await axios.post('/productbatch/'+formState.batch_id, formJson);}
+
+        axios
+        .post(url, formJson)
+        .then((resp) => {
             Swal.fire({
                 title: "Success!",
-                text: response.data.message,
+                text: resp.data.message,
                 icon: "success",
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
             });
+            refreshProducts()
+            handleClose()
+        })
+        .catch((error) => {
+            Swal.fire({
+                title: "Failed!",
+                text: error.response.data.error,
+                icon: "error",
+                showConfirmButton: true,
+            });
+            console.log(error);
+        }).finally(() => {
+            setLoading(false); // Reset submitting state
+        });
 
-            handleClose();
-        } else {
-            console.error('Error: Response not successful', response);
-        }
+        // if (response.status === 200 || response.status === 201) {
+           
+        //     Swal.fire({
+        //         title: "Success!",
+        //         text: response.data.message,
+        //         icon: "success",
+        //         showConfirmButton: false,
+        //         timer: 2000,
+        //         timerProgressBar: true,
+        //     });
+
+        //     handleClose();
+        // } else {
+        //     console.error('Error: Response not successful', response);
+        // }
     };
 
     // Function to update form state based on a batch object
@@ -315,6 +348,7 @@ export default function BatchModal({
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
+                        disabled={loading}
                     >
                         {isNew ? "SAVE BATCH" : "UPDATE BATCH"}
                     </Button>

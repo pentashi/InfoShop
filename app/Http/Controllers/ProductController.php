@@ -62,7 +62,7 @@ class ProductController extends Controller
                     ->orWhere('products.name', 'LIKE', '%' . $filters['search_query'] . '%');
             });
         }
-
+        $query->orderBy('products.id', 'desc');
         $results = $query->paginate(25);
         $results->appends($filters);
         return $results;
