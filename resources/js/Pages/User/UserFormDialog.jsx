@@ -170,7 +170,7 @@ export default function UserFormDialog({ open, handleClose, user, stores }) {
               onChange={handleChange}
               required
             >
-              <MenuItem value="super admin">Super Admin</MenuItem>
+              {/* <MenuItem value="super-admin">Super Admin</MenuItem> */}
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="user">User</MenuItem>
               {/* Add more roles as needed */}

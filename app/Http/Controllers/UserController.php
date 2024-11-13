@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function index(){
         $stores = Store::select('id', 'name')->get();
-        $users=User::select('users.id','users.name','user_name', 'user_role', 'email', 'stores.name as store_name', 'users.created_at', 'store_id')->leftJoin('stores','stores.id','=','users.store_id')->get();
+        $users=User::select('users.id','users.name','user_name', 'user_role', 'email', 'stores.name as store_name', 'users.created_at', 'store_id')->leftJoin('stores','stores.id','=','users.store_id')->where('user_role','!=','super-admin')->get();
         return Inertia::render('User/User',[
             'users'=>$users,
             'stores'=>$stores,

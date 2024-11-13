@@ -52,6 +52,11 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
             borderBottom: "none",
             fontFamily: settings.sale_print_font,
         },
+        receiptSummaryTyp: {
+            fontSize: '13px',
+            fontWeight:'bold',
+            fontFamily: settings.sale_print_font,
+        },
         itemsHeader:{
             fontSize: "13px",
             padding: 0, 
@@ -60,6 +65,12 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
             py: 1,
             pt:0,
         },
+        itemsHeaderTyp:{
+            fontSize:'14px',
+            fontWeight:'bold',
+            fontFamily: settings.sale_print_font,
+        },
+
         itemsCells:{
             fontSize: "13px",
             padding: 0,
@@ -68,6 +79,12 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
             verticalAlign: "middle",
             fontFamily: settings.sale_print_font,
         },
+        itemsCellsTyp:{
+            fontSize: "13px",
+            fontWeight:'500',
+            fontFamily: settings.sale_print_font,
+        },
+
         printArea:{
             paddingRight:parseFloat(settings.sale_print_padding_right),
             paddingLeft:parseFloat(settings.sale_print_padding_left),
@@ -132,15 +149,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                             }}
                         />
                         <Box className="flex items-start flex-col">
-                            <p style={styles.receiptTopText}>
+                            <Typography sx={styles.receiptTopText} color="initial">
                                 Order: {sale.sale_prefix+'/'+sale.invoice_number}
-                            </p>
-                            <p style={styles.receiptTopText}>
+                            </Typography>
+                            <Typography sx={styles.receiptTopText} color="initial">
                                 Date: {sale.sale_date} By: {user_name}
-                            </p>
-                            <p style={styles.receiptTopText}>
+                            </Typography>
+                            <Typography sx={styles.receiptTopText} color="initial">
                                 Client: {sale.name}
-                            </p>
+                            </Typography>
                         </Box>
                         <Divider
                             sx={{
@@ -158,25 +175,26 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell sx={styles.itemsHeader}>
-                                            Name
+                                        <Typography sx={styles.itemsHeaderTyp} color="initial">Name</Typography>                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.itemsHeader}
                                             align="right"
                                         >
-                                            Qty.
+                                            
+                                            <Typography sx={styles.itemsHeaderTyp} color="initial">Qty.</Typography>
                                         </TableCell>
                                         <TableCell
                                             sx={styles.itemsHeader}
                                             align="right"
                                         >
-                                            Price
+                                            <Typography sx={styles.itemsHeaderTyp} color="initial">Price</Typography>
                                         </TableCell>
                                         <TableCell
                                             sx={styles.itemsHeader}
                                             align="right"
                                         >
-                                            Total
+                                            <Typography sx={styles.itemsHeaderTyp} color="initial">Total</Typography>
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -186,28 +204,34 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             <TableCell
                                                 sx={styles.itemsCells}
                                             >
-                                                {item.name}
+                                                <Typography sx={styles.itemsCellsTyp} color="initial">{item.name}</Typography>
+                                                
                                             </TableCell>
                                             <TableCell
                                                 sx={styles.itemsCells}
                                                 align="right"
                                             >
-                                                {item.quantity}
+                                                 <Typography sx={styles.itemsCellsTyp} color="initial">{item.quantity}</Typography>
+                                                
                                             </TableCell>
                                             <TableCell
                                                 sx={styles.itemsCells}
                                                 align="right"
                                             >
-                                                {item.unit_price}
+                                                <Typography sx={styles.itemsCellsTyp} color="initial">{item.unit_price}</Typography>
+                                                
                                             </TableCell>
                                             <TableCell
                                                 sx={styles.itemsCells}
                                                 align="right"
                                             >
-                                                {(
+                                                 <Typography sx={styles.itemsCellsTyp} color="initial">
+                                                 {(
                                                     item.quantity *
                                                     item.unit_price
                                                 ).toFixed(2)}
+                                                 </Typography>
+                                               
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -228,18 +252,23 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             sx={styles.receiptSummaryText}
                                             colSpan={3}
                                             align="right"
+                                            color="initial"
                                         >
-                                            Total:
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Total:</Typography>
+                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
                                             align="right"
+                                            color="initial"
                                         >
-                                            Rs.
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">
+                                                Rs.
                                             {(
                                                 parseFloat(sale.total_amount) +
                                                 parseFloat(sale.discount)
-                                            ).toFixed(2)}
+                                            ).toFixed(2)}</Typography>
+                                            
                                         </TableCell>
                                     </TableRow>
                                     <TableRow sx={{ border: "none" }}>
@@ -248,13 +277,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            Discount:
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Discount:</Typography>
+                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
                                             align="right"
                                         >
-                                            Rs.{sale.discount}
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Rs.{sale.discount}</Typography>
+                                            
                                         </TableCell>
                                     </TableRow>
                                     <TableRow sx={{ border: "none" }}>
@@ -263,16 +294,20 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            Subtotal:
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Subtotal:</Typography>
+                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
                                             align="right"
                                         >
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">
                                             Rs.
                                             {parseFloat(
                                                 sale.total_amount
                                             ).toFixed(2)}
+                                            </Typography>
+                                            
                                         </TableCell>
                                     </TableRow>
                                     <TableRow sx={{ border: "none" }}>
@@ -281,13 +316,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            Amount Received:
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Amount Received:</Typography>
+                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
                                             align="right"
                                         >
-                                            Rs.{sale.amount_received}
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Rs.{sale.amount_received}</Typography>
+                                            
                                         </TableCell>
                                     </TableRow>
                                     <TableRow sx={{ border: "none" }}>
@@ -296,12 +333,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             colSpan={3}
                                             align="right"
                                         >
-                                            Change:
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">Change:</Typography>
+                                            
                                         </TableCell>
                                         <TableCell
                                             sx={styles.receiptSummaryText}
                                             align="right"
                                         >
+                                            <Typography sx={styles.receiptSummaryTyp} color="initial">
                                             Rs.
                                             {(
                                                 parseFloat(
@@ -309,6 +348,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 ) -
                                                 parseFloat(sale.total_amount)
                                             ).toFixed(2)}
+                                            </Typography>
+                                            
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
