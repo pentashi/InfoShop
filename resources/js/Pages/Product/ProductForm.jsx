@@ -15,6 +15,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Grid from "@mui/material/Grid2";
 import "dayjs/locale/en-gb";
 import Swal from "sweetalert2";
+import Hotkeys from "react-hot-keys";
 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -173,6 +174,16 @@ export default function Product({ product, collection }) {
 
     return (
         <AuthenticatedLayout>
+            <Hotkeys
+     keyName="Control+s" // Listening for Shift+A and Ctrl+S
+     onKeyDown={(keyName, e) => {
+       e.preventDefault(); // Prevent default browser action for Ctrl+S
+        if (keyName === "Control+s") {
+         // Trigger the form submit by programmatically calling handleSubmit
+         document.getElementById("product-form").requestSubmit();
+       }
+     }}
+    >
             <Head title="Products" />
             <form
                 id="product-form"
@@ -274,7 +285,7 @@ export default function Product({ product, collection }) {
                 </Box>
 
                 <Divider></Divider>
-                <Box sx={{ mt: 3, mb: 4 }}>
+                <Box sx={{ mt: 2, mb: 2 }}>
                     <Typography variant="h5" color="initial">
                         Stock
                     </Typography>
@@ -366,8 +377,17 @@ export default function Product({ product, collection }) {
                         >
                             <ToggleButton
                                 value="1"
-                                sx={{ p: "15px" }}
+                                sx={{ p: "15px",
+                                    color:'black',
+      '&.Mui-selected': {
+        bgcolor: 'success.dark', // Background color when active
+        color: 'white', // Text color when active
+        '&:hover': {
+          bgcolor: 'success.dark', // Darker shade on hover when active
+        },}
+                                }}
                                 variant="contained"
+                                
                             >
                                 Manage Stock
                             </ToggleButton>
@@ -513,6 +533,7 @@ export default function Product({ product, collection }) {
                     </Toolbar>
                 </AppBar>
             </form>
+            </Hotkeys>
         </AuthenticatedLayout>
     );
 }
