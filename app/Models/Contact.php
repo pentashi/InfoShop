@@ -41,4 +41,24 @@ class Contact extends Model
     {
         return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
     }
+    
+    public function incrementBalance($amount, $user)
+    {
+        // Step 1: Get the current balance
+        $previousBalance = $this->balance;
+
+        // Step 2: Increment the balance
+        $this->increment('balance', $amount);
+
+        // Step 3: Log the activity with previous balance, new balance, and user context
+        activity()
+            ->performedOn($this)
+            ->causedBy($user)
+            ->withProperties([
+                'previous_balance' => $previousBalance,
+                'incremented_amount' => $amount,
+                'new_balance' => $this->balance,
+            ])
+            ->log('Increased balance from ' . $previousBalance . ' to ' . $this->balance);
+    }
 }

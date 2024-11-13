@@ -12,6 +12,7 @@ use App\Models\Sale;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -36,16 +37,19 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
+            $contact = Contact::find($contactId);
+            $user = Auth::user();
+
             $transactionData['transaction_type'] = 'account';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 
             }
             elseif($paymentMethod !='Account' && $request->has('transaction_id')){
                 $transactionData['transaction_type'] = 'sale';
-                Contact::where('id', $contactId)->increment('balance', $amount);
+                $contact->incrementBalance($amount, $user);
             }
             else{
-                Contact::where('id', $contactId)->increment('balance', $amount);
+                $contact->incrementBalance($amount, $user);
             }
             
             Transaction::create($transactionData);
@@ -110,16 +114,19 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try{
+            $contact = Contact::find($contactId);
+            $user = Auth::user();
+            
             $transactionData['transaction_type'] = 'account';
             if($paymentMethod=='Account' && $request->has('transaction_id')) {
                 
             }
             elseif($paymentMethod !='Account' && $request->has('transaction_id')){
                 $transactionData['transaction_type'] = 'purchase';
-                Contact::where('id', $contactId)->increment('balance', $amount);
+                $contact->incrementBalance($amount, $user);
             }
             else{
-                Contact::where('id', $contactId)->increment('balance', $amount);
+                $contact->incrementBalance($amount, $user);
             }
             
             PurchaseTransaction::create($transactionData);

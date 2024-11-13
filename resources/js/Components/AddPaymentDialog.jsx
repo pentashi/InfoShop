@@ -37,7 +37,7 @@ export default function AddPaymentDialog({
     stores=null,
     refreshTable
 }) {
-
+    const [loading, setLoading] = useState(false);
     const [paymentForm, setPaymentFormState] = useState(initialPaymentFormState);
 
     const handleClose = () => {
@@ -54,6 +54,9 @@ export default function AddPaymentDialog({
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        if (loading) return;
+        setLoading(true);
 
         const submittedFormData = new FormData(event.currentTarget);
         let formJson = Object.fromEntries(submittedFormData.entries());
@@ -89,6 +92,8 @@ export default function AddPaymentDialog({
                 showConfirmButton: true,
             });
             console.log(error);
+        }).finally(() => {
+            setLoading(false); // Reset submitting state
         });
     };
 
@@ -228,9 +233,9 @@ export default function AddPaymentDialog({
                         fullWidth
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
-                        disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit)}
+                        disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit) || loading}
                     >
-                        ADD PAYMENT
+                        {loading ? 'Loading...' : 'ADD PAYMENT'}
                     </Button>
                 </DialogActions>
             </Dialog>
