@@ -80,12 +80,22 @@ class DatabaseSeeder extends Seeder
         $superAdmin=User::create([
             'name' => 'Admin',
             'user_name'=>'master',
-            'user_role'=>'super admin',
-            'email' => 'admin@clearcodeweb.xyz.lk',
+            'user_role'=>'super-admin',
+            'email' => 'master@clearcodeweb.xyz.lk',
             'store_id' => 1,
             'password' => Hash::make('8236'),
         ]);
         $superAdmin->assignRole($superAdminRole);
+
+        $admin=User::create([
+            'name' => 'Admin',
+            'user_name'=>'admin',
+            'user_role'=>'admin',
+            'email' => 'admin@clearcodeweb.xyz.lk',
+            'store_id' => 1,
+            'password' => Hash::make('8236'),
+        ]);
+        $admin->assignRole($adminRole);
 
         $this->call([
             ContactSeeder::class,
