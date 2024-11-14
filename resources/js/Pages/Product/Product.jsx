@@ -247,7 +247,6 @@ export default function Product({ products, stores }) {
                     </FormControl>
                     </Grid>
                     
-                    
                     <TextField
                     sx={{minWidth:'300px', width: { xs: '100%', sm: 'auto' }}}
                     fullWidth
@@ -260,6 +259,12 @@ export default function Product({ products, stores }) {
                         required
                         onFocus={(event) => {
                             event.target.select();
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault(); // Prevents form submission if inside a form
+                                refreshProducts(window.location.pathname); // Trigger search on Enter
+                            }
                         }}
                         slotProps={{
                             inputLabel: {

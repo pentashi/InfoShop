@@ -6,8 +6,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
-
 import Swal from "sweetalert2";
+import { usePage } from "@inertiajs/react";
 
 export default function QuantityModal({
     modalOpen,
@@ -16,33 +16,37 @@ export default function QuantityModal({
     refreshProducts,
     stores,
 }) {
-
+    const auth = usePage().props.auth.user;
     const initialFormState = {
         batch_id: "",
         stock_id:'',
         quantity: 0,
         reason:'',
-        store_id:1,
+        store_id:auth.store_id ?? 1,
     }
 
     const [formState, setFormState] = useState(initialFormState);
-
+    const [loading, setLoading] = useState(false)
     const handleClose = () => {
         setModalOpen(false)
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        if (loading) return;
+        setLoading(true);
+
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.stock_id = formState.stock_id;
         formJson.batch_id = formState.batch_id;
         formJson.store_id = formState.store_id;
 
-        const response = await axios.post('/quantity/store', formJson);
-
-        if (response.status === 200 || response.status === 201) {
-            refreshProducts()
+        axios
+        .post('/quantity/store', formJson)
+        .then((response) => {
+            refreshProducts();
             Swal.fire({
                 title: "Success!",
                 text: response.data.message,
@@ -51,11 +55,35 @@ export default function QuantityModal({
                 timer: 2000,
                 timerProgressBar: true,
             });
-            setFormState(initialFormState)
+            setFormState(initialFormState);
             handleClose();
-        } else {
-            console.error('Error: Response not successful', response);
-        }
+        })
+        .catch((error) => {
+            let errorMessage = "An unknown error occurred."; // Default error message
+
+            if (error.response && error.response.data) {
+                // Check for multiple errors in `error.response.data.errors`
+                if (error.response.data.errors) {
+                    errorMessage = Object.values(error.response.data.errors)
+                        .flat() // Flatten nested arrays
+                        .join(' | '); // Join messages with a separator
+                } else {
+                    // Fallback to a single error message or a default message
+                    errorMessage = error.response.data.error || error.response.data.message || errorMessage;
+                }
+            }
+
+            Swal.fire({
+                title: "Failed!",
+                text: errorMessage,
+                icon: "error",
+                showConfirmButton: true,
+            });
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            setLoading(false); // Reset loading state
+        });
     };
 
     // Function to update form state based on a batch object
@@ -64,7 +92,7 @@ export default function QuantityModal({
             ...prevState,
             batch_id: stock.batch_id,
             stock_id: stock.stock_id,
-            store_id:stock.store_id,
+            store_id:stock.store_id??auth.store_id,
         }));
     };
 
@@ -134,6 +162,7 @@ export default function QuantityModal({
                                 label="Quantity"
                                 variant="outlined"
                                 required
+                                autoFocus
                                 value={formState.quantity}
                                 onChange={handleInputChange}
                                 sx={{
@@ -142,6 +171,30 @@ export default function QuantityModal({
                                         fontSize: "1.3rem",
                                         textAlign: "center",
                                     },
+                                }}
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        
+                        <Grid size={12} sx={{ mt: "0.6rem" }}>
+                            <TextField
+                                fullWidth
+                                name="reason"
+                                label="Reason"
+                                variant="outlined"
+                                required
+                                value={formState.reason}
+                                onChange={handleInputChange}
+                                sx={{
+                                    mt: "0.5rem",
+                                    input: { fontSize: "1rem" },
                                 }}
                                 onFocus={(event) => {
                                     event.target.select();
@@ -176,29 +229,6 @@ export default function QuantityModal({
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid size={12} sx={{ mt: "0.6rem" }}>
-                            <TextField
-                                fullWidth
-                                name="reason"
-                                label="Reason"
-                                variant="outlined"
-                                required
-                                value={formState.reason}
-                                onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                }}
-                            />
-                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
@@ -207,6 +237,7 @@ export default function QuantityModal({
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
+                        disabled={loading}
                     >
                         {"UPDATE QUANTITY"}
                     </Button>

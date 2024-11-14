@@ -11,7 +11,7 @@ import CartItemModal from './CartItemModal';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
-import productplaceholder from "./../product-placeholder.webp";
+import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 export default function CartItems() {
   const { cartState, removeFromCart } = useCart();

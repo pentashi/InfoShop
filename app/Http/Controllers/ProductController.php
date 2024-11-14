@@ -100,7 +100,10 @@ class ProductController extends Controller
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $product = Product::findOrFail($id);
-        $product->image_url = asset($imageUrl. $product->image_url);
+        if (!empty($product->image_url)) {
+            // If the image URL exists and is not empty
+            $product->image_url = asset($imageUrl . $product->image_url);
+        }
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
@@ -283,7 +286,12 @@ class ProductController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validate([
             'id' => 'required|exists:products,id', // Ensure product_id exists in products table
-            'new_batch' => 'required|string|max:255',
+            'new_batch' => [
+            'required',
+            'string',
+            'max:255',
+            'unique:product_batches,batch_number,NULL,id,product_id,' . $request->id,
+        ],
             'cost' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
         ]);
@@ -302,13 +310,19 @@ class ProductController extends Controller
     }
 
     public function updateBatch(Request $request, $id){
+        $batch = ProductBatch::findOrFail($id);
+        
         $validatedData = $request->validate([
-            'batch_number' => 'required|string|max:255',
+            'batch_number' => [
+            'required',
+            'string',
+            'max:255',
+            'unique:product_batches,batch_number,' . $id . ',id,product_id,' . $batch->product_id,
+        ],
             'cost' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
         ]);
 
-        $batch = ProductBatch::findOrFail($id);
         $batch->update([
             'batch_number' => $validatedData['batch_number'], // Map 'new_batch' to 'batch_number'
             'cost' => $validatedData['cost'],

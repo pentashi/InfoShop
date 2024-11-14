@@ -43,7 +43,6 @@ function AuthenticatedLayout({ header, children, ...props }) {
     const pageLabel = usePage().props.pageLabel;
     const pathname = usePage().url;
 
-    const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
 
@@ -255,16 +254,12 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     onClick={(e) => {
                         e.preventDefault(); // Prevent default link behavior
-                        router.post("logout"); // Call your logout function here
+                        router.post(route('logout')); // Call your logout function here
                     }}
                 />
             </List>
         </div>
     );
-
-    // Remove this const when copying and pasting into your project.
-    const container =
-        window !== undefined ? () => window().document.body : undefined;
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -324,7 +319,6 @@ function AuthenticatedLayout({ header, children, ...props }) {
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
             >
                 <Drawer
-                    container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onTransitionEnd={handleDrawerTransitionEnd}

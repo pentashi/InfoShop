@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
-import productplaceholder from "./../product-placeholder.webp";
+import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 export default function ProductItem({ product }) {
     const { name, price, image_url, quantity } = product;

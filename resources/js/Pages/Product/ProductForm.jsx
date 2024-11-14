@@ -30,6 +30,7 @@ import { styled } from "@mui/material/styles";
 
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -67,9 +68,9 @@ export default function Product({ product, collection }) {
         description: "",
         sku: "",
         barcode: "",
-        featured_image: "https://placehold.co/600x400", // For file input
+        featured_image: productplaceholder, // For file input
         unit: "PC",
-        quantity: 0,
+        quantity: "",
         alert_quantity: 5,
         is_stock_managed: 1,
         is_active: 1,
@@ -110,7 +111,7 @@ export default function Product({ product, collection }) {
                 barcode: product.barcode || "",
                 featured_image: product.image_url
                     ? product.image_url
-                    : "https://placehold.co/600x400", // Reset file input on edit
+                    : productplaceholder, // Reset file input on edit
                 unit: product.unit || "PC",
                 alert_quantity: product.alert_quantity || 0,
                 is_stock_managed: product.is_stock_managed || false,
@@ -153,11 +154,11 @@ export default function Product({ product, collection }) {
                     title: "Success!",
                     text: "Successfully saved",
                     icon: "success",
-                    // position: 'bottom-start',
+                    position: 'bottom-end',
                     showConfirmButton: false,
                     timer: 2000,
                     timerProgressBar: true,
-                    // toast: true,
+                    toast: true,
                 });
             },
             onError: (errors) => {
@@ -301,11 +302,14 @@ export default function Product({ product, collection }) {
                                 type="number"
                                 fullWidth
                                 required
+                                step={0.5}
                                 slotProps={{
                                     input: {
-                                        min: 0,
+                                        step: 0.5,
                                     },
                                 }}
+                                value={productFormData.cost}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -323,6 +327,8 @@ export default function Product({ product, collection }) {
                                         min: 0,
                                     },
                                 }}
+                                value={productFormData.price}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -335,6 +341,15 @@ export default function Product({ product, collection }) {
                                 type="number"
                                 fullWidth
                                 required
+                                step={0.5}
+                                slotProps={{
+                                    input: {
+                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                        step: 0.5,
+                                    },
+                                }}
+                                value={productFormData.quantity}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -475,7 +490,7 @@ export default function Product({ product, collection }) {
                             <Card sx={{ width: { xs: "100%", sm: 350 } }}>
                                 <CardMedia
                                     sx={{ height: 300 }}
-                                    image={productFormData.featured_image}
+                                    image={productFormData.featured_image??productplaceholder}
                                 />
 
                                 <CardActions className="mt-0">

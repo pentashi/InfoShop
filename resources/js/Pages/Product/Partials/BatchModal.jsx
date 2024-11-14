@@ -69,9 +69,10 @@ export default function BatchModal({
             handleClose()
         })
         .catch((error) => {
+            const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
             Swal.fire({
                 title: "Failed!",
-                text: error.response.data.error,
+                text: errorMessages,
                 icon: "error",
                 showConfirmButton: true,
             });
@@ -249,6 +250,7 @@ export default function BatchModal({
                                     },
                                     input: {
                                         // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                        step: 0.5,
                                     },
                                 }}
                             />
@@ -273,6 +275,10 @@ export default function BatchModal({
                                 slotProps={{
                                     inputLabel: {
                                         shrink: true,
+                                    },
+                                    input: {
+                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                        step: 0.5,
                                     },
                                 }}
                             />
