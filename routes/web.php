@@ -100,7 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/dailycash',[ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
     Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
     Route::get('reports/contact-statement',[ReportController::class, 'getContactStatement'])->name('reports.contactstatement');
-
+    Route::get('reports/sales',[ReportController::class, 'getSalesReport'])->name('reports.sales');
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');

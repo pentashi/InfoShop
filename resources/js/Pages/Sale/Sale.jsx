@@ -8,6 +8,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import Select2 from "react-select";
+import numeral from "numeral";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
@@ -31,34 +32,42 @@ const columns = (handleRowClick) => [
             </Tooltip>
         ),
      },
-    { field: "discount", headerName: "Discount", width: 100 },
-    { field: "total_amount", headerName: "Total Amount", width: 120 },
+    { field: "discount", headerName: "Discount", width: 100, align:'right',headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    { field: "total_amount", headerName: "Total", width: 120, align:'right',headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
     {
         field: "amount_received",
         headerName: "Amount Received",
-        width: 120,
+        width: 140, align:'right',headerAlign: 'right',
         renderCell: (params) => (
             <Button
                 onClick={() => handleRowClick(params.row, "add_payment")}
                 variant="text"
                 fullWidth
                 sx={{
-                    textAlign: "left",
+                    textAlign: "right",
                     fontWeight: "bold",
-                    justifyContent: "flex-start",
+                    justifyContent: "flex-end",
                 }}
             >
-                {parseFloat(params.value).toFixed(2)}
+                {numeral(params.value).format('0,0.00')}
             </Button>
         ),
     },
     {
         field: "change",
         headerName: "Change",
-        width: 100,
+        width: 100, align:'right',headerAlign: 'right',
         renderCell: (params) => {
             const change = params.row.amount_received - params.row.total_amount;
-            return change.toFixed(2);
+            return numeral(change).format('0,0.00');
         },
     },
     // { field: 'profit_amount', headerName: 'Profit Amount', width: 120 },

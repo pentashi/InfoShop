@@ -10,11 +10,17 @@ import Box from "@mui/material/Box";
 import CardActions from "@mui/material/CardActions";
 import CardMedia from "@mui/material/CardMedia";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
-import { Select, MenuItem, Typography, FormControl, InputLabel } from '@mui/material';
+import {
+    Select,
+    MenuItem,
+    Typography,
+    FormControl,
+    InputLabel,
+} from "@mui/material";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
@@ -47,7 +53,10 @@ const fontOptions = [
     { label: "Monaco", fontFamily: "Monaco, monospace" },
     { label: "Lucida Console", fontFamily: "'Lucida Console', monospace" },
     { label: "Consolas", fontFamily: "Consolas, monospace" },
-    { label: "Bitstream Vera Sans Mono", fontFamily: "'Bitstream Vera Sans Mono', monospace" },
+    {
+        label: "Bitstream Vera Sans Mono",
+        fontFamily: "'Bitstream Vera Sans Mono', monospace",
+    },
     { label: "DejaVu Sans Mono", fontFamily: "'DejaVu Sans Mono', monospace" },
     { label: "Inconsolata", fontFamily: "'Inconsolata', monospace" },
     { label: "Source Code Pro", fontFamily: "'Source Code Pro', monospace" },
@@ -60,7 +69,6 @@ const fontOptions = [
     { label: "Tisa Mono", fontFamily: "'Tisa Mono', monospace" },
     { label: "Space Mono", fontFamily: "'Space Mono', monospace" },
 ];
-
 
 export default function Setting({ settings }) {
     const [settingFormData, setSettingFormData] = useState({
@@ -75,6 +83,42 @@ export default function Setting({ settings }) {
         show_barcode_product_name: settings.show_barcode_product_name,
     });
 
+    const [barcodeSettings, setBarcodeSettings] = useState(() => {
+        const initialBarcodeSettings = new Map([
+          ["container_height", "28mm"],
+          ["store_font_size", "0.8em"],
+          ["price_font_size", "0.8em"],
+          ["price_margin_top", "-3px"],
+          ["price_margin_bottom", "-5px"],
+          ["barcode_margin_top", "-10px"],
+          ["barcode_height", 35],
+          ["barcode_font_size", 14],
+          ["barcode_width", 1.5],
+          ["barcode_format", "CODE128"],
+          ["product_name_margin_top", "-4px"],
+          ["product_name_font_size", "0.7em"],
+        ]);
+
+        // Parse JSON if barcode_settings exists in settings
+        if (settings.barcode_settings) {
+            try {
+                const parsedSettings = JSON.parse(settings.barcode_settings);
+                Object.entries(parsedSettings).forEach(([key, value]) => {
+                    initialBarcodeSettings.set(key, value);
+                });
+            } catch (error) {
+                console.error("Failed to parse barcode settings:", error);
+            }
+        }
+
+        return initialBarcodeSettings;
+    });
+
+      const handleBarcodeFieldChange = (e) => {
+        const { name, value } = e.target;
+        setBarcodeSettings((prevSettings) => new Map(prevSettings).set(name, value));
+      };
+
     const handleFontChange = (event) => {
         const selectedFontFamily = event.target.value;
         setSettingFormData({
@@ -82,12 +126,12 @@ export default function Setting({ settings }) {
             sale_print_font: selectedFontFamily,
         });
     };
-    
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setSettingFormData({
             ...settingFormData,
-            [name]: type === 'checkbox' ? (checked ? 'on' : 'off') : value,
+            [name]: type === "checkbox" ? (checked ? "on" : "off") : value,
         });
     };
 
@@ -109,6 +153,8 @@ export default function Setting({ settings }) {
         event.preventDefault();
         const submittedFormData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(submittedFormData.entries());
+        const barcodeSettingsObject = Object.fromEntries(barcodeSettings);
+        formJson.barcodeSettings = JSON.stringify(barcodeSettingsObject);
 
         router.post("settings", formJson, {
             forceFormData: true,
@@ -146,7 +192,11 @@ export default function Setting({ settings }) {
                         flexDirection: "column",
                     }}
                 >
-                    <Grid container spacing={2} width={{xs:'100%', sm:'60%'}}>
+                    <Grid
+                        container
+                        spacing={2}
+                        width={{ xs: "100%", sm: "60%" }}
+                    >
                         <Grid size={12}>
                             <Accordion defaultExpanded>
                                 <AccordionSummary
@@ -172,9 +222,10 @@ export default function Setting({ settings }) {
                                                 sx={{
                                                     height: 200,
                                                     contain: "content",
-                                                    padding:"8px",
-                                                    backgroundSize:'contain',
-                                                    backgroundOrigin:'content-box',
+                                                    padding: "8px",
+                                                    backgroundSize: "contain",
+                                                    backgroundOrigin:
+                                                        "content-box",
                                                 }}
                                                 image={
                                                     settingFormData.shop_logo
@@ -226,7 +277,8 @@ export default function Setting({ settings }) {
                                     RECEIPT PRINT
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Grid container
+                                    <Grid
+                                        container
                                         sx={{
                                             display: "flex",
                                             width: "100%",
@@ -276,49 +328,129 @@ export default function Setting({ settings }) {
                                             />
                                         </Grid>
                                         <Grid size={6}>
-                                        <FormControl fullWidth>
-                                    <InputLabel>Choose Font for Receipt</InputLabel>
-                                    <Select
-                                    name="sale_print_font"
-                                        label="Choose Font for Receipt"
-                                        value={settingFormData.sale_print_font}
-                                        onChange={handleFontChange}
-                                    >
-                                        {fontOptions.map((option) => (
-                                            <MenuItem key={option.fontFamily} value={option.fontFamily}>
-                                                <Typography style={{ fontFamily: option.fontFamily }}>
-                                                    {option.label}
-                                                </Typography>
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                            <FormControl fullWidth>
+                                                <InputLabel>
+                                                    Choose Font for Receipt
+                                                </InputLabel>
+                                                <Select
+                                                    name="sale_print_font"
+                                                    label="Choose Font for Receipt"
+                                                    value={
+                                                        settingFormData.sale_print_font
+                                                    }
+                                                    onChange={handleFontChange}
+                                                >
+                                                    {fontOptions.map(
+                                                        (option) => (
+                                                            <MenuItem
+                                                                key={
+                                                                    option.fontFamily
+                                                                }
+                                                                value={
+                                                                    option.fontFamily
+                                                                }
+                                                            >
+                                                                <Typography
+                                                                    style={{
+                                                                        fontFamily:
+                                                                            option.fontFamily,
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        option.label
+                                                                    }
+                                                                </Typography>
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                            </FormControl>
                                         </Grid>
                                     </Grid>
                                 </AccordionDetails>
                             </Accordion>
-                            <Accordion defaultExpanded>
+                            <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >
                                     BARCODE PRINT
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Grid container
+                                    <Grid
+                                        container
                                         sx={{
                                             display: "flex",
                                             width: "100%",
                                         }}
                                     >
                                         <Grid size={6}>
-                                            <FormControlLabel control={<Switch name="show_barcode_store" value={settingFormData.show_barcode_store} onChange={handleChange} checked={settingFormData.show_barcode_store === 'on'}/>} label="STORE NAME" />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        name="show_barcode_store"
+                                                        value={
+                                                            settingFormData.show_barcode_store
+                                                        }
+                                                        onChange={handleChange}
+                                                        checked={
+                                                            settingFormData.show_barcode_store ===
+                                                            "on"
+                                                        }
+                                                    />
+                                                }
+                                                label="STORE NAME"
+                                            />
                                         </Grid>
                                         <Grid size={6}>
-                                            <FormControlLabel control={<Switch name="show_barcode_product_price" value={settingFormData.show_barcode_product_price} onChange={handleChange} checked={settingFormData.show_barcode_product_price === 'on'}/>} label="PRODUCT PRICE" />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        name="show_barcode_product_price"
+                                                        value={
+                                                            settingFormData.show_barcode_product_price
+                                                        }
+                                                        onChange={handleChange}
+                                                        checked={
+                                                            settingFormData.show_barcode_product_price ===
+                                                            "on"
+                                                        }
+                                                    />
+                                                }
+                                                label="PRODUCT PRICE"
+                                            />
                                         </Grid>
                                         <Grid size={6}>
-                                            <FormControlLabel control={<Switch name="show_barcode_product_name" value={settingFormData.show_barcode_product_name} onChange={handleChange} checked={settingFormData.show_barcode_product_name === 'on'}/>} label="PRODUCT NAME" />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        name="show_barcode_product_name"
+                                                        value={
+                                                            settingFormData.show_barcode_product_name
+                                                        }
+                                                        onChange={handleChange}
+                                                        checked={
+                                                            settingFormData.show_barcode_product_name ===
+                                                            "on"
+                                                        }
+                                                    />
+                                                }
+                                                label="PRODUCT NAME"
+                                            />
                                         </Grid>
+                                    </Grid>
+                                    <Grid spacing={2} container sx={{ mt: 2 }}>
+                                    {[...barcodeSettings.keys()].map((key) => (
+                                    <Grid item size={3} key={key}>
+                                        <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        label={key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}
+                                        name={key}
+                                        value={barcodeSettings.get(key)}
+                                        onChange={handleBarcodeFieldChange}
+                                        />
+                                    </Grid>
+                                    ))}
                                     </Grid>
                                 </AccordionDetails>
                             </Accordion>

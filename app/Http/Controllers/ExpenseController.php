@@ -40,6 +40,7 @@ class ExpenseController extends Controller
         $expense->amount = $request->amount;
         $expense->expense_date = $request->expense_date;
         $expense->store_id = $request->store_id;
+        $expense->source = $request->source;
         $expense->save();
 
         return response()->json([

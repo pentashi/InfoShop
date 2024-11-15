@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo} from "react";
+import React, { useState, useContext, useMemo, useEffect} from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -39,6 +39,7 @@ export default function PaymentsCheckoutDialog({
     const [discount, setDiscount] = useState(0);
     const [amount, setAmount] = useState((cartTotal - discount))
     const [payments, setPayments] = useState([])
+    const [amountReceived, setAmountReceived] = useState(0)
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openPayment = Boolean(anchorEl);
@@ -57,8 +58,21 @@ export default function PaymentsCheckoutDialog({
     };
 
     const handleClose = () => {
+        setPayments([])
+        setAmountReceived(0)
+        setAmount(cartTotal-discount)
         setOpen(false);
     };
+
+    useEffect(() => {
+        setAmount(cartTotal-discount);
+        setAmountReceived(payments.reduce((sum, payment) => sum + payment.amount, 0));
+        setAmount(cartTotal-discount)
+    }, [])
+
+    useEffect(() => {
+        setAmountReceived(payments.reduce((sum, payment) => sum + payment.amount, 0));
+    }, [payments])
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -110,7 +124,7 @@ export default function PaymentsCheckoutDialog({
      // Function to handle the addition of a payment
      const addPayment = (paymentMethod) => {
         const netTotal = cartTotal-discount
-        const balance = amountRecieved+parseFloat(amount)
+        const balance = amountReceived+parseFloat(amount)
         if (netTotal<balance)
         {
             alert('Payment cannot be exceeded the total amount')
@@ -124,10 +138,6 @@ export default function PaymentsCheckoutDialog({
         handlePaymentClose()
     };
 
-    // Memoize the total amount to avoid recalculating it on every render unless 'payments' changes
-    const amountRecieved = useMemo(() => {
-        return payments.reduce((sum, payment) => sum + payment.amount, 0);
-    }, [payments]); // Only re-calculate when 'payments' changes
 
     // Function to remove a payment
     const deletePayment = (index) => {
@@ -259,6 +269,7 @@ export default function PaymentsCheckoutDialog({
                         <Grid size={12} sx={{mt:'1rem'}}>
                        
                         <TextField
+                                autoFocus
                                 fullWidth
                                 type="number"
                                 name="amount"
@@ -377,7 +388,7 @@ export default function PaymentsCheckoutDialog({
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
                         // onClick={handleClose}
-                        disabled={amountRecieved - (cartTotal - discount) < 0 || loading || amountRecieved > (cartTotal - discount)} //amountRecieved-(cartTotal-discount)
+                        disabled={amountReceived - (cartTotal - discount) < 0 || loading || amountReceived > (cartTotal - discount)} //amountReceived-(cartTotal-discount)
                     >
                         {loading ? 'Loading...' : 'PAY'}
                     </Button>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, Link } from "@inertiajs/react";
 import {
     Card,
     CardContent,
@@ -198,6 +198,7 @@ export default function Dashboard({ data }) {
                         </Grid>
 
                         <List>
+                        <Link href="/reports/sales" style={{ textDecoration: 'none' }}>
                             <ListItem secondaryAction={numeral(total_sales).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -206,8 +207,9 @@ export default function Dashboard({ data }) {
                                     <ListItemText primary="Sales" />
                                 </ListItemButton>
                             </ListItem>
+                            </Link>
                             <Divider />
-
+                            <Link href="/reports/dailycash" style={{ textDecoration: 'none' }}>
                             <ListItem secondaryAction={numeral(cash_in).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -216,6 +218,7 @@ export default function Dashboard({ data }) {
                                     <ListItemText primary="Cash in" />
                                 </ListItemButton>
                             </ListItem>
+                            </Link>
                             <Divider />
 
                             <ListItem secondaryAction={numeral(expenses).format('0,0.00')}>

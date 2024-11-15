@@ -25,8 +25,6 @@ import ExpenseDialog from "./Partials/ExpenseDialog";
 
 const columns = (handleRowClick) => [
     { field: "id", headerName: "ID", width: 80 },
-    { field: "description", headerName: "Description", width: 300 },
-    { field: "amount", headerName: "Amount", width: 120 }, 
     {
         field: "expense_date",
         headerName: "Date",
@@ -36,10 +34,25 @@ const columns = (handleRowClick) => [
             return dayjs(params.value).format("YYYY-MM-DD");
         },
     },
+    { field: "description", headerName: "Description", width: 300 },
+    {
+        field: "source",
+        headerName: "Source",
+        width: 120,
+        renderCell: (params) => {
+            return params.value?params.value.toUpperCase():'-';
+        },
+    },
+    { field: "amount", headerName: "Amount", width: 130, align:'right',headerAlign: 'right', 
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    }, 
+    
     {
         field: 'action',
         headerName: 'Actions',
-        width: 150,
+        width: 150, align:'right',headerAlign: 'right',
         renderCell: (params) => (
           <>
           <IconButton sx={{ml:'0.3rem'}} color="error" onClick={() => handleRowClick(params.row, "delete_expense")}>

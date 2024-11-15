@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Head, router } from "@inertiajs/react";
 import { Button, Box, Divider, Typography, Select, MenuItem , InputLabel, FormControl} from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -132,6 +132,12 @@ export default function Product({ product, collection }) {
         }
     }, [product]);
 
+    const refBarcode = useRef(null);
+
+    useEffect(() => {
+        refBarcode.current.focus();
+    }, []);
+
     const handleStockChange = (event, newStatus) => {
         if (!newStatus) setManageStock("0");
         else setManageStock("1");
@@ -230,7 +236,8 @@ export default function Product({ product, collection }) {
                                 required
                                 value={productFormData.barcode}
                                 onChange={handleChange}
-                                
+                                autoFocus
+                                ref={refBarcode}
                             />
                     </Grid>
                     <Grid size={{xs:6, sm:3}}>

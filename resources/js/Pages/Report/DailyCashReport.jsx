@@ -73,12 +73,12 @@ export default function DailyReport({ logs, stores }) {
                 container
                 spacing={2}
                 alignItems="center"
-                sx={{ width: "100%" }}
+                // sx={{ width: "100%" }}
                 justifyContent={"center"}
                 size={12}
             >
-                <FormControl>
-                    <TextField
+                <Grid size={{xs:8, sm:2}}>
+                <TextField
                         label="Date"
                         name="transaction_date"
                         placeholder="Transaction Date"
@@ -93,26 +93,30 @@ export default function DailyReport({ logs, stores }) {
                         onChange={(e) => setTransactionDate(e.target.value)}
                         required
                     />
-                </FormControl>
-
+                </Grid>
+                <Grid size={{xs:4, sm:1}}>
                 <Button
                     variant="contained"
                     onClick={() => refreshLogs(window.location.pathname)}
-                    sx={{ height: "100%" }}
+                    sx={{ height: "100%", width: "100%" }}
                     size="large"
                 >
                     <FindReplaceIcon />
                 </Button>
-
+                </Grid>
+                
+                <Grid size={{xs:12, sm:2}}>
                 <Button
                     variant="contained"
                     onClick={() => setModalOpen(true)}
-                    sx={{ height: "100%" }}
+                    sx={{ height: "100%", width:'100%' }}
                     startIcon={<AddCircleIcon />}
                     size="large"
                 >
                     ADD A RECORD
                 </Button>
+                </Grid>
+                
             </Grid>
 
             <Box
@@ -152,7 +156,7 @@ export default function DailyReport({ logs, stores }) {
                                                 : "")}
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
-                                        {row.amount}
+                                        {numeral(row.amount).format('0,0.00')}
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}
@@ -164,7 +168,7 @@ export default function DailyReport({ logs, stores }) {
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
                                     <strong>
-                                        {dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0).toFixed(2)}
+                                        {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
                                     </strong>
                                 </StyledTableCell>
                             </StyledTableRow>

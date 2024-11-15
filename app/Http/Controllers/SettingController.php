@@ -35,6 +35,11 @@ class SettingController extends Controller
         $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';
         $settingsData['show_barcode_product_name'] = $request->has('show_barcode_product_name') ? 'on' : 'off';
 
+        // Add barcode settings JSON string to settingsData if it exists
+        if ($request->has('barcodeSettings')) {
+            $settingsData['barcode_settings'] = $request->input('barcodeSettings');
+        }
+
         foreach ($settingsData as $metaKey => $metaValue) {
             if ($metaValue !== null) { // Ensure the value is not null before updating
                 Setting::updateOrCreate(

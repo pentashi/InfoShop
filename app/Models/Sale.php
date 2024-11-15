@@ -54,24 +54,26 @@ class Sale extends Model
         });
     }
 
-    protected $casts = [
-        'sale_date' => 'datetime',  // or 'date' if you don't need the time
-    ];
+    // public function getUpdatedAtAttribute($value)
+    // {
+    //     return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    // }
 
-    public function getUpdatedAtAttribute($value)
-    {
-        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
-    }
+    // // Accessor for formatted created_at date
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    // }
 
-    // Accessor for formatted created_at date
-    public function getCreatedAtAttribute($value)
-    {
-        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
-    }
+    // // Accessor for formatted sale_date date
+    // public function getSaleDateAttribute($value)
+    // {
+    //     return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+    // }
 
-    // Accessor for formatted sale_date date
-    public function getSaleDateAttribute($value)
+    // Relationship to transactions
+    public function transactions()
     {
-        return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
+        return $this->hasMany(Transaction::class, 'sales_id');
     }
 }

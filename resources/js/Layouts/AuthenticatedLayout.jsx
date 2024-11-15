@@ -254,7 +254,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     onClick={(e) => {
                         e.preventDefault(); // Prevent default link behavior
-                        router.post(route('logout')); // Call your logout function here
+                        router.post(route(document.location.origin+"/logout")); // Call your logout function here
                     }}
                 />
             </List>
@@ -302,7 +302,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             <IconButton
                                 color="white"
                                 size="large"
-                                onClick={(e) => router.post("logout")}
+                                onClick={(e) => router.post(document.location.origin+"/logout")}
                                 sx={{display: { xs: "none", sm:'block' } }}
                             >
                                 <LogoutIcon

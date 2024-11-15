@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid2";
 import { Button, Box, FormControl, TextField,Tooltip } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
+import numeral from "numeral";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
@@ -28,17 +29,35 @@ const columns = (handleRowClick) => [
         ),
      },
     { field: "product_name", headerName: "Product Name", width: 200,},
-    { field: "quantity", headerName: "Quantity", width: 100,},
-    { field: "discount", headerName: "Discount", width: 100 },
-    { field: "unit_cost", headerName: "Cost", width: 100 },
-    { field: "unit_price", headerName: "Price", width: 100 },
+    { field: "quantity", headerName: "Quantity", width: 100, align:'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    { field: "discount", headerName: "Discount", width: 100, align:'right',headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    { field: "unit_cost", headerName: "Cost", width: 100, align:'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    { field: "unit_price", headerName: "Price", width: 100, align:'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
     {
         field:'total',
         headerName: "Total",
         width: 100,
+        align:'right',
+        headerAlign: 'right',
         renderCell: (params) => {
             const change = (params.row.unit_price - params.row.discount)*params.row.quantity;
-            return change.toFixed(2);
+            return numeral(change).format('0,0.00');
         },
     },
     // { field: 'profit_amount', headerName: 'Profit Amount', width: 120 },

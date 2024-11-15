@@ -18,7 +18,7 @@ class Expense extends Model
     use Userstamps;
     use LogsActivity;
 
-    protected $fillable = ['description', 'amount', 'expense_date', 'store_id'];
+    protected $fillable = ['description', 'amount', 'expense_date', 'store_id', 'source'];
     protected static $recordEvents = ['deleted'];
 
     protected static function booted()
@@ -40,19 +40,21 @@ class Expense extends Model
 
     public function createCashLog()
     {
-        $convertedAmount = -$this->amount;
-        $transactionType = $convertedAmount < 0 ? 'cash_out' : 'cash_in';
+        if($this->source=='drawer'){
+            $convertedAmount = -$this->amount;
+            $transactionType = $convertedAmount < 0 ? 'cash_out' : 'cash_in';
 
-        // Create the cash log entry using the values from the expense
-        CashLog::create([
-            'transaction_date' => $this->expense_date,  // Use expense_date as transaction_date
-            'transaction_type' => $transactionType,  // Set the transaction type as 'withdrawal'
-            'reference_id' => $this->id,  // The ID of the expense as the reference
-            'amount' => $convertedAmount,  // Convert the amount to its opposite value (negative)
-            'source' => 'expenses',  // Set source as 'expenses'
-            'description' => $this->description,  // Copy the description
-            'store_id' => $this->store_id,  // Store ID from expense
-        ]);
+            // Create the cash log entry using the values from the expense
+            CashLog::create([
+                'transaction_date' => $this->expense_date,  // Use expense_date as transaction_date
+                'transaction_type' => $transactionType,  // Set the transaction type as 'withdrawal'
+                'reference_id' => $this->id,  // The ID of the expense as the reference
+                'amount' => $convertedAmount,  // Convert the amount to its opposite value (negative)
+                'source' => 'expenses',  // Set source as 'expenses'
+                'description' => $this->description,  // Copy the description
+                'store_id' => $this->store_id,  // Store ID from expense
+            ]);
+        }
     }
 
     public function getActivitylogOptions(): LogOptions

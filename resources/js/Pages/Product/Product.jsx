@@ -94,9 +94,9 @@ const productColumns = (handleProductEdit) => [
             </Button>
         ),
     },
-    { field: "cost", headerName: "Cost", width: 100},
-    { field: "price", headerName: "Price", width: 100 },
-    { field: "valuation", headerName: "Valuation", width: 100,
+    { field: "cost", headerName: "Cost", width: 100, align:'right',headerAlign: 'right',},
+    { field: "price", headerName: "Price", width: 100, align:'right',headerAlign: 'right', },
+    { field: "valuation", headerName: "Valuation", width: 100, align:'right',headerAlign: 'right',
         renderCell: (params) => {
             const price = params.row.cost;
             const quantity =  params.row.quantity;
@@ -106,14 +106,18 @@ const productColumns = (handleProductEdit) => [
     {
         field: "quantity",
         headerName: "Quantity",
-        width: 100,
+        width: 100,align:'right',headerAlign: 'right',
         valueGetter: (value) => parseFloat(value),
         renderCell: (params) => (
             <Button
                 variant="text"
                 color="default"
                 fullWidth
-                sx={{ fontWeight: "bold" }}
+                sx={{
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    justifyContent: "flex-end",
+                }}
                 underline="hover"
                 onClick={() => handleProductEdit(params.row, 'qty')}
             >

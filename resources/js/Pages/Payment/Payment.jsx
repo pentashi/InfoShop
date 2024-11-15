@@ -28,6 +28,11 @@ const columns = (handleRowClick) => [
             return params.value.toString().padStart(4, "0");
         },
     },
+    { field: "transaction_type", headerName: "Type", width: 100,
+        renderCell: (params) => {
+            return params.value.toUpperCase();
+        },
+    },
     { field: "contact_name", headerName: "Customer Name", width: 200 },
     {
         field: "reference_id",
@@ -41,8 +46,13 @@ const columns = (handleRowClick) => [
         },
     },
     { field: "payment_method", headerName: "Payment Method", width: 150 },
-    { field: "amount", headerName: "Total Amount", width: 120 },
-    { field: "transaction_type", headerName: "Transaction Type", width: 200 },
+    
+    { field: "amount", headerName: "Total Amount", width: 120, align:'right',headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+     },
+    
     {
         field: "transaction_date",
         headerName: "Date",
@@ -221,7 +231,7 @@ export default function Payment({ payments, transactionType, contacts }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={'end'}>
-            <Chip size="large" label={'Total:'+numeral(totalAmount).format('0,0')} color="primary" />
+            <Chip size="large" label={'Total:'+numeral(totalAmount).format('0,0.00')} color="primary" />
                 <CustomPagination
                     dataLinks={dataPayments?.links}
                     refreshTable={refreshPayments}

@@ -62,4 +62,10 @@ class Transaction extends Model
             ]);
         }
     }
+
+    // Relationship back to sales
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'sales_id');
+    }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('amount', 10, 2);
             $table->date('expense_date');
+            $table->string('source')->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

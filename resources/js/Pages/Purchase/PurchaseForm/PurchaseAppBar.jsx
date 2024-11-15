@@ -12,7 +12,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 import { usePurchase } from "@/Context/PurchaseContext";
 
-export default function PurchaseAppBar({setOpenPayment, selectedVendor}) {
+export default function PurchaseAppBar({setOpenPayment, selectedVendor, disable=true}) {
     const { cartState, cartTotal, } = usePurchase();
 
     return (
@@ -42,7 +42,7 @@ export default function PurchaseAppBar({setOpenPayment, selectedVendor}) {
                         size="large"
                         endIcon={<PaymentsIcon />}
                         onClick={() => setOpenPayment(true)}
-                        disabled={cartState.length === 0 || !selectedVendor}
+                        disabled={cartState.length === 0 || !selectedVendor || disable}
                     >
                         PAYMENTS
                     </Button>

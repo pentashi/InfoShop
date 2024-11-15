@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo} from "react";
+import React, { useState, useContext, useMemo } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -24,7 +24,8 @@ const initialPaymentFormState = {
     amount: 0,
     expense_date: dayjs().format("YYYY-MM-DD"), // Today's date in 'YYYY-MM-DD' format
     description: '',
-    store_id:1,
+    store_id: 1,
+    source:'drawer'
 };
 
 export default function ExpenseDialog({
@@ -54,26 +55,26 @@ export default function ExpenseDialog({
         const submittedFormData = new FormData(event.currentTarget);
         let formJson = Object.fromEntries(submittedFormData.entries());
 
-        let url='/expense';
+        let url = '/expense';
 
         axios
-        .post(url, formJson)
-        .then((resp) => {
-            Swal.fire({
-                title: "Success!",
-                text: resp.data.message,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .post(url, formJson)
+            .then((resp) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                refreshExpenses(window.location.pathname)
+                setOpen(false)
+            })
+            .catch((error) => {
+                console.error("Submission failed with errors:", error);
+                console.log(formJson);
             });
-            refreshExpenses(window.location.pathname)
-            setOpen(false)
-        })
-        .catch((error) => {
-            console.error("Submission failed with errors:", error);
-            console.log(formJson);
-        });
     };
 
     return (
@@ -103,29 +104,16 @@ export default function ExpenseDialog({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
-                    <Grid container size={12}>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label={"Description"}
-                        name="description"
-                        multiline
-                        value={expensesForm.note}
-                        onChange={handleFieldChange}
-                        sx={{mb:'1.5rem'}}
-                        required
-                    />
-                    </Grid>
                     <Grid container spacing={2}>
-                        <Grid size={6}>
-                        <TextField
+                        <Grid size={4}>
+                            <TextField
                                 fullWidth
                                 type="number"
                                 name="amount"
                                 label="Amount"
                                 variant="outlined"
                                 autoFocus
-                                sx={{input:{fontWeight:'bold'}}}
+                                sx={{ input: { fontWeight: "bold" } }}
                                 value={expensesForm.amount}
                                 onChange={handleFieldChange}
                                 onFocus={(event) => {
@@ -146,7 +134,7 @@ export default function ExpenseDialog({
                             />
                         </Grid>
 
-                           <Grid size={6}>
+                        <Grid size={4}>
                             <TextField
                                 label="Date"
                                 name="expense_date"
@@ -162,9 +150,41 @@ export default function ExpenseDialog({
                                 required
                             />
                         </Grid>
+                        <Grid size={4}>
+                            <TextField
+                                label="Source"
+                                name="source"
+                                fullWidth
+                                select
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
+                                value={expensesForm.source}
+                                onChange={handleFieldChange}
+                                required
+                            >
+                                <MenuItem value={"drawer"}>
+                                    Cash Drawer
+                                </MenuItem>
+                                <MenuItem value={"external"}>External</MenuItem>
+                            </TextField>
+                        </Grid>
+                        <Grid container size={12} spacing={2}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                label={"Description"}
+                                name="description"
+                                value={expensesForm.note}
+                                onChange={handleFieldChange}
+                                required
+                            />
+                        </Grid>
 
                         <Grid size={12}>
-                            <FormControl sx={{ width:'100%', mt:'0.6rem' }}>
+                            <FormControl sx={{ width: "100%", mt: "0.6rem" }}>
                                 <InputLabel>Store</InputLabel>
                                 <Select
                                     value={expensesForm.store_id}
@@ -174,7 +194,10 @@ export default function ExpenseDialog({
                                     name="store_id"
                                 >
                                     {stores?.map((store) => (
-                                        <MenuItem key={store.id} value={store.id}>
+                                        <MenuItem
+                                            key={store.id}
+                                            value={store.id}
+                                        >
                                             {store.name}
                                         </MenuItem>
                                     ))}
@@ -183,9 +206,7 @@ export default function ExpenseDialog({
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{py:'0.5rem'}}></Divider>
-
-                    
+                    <Divider sx={{ py: "0.5rem" }}></Divider>
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -193,7 +214,7 @@ export default function ExpenseDialog({
                         fullWidth
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
-                        disabled={expensesForm.amount == 0 }
+                        disabled={expensesForm.amount == 0}
                     >
                         ADD EXPENSE
                     </Button>

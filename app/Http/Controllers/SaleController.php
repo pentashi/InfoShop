@@ -93,6 +93,7 @@ class SaleController extends Controller
         $salesItems = SaleItem::select(
             'sale_items.quantity',
             'sale_items.unit_price',
+            'sale_items.discount',
             'products.name',
         )
         ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";
+import Swal from "sweetalert2";
 
 import { usePurchase } from "@/Context/PurchaseContext";
 
@@ -23,6 +24,7 @@ export default function AddToPurchase({
 }) {
     const { addToCart } = usePurchase();
     const [isSelectBatch, setIsSelectBatch] = useState(true);
+    const [loading, setLoading] = useState(false)
     const [formState, setFormState] = useState({
         id:'',
         batch_id: "",
@@ -41,29 +43,48 @@ export default function AddToPurchase({
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
 
+        if (loading) return;
+        setLoading(true);
+
         const formData = new FormData(event.currentTarget)
         const formJson = Object.fromEntries(formData.entries())
 
         if(!isSelectBatch){
-            const response = await axios.post('/storebatch', formJson);
+            let url='/storebatch';
 
-            if (response.status === 200) {
-                // Override formJson.batch_id with the response data
-                formJson.batch_id = response.data.batch_id; // Adjust the property name based on your response
+            axios
+            .post(url, formJson)
+            .then((resp) => {
+                formJson.batch_id = resp.data.batch_id; // Adjust the property name based on your response
                 formJson.batch_number = formJson.new_batch;
 
-                // Optionally log the modified formJson
-                console.log('Updated Form JSON:', formJson);
-
-                // You can now proceed with using the modified formJson
-                addToCart(formJson, formJson.quantity); // Uncomment to use this function
-                handleClose();
-            } else {
-                console.error('Error: Response not successful', response);
-            }
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                addToCart(formJson, formJson.quantity);
+                handleClose()
+            })
+            .catch((error) => {
+                const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
+                Swal.fire({
+                    title: "Failed!",
+                    text: errorMessages,
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+                console.error(error);
+            }).finally(() => {
+                setLoading(false); // Reset submitting state
+            });
         }
         else{
             addToCart(formJson,formJson.quantity)
+            setLoading(false);
             handleClose()
         }
     };
@@ -313,6 +334,7 @@ export default function AddToPurchase({
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
                         // onClick={handleClose}
+                        disabled={loading}
                     >
                         ADD TO CART
                     </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import {
     Box,
     Divider,
@@ -21,6 +21,7 @@ export default function SearchBox() {
     const [search_query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
     const [inputValue, setInputValue] = useState("");
+    const searchRef = useRef(null);
 
     const handleSearchQuery = (search_query) => {
         setQuery(search_query);
@@ -60,6 +61,12 @@ export default function SearchBox() {
         }
     };
 
+    useEffect(() => {
+        if (searchRef.current) {
+            searchRef.current.focus();
+        }
+    }, []);
+
     return (
         <>
             <Box
@@ -87,15 +94,7 @@ export default function SearchBox() {
                     getOptionLabel={(option) =>
                         typeof option === "string"
                             ? option
-                            : option.name +
-                              " | " +
-                            option.barcode +
-                              " | " +
-                            option.sku +
-                              " | " +
-                              option.batch_number +
-                              " | Rs." +
-                              option.price
+                            : `${option.name} | ${option.barcode} ${option.sku ? `| ${option.sku}` : ""} | ${option.batch_number} | Rs.${option.price}`
                     }
                     getOptionKey={(option) => option.id+option.batch_id}
                     onChange={(event, product) => {
@@ -113,6 +112,7 @@ export default function SearchBox() {
                     renderInput={(params) => (
                         <TextField
                             {...params}
+                            inputRef={searchRef}
                             fullWidth
                             placeholder="Search product..."
                             onChange={(event) =>
@@ -120,6 +120,23 @@ export default function SearchBox() {
                             }
                             onFocus={(event) => {
                                 event.target.select();
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') {
+                                    // const arrowDownEvent = new KeyboardEvent('keydown', {
+                                    //     key: 'ArrowDown',
+                                    //     code: 'ArrowDown',
+                                    //     keyCode: 40, // 40 is the key code for ArrowDown
+                                    //     which: 40,
+                                    //     bubbles: true,
+                                    // });
+                                    
+                                    // event.target.dispatchEvent(arrowDownEvent);
+                                    if (searchRef.current) {
+                                        searchRef.current.focus();
+                                    }
+                                    event.stopPropagation();
+                                }
                             }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {

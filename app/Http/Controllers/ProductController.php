@@ -238,14 +238,14 @@ class ProductController extends Controller
             DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
             'products.name',
             'products.barcode',
-            DB::raw("COALESCE(products.sku, 'N/A') AS sku"),
+            // DB::raw("COALESCE(products.sku, 'N/A') AS sku"), //if we comment it, it will not generate on front end
             'products.discount',
             'products.is_stock_managed',
             DB::raw("COALESCE(product_batches.batch_number, 'N/A') AS batch_number"),
             'product_batches.cost',
             'product_batches.price',
             'product_batches.id AS batch_id',
-            'product_stocks.quantity', // Only keeping the summed quantity from product_stocks
+            DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity")
         )
         ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
@@ -257,7 +257,7 @@ class ProductController extends Controller
             $products = $products->where('product_stocks.store_id', session('store_id'));
         }
         else{
-            $products = $products->whereNotNull('product_stocks.store_id');
+            // $products = $products->whereNotNull('product_stocks.store_id');
         }
       
         $products = $products
@@ -291,9 +291,13 @@ class ProductController extends Controller
             'string',
             'max:255',
             'unique:product_batches,batch_number,NULL,id,product_id,' . $request->id,
-        ],
+            ],
             'cost' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
+        ],
+        [
+            // Custom error message for unique validation
+            'new_batch.unique' => 'The batch number is already in use for this product.',
         ]);
 
         $batch = ProductBatch::create([
@@ -355,7 +359,8 @@ class ProductController extends Controller
         $settings = Setting::whereIn('meta_key', [
             'show_barcode_store',
             'show_barcode_product_price',
-            'show_barcode_product_name'
+            'show_barcode_product_name',
+            'barcode_settings',
         ])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
          // Render the 'Products' component with data

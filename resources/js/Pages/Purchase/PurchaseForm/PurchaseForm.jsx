@@ -253,8 +253,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
             
             <PurchaseCartItems />
 
-            <PurchaseAppBar setOpenPayment={setOpenPayment} selectedVendor={selectedVendor}></PurchaseAppBar>
-            
+            <PurchaseAppBar setOpenPayment={setOpenPayment} selectedVendor={selectedVendor} disable={!purchaseForm.reference_no}></PurchaseAppBar>
             <PaymentsCheckoutDialog
                 open={openPayment}
                 setOpen={setOpenPayment}
@@ -262,6 +261,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                 selectedContact={selectedVendor}
                 formData={purchaseForm}
             />
+            
         </AuthenticatedLayout>
     );
 }
