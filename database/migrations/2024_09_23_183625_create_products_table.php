@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('unit', 10); // Km/Litre/Box
             $table->integer('brand_id')->nullable(); // Brand ID (integer)
             $table->integer('category_id')->nullable(); // Category ID (integer)
+            $table->string('product_type', 50)->default('simple')->nullable();
             $table->decimal('discount', 10, 2)->default(0); // Discount of product in stock
             $table->decimal('quantity', 10, 2)->default(0); // Quantity of product in stock
             $table->decimal('alert_quantity', 10, 2)->default(5); // Minimum stock threshold for alerts
