@@ -178,7 +178,8 @@ class TransactionController extends Controller
                 'transaction_date',
                 'amount',
                 'payment_method',
-                'transaction_type'
+                'transaction_type',
+                'note',
             )
             ->join('contacts', 'contact_id', '=', 'contacts.id')
             ->orderBy('transaction_date', 'desc');

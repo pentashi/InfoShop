@@ -254,7 +254,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     onClick={(e) => {
                         e.preventDefault(); // Prevent default link behavior
-                        router.post(route(document.location.origin+"/logout")); // Call your logout function here
+                        router.post(document.location.origin+"/logout"); // Call your logout function here
                     }}
                 />
             </List>

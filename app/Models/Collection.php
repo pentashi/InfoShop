@@ -14,6 +14,7 @@ class Collection extends Model
         'name',
         'description',
         'parent_id',
+        'slug',
     ];
 
     // Define relationships if necessary (self-referencing for hierarchical structure)

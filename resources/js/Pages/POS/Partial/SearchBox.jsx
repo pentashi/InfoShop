@@ -121,23 +121,7 @@ export default function SearchBox() {
                             onFocus={(event) => {
                                 event.target.select();
                             }}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    // const arrowDownEvent = new KeyboardEvent('keydown', {
-                                    //     key: 'ArrowDown',
-                                    //     code: 'ArrowDown',
-                                    //     keyCode: 40, // 40 is the key code for ArrowDown
-                                    //     which: 40,
-                                    //     bubbles: true,
-                                    // });
-                                    
-                                    // event.target.dispatchEvent(arrowDownEvent);
-                                    if (searchRef.current) {
-                                        searchRef.current.focus();
-                                    }
-                                    event.stopPropagation();
-                                }
-                            }}
+                            disableCloseOnSelect
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": {

@@ -21,7 +21,6 @@ import dayjs from "dayjs";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PaidIcon from "@mui/icons-material/Paid";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import axios from "axios";
 import numeral from "numeral";
 
@@ -102,7 +101,7 @@ export default function Dashboard({ data }) {
                                 Total valuation
                             </Typography>
                             <Typography variant="h5" component="div">
-                                Rs. {data.totalValuation}
+                                RS. {data.totalValuation}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -140,14 +139,14 @@ export default function Dashboard({ data }) {
                                 Customer balance
                             </Typography>
                             <Typography variant="h5" component="div">
-                                Rs. {data.customerBalance}
+                                RS. {data.customerBalance}
                             </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
 
-            <Grid container size={{xs:12, sm:8, md:4}} sx={{ mt: "3rem"}}>
+            <Grid container size={{xs:12, sm:8, md:4}} sx={{ mt: "3rem"}} spacing={2}>
                 <Grid size={{xs:12, sm:8, md:4}}>
                 <Card sx={{width:'100%' }} >
                     <CardContent>
@@ -198,7 +197,7 @@ export default function Dashboard({ data }) {
                         </Grid>
 
                         <List>
-                        <Link href="/reports/sales" style={{ textDecoration: 'none' }}>
+                        <Link href="/reports/sales" >
                             <ListItem secondaryAction={numeral(total_sales).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -209,7 +208,7 @@ export default function Dashboard({ data }) {
                             </ListItem>
                             </Link>
                             <Divider />
-                            <Link href="/reports/dailycash" style={{ textDecoration: 'none' }}>
+                            <Link href="/reports/dailycash">
                             <ListItem secondaryAction={numeral(cash_in).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -220,7 +219,7 @@ export default function Dashboard({ data }) {
                             </ListItem>
                             </Link>
                             <Divider />
-
+                            <Link href="/expenses">
                             <ListItem secondaryAction={numeral(expenses).format('0,0.00')}>
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -229,7 +228,25 @@ export default function Dashboard({ data }) {
                                     <ListItemText primary="Expenses" />
                                 </ListItemButton>
                             </ListItem>
+                            </Link>
                         </List>
+                    </CardContent>
+                </Card>
+                </Grid>
+                <Grid size={{xs:12, sm:4, md:4}}>
+                <Card sx={{width:'100%' }} >
+                    <CardContent>
+                        <Grid container display="flex" flexDirection={'column'} spacing={2} width={'100%'}>
+                        <Typography variant="h4" color="initial">
+                            Hello,
+                        </Typography>
+                        <Typography variant="h2" color="initial">
+                        {auth.name}
+                        </Typography>
+                            
+                        </Grid>
+
+                        
                     </CardContent>
                 </Card>
                 </Grid>

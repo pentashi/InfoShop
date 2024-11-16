@@ -44,7 +44,7 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export default function Product({ product, collection }) {
+export default function Product({ product, collection, product_code }) {
     // Filter and map the collection
     const brandOptions = collection
         .filter((item) => item.collection_type === "brand")
@@ -67,7 +67,7 @@ export default function Product({ product, collection }) {
         name: "",
         description: "",
         sku: "",
-        barcode: "",
+        barcode: product_code,
         featured_image: productplaceholder, // For file input
         unit: "PC",
         quantity: "",

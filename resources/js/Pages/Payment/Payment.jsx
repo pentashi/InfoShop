@@ -46,7 +46,7 @@ const columns = (handleRowClick) => [
         },
     },
     { field: "payment_method", headerName: "Payment Method", width: 150 },
-    
+    { field: "note", headerName: "Note", width: 100 },    
     { field: "amount", headerName: "Total Amount", width: 120, align:'right',headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');

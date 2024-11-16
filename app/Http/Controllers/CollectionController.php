@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class CollectionController extends Controller
 {
@@ -22,12 +23,12 @@ class CollectionController extends Controller
 
     public function store(Request $request)
     {
-        // 3. Validate the incoming request
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|unique:collections,name', // 'name' must be unique
             'collection_type' => 'required|string|max:50',
             'description' => 'nullable|string',
         ]);
+        $validatedData['slug'] = Str::slug($request->input('name'));
 
         // 4. Save the data to the database
         Collection::create($validatedData);
@@ -38,13 +39,13 @@ class CollectionController extends Controller
     public function update(Request $request, $id)
     {
         $collection = Collection::findOrFail($id);
-        // 1. Validate the incoming request
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:collections,name,' . $id,
             'collection_type' => 'required|string|max:50',
             'description' => 'nullable|string',
+            'slug' => 'nullable|string|max:255|unique:collections,slug,' . $id,
         ]);
-
+        $validatedData['slug'] = Str::slug($validatedData['name']);
         // 2. Update the data in the database
         $collection->update($validatedData);
 

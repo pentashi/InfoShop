@@ -85,10 +85,15 @@ class ProductController extends Controller
 
     public function create()
     {
+        $lastProduct = Product::latest('id')->first();
+        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + 1000 + 1) : 1001;
+
         $collection = Collection::select('id', 'name', 'collection_type')->get();
+
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
+            'product_code' => $nextItemCode,
             'pageLabel'=>'Product Details',
         ]);
     }
@@ -245,13 +250,16 @@ class ProductController extends Controller
             'product_batches.cost',
             'product_batches.price',
             'product_batches.id AS batch_id',
-            DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity")
+            DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity"),
+            'collections.slug',
+            'collections.name as category_name',
         )
         ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
-        ->where('barcode', 'like', '%' . $search_query . '%')
+        ->leftJoin('collections', 'products.category_id', '=', 'collections.id')
+        ->where('barcode', 'like', $search_query . '%')
         ->orWhere('sku', 'like', '%' . $search_query . '%')
-        ->orWhere('name', 'like', '%' . $search_query . '%');
+        ->orWhere('products.name', 'like', '%' . $search_query . '%');
 
         if($is_purchase==0){
             $products = $products->where('product_stocks.store_id', session('store_id'));
@@ -274,6 +282,8 @@ class ProductController extends Controller
         'product_batches.price',
         'products.barcode',
         'products.sku',
+        'collections.slug',
+        'category_name',
         )
         ->limit(10)->get();
         

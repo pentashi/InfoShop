@@ -33,20 +33,25 @@ const QuantityInput = ({cartItem}) => {
   };
 
   const decreaseValue = () => {
-    const newQuantity = Math.max(quantity - 1, min);
+    const newQuantity = Math.max(parseFloat(quantity) - 1, min);
     setQuantity(newQuantity);
     setInputValue(newQuantity);
     updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
   };
 
   const increaseValue = () => {
-    const newQuantity = Math.min(quantity + 1, max);
+    const newQuantity = Math.min(parseFloat(quantity) + 1, max);
     setQuantity(newQuantity);
     setInputValue(newQuantity);
     updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
   };
 
-  return (
+  return (   
+    cartItem.slug && cartItem.slug=='reload' ?(
+      <>
+      {/* return empty if it's a reload */}
+      </>
+    ) : (  
     <div className="quantity">
       <button type='button' className="minus" aria-label="Decrease" onClick={decreaseValue} disabled={quantity <= min}>
         <RemoveIcon></RemoveIcon>
@@ -64,6 +69,7 @@ const QuantityInput = ({cartItem}) => {
        <AddIcon></AddIcon>
       </button>
     </div>
+    )
   );
 };
 

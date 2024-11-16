@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\ProductStock;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\ReloadAndBillMeta;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
@@ -158,7 +159,7 @@ class POSController extends Controller
             }
 
             foreach ($cartItems as $item) {
-                SaleItem::create([
+                $sale_item=SaleItem::create([
                     'sale_id' => $sale->id, // Associate the sales item with the newly created sale
                     'product_id' => $item['id'], // Product ID (assuming you have this)
                     'batch_id' => $item['batch_id'], // Batch ID from the cart item
@@ -167,6 +168,7 @@ class POSController extends Controller
                     'unit_cost' => $item['cost'], // Cost price per unit
                     'discount' => $item['discount'], // Discount applied to this item
                     'sale_date'=>$sale->sale_date,
+                    'description' => isset($item['category_name']) ? $item['category_name'] : null,
                 ]);
         
                 if($item['is_stock_managed'] ==1){
@@ -192,6 +194,18 @@ class POSController extends Controller
                         DB::rollBack();
                         return response()->json(['error' => 'Stock for product not found in the specified store or batch'], 500);
                     }
+                }
+
+                if (isset($item['slug']) && $item['slug'] == 'reload') {
+                    // Create a ReloadAndBillMeta record with description 'reload'
+                    ReloadAndBillMeta::create([
+                        'sale_item_id' => $sale_item->id, // Link the reload meta to the SaleItem
+                        'transaction_type' => 'reload', // Set transaction type as 'reload'
+                        'account_number' => $item['account_number'], // Assuming 'account_number' exists in the cart item
+                        'commission' => $item['commission'], // You can adjust commission as needed
+                        'additional_commission' => 0, // Set additional commission if needed
+                        'description' => $item['category_name'], // Set the description as 'reload'
+                    ]);
                 }
             }
             

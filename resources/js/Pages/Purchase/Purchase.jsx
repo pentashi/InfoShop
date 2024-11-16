@@ -20,7 +20,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import Select2 from "react-select";
-
+import numeral from "numeral";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
 import ViewPaymentDetailsDialog from "@/Components/ViewPaymentDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
@@ -28,12 +28,20 @@ import CustomPagination from "@/Components/CustomPagination";
 const columns = (handleRowClick) => [
     { field: "id", headerName: "ID", width: 80 },
     { field: "name", headerName: "Vendor Name", width: 200 },
-    { field: "discount", headerName: "Discount", width: 100 },
-    { field: "total_amount", headerName: "Total Amount", width: 120 },
+    { field: "discount", headerName: "Discount", width: 100, align:'right',headerAlign: 'right', 
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    { field: "total_amount", headerName: "Total Amount", width: 120, align:'right',headerAlign: 'right', 
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
     {
         field: "amount_paid",
         headerName: "Amount Paid",
-        width: 120,
+        width: 120, align:'right',headerAlign: 'right',
         renderCell: (params) => (
             <Button
                 onClick={() => handleRowClick(params.row, "add_payment")}
@@ -42,10 +50,10 @@ const columns = (handleRowClick) => [
                 sx={{
                     textAlign: "left",
                     fontWeight: "bold",
-                    justifyContent: "flex-start",
+                    justifyContent: "flex-end",
                 }}
             >
-                {parseFloat(params.value).toFixed(2)}
+                {numeral(params.value).format('0,0.00')}
             </Button>
         ),
     },

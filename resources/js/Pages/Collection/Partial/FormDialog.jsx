@@ -57,9 +57,15 @@ export default function FormDialog({ open, handleClose, collection }) {
         handleClose(); // Close dialog on success
       },
       onError: (errors) => {
-        console.error('Submission failed with errors:', errors);
-      },
-    });
+        const errorMessages = Object.values(errors).flat().join(' | ');
+        Swal.fire({
+            title: 'Error!',
+            text: errorMessages || 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        },
+        });
   };
 
   // Collection type select box
@@ -96,19 +102,19 @@ export default function FormDialog({ open, handleClose, collection }) {
           />
 
             <FormControl fullWidth className="py-8" style={{marginTop:'1.5rem', marginBottom:'0.5rem'}} margin="dense">
-              <InputLabel id="collection-type-label" >Type</InputLabel>
-              <Select
-                labelId="collection-type-label"
+              <TextField
                 id="collection_type"
                 value={collectionType}
                 label="Type"
                 onChange={handleChange}
                 name="collection_type"
+                required
+                select
               >
               <MenuItem value={'category'}>Category</MenuItem>
               <MenuItem value={'brand'}>Brand</MenuItem>
               <MenuItem value={'tag'}>Tag</MenuItem>
-              </Select>
+              </TextField>
           </FormControl>
 
           {/* Collection Description */}

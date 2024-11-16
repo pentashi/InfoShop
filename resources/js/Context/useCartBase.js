@@ -57,10 +57,7 @@ const cartReducer = (state, action) => {
       if (existingProductIndex !== -1) {
         const updatedItem = {
           ...cart[existingProductIndex],
-          cost: action.payload.cost !== undefined ? action.payload.cost : cart[existingProductIndex].cost,
-          price: action.payload.price !== undefined ? action.payload.price : cart[existingProductIndex].price,
-          quantity: action.payload.quantity !== undefined ? action.payload.quantity : cart[existingProductIndex].quantity,
-          discount: action.payload.discount !== undefined ? action.payload.discount : cart[existingProductIndex].discount
+          ...action.payload,
         };
         
         cart[existingProductIndex] = updatedItem;

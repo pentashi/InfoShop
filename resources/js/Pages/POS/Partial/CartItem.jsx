@@ -44,12 +44,13 @@ export default function CartItems() {
                     variant="body2"
                     sx={{ color: 'text.primary', display: 'inline' }}
                   >
-                    Rs.{(item.price-item.discount).toFixed(2)} X {item.quantity} = <b>Rs.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
+                    RS.{(item.price-item.discount).toFixed(2)} X {item.quantity} = <b>RS.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
                     <br></br>
                   </Typography>
                   </>
               }
             />
+    
             <Box className="flex flex-row">
               <div className="relative w-full flex flex-row">
               <QuantityInput cartItem={item}></QuantityInput>
