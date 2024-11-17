@@ -37,6 +37,8 @@ export default function CashCheckoutDialog({ disabled }) {
     };
 
     const handleClose = () => {
+        setAmountRecieved(0)
+        setDiscount(0)
         setOpen(false);
     };
 

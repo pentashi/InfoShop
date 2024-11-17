@@ -47,11 +47,6 @@ const QuantityInput = ({cartItem}) => {
   };
 
   return (   
-    cartItem.slug && cartItem.slug=='reload' ?(
-      <>
-      {/* return empty if it's a reload */}
-      </>
-    ) : (  
     <div className="quantity">
       <button type='button' className="minus" aria-label="Decrease" onClick={decreaseValue} disabled={quantity <= min}>
         <RemoveIcon></RemoveIcon>
@@ -69,7 +64,6 @@ const QuantityInput = ({cartItem}) => {
        <AddIcon></AddIcon>
       </button>
     </div>
-    )
   );
 };
 

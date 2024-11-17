@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('is_stock_managed')->default(true); // Indicates if stock management is enabled
             $table->boolean('is_active')->default(true); // Product Active Status, default to true
             $table->boolean('is_featured')->default(false); // Product Featured Status, default to false
+            $table->json('meta_data')->nullable()->after('is_featured');
             $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -3,7 +3,16 @@ import * as React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState, useEffect, useRef } from "react";
 import { Head, router } from "@inertiajs/react";
-import { Button, Box, Divider, Typography, Select, MenuItem , InputLabel, FormControl} from "@mui/material";
+import {
+    Button,
+    Box,
+    Divider,
+    Typography,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -25,7 +34,7 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardMedia from "@mui/material/CardMedia";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { styled } from "@mui/material/styles";
 
 import ToggleButton from "@mui/material/ToggleButton";
@@ -76,6 +85,8 @@ export default function Product({ product, collection, product_code }) {
         is_active: 1,
         brand_id: "",
         category_id: "",
+        product_type: "simple",
+        fixed_commission:0,
     });
 
     // Handle input changes
@@ -118,6 +129,8 @@ export default function Product({ product, collection, product_code }) {
                 is_active: product.is_active || false,
                 brand_id: product.brand_id || "",
                 category_id: product.category_id || "",
+                product_type: product.product_type || "simple",
+                fixed_commission: product.fixed_commission || 0,
             });
             setManageStock(product.is_stock_managed.toString());
 
@@ -160,7 +173,7 @@ export default function Product({ product, collection, product_code }) {
                     title: "Success!",
                     text: "Successfully saved",
                     icon: "success",
-                    position: 'bottom-end',
+                    position: "bottom-end",
                     showConfirmButton: false,
                     timer: 2000,
                     timerProgressBar: true,
@@ -168,13 +181,13 @@ export default function Product({ product, collection, product_code }) {
                 });
             },
             onError: (errors) => {
-                const errorMessages = Object.values(errors).flat().join(' | ');
-            Swal.fire({
-                title: 'Error!',
-                text: errorMessages || 'An unexpected error occurred.',
-                icon: 'error',
-                confirmButtonText: 'OK',
-              });
+                const errorMessages = Object.values(errors).flat().join(" | ");
+                Swal.fire({
+                    title: "Error!",
+                    text: errorMessages || "An unexpected error occurred.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                });
             },
         });
     };
@@ -182,53 +195,53 @@ export default function Product({ product, collection, product_code }) {
     return (
         <AuthenticatedLayout>
             <Hotkeys
-     keyName="Control+s" // Listening for Shift+A and Ctrl+S
-     onKeyDown={(keyName, e) => {
-       e.preventDefault(); // Prevent default browser action for Ctrl+S
-        if (keyName === "Control+s") {
-         // Trigger the form submit by programmatically calling handleSubmit
-         document.getElementById("product-form").requestSubmit();
-       }
-     }}
-    >
-            <Head title="Products" />
-            <form
-                id="product-form"
-                encType="multipart/form-data"
-                onSubmit={handleSubmit}
+                keyName="Control+s" // Listening for Shift+A and Ctrl+S
+                onKeyDown={(keyName, e) => {
+                    e.preventDefault(); // Prevent default browser action for Ctrl+S
+                    if (keyName === "Control+s") {
+                        // Trigger the form submit by programmatically calling handleSubmit
+                        document.getElementById("product-form").requestSubmit();
+                    }
+                }}
             >
-                <input
-                    name="is_stock_managed"
-                    type="hidden"
-                    value={manageStock}
-                />
-                <Box className="mb-10">
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link
-                            underline="hover"
-                            sx={{ display: "flex", alignItems: "center" }}
-                            color="inherit"
-                            href="/"
-                        >
-                            <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-                            Home
-                        </Link>
-                        <Link
-                            underline="hover"
-                            color="inherit"
-                            href="/products"
-                        >
-                            Products
-                        </Link>
-                        <Typography sx={{ color: "text.primary" }}>
-                            {product ? "Edit Product" : "Add Product"}
-                        </Typography>
-                    </Breadcrumbs>
-                </Box>
+                <Head title="Products" />
+                <form
+                    id="product-form"
+                    encType="multipart/form-data"
+                    onSubmit={handleSubmit}
+                >
+                    <input
+                        name="is_stock_managed"
+                        type="hidden"
+                        value={manageStock}
+                    />
+                    <Box className="mb-10">
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Link
+                                underline="hover"
+                                sx={{ display: "flex", alignItems: "center" }}
+                                color="inherit"
+                                href="/"
+                            >
+                                <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                                Home
+                            </Link>
+                            <Link
+                                underline="hover"
+                                color="inherit"
+                                href="/products"
+                            >
+                                Products
+                            </Link>
+                            <Typography sx={{ color: "text.primary" }}>
+                                {product ? "Edit Product" : "Add Product"}
+                            </Typography>
+                        </Breadcrumbs>
+                    </Box>
 
-                <Grid container spacing={2}>
-                    <Grid size={{xs:6, sm:3}}>
-                        <TextField
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 6, sm: 3 }}>
+                            <TextField
                                 label="Barcode"
                                 id="barcode"
                                 name="barcode"
@@ -238,323 +251,361 @@ export default function Product({ product, collection, product_code }) {
                                 onChange={handleChange}
                                 autoFocus
                                 ref={refBarcode}
-                            />
-                    </Grid>
-                    <Grid size={{xs:6, sm:3}}>
-                    <TextField
-                            label="SKU"
-                            id="sku"
-                            name="sku"
-                            value={productFormData.sku}
-                            onChange={handleChange}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid size={{xs:12, sm:4}}>
-                    <TextField
-                            label="Product Name"
-                            id="product-name"
-                            name="name"
-                            fullWidth
-                            required
-                            value={productFormData.name}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid size={{xs:12, sm:2}}>
-                    <FormControl
-                            fullWidth
-                            style={{ marginTop: "0", marginBottom: "0" }}
-                            margin="dense"
-                        >
-                            <InputLabel id="product-unit-label">
-                                Product Unit
-                            </InputLabel>
-                            <Select
-                                labelId="product-unit-label"
-                                id="product_unit"
-                                value={productFormData.unit}
-                                label="Product Unit"
-                                onChange={handleChange}
-                                name="unit"
-                            >
-                                <MenuItem value={"PC"}>PC</MenuItem>
-                                <MenuItem value={"KG"}>KG</MenuItem>
-                                <MenuItem value={"Meter"}>Meter</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                </Grid>
-                <Box className="sm:columns-1 md:columns-2 mb-4">
-                   
-                    <div>
-                        
-                    </div>
-                </Box>
-
-                <Divider></Divider>
-                <Box sx={{ mt: 2, mb: 2 }}>
-                    <Typography variant="h5" color="initial">
-                        Stock
-                    </Typography>
-                </Box>
-                {!product && (
-                    <Box className="sm:columns-1 md:columns-5 xs:columns-2 mb-3 mt-4">
-                        {/* Cost */}
-                        <div className="mb-3">
-                            <TextField
-                                label="Cost"
-                                id="cost"
-                                name="cost"
-                                type="number"
-                                fullWidth
-                                required
-                                step={0.5}
-                                slotProps={{
-                                    input: {
-                                        step: 0.5,
-                                    },
+                                onFocus={(event) => {
+                                    event.target.select();
                                 }}
-                                value={productFormData.cost}
-                                onChange={handleChange}
                             />
-                        </div>
-
-                        {/* Price */}
-                        <div className="mb-3">
-                        <TextField
-                                label="Price"
-                                id="price"
-                                name="price"
-                                type="number"
-                                fullWidth
-                                required
-                                slotProps={{
-                                    input: {
-                                        min: 0,
-                                    },
-                                }}
-                                value={productFormData.price}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        {/* Quantity */}
-                        <div className="mb-3">
-                            <TextField
-                                label="Quantity"
-                                id="quantity"
-                                name="quantity"
-                                type="number"
-                                fullWidth
-                                required
-                                step={0.5}
-                                slotProps={{
-                                    input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                        step: 0.5,
-                                    },
-                                }}
-                                value={productFormData.quantity}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <TextField
-                                label="Batch number"
-                                id="batch-number"
-                                name="batch_number"
-                                fullWidth
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="en-gb"
-                            >
-                                <DatePicker
-                                    name="expiry_date"
-                                    label="Expiry Date"
-                                    className="w-full"
-                                />
-                            </LocalizationProvider>
-                        </div>
-                    </Box>
-                )}
-
-                <Box className="sm:columns-1 md:columns-5 mb-4 mt-2">
-                    <div className="mb-3">
-                        <ToggleButtonGroup
-                            color="primary"
-                            value={manageStock}
-                            exclusive
-                            onChange={handleStockChange}
-                            aria-label="Manage stock"
-                            className="h-full"
-                            id="btn-manage-stock"
-                            variant="contained"
-                            fullWidth
-                        >
-                            <ToggleButton
-                                value="1"
-                                sx={{ p: "15px",
-                                    color:'black',
-      '&.Mui-selected': {
-        bgcolor: 'success.dark', // Background color when active
-        color: 'white', // Text color when active
-        '&:hover': {
-          bgcolor: 'success.dark', // Darker shade on hover when active
-        },}
-                                }}
-                                variant="contained"
-                                
-                            >
-                                Manage Stock
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </div>
-
-                    <div className="mb-3">
-                        <TextField
-                            label="Alert Quantity"
-                            id="alert-quantity"
-                            name="alert_quantity"
-                            type="number"
-                            fullWidth
-                            onChange={handleChange}
-                            value={productFormData.alert_quantity}
-                        />
-                    </div>
-                </Box>
-
-                <Divider></Divider>
-                <Typography variant="h5" sx={{ mt: 2 }} color="initial">
-                    More Information
-                </Typography>
-
-                <Box sx={{ flexGrow: 1 }} className="pb-16 mt-4">
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <div className="mb-3">
-                                <Autocomplete
-                                    disablePortal
-                                    // defaultValue={brandOptions.find(option => option.id === null)}
-                                    value={selectedBrand || null}
-                                    onChange={(event, newValue) => {
-                                        setSelectedBrand(newValue);
-                                    }}
-                                    getOptionLabel={(options) => options.label}
-                                    options={brandOptions}
-                                    fullWidth
-                                    id="brand"
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Brand" />
-                                    )}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Autocomplete
-                                    disablePortal
-                                    value={selectedCategory || null}
-                                    onChange={(event, newValue) => {
-                                        setSelectedCategory(newValue);
-                                    }}
-                                    options={categoryOptions}
-                                    getOptionLabel={(options) => options.label}
-                                    fullWidth
-                                    id="category"
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            label="Category"
-                                        />
-                                    )}
-                                />
-                            </div>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 8 }}>
-                            {/* Product Description */}
+                        <Grid size={{ xs: 6, sm: 3 }}>
+                            <TextField
+                                label="SKU"
+                                id="sku"
+                                name="sku"
+                                value={productFormData.sku}
+                                onChange={handleChange}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                            <TextField
+                                label="Product Name"
+                                id="product-name"
+                                name="name"
+                                fullWidth
+                                required
+                                value={productFormData.name}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 2 }}>
+                            <FormControl
+                                fullWidth
+                                style={{ marginTop: "0", marginBottom: "0" }}
+                                margin="dense"
+                            >
+                                <InputLabel id="product-unit-label">
+                                    Product Unit
+                                </InputLabel>
+                                <Select
+                                    labelId="product-unit-label"
+                                    id="product_unit"
+                                    value={productFormData.unit}
+                                    label="Product Unit"
+                                    onChange={handleChange}
+                                    name="unit"
+                                >
+                                    <MenuItem value={"PC"}>PC</MenuItem>
+                                    <MenuItem value={"KG"}>KG</MenuItem>
+                                    <MenuItem value={"Meter"}>Meter</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Box className="sm:columns-1 md:columns-2 mb-4">
+                        <div></div>
+                    </Box>
+
+                    <Divider></Divider>
+                    <Box sx={{ mt: 2, mb: 2 }}>
+                        <Typography variant="h5" color="initial">
+                            Stock
+                        </Typography>
+                    </Box>
+                    {!product && (
+                        <Box className="sm:columns-1 md:columns-5 xs:columns-2 mb-3 mt-4">
+                            {/* Cost */}
                             <div className="mb-3">
                                 <TextField
-                                    label="Product Description"
-                                    id="product-description"
-                                    name="description"
-                                    multiline
-                                    rows={4}
+                                    label="Cost"
+                                    id="cost"
+                                    name="cost"
+                                    type="number"
                                     fullWidth
-                                    value={productFormData.description}
+                                    required
+                                    step={0.5}
+                                    slotProps={{
+                                        input: {
+                                            step: 0.5,
+                                        },
+                                    }}
+                                    value={productFormData.cost}
                                     onChange={handleChange}
                                 />
                             </div>
-                        </Grid>
 
-                        <Grid
-                            size={{ xs: 12, md: 12 }}
-                            className="flex justify-center"
-                        >
-                            <Card sx={{ width: { xs: "100%", sm: 350 } }}>
-                                <CardMedia
-                                    sx={{ height: 300 }}
-                                    image={productFormData.featured_image??productplaceholder}
+                            {/* Price */}
+                            <div className="mb-3">
+                                <TextField
+                                    label="Price"
+                                    id="price"
+                                    name="price"
+                                    type="number"
+                                    fullWidth
+                                    required
+                                    slotProps={{
+                                        input: {
+                                            min: 0,
+                                        },
+                                    }}
+                                    value={productFormData.price}
+                                    onChange={handleChange}
                                 />
+                            </div>
 
-                                <CardActions className="mt-0">
-                                    {/* <Box sx={{ flexGrow: 1 }} /> */}
-                                    <Button
-                                        component="label"
-                                        role={undefined}
-                                        variant="contained"
-                                        tabIndex={-1}
-                                        startIcon={<CloudUploadIcon />}
-                                        fullWidth
-                                    >
-                                        Upload image
-                                        <VisuallyHiddenInput
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            name="featured_image"
-                                        />
-                                    </Button>
-                                </CardActions>
-                            </Card>
+                            {/* Quantity */}
+                            <div className="mb-3">
+                                <TextField
+                                    label="Quantity"
+                                    id="quantity"
+                                    name="quantity"
+                                    type="number"
+                                    fullWidth
+                                    required
+                                    step={0.5}
+                                    slotProps={{
+                                        input: {
+                                            // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                            step: 0.5,
+                                        },
+                                    }}
+                                    value={productFormData.quantity}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div className="mb-3">
+                                <TextField
+                                    label="Batch number"
+                                    id="batch-number"
+                                    name="batch_number"
+                                    fullWidth
+                                />
+                            </div>
+
+                            <div className="mb-3">
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="en-gb"
+                                >
+                                    <DatePicker
+                                        name="expiry_date"
+                                        label="Expiry Date"
+                                        className="w-full"
+                                    />
+                                </LocalizationProvider>
+                            </div>
+                        </Box>
+                    )}
+
+                    <Grid container spacing={2}>
+                        <Grid size={2} className="mb-3">
+                            <ToggleButtonGroup
+                                color="primary"
+                                value={manageStock}
+                                exclusive
+                                onChange={handleStockChange}
+                                aria-label="Manage stock"
+                                className="h-full"
+                                id="btn-manage-stock"
+                                variant="contained"
+                                fullWidth
+                            >
+                                <ToggleButton
+                                    value="1"
+                                    sx={{
+                                        p: "15px",
+                                        color: "black",
+                                        "&.Mui-selected": {
+                                            bgcolor: "success.dark", // Background color when active
+                                            color: "white", // Text color when active
+                                            "&:hover": {
+                                                bgcolor: "success.dark", // Darker shade on hover when active
+                                            },
+                                        },
+                                    }}
+                                    variant="contained"
+                                >
+                                    Manage Stock
+                                </ToggleButton>
+                            </ToggleButtonGroup>
                         </Grid>
-                    </Grid>
-                </Box>
 
-                <AppBar
-                    position="fixed"
-                    variant="contained"
-                    sx={{ top: "auto", bottom: 0 }}
-                >
-                    <Toolbar>
-                        
-                        <Box sx={{ flexGrow: 1 }} />
+                        <Grid size={2} className="mb-3">
+                            <TextField
+                                label="Alert Quantity"
+                                id="alert-quantity"
+                                name="alert_quantity"
+                                type="number"
+                                fullWidth
+                                onChange={handleChange}
+                                value={productFormData.alert_quantity}
+                            />
+                        </Grid>
+
+                        <Grid size={2}>
+                            <TextField
+                                label="Product Type"
+                                name="product_type"
+                                select
+                                fullWidth
+                                onChange={handleChange}
+                                value={productFormData.product_type}
+                                required
+                            >
+                                <MenuItem value={"simple"}>SIMPLE</MenuItem>
+                                <MenuItem value={"reload"}>RELOAD</MenuItem>
+                            </TextField>
+                        </Grid>
+                        {productFormData.product_type=='reload'&&(
+                            <Grid size={2}>
+                            <TextField
+                                label="Fixed Commission"
+                                name="fixed_commission"
+                                type="number"
+                                fullWidth
+                                required
+                                onChange={handleChange}
+                                value={productFormData.fixed_commission}
+                            />
+                        </Grid>
+                        )}
+                    </Grid>
+
+                    <Divider></Divider>
+                    <Typography variant="h5" sx={{ mt: 2 }} color="initial">
+                        More Information
+                    </Typography>
+
+                    <Box sx={{ flexGrow: 1 }} className="pb-16 mt-4">
+                        <Grid container spacing={2}>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <div className="mb-3">
+                                    <Autocomplete
+                                        disablePortal
+                                        // defaultValue={brandOptions.find(option => option.id === null)}
+                                        value={selectedBrand || null}
+                                        onChange={(event, newValue) => {
+                                            setSelectedBrand(newValue);
+                                        }}
+                                        getOptionLabel={(options) =>
+                                            options.label
+                                        }
+                                        options={brandOptions}
+                                        fullWidth
+                                        id="brand"
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Brand"
+                                            />
+                                        )}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <Autocomplete
+                                        disablePortal
+                                        value={selectedCategory || null}
+                                        onChange={(event, newValue) => {
+                                            setSelectedCategory(newValue);
+                                        }}
+                                        options={categoryOptions}
+                                        getOptionLabel={(options) =>
+                                            options.label
+                                        }
+                                        fullWidth
+                                        id="category"
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Category"
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 8 }}>
+                                {/* Product Description */}
+                                <div className="mb-3">
+                                    <TextField
+                                        label="Product Description"
+                                        id="product-description"
+                                        name="description"
+                                        multiline
+                                        rows={4}
+                                        fullWidth
+                                        value={productFormData.description}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </Grid>
+
+                            <Grid
+                                size={{ xs: 12, md: 12 }}
+                                className="flex justify-center"
+                            >
+                                <Card sx={{ width: { xs: "100%", sm: 350 } }}>
+                                    <CardMedia
+                                        sx={{ height: 300 }}
+                                        image={
+                                            productFormData.featured_image ??
+                                            productplaceholder
+                                        }
+                                    />
+
+                                    <CardActions className="mt-0">
+                                        {/* <Box sx={{ flexGrow: 1 }} /> */}
+                                        <Button
+                                            component="label"
+                                            role={undefined}
+                                            variant="contained"
+                                            tabIndex={-1}
+                                            startIcon={<CloudUploadIcon />}
+                                            fullWidth
+                                        >
+                                            Upload image
+                                            <VisuallyHiddenInput
+                                                type="file"
+                                                onChange={handleFileChange}
+                                                name="featured_image"
+                                            />
+                                        </Button>
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    </Box>
+
+                    <AppBar
+                        position="fixed"
+                        variant="contained"
+                        sx={{ top: "auto", bottom: 0 }}
+                    >
+                        <Toolbar>
+                            <Box sx={{ flexGrow: 1 }} />
 
                             <Button
-                            variant="contained"
-                            color="warning"
-                            size="large"
-                            startIcon={<ArrowBackIosNewIcon />}
-                            sx={{mr:'1rem'}}
-                            onClick={() => window.history.back()}
-                        >
-                            BACK
-                        </Button>
-                        
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            color="success"
-                            size="large"
-                            endIcon={<SaveIcon />}
-                        >
-                            SAVE
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-            </form>
+                                variant="contained"
+                                color="warning"
+                                size="large"
+                                startIcon={<ArrowBackIosNewIcon />}
+                                sx={{ mr: "1rem" }}
+                                onClick={() => window.history.back()}
+                            >
+                                BACK
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                type="submit"
+                                color="success"
+                                size="large"
+                                endIcon={<SaveIcon />}
+                            >
+                                SAVE
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                </form>
             </Hotkeys>
         </AuthenticatedLayout>
     );

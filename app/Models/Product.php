@@ -27,7 +27,9 @@ class Product extends Model
         'brand_id',
         'category_id',
         'discount',
-        'is_featured'
+        'is_featured',
+        'product_type',
+        'meta_data',
     ];
 
     // Accessor for formatted updated_at date
@@ -41,4 +43,8 @@ class Product extends Model
     {
         return \Carbon\Carbon::parse($value)->format('Y-m-d'); // Adjust the format as needed
     }
+
+    protected $casts = [
+        'meta_data' => 'array', // Ensure the meta_data column is treated as an array
+    ];
 }

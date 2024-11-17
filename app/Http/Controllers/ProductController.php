@@ -105,6 +105,13 @@ class ProductController extends Controller
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $product = Product::findOrFail($id);
+
+        $metaData = $product->meta_data;
+        if ($product->product_type === 'reload' && isset($metaData['fixed_commission'])) {
+            $product->fixed_commission = $metaData['fixed_commission'];
+        }
+        $product->meta_data = $metaData;
+
         if (!empty($product->image_url)) {
             // If the image URL exists and is not empty
             $product->image_url = asset($imageUrl . $product->image_url);
@@ -141,6 +148,14 @@ class ProductController extends Controller
             $imageUrl = $request->file('featured_image')->store($folderPath, 'public'); // Store the image in the public disk
         }
 
+        // Prepare meta_data (convert to JSON)
+        $metaData = $request->meta_data ?? []; // If no meta_data is provided, default to an empty array
+
+        // Check if the product type is 'reload' and add specific fields (e.g., fixed_commission) to meta_data
+        if ($request->product_type === 'reload') {
+            $metaData['fixed_commission'] = $request->fixed_commission ?? 0; // Optional fixed_commission field
+        }
+
         $product=Product::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -154,6 +169,8 @@ class ProductController extends Controller
             'is_active' => 1,
             'brand_id' => $request->brand_id,
             'category_id' => $request->category_id,
+            'product_type' => $request->product_type,
+            'meta_data'=>$metaData,
         ]);
 
         $productBatch = ProductBatch::create([
@@ -203,6 +220,12 @@ class ProductController extends Controller
             $imageUrl = $request->file('featured_image')->store($folderPath, 'public'); // Store new image and replace the old one
         }
 
+        $metaData = $product->meta_data ?? [];
+        if ($request->product_type == 'reload' && $request->has('fixed_commission')) {
+            // Merge existing meta_data with the fixed_commission field
+            $metaData['fixed_commission'] = $request->fixed_commission;
+        }
+
         // Update the product with new values
         $product->update([
             'name' => $request->name,
@@ -216,6 +239,8 @@ class ProductController extends Controller
             'is_active' => $request->is_active ?? 1, // Default to active if not provided
             'brand_id' => $request->brand_id,
             'category_id' => $request->category_id,
+            'product_type' => $request->product_type,
+            'meta_data' => $metaData,
         ]);
 
         DB::commit();
@@ -251,16 +276,18 @@ class ProductController extends Controller
             'product_batches.price',
             'product_batches.id AS batch_id',
             DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity"),
-            'collections.slug',
-            'collections.name as category_name',
+            'products.meta_data',
+            'products.product_type'
         )
         ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
         ->leftJoin('collections', 'products.category_id', '=', 'collections.id')
+        ->where('product_batches.is_active',1)
         ->where('barcode', 'like', $search_query . '%')
         ->orWhere('sku', 'like', '%' . $search_query . '%')
         ->orWhere('products.name', 'like', '%' . $search_query . '%');
 
+        // it means, If it is a sale
         if($is_purchase==0){
             $products = $products->where('product_stocks.store_id', session('store_id'));
         }
@@ -282,8 +309,8 @@ class ProductController extends Controller
         'product_batches.price',
         'products.barcode',
         'products.sku',
-        'collections.slug',
-        'category_name',
+        'products.meta_data',
+        'products.product_type'
         )
         ->limit(10)->get();
         

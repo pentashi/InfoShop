@@ -25,21 +25,11 @@ export default function CartItemModal() {
         selectedCartItem,
         setSelectedCartItem,
     } = useContext(SharedContext);
-    const [formState, setFormState] = useState({
-        id: "",
-        batch_id: "",
-        quantity: 1,
-        cost: "",
-        price: "",
-        batch_number: "",
-        name: "",
-        discount: 0,
-        commission:0,
-        account_number:'',
-    });
+    const [formState, setFormState] = useState([]);
 
     const handleClose = () => {
         setSelectedCartItem(null);
+        setFormState([]);
         setCartItemModalOpen(false);
     };
 
@@ -54,19 +44,7 @@ export default function CartItemModal() {
         if (selectedCartItem) {
             setFormState((prevState) => ({
                 ...prevState,
-                batch_id: selectedCartItem.batch_id,
-                cost: selectedCartItem.cost,
-                price: selectedCartItem.price,
-                batch_number: selectedCartItem.batch_number,
-                name: selectedCartItem.name,
-                id: selectedCartItem.id,
-                quantity: selectedCartItem.quantity,
-                slug: selectedCartItem.slug,
-                category_name: selectedCartItem.category_name,
-                discount: selectedCartItem.discount,
-                commission: selectedCartItem.commission,
-                additional_commission: selectedCartItem.additional_commission,
-                account_number:selectedCartItem.account_number,
+                ...selectedCartItem,
             }));
         }
     }, [selectedCartItem]);
@@ -80,14 +58,31 @@ export default function CartItemModal() {
         const { name, value } = e.target;
         // Update other fields (e.g., quantity, cost, price)
         setFormState((prevState) => {
-            let newState = {
-                ...prevState,
-                [name]: value, // Update the value of the field being changed
-            };
+            let newState = { ...prevState };
 
-            // If slug is "reload", we need to calculate the cost based on the price and commission
-            if (prevState.slug === "reload") {
-                if (name === "price" || name === "commission") {
+            if (name === "fixed_commission") {
+                // We store the percentage value of fixed_commission, but it's only used for calculation
+                newState.meta_data = {
+                    ...newState.meta_data,
+                    fixed_commission: value,
+                };
+            } else {
+                newState[name] = value; // Update fields outside of meta_data
+            }
+
+            // If product type is "reload", we need to calculate the cost based on the price and commission
+            if (newState.product_type === "reload") {
+                const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
+                const price = parseFloat(newState.price) || 0;
+                const additionalCommission = parseFloat(newState.additional_commission) || 0;
+                const extraCommission = parseFloat(newState.extra_commission) || 0;
+                const calculatedCommission = ((price - additionalCommission) * fixedCommission) / 100;
+                const totalCommission = additionalCommission + extraCommission + calculatedCommission;
+                newState.commission = totalCommission;
+
+                if (
+                    name === "price" || name === "fixed_commission" || name === "extra_commission" || name ==='additional_commission'
+                ) {
                     // Recalculate the cost if price or commission changes
                     const calculatedCost = parseFloat(newState.price) - parseFloat(newState.commission) || 0;
                     newState.cost = calculatedCost; // Update the cost field
@@ -113,8 +108,8 @@ export default function CartItemModal() {
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {formState.slug === "reload" && formState.category_name
-                        ? formState.category_name
+                    {formState.product_type === "reload"
+                        ? "RELOAD"
                         : "EDIT CART"}
                 </DialogTitle>
                 <IconButton
@@ -144,7 +139,7 @@ export default function CartItemModal() {
                         <input type="hidden" name="id" value={formState.id} />
 
                         <Grid size={6}>
-                            {formState.slug !== "reload" ? (
+                            {formState.product_type !== "reload" ? (
                                 <TextField
                                     fullWidth
                                     type="number"
@@ -169,7 +164,7 @@ export default function CartItemModal() {
                                         },
                                     }}
                                 />
-                                ) : (
+                            ) : (
                                 <TextField
                                     fullWidth
                                     autoFocus
@@ -228,49 +223,16 @@ export default function CartItemModal() {
                                 }}
                             />
                         </Grid>
-                        <Grid size={6}>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                name="discount"
-                                label="Discount"
-                                variant="outlined"
-                                required
-                                value={formState.discount}
-                                onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                    display:
-                                        formState?.slug === "reload"
-                                            ? "none"
-                                            : "block",
-                                }}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                Rs.
-                                            </InputAdornment>
-                                        ),
-                                    },
-                                }}
-                            />
-                            {formState.slug === "reload" && (
+                        {formState.product_type === "reload" && (
+                            <Grid size={4}>
                                 <TextField
                                     fullWidth
                                     type="number"
-                                    name="commission"
-                                    label="Commission"
+                                    name="additional_commission"
+                                    label="Customer Commission"
                                     variant="outlined"
                                     required
-                                    value={formState.commission}
+                                    value={formState.additional_commission}
                                     onChange={handleInputChange}
                                     sx={{
                                         mt: "0.5rem",
@@ -292,8 +254,143 @@ export default function CartItemModal() {
                                         },
                                     }}
                                 />
-                            )}
+                            </Grid>
+                        )}
+
+                        {formState.product_type === "reload" && (
+                            <Grid size={4}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="fixed_commission"
+                                    label="Fixed Commission"
+                                    variant="outlined"
+                                    required
+                                    value={formState.meta_data.fixed_commission}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem" },
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    %
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
+
+                        {formState.product_type === "reload" && (
+                            <Grid size={4}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="extra_commission"
+                                    label="Extra Commission"
+                                    variant="outlined"
+                                    required
+                                    value={formState.extra_commission}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem" },
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    Rs.
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
+                        {formState.product_type === "reload" && (
+                            <Grid size={6}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="commission"
+                                    label="Total Commission"
+                                    variant="outlined"
+                                    required
+                                    value={formState.commission}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem" },
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    Rs.
+                                                </InputAdornment>
+                                            ),
+                                            readOnly:true
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
+{formState.product_type !== "reload" && (
+                        <Grid size={6}>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                name="discount"
+                                label="Discount"
+                                variant="outlined"
+                                required
+                                value={formState.discount}
+                                onChange={handleInputChange}
+                                sx={{
+                                    mt: "0.5rem",
+                                    input: { fontSize: "1rem" },
+                                }}
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                    input: {
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                Rs.
+                                            </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
                         </Grid>
+                        )}
                         <Grid size={6}>
                             <TextField
                                 fullWidth
@@ -317,7 +414,7 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                     input: {
-                                        readOnly: formState.slug === "reload", //Make cost un editable if reload enabled
+                                        readOnly: formState.product_type === "reload", //Make cost un editable if reload enabled
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 Rs.

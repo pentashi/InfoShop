@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class POSController extends Controller
 {
@@ -42,6 +43,8 @@ class POSController extends Controller
             'pb.price',
             'pb.id AS batch_id',
             'ps.quantity',
+            'products.meta_data',
+            'products.product_type'
         )
         ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
         ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
@@ -57,12 +60,13 @@ class POSController extends Controller
             'pb.cost', 
             'pb.price', 
             'pb.id', 
-            'ps.quantity'
+            'ps.quantity',
+            'products.product_type',
+            'products.meta_data',
             )
         ->limit(20)
         ->get();
         
-
         return Inertia::render('POS/POS', [
             'products' => $products,
             'urlImage' =>url('storage/'),
@@ -83,6 +87,8 @@ class POSController extends Controller
         $saleDate = $request->input('sale_date');
         $payments = $request->payments;
         $createdBy = Auth::id();
+
+        // dd($request);
 
         DB::beginTransaction();
         try{
@@ -196,15 +202,27 @@ class POSController extends Controller
                     }
                 }
 
-                if (isset($item['slug']) && $item['slug'] == 'reload') {
+                if ($item['product_type'] == 'reload') {
+                    $validator = Validator::make($item, [
+                        'account_number' => 'required', // Account number must be required when product type is reload
+                    ]);
+
+                    if ($validator->fails()) {
+                        // If validation fails, return an error response
+                        return response()->json([
+                            'error' => 'Account number is required for reload product type.',
+                            'messages' => $validator->errors(),
+                        ], 400);
+                    }
+
                     // Create a ReloadAndBillMeta record with description 'reload'
                     ReloadAndBillMeta::create([
                         'sale_item_id' => $sale_item->id, // Link the reload meta to the SaleItem
                         'transaction_type' => 'reload', // Set transaction type as 'reload'
                         'account_number' => $item['account_number'], // Assuming 'account_number' exists in the cart item
                         'commission' => $item['commission'], // You can adjust commission as needed
-                        'additional_commission' => 0, // Set additional commission if needed
-                        'description' => $item['category_name'], // Set the description as 'reload'
+                        'additional_commission' => $item['additional_commission'], // Set additional commission if needed
+                        'description' => $item['product_type'], // Set the description as 'reload'
                     ]);
                 }
             }
