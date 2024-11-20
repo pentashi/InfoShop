@@ -41,7 +41,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function SalesReport({ stores, report }) {
+export default function CustomerReport({ stores, report, contacts, previousCredits, previousDebits,previousBalance }) {
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
@@ -77,30 +77,24 @@ export default function SalesReport({ stores, report }) {
         { label: "#", align: "left", sx: {} },
         { label: "DATE", align: "left", sx: { width: "120px" } },
         { label: "DESCRIPTION", align: "left", sx: {} },
-        { label: "RECEIVABLE", align: "right", sx: {} },
-        { label: "SETTLED", align: "right", sx: {} },
-        { label: "PROFIT", align: "right", sx: {} },
+        { label: "DEBIT (OWED)", align: "right", sx: {} },
+        { label: "CREDIT(PAID)", align: "right", sx: {} },
     ];
 
     const initialTotals = {
-        totalReceivable: 0,
-        totalSettled: 0,
-        totalProfit: 0,
-        totalBalance: 0,
-        totalRevenue: 0,
+        totalDebit: 0,     // Total amount owed by the customer (DEBIT)
+        totalCredit: 0,    // Total amount paid by the customer (CREDIT)
+        totalBalance: 0,   // Total balance (calculated as owed - paid)
     };
 
     const totals = (dataReport && dataReport.length > 0)
         ? dataReport.reduce((acc, row) => {
-            const receivable = parseFloat(row.receivable) || 0;
-            const settled = parseFloat(row.settled) || 0;
-            const profit = parseFloat(row.profit) || 0;
+            const debit = parseFloat(row.debit) || 0;       // DEBIT (Amount Owed)
+            const credit = parseFloat(row.credit) || 0;     // CREDIT (Amount Paid)
 
-            acc.totalReceivable += receivable;
-            acc.totalSettled += settled;
-            acc.totalProfit += profit;
-            acc.totalBalance += receivable - settled;
-            acc.totalRevenue += receivable;
+            acc.totalDebit += debit;   // Add to total debit (amount owed)
+            acc.totalCredit += credit; // Add to total credit (amount paid)
+            acc.totalBalance += debit - credit; // Calculate balance (amount owed - amount paid)
 
             return acc;
         }, initialTotals)
@@ -186,8 +180,8 @@ export default function SalesReport({ stores, report }) {
             </Grid>
 
 
-                <Grid container width={'100%'} justifyContent={'center'} sx={{mt:2}}>
-                <TableContainer component={Paper} sx={{ width:'100%', maxWidth: {sm:"750px"}, overflow:'auto',height:'500px' }}>
+            <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
+                <TableContainer component={Paper} sx={{ width: '100%', maxWidth: { sm: "750px" }, overflow: 'auto', height: '500px' }}>
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>
@@ -204,25 +198,32 @@ export default function SalesReport({ stores, report }) {
                         </TableHead>
                         <TableBody>
                             {dataReport && dataReport.length > 0 ? (
+
                                 dataReport.map((row, index) => (
                                     <StyledTableRow key={index}>
-                                        <StyledTableCell component="th" scope="row">
+                                        {/* Display the index in the first column */}
+                                        <StyledTableCell component="th" scope="row" align="left">
                                             {index + 1}
                                         </StyledTableCell>
+
+                                        {/* Display the date in the second column */}
                                         <StyledTableCell align="left">
                                             {row.date} {/* Display the date */}
                                         </StyledTableCell>
+
+                                        {/* Display the description in the third column */}
                                         <StyledTableCell align="left">
                                             {row.description} {/* Display the description */}
                                         </StyledTableCell>
+
+                                        {/* Display the debit (amount owed) in the fourth column */}
                                         <StyledTableCell align="right">
-                                            {numeral(row.receivable).format('0,0.00')} {/* Format receivable */}
+                                            {numeral(row.debit).format('0,0.00')} {/* Format debit */}
                                         </StyledTableCell>
+
+                                        {/* Display the credit (amount paid) in the fifth column */}
                                         <StyledTableCell align="right">
-                                            {numeral(row.settled).format('0,0.00')} {/* Format settled */}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="right">
-                                            {numeral(row.profit).format('0,0.00')} {/* Format profit */}
+                                            {numeral(row.credit).format('0,0.00')} {/* Format credit */}
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 ))
@@ -234,63 +235,53 @@ export default function SalesReport({ stores, report }) {
                                 </StyledTableRow>
                             )}
 
-                            <StyledTableRow sx={{backgroundColor:'black'}}>
+                            <StyledTableRow sx={{ backgroundColor: 'black' }}>
                                 <StyledTableCell colSpan={3} align="right">
                                     <strong>Total:</strong>
                                 </StyledTableCell>
+
+                                {/* Total Debit */}
                                 <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor:'#295F98', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}>
-                                    <strong>{numeral(totals.totalReceivable).format('0,0.00')}</strong>
+                                    sx={{
+                                        backgroundColor: '#295F98', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}>
+                                    <strong>{numeral(totals.totalDebit).format('0,0.00')}</strong>
                                 </StyledTableCell>
+
+                                {/* Total Credit */}
                                 <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor:'#295F98', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}>
-                                    <strong>{numeral(totals.totalSettled).format('0,0.00')}</strong>
+                                    sx={{
+                                        backgroundColor: '#295F98', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}>
+                                    <strong>{numeral(totals.totalCredit).format('0,0.00')}</strong>
                                 </StyledTableCell>
-                                <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor: totals.totalProfit > 0 ? 'green' : totals.totalProfit < 0 ? 'red' : 'gray', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}
-                                >
-                                    <strong>{numeral(totals.totalProfit).format('0,0.00')}</strong>
-                                </StyledTableCell>
+
                             </StyledTableRow>
+
                             <StyledTableRow>
-                                <StyledTableCell colSpan={6} align="right">
+                                <StyledTableCell colSpan={5} align="right">
                                 </StyledTableCell>
                             </StyledTableRow>
 
-                            {/* Row for Revenue */}
+                            {/* Row for Balance/Receivable */}
                             <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
-                                    <strong>Revenue:</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <strong>{numeral(totals.totalRevenue).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                            </StyledTableRow>
-
-                            {/* Row for Balance */}
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
+                                <StyledTableCell colSpan={4} align="right">
                                     <strong>Balance/Receivable:</strong>
                                 </StyledTableCell>
-                                <StyledTableCell align="right">
+                                <StyledTableCell align="right"
+                                    sx={{
+                                        backgroundColor: totals.totalBalance > 0 ? 'red' : totals.totalBalance < 0 ? 'green' : 'gray', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}>
                                     <strong>{numeral(totals.totalBalance).format('0,0.00')}</strong>
                                 </StyledTableCell>
                             </StyledTableRow>
-
-                            
                         </TableBody>
                     </Table>
                 </TableContainer>
-                </Grid>
+            </Grid>
         </AuthenticatedLayout>
     );
 }

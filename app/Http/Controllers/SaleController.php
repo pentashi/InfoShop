@@ -27,9 +27,10 @@ class SaleController extends Controller
             'contacts.name',
             'contacts.balance',
             'store_id',
+            'invoice_number',
         )
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
-        ->orderBy('sale_date', 'desc');
+        ->orderBy('sales.id', 'desc');
 
         if(isset($filters['contact_id'])){
             $query->where('contact_id', $filters['contact_id']);
@@ -42,6 +43,11 @@ class SaleController extends Controller
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
         }
+
+        if(isset($filters['query'])){
+            $query->where('invoice_number', 'LIKE', '%' . $filters['query'] . '%');
+        }
+
         $results = $query->paginate(25);
         $results->appends($filters);
         return $results;
@@ -49,7 +55,7 @@ class SaleController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'status']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'status', 'query']);
         $sales = $this->getSales($filters);
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
 

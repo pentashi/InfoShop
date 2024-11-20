@@ -78,6 +78,7 @@ export default function CartItemModal() {
                 const extraCommission = parseFloat(newState.extra_commission) || 0;
                 const calculatedCommission = ((price - additionalCommission) * fixedCommission) / 100;
                 const totalCommission = additionalCommission + extraCommission + calculatedCommission;
+                newState.extra_commission = extraCommission;
                 newState.commission = totalCommission;
 
                 if (
@@ -262,40 +263,6 @@ export default function CartItemModal() {
                                 <TextField
                                     fullWidth
                                     type="number"
-                                    name="fixed_commission"
-                                    label="Fixed Commission"
-                                    variant="outlined"
-                                    required
-                                    value={formState.meta_data.fixed_commission}
-                                    onChange={handleInputChange}
-                                    sx={{
-                                        mt: "0.5rem",
-                                        input: { fontSize: "1rem" },
-                                    }}
-                                    onFocus={(event) => {
-                                        event.target.select();
-                                    }}
-                                    slotProps={{
-                                        inputLabel: {
-                                            shrink: true,
-                                        },
-                                        input: {
-                                            endAdornment: (
-                                                <InputAdornment position="start">
-                                                    %
-                                                </InputAdornment>
-                                            ),
-                                        },
-                                    }}
-                                />
-                            </Grid>
-                        )}
-
-                        {formState.product_type === "reload" && (
-                            <Grid size={4}>
-                                <TextField
-                                    fullWidth
-                                    type="number"
                                     name="extra_commission"
                                     label="Extra Commission"
                                     variant="outlined"
@@ -317,6 +284,39 @@ export default function CartItemModal() {
                                             startAdornment: (
                                                 <InputAdornment position="start">
                                                     Rs.
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
+                        {formState.product_type === "reload" && (
+                            <Grid size={4}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="fixed_commission"
+                                    label="Fixed Commission"
+                                    variant="outlined"
+                                    required
+                                    value={formState.meta_data.fixed_commission}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem" },
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    %
                                                 </InputAdornment>
                                             ),
                                         },

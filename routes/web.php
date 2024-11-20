@@ -21,6 +21,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReloadController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -101,6 +102,9 @@ Route::middleware('auth')->group(function () {
     Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
     Route::get('reports/contact-statement',[ReportController::class, 'getContactStatement'])->name('reports.contactstatement');
     Route::get('reports/sales',[ReportController::class, 'getSalesReport'])->name('reports.sales');
+    Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
+
+    Route::get('/reloads',[ReloadController::class, 'index'])->name('expenses.index');
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');

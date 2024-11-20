@@ -3,13 +3,13 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, IconButton, FormControl, TextField, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import { Button, Box, IconButton, TextField, MenuItem, Tooltip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import Select2 from "react-select";
 import numeral from "numeral";
-
+import dayjs from "dayjs";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
 import ViewPaymentDetailsDialog from "@/Components/ViewPaymentDetailsDialog";
@@ -25,19 +25,31 @@ const columns = (handleRowClick) => [
             return "#" + params.value.toString().padStart(4, "0");
         },
     },
-    { field: "name", headerName: "Customer Name", width: 200,
+    {
+        field: "invoice_number",
+        headerName: "No",
+        width: 150,
+        renderCell: (params) => {
+            // Format the date to 'YYYY-MM-DD'
+            return "#" + params.value.toString().padStart(4, "0");
+        },
+    },
+    {
+        field: "name", headerName: "Customer Name", width: 200,
         renderCell: (params) => (
-            <Tooltip title={''+params.row.balance} arrow>
+            <Tooltip title={'' + params.row.balance} arrow>
                 <Button>{params.value}</Button>
             </Tooltip>
         ),
-     },
-    { field: "discount", headerName: "Discount", width: 100, align:'right',headerAlign: 'right',
+    },
+    {
+        field: "discount", headerName: "Discount", width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
     },
-    { field: "total_amount", headerName: "Total", width: 120, align:'right',headerAlign: 'right',
+    {
+        field: "total_amount", headerName: "Total", width: 120, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
@@ -45,7 +57,7 @@ const columns = (handleRowClick) => [
     {
         field: "amount_received",
         headerName: "Amount Received",
-        width: 140, align:'right',headerAlign: 'right',
+        width: 140, align: 'right', headerAlign: 'right',
         renderCell: (params) => (
             <Button
                 onClick={() => handleRowClick(params.row, "add_payment")}
@@ -64,7 +76,7 @@ const columns = (handleRowClick) => [
     {
         field: "change",
         headerName: "Change",
-        width: 100, align:'right',headerAlign: 'right',
+        width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             const change = params.row.amount_received - params.row.total_amount;
             return numeral(change).format('0,0.00');
@@ -108,10 +120,14 @@ export default function Sale({ sales, contacts }) {
     const [amountLimit, setAmountLimit] = useState(0);
     const [dataSales, setDataSales] = useState(sales);
 
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [status, setStatus] = useState("all");
-    const [selectedFilterContact, setSelectedFilterContact] = useState(null)
+    const [searchTerms, setSearchTerms] = useState({
+        start_date: dayjs().format("YYYY-MM-DD"),
+        end_date: dayjs().format("YYYY-MM-DD"),
+        store: 0,
+        contact: '',
+        status: 'all',
+        query: '',
+    });
 
     const handleRowClick = (sale, action) => {
         setSelectedTransaction(sale);
@@ -137,104 +153,126 @@ export default function Sale({ sales, contacts }) {
             },
         };
         router.get(
-            url,
-            {
-                start_date: startDate,
-                end_date: endDate,
-                contact_id: selectedFilterContact?.id,
-                status: status,
-            },
+            url, { ...searchTerms, contact_id: searchTerms.contact?.id },
             options
         );
     };
 
-    const handleContactChange = (selectedOption) => {
-      setSelectedFilterContact(selectedOption);
+    const handleSearchChange = (input) => {
+        if (input?.target) {
+            // Handle regular inputs (e.g., TextField)
+            const { name, value } = input.target;
+            setSearchTerms((prev) => ({ ...prev, [name]: value }));
+        } else {
+            // Handle Select2 inputs (e.g., contact selection)
+            setSearchTerms((prev) => ({
+                ...prev,
+                contact: input, // Store selected contact or null
+            }));
+        }
     };
 
     return (
         <AuthenticatedLayout>
             <Head title="Sales" />
-            <Grid
-                container
-                spacing={2}
-                alignItems="center"
-                justifyContent={"end"}
-                sx={{ width: "100%" }}
-                size={12}
-            >
-              <FormControl sx={{ minWidth: "240px" }}>
-                    <Select2
-                        className="w-full"
-                        placeholder="Select a contact..."
-                        styles={{
-                            control: (baseStyles, state) => ({
-                                ...baseStyles,
-                                height: "55px",
-                            }),
-                        }}
-                        options={contacts} // Options to display in the dropdown
-                        onChange={handleContactChange} // Triggered when an option is selected
-                        isClearable // Allow the user to clear the selected option
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.id}
-                    ></Select2>
-                </FormControl>
+   
+                <Grid
+                    container
+                    spacing={2}
+                    alignItems="center"
+                    justifyContent={"end"}
+                    sx={{ width: "100%" }}
+                    size={12}
+                >
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Select2
+                            className="w-full"
+                            placeholder="Select a contact..."
+                            styles={{
+                                control: (baseStyles, state) => ({
+                                    ...baseStyles,
+                                    height: "55px",
+                                }),
+                            }}
+                            options={contacts} // Options to display in the dropdown
+                            onChange={(selectedOption) => handleSearchChange(selectedOption)}
+                            isClearable // Allow the user to clear the selected option
+                            getOptionLabel={(option) => option.name + ' | ' + option.balance}
+                            getOptionValue={(option) => option.id}
+                        ></Select2>
+                    </Grid>
 
-                <FormControl sx={{ minWidth: "200px" }}>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                        value={status}
-                        label="Status"
-                        onChange={(e) => setStatus(e.target.value)}
-                        required
-                        name="status"
-                    >
-                        <MenuItem value={"all"}>All</MenuItem>
-                        <MenuItem value={"completed"}>Completed</MenuItem>
-                        <MenuItem value={"pending"}>Pending</MenuItem>
-                    </Select>
-                </FormControl>
+                    <Grid size={{ xs: 12, sm: 2 }}>
+                        <TextField
+                            value={searchTerms.status}
+                            label="Status"
+                            onChange={handleSearchChange}
+                            name="status"
+                            select
+                            fullWidth
+                        >
+                            <MenuItem value={"all"}>All</MenuItem>
+                            <MenuItem value={"completed"}>Completed</MenuItem>
+                            <MenuItem value={"pending"}>Pending</MenuItem>
+                        </TextField>
+                    </Grid>
 
-                <FormControl>
-                    <TextField
-                        label="Start Date"
-                        name="start_date"
-                        placeholder="Start Date"
-                        fullWidth
-                        type="date"
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        required
-                    />
-                </FormControl>
+                    <Grid size={{ xs: 6, sm: 2 }}>
+                        <TextField
+                            label="Start Date"
+                            name="start_date"
+                            placeholder="Start Date"
+                            fullWidth
+                            type="date"
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                            value={searchTerms.start_date}
+                            onChange={handleSearchChange}
+                        />
+                    </Grid>
 
-                <FormControl>
-                    <TextField
-                        label="End Date"
-                        name="end_date"
-                        placeholder="End Date"
-                        fullWidth
-                        type="date"
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        required
-                    />
-                </FormControl>
-                <Button variant="contained" onClick={()=>refreshSales(window.location.pathname)} size="large">
-                    <FindReplaceIcon />
-                </Button>
-            </Grid>
+                    <Grid size={{ xs: 6, sm: 2 }}>
+                        <TextField
+                            label="End Date"
+                            name="end_date"
+                            placeholder="End Date"
+                            fullWidth
+                            type="date"
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                            value={searchTerms.end_date}
+                            onChange={handleSearchChange}
+                            required
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 2 }}>
+                        <TextField
+                            value={searchTerms.query}
+                            label="Search"
+                            onChange={handleSearchChange}
+                            name="query"
+                            fullWidth
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault(); // Prevents form submission if inside a form
+                                    refreshSales(window.location.pathname); // Trigger search on Enter
+                                }
+                            }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 1 }}>
+                        <Button variant="contained" type="submit" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
+                            <FindReplaceIcon />
+                        </Button>
+                    </Grid>
+
+                </Grid>
 
             <Box
                 className="py-6 w-full"

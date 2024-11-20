@@ -3,11 +3,12 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
-import { Button, Box, TextField } from '@mui/material';
+import { Button, Box, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import PrintIcon from "@mui/icons-material/Print";
 
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import FormDialog from './Partial/FormDialog';
 import CustomPagination from '@/Components/CustomPagination';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
@@ -41,6 +42,20 @@ const columns = (handleRowClick) => [
     { field: 'email', headerName: 'Email', width: 200 },
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
     { field: 'created_at', headerName: 'Created At', width: 100 },
+    {
+        field: "action",
+        headerName: "Actions",
+        width: 150,
+        renderCell: (params) => (
+            <>
+                <Link href={"/reports/" + params.row.id+'/customer'}>
+                    <IconButton color="primary">
+                        <PrintIcon />
+                    </IconButton>
+                </Link>
+            </>
+        ),
+    },
 ];
 
 export default function Contact({contacts, type, stores}) {

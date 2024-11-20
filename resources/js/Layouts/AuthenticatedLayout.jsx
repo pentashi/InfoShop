@@ -33,6 +33,8 @@ import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import PeopleIcon from "@mui/icons-material/People";
 import Tooltip from "@mui/material/Tooltip";
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
+import WorkIcon from '@mui/icons-material/Work';
 
 import oneshopLogo from "./oneshop-logo.png";
 const drawerWidth = 240;
@@ -178,8 +180,8 @@ function AuthenticatedLayout({ header, children, ...props }) {
                 />
                 <NavItem
                     href="/reports/dailycash"
-                    icon={ContentPasteIcon}
-                    label="Daily Cash"
+                    icon={WorkIcon}
+                    label="Cash Drawer"
                     open={open}
                     selected={isSelected("/reports/dailycash")}
                 />
@@ -189,6 +191,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     label="Payments"
                     open={open}
                     selected={isSelected("/payments")}
+                />
+                <NavItem
+                    href="/reloads"
+                    icon={PhoneForwardedIcon}
+                    label="Reloads"
+                    open={open}
+                    selected={isSelected("/reloads")}
                 />
                 <NavItem
                     href="/expenses"

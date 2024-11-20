@@ -104,7 +104,7 @@ export default function CartFooter() {
                     variant="contained"
                     endIcon={<AddCardIcon />}
                     disabled={
-                        cartState.length === 0 || selectedCustomer === null
+                        selectedCustomer?.id === 1 || cartState.length === 0 || selectedCustomer === null
                     }
                     onClick={() => setPaymentsModalOpen(true)}
                     size="large"
