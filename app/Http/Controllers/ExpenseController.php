@@ -9,10 +9,9 @@ use App\Models\Store;
 
 class ExpenseController extends Controller
 {
-
     public function getExpenses($filters){
         $query = Expense::query();
-        $query= $query->orderBy('expense_date', 'desc');
+        $query= $query->orderBy('id', 'desc');
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('expense_date', [$filters['start_date'], $filters['end_date']]);
         }

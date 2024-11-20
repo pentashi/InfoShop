@@ -14,7 +14,7 @@ class ContactController extends Controller
 
     public function getContacts($type, $filters){
         // Fetch data from the Collection model
-        $contacts = Contact::select('id', 'name','phone','email','address', 'balance','created_at')->where('id','!=','1');
+        $contacts = Contact::select('id', 'name','phone','email','address', 'balance','created_at','type')->where('id','!=','1');
         
         if (!empty($filters['search_query'])) {
             $searchTerm = $filters['search_query'];

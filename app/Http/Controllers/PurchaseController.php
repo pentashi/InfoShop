@@ -86,7 +86,7 @@ class PurchaseController extends Controller
             'reference_no' => 'nullable|string',
             'note' => 'nullable|string',
         ]);
-
+        // dd($request->cartItems);
         DB::beginTransaction();
         try{
             // Create a new purchase record
@@ -108,41 +108,54 @@ class PurchaseController extends Controller
             $payments = $request->payments;
 
             foreach ($cartItems as $item) {
+                $description = null;
+                $item_id = $item['id'];
+                $batch_id = $item['batch_id'];
+                if($item['product_type']=='custom') {
+                    $description = $item['name'];
+                    $item_id = null;
+                    $batch_id = null;
+                }
                 // Create a new purchase item
                 PurchaseItem::create([
                     'purchase_id' => $purchase->id, // Associate the purchase item with the newly created purchase
-                    'product_id' => $item['id'], // Product ID (assuming you have this)
-                    'batch_id' => $item['batch_id'], // Batch ID from the cart item
+                    'product_id' => $item_id, // Product ID (assuming you have this)
+                    'batch_id' => $batch_id, // Batch ID from the cart item
                     'quantity' => $item['quantity'], // Quantity purchased
                     'unit_price' => $item['price'], // Purchase price per unit
                     'unit_cost' => $item['cost'], // Cost price per unit
+                    'purchase_date'=>$purchase['purchase_date'],
+                    'description'=>$description,
                 ]);
             
-                // Retrieve or create the product stock using store_id and batch_id
-                $productStock = ProductStock::firstOrCreate(
-                    [
-                        'store_id' => $purchase->store_id,
-                        'batch_id' => $item['batch_id'],
-                    ],
-                    [
-                        'quantity' => 0,  // Initial quantity for new stock
-                    ]
-                );
+                if($item['product_type']!='custom'){ //Custom product does not have stock
 
-                // Update the quantity in stock
-                $productStock->quantity += $item['quantity'];
-                $productStock->save();
+                    // Retrieve or create the product stock using store_id and batch_id
+                    $productStock = ProductStock::firstOrCreate(
+                        [
+                            'store_id' => $purchase->store_id,
+                            'batch_id' => $item['batch_id'],
+                        ],
+                        [
+                            'quantity' => 0,  // Initial quantity for new stock
+                        ]
+                    );
 
-                // Update the ProductBatch for price and cost
-                $productBatch = ProductBatch::find($item['batch_id']);
+                    // Update the quantity in stock
+                    $productStock->quantity += $item['quantity'];
+                    $productStock->save();
 
-                if ($productBatch) {
-                    // Directly update the price and cost
-                    $productBatch->price = $item['price']; // Set the purchase price
-                    $productBatch->cost = $item['cost'];   // Set the cost
+                    // Update the ProductBatch for price and cost
+                    $productBatch = ProductBatch::find($item['batch_id']);
 
-                    // Save the updated product batch
-                    $productBatch->save();
+                    if ($productBatch) {
+                        // Directly update the price and cost
+                        $productBatch->price = $item['price']; // Set the purchase price
+                        $productBatch->cost = $item['cost'];   // Set the cost
+
+                        // Save the updated product batch
+                        $productBatch->save();
+                    }
                 }
             }
             

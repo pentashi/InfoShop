@@ -197,7 +197,7 @@ export default function Expense({ expenses, stores }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
             >
                 <DataGrid
                     rows={dataExpenses?.data}

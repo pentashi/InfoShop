@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class ReloadController extends Controller
 {
-    public function getReloads($filters)    
+    public function getReloads($filters)
 {
     $query = ReloadAndBillMeta::query();
     
@@ -21,6 +21,7 @@ class ReloadController extends Controller
         'reload_and_bill_metas.account_number',
         'reload_and_bill_metas.commission',
         'reload_and_bill_metas.additional_commission',
+        'sale_items.unit_price',
         'reload_and_bill_metas.description',
         'sale_items.sale_date',
     )

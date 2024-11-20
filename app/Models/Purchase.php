@@ -27,4 +27,9 @@ class Purchase extends Model
         'profit_amount',
     ];
 
+    public function transactions()
+    {
+        return $this->hasMany(PurchaseTransaction::class, 'purchase_id');
+    }
+
 }

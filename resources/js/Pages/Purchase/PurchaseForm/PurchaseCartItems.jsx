@@ -14,13 +14,6 @@ export default function PurchaseCartItems() {
         totalProfit,
     } = usePurchase();
 
-    // Function to handle the removal of items from the cart
-    const handleRemoveItem = (item) => {
-        // Logic to remove the item from cartState
-        removeFromCart(item)
-        // You can update your state here to remove the item from the cart
-    };
-
     const handleQuantityChange = (item, newQuantity) => {
         if(newQuantity=='' || newQuantity==null) newQuantity=0
         updateProductQuantity(item.id, item.batch_number, newQuantity)
@@ -41,8 +34,8 @@ export default function PurchaseCartItems() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {cartState.map((item) => (
-                        <TableRow key={item.batch_id}>
+                    {cartState.map((item, index) =>(
+                        <TableRow key={index}>
                             <TableCell sx={{padding:'10px 10px'}}>{item.name}</TableCell>
                             <TableCell sx={{padding:'7px 10px'}}>{item.batch_number}</TableCell>
                             <TableCell sx={{padding:'7px 10px'}}>{parseFloat(item.price).toFixed(2)}</TableCell>
@@ -52,7 +45,7 @@ export default function PurchaseCartItems() {
                             <TableCell sx={{padding:'7px 10px'}}>
                                 <IconButton 
                                     aria-label="delete" 
-                                    onClick={() => handleRemoveItem(item)} 
+                                    onClick={() => removeFromCart(index)} 
                                     color="error"
                                 >
                                     <DeleteIcon />

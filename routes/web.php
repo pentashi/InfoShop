@@ -84,7 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer-transaction', [TransactionController::class, 'storeCustomerTransaction']);
     Route::post('/vendor-transaction', [TransactionController::class, 'storeVendorTransaction']);
     Route::get('/payments/{type}', [TransactionController::class, 'viewPayments']); //It will be purchases or sales
+
     Route::post('/getpayments/{type}', [TransactionController::class, 'findPayments']); //It will be purchases or sales
+    Route::post('/getorderdetails/{type}', [ReportController::class, 'viewOrderDetails']); //It will be purchases or sales
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
@@ -100,9 +102,9 @@ Route::middleware('auth')->group(function () {
     // Route::get('reports/daily',[ReportController::class, 'getDailyReport'])->name('reports.daily');
     Route::get('reports/dailycash',[ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
     Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
-    Route::get('reports/contact-statement',[ReportController::class, 'getContactStatement'])->name('reports.contactstatement');
     Route::get('reports/sales',[ReportController::class, 'getSalesReport'])->name('reports.sales');
     Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
+    Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
 
     Route::get('/reloads',[ReloadController::class, 'index'])->name('expenses.index');
 

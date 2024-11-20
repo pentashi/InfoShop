@@ -8,9 +8,9 @@ const cartReducer = (state, action) => {
       const existingProductIndex = cart.findIndex(
         (item) =>
           item.id === action.payload.id &&
-          item.batch_number === action.payload.batch_number
+          item.batch_number === action.payload.batch_number &&
+          item.product_type !== 'custom'
       );
-
       if (existingProductIndex !== -1) {
         cart[existingProductIndex].quantity =
           parseFloat(cart[existingProductIndex].quantity) + 1;
@@ -22,11 +22,10 @@ const cartReducer = (state, action) => {
     }
 
     case 'REMOVE_FROM_CART': {
-      return state.filter(
-        (item) =>
-          !(item.id === action.payload.id && item.batch_number === action.payload.batch_number)
-      );
-    }
+      const cart = [...state];
+      cart.splice(action.payload.index, 1);
+      return cart;
+  }
 
     case 'UPDATE_PRODUCT_QUANTITY': {
       const cart = [...state];
@@ -101,10 +100,10 @@ const useCartBase = (initialStateKey) => {
     dispatch({ type: 'ADD_TO_CART', payload: {...item, quantity} });
   };
 
-  const removeFromCart = (product) => {
+  const removeFromCart = (index) => {
     dispatch({
       type: 'REMOVE_FROM_CART',
-      payload: product, // product should contain at least id and batch_number
+      payload: {index}, // product should contain at least id and batch_number
     });
   };
 

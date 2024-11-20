@@ -23,10 +23,10 @@ export default function ProductSearch() {
     const [selectedProductOption, setSelectedProductOption] = useState(null); // Stores the selected option
     const [inputValue, setInputValue] = useState("");
     const [addToPurchaseOpen, setAddToPurchaseOpen] = useState(false);
-    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState([]);
 
     // Function to fetch product data based on the input value (user's search query)
-    const fetchProducts = (search_query, barcodeChecked) => {
+    const fetchProducts = (search_query) => {
         const is_purchase = 1;
         if (!search_query) {
             setProductOptions([]); // Clear options if input is empty
@@ -41,10 +41,8 @@ export default function ProductSearch() {
                 const products = response.data.products;
                 setProductOptions(products);
 
-                if (barcodeChecked) {
-                    setSelectedProducts(response.data.products);
-                    setAddToPurchaseOpen(true); //Open add purchase dialog
-                }
+                // setSelectedProducts(response.data.products);
+                // setAddToPurchaseOpen(true);
             })
             .catch((error) => {
                 console.error("Error fetching products:", error);
@@ -77,7 +75,7 @@ export default function ProductSearch() {
     const handleChange = (selectedOption) => {
         setSelectedProductOption(selectedOption);
         if (selectedOption) {
-            setSelectedProducts(selectedOption);
+            setSelectedProduct(selectedOption);
             setAddToPurchaseOpen(true);
         }
     };
@@ -139,7 +137,7 @@ export default function ProductSearch() {
             <AddToPurchase
                 addToPurchaseOpen={addToPurchaseOpen}
                 setAddToPurchaseOpen={setAddToPurchaseOpen}
-                products={selectedProducts}
+                product={selectedProduct}
             />
         </Box>
     );

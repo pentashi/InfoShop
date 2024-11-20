@@ -22,19 +22,19 @@ const columns = () => [
             return params.value.toString().padStart(4, "0");
         },
     },
-    { field: "transaction_type", headerName: "Transaction Type", width: 150 },
+    { field: "sale_date", headerName: "Date", width: 120,
+        renderCell: (params) => dayjs(params.value).format("YYYY-MM-DD"),
+    },
     { field: "account_number", headerName: "Account Number", width: 200 },
     { field: "product_name", headerName: "Product Name", width: 150 },
-    { field: "commission", headerName: "Commission", width: 100, align: "right", headerAlign: "right",
-        renderCell: (params) => numeral(params.value).format('0,0.00'),
-    },
+    { field: "unit_price", headerName: "Amount", width: 100 },
     { field: "additional_commission", headerName: "Additional Commission", width: 150, align: "right", headerAlign: "right",
         renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
-    { field: "description", headerName: "Description", width: 250 },
-    { field: "sale_date", headerName: "Sale Date", width: 120,
-        renderCell: (params) => dayjs(params.value).format("YYYY-MM-DD"),
+    { field: "commission", headerName: "Commission", width: 100, align: "right", headerAlign: "right",
+        renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
+    { field: "description", headerName: "Description", width: 250 },
 ];
 
 export default function Reload({ reloads, transactionType }) {
@@ -125,7 +125,7 @@ export default function Reload({ reloads, transactionType }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
             >
                 <DataGrid
                     rows={dataReloads?.data}

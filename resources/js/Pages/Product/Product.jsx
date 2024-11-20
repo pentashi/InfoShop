@@ -288,7 +288,7 @@ export default function Product({ products, stores }) {
 
                 <Box
                     className="py-6 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                    sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
                 >
                     <DataGrid
                         rows={dataProducts.data}

@@ -19,8 +19,8 @@ export default function CartItems() {
 
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-      {cartState.map((item) => (
-        <React.Fragment key={item.id + item.batch_number}>
+      {cartState.map((item, index) =>(
+        <React.Fragment key={index}>
           <ListItem alignItems="center" sx={{padding:{sm:1, xs:0}, paddingY:1}}>
             <ListItemAvatar sx={{display:{xs:'none', sm:'block'}}}>
               <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url?item.image_url:productplaceholder} />
@@ -54,7 +54,7 @@ export default function CartItems() {
             <Box className="flex flex-row">
               <div className="relative w-full flex flex-row">
               <QuantityInput cartItem={item}></QuantityInput>
-              <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(item)}>
+              <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(index)}>
                 <DeleteIcon />
                 </IconButton>
               </div>

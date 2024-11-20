@@ -16,13 +16,13 @@ import {
     TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import PaymentsIcon from "@mui/icons-material/Payments";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import Select2 from "react-select";
 import numeral from "numeral";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
-import ViewPaymentDetailsDialog from "@/Components/ViewPaymentDetailsDialog";
+import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
@@ -80,9 +80,9 @@ const columns = (handleRowClick) => [
                 <IconButton
                     sx={{ ml: "0.3rem" }}
                     color="primary"
-                    onClick={() => handleRowClick(params.row, "view_payments")}
+                    onClick={() => handleRowClick(params.row, "view_details")}
                 >
-                    <PaymentsIcon />
+                    <VisibilityIcon />
                 </IconButton>
             </>
         ),
@@ -111,7 +111,7 @@ export default function Purchases({ purchases, contacts }) {
             setSelectedContact(purchase.contact_id);
             setAmountLimit(amountLimit);
             setPaymentModalOpen(true);
-        } else if (action == "view_payments") {
+        } else if (action == "view_details") {
             setViewPaymentsModalOpen(true);
         }
     };
@@ -239,7 +239,7 @@ export default function Purchases({ purchases, contacts }) {
 
                 <Box
                     className="py-6 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                    sx={{ display: "grid", gridTemplateColumns: "1fr", height:520 }}
                 >
                     <DataGrid
                         rowHeight={50}
@@ -272,7 +272,7 @@ export default function Purchases({ purchases, contacts }) {
                 is_customer={false}
                 refreshTable={refreshPurchases}
             />
-            <ViewPaymentDetailsDialog
+            <ViewDetailsDialog
                 open={viewPaymentsModalOpen}
                 setOpen={setViewPaymentsModalOpen}
                 type={"purchase"}

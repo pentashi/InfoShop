@@ -293,6 +293,7 @@ class ProductController extends Controller
         }
         else{
             // $products = $products->whereNotNull('product_stocks.store_id');
+            $products = $products->where('products.product_type','!=','reload');
         }
       
         $products = $products

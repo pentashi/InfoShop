@@ -18,25 +18,17 @@ import Swal from "sweetalert2";
 import { usePurchase } from "@/Context/PurchaseContext";
 
 export default function AddToPurchase({
-    products,
+    product,
     addToPurchaseOpen,
     setAddToPurchaseOpen,
 }) {
     const { addToCart } = usePurchase();
     const [isSelectBatch, setIsSelectBatch] = useState(true);
     const [loading, setLoading] = useState(false)
-    const [formState, setFormState] = useState({
-        id:'',
-        batch_id: "",
-        quantity: "",
-        cost: "",
-        price: "",
-        batch_number:"",
-        name:'',
-        new_batch:'',
-    });
+    const [formState, setFormState] = useState([]);
 
     const handleClose = () => {
+        setFormState([])
         setAddToPurchaseOpen(false);
     };
 
@@ -91,66 +83,25 @@ export default function AddToPurchase({
 
     // Update selectedBatch when products change
     useEffect(() => {
-        if (Array.isArray(products)) {
-            // Select the first product by default if products is an array
-            setFormState((prevState) => ({
-                ...prevState,
-                batch_id: products.length > 0 ? products[0].batch_id : "",
-                cost: products.length > 0 ? products[0].cost : "",
-                price: products.length > 0 ? products[0].price : "",
-                batch_number:products.length > 0 ? products[0].batch_number : "",
-                name:products.length > 0 ? products[0].name : "",
-                id:products.length > 0 ? products[0].id : "",
-            }));
-        } else if (products) {
+       if (product) {
+            const copyProduct = { ...product };
+            if(copyProduct.product_type==='custom') copyProduct.name='';
+            copyProduct.quantity = ''
             // If products is a single object, select that batch
-            setFormState((prevState) => ({
-                ...prevState,
-                batch_id: products.batch_id,
-                cost: products.cost,
-                price: products.price,
-                batch_number:products.batch_number,
-                name:products.name,
-                id:products.id,
-            }));
+            setFormState(copyProduct);
         }
 
-    }, [products]);
+    }, [product]);
 
     // Handle form input changes
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        // Handle batch change separately to update cost and price based on the selected batch
-        if (name === "batch_id") {
-            // Find the product based on the selected batch
-            const selectedProduct = Array.isArray(products)
-                ? products.find((product) => product.batch_id === value)
-                : products;
+        const { name, value } = e.target;        
 
-            if (selectedProduct) {
-                // Update batch, cost, and price when the batch changes
-                setFormState((prevState) => ({
-                    ...prevState,
-                    batch_id: selectedProduct.batch_id,
-                    cost: selectedProduct.cost,
-                    price: selectedProduct.price,
-                    batch_number:selectedProduct.batch_number,
-                    name:selectedProduct.name,
-                    id:selectedProduct.id,
-                }));
-            }
-        } else {
-            // Update other fields (e.g., quantity, cost, price)
-            setFormState((prevState) => ({
-                ...prevState,
-                [name]: value,
-            }));
-        }
+        setFormState((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
-
-    const toggleInputType = () => {
-        setIsSelectBatch((prev) => !prev); // Toggle between select and input text field
-      };
 
     return (
         <React.Fragment>
@@ -182,29 +133,33 @@ export default function AddToPurchase({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2}>
-                    <input
-                                type="hidden"
-                                name="batch_number"
-                                value={formState.batch_number}
-                            />
-                            <input
-                                type="hidden"
-                                name="name"
-                                value={formState.name}
-                            />
-                            <input
-                                type="hidden"
-                                name="id"
-                                value={formState.id}
-                            />
-
-                        <Grid size={6}>
-                            <FormControl fullWidth sx={{ mt: "0.5rem" }}>
+                        <input
+                            type="hidden"
+                            name="batch_number"
+                            value={formState.batch_number}
+                        />
+                        <input
+                            type="hidden"
+                            name="batch_id"
+                            value={formState.batch_id}
+                        />
+                        <input
+                            type="hidden"
+                            name="name"
+                            value={formState.name}
+                        />
+                        <input type="hidden" name="id" value={formState.id} />
+                        <input
+                            type="hidden"
+                            name="product_type"
+                            value={formState.product_type}
+                        />
+                        {product.product_type !== "custom" && (
+                            <Grid size={6}>
                                 <TextField
-                                    select={isSelectBatch}
-                                    label={isSelectBatch ? "Batch" : "New Batch"}
-                                    name={isSelectBatch ? "batch_id" : "new_batch"} // Different name for new batch input
-                                    value={isSelectBatch ? formState.batch_id : formState.new_batch}
+                                    fullWidth
+                                    label={"Batch"}
+                                    value={formState.batch_number}
                                     required
                                     onChange={handleInputChange}
                                     slotProps={{
@@ -212,37 +167,36 @@ export default function AddToPurchase({
                                             shrink: true,
                                         },
                                         input: {
-                                            endAdornment: 
-                                            <InputAdornment position="end" sx={{cursor:'pointer'}} onClick={toggleInputType}>
-                                            {isSelectBatch ? (<span className="hover:underline text-sky-500">ADD</span>) : (<span className="hover:underline text-amber-800">BACK</span>)}
-                                            </InputAdornment>,
-                                            sx: { pr: '12px !important' }
+                                            sx: { pr: "12px !important" },
                                         },
-                                        select:{
-                                            IconComponent: () => null, // This removes the arrow icon
-                                        }
                                     }}
-                                >
-                                    {Array.isArray(products) ? (
-                                        products.map((product) => (
-                                            <MenuItem
-                                                key={product.batch_id}
-                                                value={product.batch_id}
-                                            >
-                                                {product.batch_number}
-                                            </MenuItem>
-                                        ))
-                                    ) : (
-                                        <MenuItem
-                                            key={products.batch_id}
-                                            value={products.batch_id}
-                                        >
-                                            {products.batch_number}
-                                        </MenuItem>
-                                    )}
-                                </TextField>
-                            </FormControl>
-                        </Grid>
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                />
+                            </Grid>
+                        )}
+                        {product.product_type === "custom" && (
+                            <Grid size={6}>
+                                <TextField
+                                    fullWidth
+                                    label={"Description"}
+                                    name={'name'}
+                                    value={formState.name}
+                                    required
+                                    autoFocus={product.product_type === "custom"}
+                                    onChange={handleInputChange}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            sx: { pr: "12px !important" },
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
                         <Grid size={6}>
                             <TextField
                                 fullWidth
@@ -250,11 +204,10 @@ export default function AddToPurchase({
                                 name="quantity"
                                 label="Quantity"
                                 variant="outlined"
-                                autoFocus
+                                autoFocus={product.product_type !== "custom"}
                                 value={formState.quantity}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.5rem",
                                     input: { fontSize: "1rem" },
                                 }}
                                 required
@@ -282,7 +235,6 @@ export default function AddToPurchase({
                                 value={formState.cost}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.5rem",
                                     input: { fontSize: "1rem" },
                                 }}
                                 onFocus={(event) => {
@@ -309,7 +261,6 @@ export default function AddToPurchase({
                                 value={formState.price}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.5rem",
                                     input: { fontSize: "1rem" },
                                 }}
                                 onFocus={(event) => {
@@ -318,9 +269,6 @@ export default function AddToPurchase({
                                 slotProps={{
                                     inputLabel: {
                                         shrink: true,
-                                    },
-                                    input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                                     },
                                 }}
                             />

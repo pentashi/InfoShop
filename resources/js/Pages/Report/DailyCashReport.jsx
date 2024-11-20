@@ -77,13 +77,14 @@ export default function DailyReport({ logs, stores }) {
                 justifyContent={"center"}
                 size={12}
             >
-                <Grid size={{xs:8, sm:2}}>
+                <Grid size={{xs:8, sm:4, md:2}}>
                 <TextField
                         label="Date"
                         name="transaction_date"
                         placeholder="Transaction Date"
                         fullWidth
                         type="date"
+                        sx={{ height: "100%", maxWidth:'180px'}}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,
@@ -94,24 +95,26 @@ export default function DailyReport({ logs, stores }) {
                         required
                     />
                 </Grid>
-                <Grid size={{xs:4, sm:1}}>
+                <Grid size={{xs:4, sm:2, md:1}}>
                 <Button
                     variant="contained"
                     onClick={() => refreshLogs(window.location.pathname)}
-                    sx={{ height: "100%", width: "100%" }}
+                    sx={{ height: "100%", }}
+                    fullWidth
                     size="large"
                 >
                     <FindReplaceIcon />
                 </Button>
                 </Grid>
                 
-                <Grid size={{xs:12, sm:2}}>
+                <Grid size={{xs:12, sm:4, md:2}}>
                 <Button
                     variant="contained"
                     onClick={() => setModalOpen(true)}
-                    sx={{ height: "100%", width:'100%' }}
+                    sx={{ height: "100%", }}
                     startIcon={<AddCircleIcon />}
                     size="large"
+                    fullWidth
                 >
                     ADD A RECORD
                 </Button>

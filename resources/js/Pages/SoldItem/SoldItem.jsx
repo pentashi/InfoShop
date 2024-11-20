@@ -175,7 +175,7 @@ export default function SoldItem({ sold_items, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
             >
                 <DataGrid
                     rows={dataSoldItems.data}

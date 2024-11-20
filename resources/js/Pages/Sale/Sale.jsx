@@ -6,13 +6,13 @@ import Grid from "@mui/material/Grid2";
 import { Button, Box, IconButton, TextField, MenuItem, Tooltip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import PaymentsIcon from "@mui/icons-material/Payments";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import Select2 from "react-select";
 import numeral from "numeral";
 import dayjs from "dayjs";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
-import ViewPaymentDetailsDialog from "@/Components/ViewPaymentDetailsDialog";
+import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
@@ -43,7 +43,7 @@ const columns = (handleRowClick) => [
         ),
     },
     {
-        field: "discount", headerName: "Discount", width: 100, align: 'right', headerAlign: 'right',
+        field: "discount", headerName: "Discount", width: 80, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
@@ -56,8 +56,8 @@ const columns = (handleRowClick) => [
     },
     {
         field: "amount_received",
-        headerName: "Amount Received",
-        width: 140, align: 'right', headerAlign: 'right',
+        headerName: "Received",
+        width: 130, align: 'right', headerAlign: 'right',
         renderCell: (params) => (
             <Button
                 onClick={() => handleRowClick(params.row, "add_payment")}
@@ -103,9 +103,9 @@ const columns = (handleRowClick) => [
                 <IconButton
                     sx={{ ml: "0.3rem" }}
                     color="primary"
-                    onClick={() => handleRowClick(params.row, "view_payments")}
+                    onClick={() => handleRowClick(params.row, "view_details")}
                 >
-                    <PaymentsIcon />
+                    <VisibilityIcon />
                 </IconButton>
             </>
         ),
@@ -138,7 +138,7 @@ export default function Sale({ sales, contacts }) {
             setSelectedContact(sale.contact_id);
             setAmountLimit(amountLimit);
             setPaymentModalOpen(true);
-        } else if (action == "view_payments") {
+        } else if (action == "view_details") {
             setViewPaymentsModalOpen(true);
         }
     };
@@ -276,7 +276,7 @@ export default function Sale({ sales, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
             >
                 <DataGrid
                     rows={dataSales.data}
@@ -307,7 +307,7 @@ export default function Sale({ sales, contacts }) {
                 is_customer={true}
                 refreshTable={refreshSales}
             />
-            <ViewPaymentDetailsDialog
+            <ViewDetailsDialog
                 open={viewPaymentsModalOpen}
                 setOpen={setViewPaymentsModalOpen}
                 type={"sale"}

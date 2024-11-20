@@ -216,7 +216,7 @@ export default function Payment({ payments, transactionType, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
             >
                 <DataGrid
                     rows={dataPayments?.data}

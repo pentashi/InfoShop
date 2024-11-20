@@ -44,6 +44,7 @@ export default function FormDialog({
                 type: contact.type || "", // Update type if available
             });
         }
+        else setFormData([])
     }, [contact]); // Dependency array includes contact
 
     const handleSubmit = (event) => {
@@ -71,6 +72,7 @@ export default function FormDialog({
                     toast: true,
                 });
                 handleClose(); // Close dialog on success
+                setFormData([])
                 onSuccess(response.data.data);
             })
             .catch((error) => {

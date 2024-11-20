@@ -48,7 +48,7 @@ const columns = (handleRowClick) => [
         width: 150,
         renderCell: (params) => (
             <>
-                <Link href={"/reports/" + params.row.id+'/customer'}>
+                <Link href={"/reports/" + params.row.id+'/'+params.row.type}>
                     <IconButton color="primary">
                         <PrintIcon />
                     </IconButton>
@@ -154,7 +154,7 @@ export default function Contact({contacts, type, stores}) {
 
               <Box
                   className="py-6 w-full"
-                  sx={{ display: "grid", gridTemplateColumns: "1fr" }}
+                  sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
               >
                   <DataGrid
                       rows={dataContacts.data}

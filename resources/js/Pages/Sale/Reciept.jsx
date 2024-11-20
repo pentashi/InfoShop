@@ -460,6 +460,23 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
+                                                colSpan={6}
+                                                align="right"
+                                            >
+                                                <Typography
+                                                    sx={
+                                                        styles.receiptSummaryTyp
+                                                    }
+                                                    color="initial"
+                                                >
+                                                   <br />
+                                                </Typography>
+                                            </TableCell>
+                                            
+                                        </TableRow>
+                                        <TableRow sx={{ border: "none" }}>
+                                            <TableCell
+                                                sx={styles.receiptSummaryText}
                                                 colSpan={5}
                                                 align="right"
                                             >
@@ -469,7 +486,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     }
                                                     color="initial"
                                                 >
-                                                    Received:
+                                                    Cash:
                                                 </Typography>
                                             </TableCell>
                                             <TableCell

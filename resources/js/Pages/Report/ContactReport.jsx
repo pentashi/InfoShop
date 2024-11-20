@@ -41,11 +41,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function CustomerReport({ stores, report, contacts, previousCredits, previousDebits,previousBalance }) {
+export default function ContactReport({ stores, report, contacts, type }) {
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().format("YYYY-MM-DD"),
+        start_date: dayjs().subtract(3, 'month').format("YYYY-MM-DD"),
         end_date: dayjs().format("YYYY-MM-DD"),
         store: 0,
     });
@@ -102,7 +102,7 @@ export default function CustomerReport({ stores, report, contacts, previousCredi
 
     return (
         <AuthenticatedLayout>
-            <Head title="Sale Report" />
+            <Head title="Contact Report" />
             <Grid
                 container
                 spacing={2}
@@ -268,7 +268,7 @@ export default function CustomerReport({ stores, report, contacts, previousCredi
                             {/* Row for Balance/Receivable */}
                             <StyledTableRow>
                                 <StyledTableCell colSpan={4} align="right">
-                                    <strong>Balance/Receivable:</strong>
+                                {type === 'vendor' ? 'Balance/To be paid:' : 'Balance/Receivable:'}
                                 </StyledTableCell>
                                 <StyledTableCell align="right"
                                     sx={{

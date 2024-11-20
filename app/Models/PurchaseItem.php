@@ -21,5 +21,7 @@ class PurchaseItem extends Model
         'unit_price',
         'unit_cost',
         'discount',
+        'description',
+        'purchase_date',
     ];
 }

@@ -217,7 +217,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                 <NavItem
                     href="/vendors"
                     icon={VendorIcon}
-                    label="Vendors"
+                    label="Suppliers"
                     open={open}
                     selected={isSelected("/vendors")}
                 />
