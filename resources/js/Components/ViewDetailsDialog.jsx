@@ -40,24 +40,24 @@ export default function ViewDetailsDialog({
     const [items, setItems] = useState([]);
 
     const handleClose = () => {
-        setPayments([])
         setOpen(false);
     };
 
-    useEffect(() => {
-        const fetchPayments = async (type) => {
-            try {
-                const response = await axios.post(`/getorderdetails/${type}`, { transaction_id: selectedTransaction });
-                setPayments(response.data.payments);
-                setItems(response.data.items);
-            } catch (error) {
-                console.error('Error fetching payments: ', error);
-            }
-        };
+    const fetchDetails = async (type) => {
+        try {
+            const response = await axios.post(`/getorderdetails/${type}`, { transaction_id: selectedTransaction });
+            setPayments(response.data.payments);
+            setItems(response.data.items);
+        } catch (error) {
+            console.error('Error fetching payments: ', error);
+        }
+    };
 
-        // Call the API with the desired type (e.g., 'purchases' or 'sales')
-        fetchPayments(type); // You can pass 'purchases' or 'sales' based on your requirements
-    }, [selectedTransaction]);
+    useEffect(() => {
+        if (open) {
+            fetchDetails(type); 
+        }
+    }, [open]);
 
     return (
         <React.Fragment>
@@ -81,7 +81,7 @@ export default function ViewDetailsDialog({
                 >
                     <CloseIcon />
                 </IconButton>
-                <DialogContent>
+                <DialogContent sx={{paddingY:'5px'}}>
                     <Tabs value={tabValue} onChange={handleChange} aria-label="icon label tabs example">
                         <Tab icon={<InventoryIcon />} iconPosition="start" label="ITEMS" />
                         <Tab icon={<PaymentsIcon />} iconPosition="start" label="PAYMENTS" />
@@ -91,10 +91,10 @@ export default function ViewDetailsDialog({
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Unit Price</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Unit Cost</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Qty</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Price</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Discount</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -118,9 +118,9 @@ export default function ViewDetailsDialog({
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Payment Method</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Method</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Payment Date</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

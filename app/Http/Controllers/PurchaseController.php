@@ -178,7 +178,7 @@ class PurchaseController extends Controller
                         $transactionData['transaction_type'] = 'account';
                         Contact::where('id', $purchase->contact_id)->decrement('balance', $payment['amount']);
                     } else {
-                        // Set transaction type to 'sale' for other payment methods
+                        // Set transaction type to 'purchase' for other payment methods
                         $transactionData['transaction_type'] = 'purchase';
                     }
 

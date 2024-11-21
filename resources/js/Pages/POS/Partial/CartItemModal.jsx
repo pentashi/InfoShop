@@ -14,7 +14,7 @@ import { useSales } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function CartItemModal() {
-    const [showCost, setShowCost] = React.useState(false);
+    const [showCost, setShowCost] = useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
     const focusInputRef = useRef(null);
 
@@ -30,6 +30,7 @@ export default function CartItemModal() {
     const handleClose = () => {
         setSelectedCartItem(null);
         setFormState([]);
+        setShowCost(false);
         setCartItemModalOpen(false);
     };
 
@@ -109,9 +110,7 @@ export default function CartItemModal() {
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {formState.product_type === "reload"
-                        ? "RELOAD"
-                        : "EDIT CART"}
+                    {formState.name}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -449,10 +448,36 @@ export default function CartItemModal() {
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
-                        // onClick={handleClose}
+                        color={formState.quantity < 0 ? "error" : "primary"}
                     >
-                        UPDATE CART
+                        {formState.quantity < 0 ? "RETURN" : "UPDATE CART"}
                     </Button>
+
+                    {formState.quantity > 0 && (
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                        type="button"
+                        color={'error'}
+                        onClick={(e) => {
+                                // Update the quantity to a negative value before submitting the form
+                                const updatedFormState = {
+                                    ...formState,
+                                    quantity: -Math.abs(formState.quantity), // Ensure quantity is negative
+                                };
+
+                                // Submit the updated form state
+                                updateCartItem(updatedFormState);
+
+                                // Close the form or dialog
+                                handleClose();
+                        }}
+                    >
+                        RETURN
+                    </Button>
+                    )}
+
                 </DialogActions>
             </Dialog>
         </React.Fragment>

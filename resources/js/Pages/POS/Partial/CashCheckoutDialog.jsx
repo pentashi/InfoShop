@@ -141,7 +141,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         fullWidth
                         autoFocus
                         variant="outlined"
-                        label={'Amount Recieved'}
+                        label={cartTotal < 0 ? 'Refund' : 'Amount Received'}
                         type="number"
                         name="amount_recieved"
                         onFocus={event => {
@@ -153,7 +153,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         slotProps={{
                             input: {
                                 style: { textAlign: 'center' },
-                                placeholder:'Amount Recieved',
+                                placeholder: cartTotal < 0 ? 'Refund Amount' : 'Amount Received',
                                 startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                             },
                         }}
@@ -243,9 +243,16 @@ export default function CashCheckoutDialog({ disabled }) {
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
                         // onClick={handleClose}
-                        disabled={(amountRecieved - (cartTotal - discount)) < 0 || loading} //amountRecieved-(cartTotal-discount) 
+                        disabled={
+                            // (amountRecieved - (cartTotal - discount)) < 0 || loading
+                            (cartTotal < 0 && amountRecieved === 0) || // Disable if refund and amount received is 0
+                            (cartTotal < 0 && amountRecieved != (cartTotal - discount)) || // Disable if refund and amount received doesn't match cart total minus discount
+                            (cartTotal >= 0 && (amountRecieved - (cartTotal - discount)) < 0) || // Disable if cartTotal is positive and amount is insufficient
+                            loading // Disable during loading
+
+                        } //amountRecieved-(cartTotal-discount) 
                     >
-                        {loading ? 'Loading...' : 'PAY'}
+                        {loading ? 'Loading...' : cartTotal < 0 ? 'REFUND' : 'PAY'}
                     </Button>
                 </DialogActions>
             </Dialog>

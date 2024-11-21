@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
@@ -7,11 +7,14 @@ import { Button, Box, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PrintIcon from "@mui/icons-material/Print";
-
+import numeral from 'numeral';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import FormDialog from './Partial/FormDialog';
 import CustomPagination from '@/Components/CustomPagination';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
+
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -31,15 +34,15 @@ const columns = (handleRowClick) => [
             sx={{
                 textAlign: "left",
                 fontWeight: "bold",
-                justifyContent: "flex-start",
+                justifyContent: "flex-end",
             }}
         >
-            {parseFloat(params.value).toFixed(2)}
+            {numeral(params.value).format('0,00.00')}
         </Button>
       ),
     }, // Added balance
     { field: 'phone', headerName: 'Phone', width: 120 },
-    { field: 'email', headerName: 'Email', width: 200 },
+    { field: 'email', headerName: 'Email', width: 100 },
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
     { field: 'created_at', headerName: 'Created At', width: 100 },
     {
@@ -64,6 +67,7 @@ export default function Contact({contacts, type, stores}) {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
 
   const [dataContacts, setDataContacts] = useState(contacts);
+  const [totalBalance, setTotalBalance] = useState(0);
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleClickOpen = () => {
@@ -107,6 +111,18 @@ export default function Contact({contacts, type, stores}) {
     refreshContacts(window.location.pathname)
   };
 
+  useEffect(() => {
+    if(dataContacts){
+        console.log(Object.values(dataContacts.data));
+        // Calculate the total balance from dataContacts
+    const sum = Object.values(dataContacts.data).reduce(
+        (acc, contact) => acc + parseFloat(contact.balance),
+        0
+      );
+      setTotalBalance(sum);
+    }
+  }, [dataContacts]);
+
   return (
       <AuthenticatedLayout>
           {/* Capitalize first letter of type and add s at the end */}
@@ -118,15 +134,22 @@ export default function Contact({contacts, type, stores}) {
               alignItems="center"
               sx={{ width: "100%" }}
           >
-              <Grid size={12} spacing={2} container justifyContent="end">
-                  <TextField
-                      sx={{ minWidth: "300px" }}
+            <Grid size={{xs:12, sm:2, md:3}}>
+            <Alert severity="error" icon={false}>
+                <AlertTitle>Balance</AlertTitle>
+                {numeral(totalBalance).format('0,00.00')}
+            </Alert>
+            </Grid>
+              <Grid size={{xs:12, sm:10, md:9}} spacing={2} container justifyContent="end" alignItems={'center'} flexDirection={{xs:'column',sm:'row'}}>
+                <Grid size={{xs:12, sm:8}}>
+                <TextField
                       name="search_query"
                       label="Search"
                       variant="outlined"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       required
+                      fullWidth
                       onFocus={(event) => {
                           event.target.select();
                       }}
@@ -136,20 +159,29 @@ export default function Contact({contacts, type, stores}) {
                           },
                       }}
                   />
+                </Grid>
+                  
+                  <Grid size={{xs:12, sm:1}}>
                   <Button
                       variant="contained"
                       onClick={() => refreshContacts(window.location.pathname)}
                       size="large"
+                      fullWidth
                   >
                       <FindReplaceIcon />
                   </Button>
+                  </Grid>
+                  <Grid size={{xs:12, sm:3}}>
                   <Button
                       variant="contained"
                       startIcon={<AddIcon />}
                       onClick={handleClickOpen}
+                      fullWidth
                   >
                       Add {type[0].toUpperCase() + type.slice(1)}
                   </Button>
+                  </Grid>
+                  
               </Grid>
 
               <Box

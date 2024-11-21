@@ -18,11 +18,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 
 const initialPaymentFormState = {
     amount: 0,
     payment_method: 'Cash',
-    transaction_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
+    transaction_date: dayjs().format("YYYY-MM-DD"), // Today's date in 'YYYY-MM-DD' format
     note: '',
     store_id:1,
 };
@@ -40,7 +41,21 @@ export default function AddPaymentDialog({
     const [loading, setLoading] = useState(false);
     const [paymentForm, setPaymentFormState] = useState(initialPaymentFormState);
 
+    const getButtonText = () => {
+        if (loading) {
+            return 'Loading...';
+        }
+        if (paymentForm.payment_method === 'Cash' || paymentForm.payment_method === 'Cheque') {
+            return paymentForm.amount < 0 ? 'REFUND' : 'PAY';
+        }
+        if (paymentForm.payment_method === 'Account Balance') {
+            return paymentForm.amount < 0 ? 'CREDIT' : 'ADD PAYMENT';
+        }
+        return 'ADD PAYMENT'; // Default text
+    };
+
     const handleClose = () => {
+        setPaymentFormState(initialPaymentFormState)
         setOpen(false);
     };
 
@@ -235,7 +250,8 @@ export default function AddPaymentDialog({
                         type="submit"
                         disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit) || loading}
                     >
-                        {loading ? 'Loading...' : 'ADD PAYMENT'}
+                        {/* {loading ? 'Loading...' : 'ADD PAYMENT'} */}
+                        {getButtonText()}
                     </Button>
                 </DialogActions>
             </Dialog>

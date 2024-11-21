@@ -23,6 +23,7 @@ class PurchaseTransaction extends Model
         'purchase_id',
         'transaction_type',
         'note',
+        'parent_id',
     ];
 
     // Boot method to create CashLog entry after a PurchaseTransaction is created

@@ -23,6 +23,7 @@ class Transaction extends Model
         'payment_method',   // Payment method
         'transaction_type',
         'note',
+        'parent_id',
     ];
 
     protected static function booted()
