@@ -214,7 +214,7 @@ export default function Dashboard({ data }) {
                                     <ListItemIcon>
                                         <PaymentsIcon />
                                     </ListItemIcon>
-                                    <ListItemText primary="Cash in" />
+                                    <ListItemText primary="Cash Sale" />
                                 </ListItemButton>
                             </ListItem>
                             </Link>

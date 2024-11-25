@@ -28,6 +28,7 @@ export default function QuantityModal({
     const [formState, setFormState] = useState(initialFormState);
     const [loading, setLoading] = useState(false)
     const handleClose = () => {
+        setFormState(initialFormState)
         setModalOpen(false)
     };
 
@@ -42,6 +43,9 @@ export default function QuantityModal({
         formJson.stock_id = formState.stock_id;
         formJson.batch_id = formState.batch_id;
         formJson.store_id = formState.store_id;
+        // console.log("Form Data", event.nativeEvent.submitter.name);
+        const submitter = event.nativeEvent.submitter.name;
+        if(submitter=='remove') formJson.quantity = -Math.abs(formState.quantity)
 
         axios
         .post('/quantity/store', formJson)
@@ -114,6 +118,11 @@ export default function QuantityModal({
                 [name]: value, // For other inputs, update based on their name
             };
         });
+    };
+
+    const isValidQuantity = (quantity) => {
+        // Check if quantity is a valid positive number
+        return Number(quantity) != 0 && !isNaN(Number(quantity));
     };
 
     return (
@@ -237,10 +246,25 @@ export default function QuantityModal({
                         fullWidth
                         sx={{ paddingY: "10px", fontSize: "1.2rem" }}
                         type="submit"
-                        disabled={loading}
+                        color={formState.quantity < 0 ? "error" : "primary"}
+                        disabled={loading || !isValidQuantity(formState.quantity)}
                     >
-                        {"UPDATE QUANTITY"}
+                        {formState.quantity < 0 ? "REMOVE QUANTITY" : "ADD QUANTITY"}
                     </Button>
+                    {formState.quantity > 0 && (
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                        type="submit"
+                        color={'error'}
+                        name="remove"
+                        value={'remove'}
+                        disabled={loading || !isValidQuantity(formState.quantity)}
+                    >
+                        {'REMOVE QUANTITY'}
+                    </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </React.Fragment>

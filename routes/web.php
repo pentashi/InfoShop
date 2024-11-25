@@ -37,7 +37,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::get('/products/search', [ProductController::class, 'searchProduct'])->name('products.search');
     Route::post('/storebatch', [ProductController::class, 'storeNewBatch'])->name('products.newbatch');
+    Route::post('/checkBatch', [ProductController::class, 'checkBatch'])->name('products.checkbatch');
     Route::post('/productbatch/{id}', [ProductController::class, 'updateBatch'])->name('products.updatebatch');
     Route::get('/getproducts/{store_id}', [ProductController::class, 'getProductsResponse'])->name('products.getproducts');
     Route::get('/product/{batch_id}/barcode', [ProductController::class, 'getBarcode'])->name('products.barcode');
@@ -97,6 +98,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('user.store');
+    Route::get('/user/role', [UserController::class, 'userRole'])->name('user.role');
+    Route::post('/user/role', [UserController::class, 'storeRole'])->name('user.storeRole');
+    Route::post('/user/{roleId}/role', [UserController::class, 'updateRole'])->name('user.updateRole');
     Route::post('/user/{id}', [UserController::class, 'update'])->name('user.update');
 
     // Route::get('reports/daily',[ReportController::class, 'getDailyReport'])->name('reports.daily');

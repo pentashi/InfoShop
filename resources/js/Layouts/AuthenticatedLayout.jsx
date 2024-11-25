@@ -32,9 +32,11 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import PeopleIcon from "@mui/icons-material/People";
 import Tooltip from "@mui/material/Tooltip";
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import Collapse from '@mui/material/Collapse';
 import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
 import WorkIcon from '@mui/icons-material/Work';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 import oneshopLogo from "./oneshop-logo.png";
 const drawerWidth = 240;
@@ -62,6 +64,12 @@ function AuthenticatedLayout({ header, children, ...props }) {
             setMobileOpen(!mobileOpen);
         }
     };
+
+    const [collapse, setCollapse] = useState(false);
+
+  const handleCollapse = () => {
+    setCollapse(!collapse);
+  };
 
     //Logic to selected menu item
     // const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
@@ -110,7 +118,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             open ? { mr: 3 } : { mr: "auto" },
                         ]}
                     >
-                        <Icon />
+                       {Icon && <Icon />}
                     </ListItemIcon>
                     <ListItemText
                         primary={label}
@@ -249,13 +257,34 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/profile")}
                 />
-                <NavItem
+                <ListItemButton onClick={handleCollapse}>
+                    <ListItemIcon>
+                    <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="User" />
+                    {collapse ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={collapse} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                    <NavItem
                     href="/users"
-                    icon={PeopleIcon}
-                    label="Users"
+                    icon={null}
+                    label="All"
                     open={open}
+                    // sx={{ pl: 5 }}
                     selected={isSelected("/users")}
-                />
+                    />
+                    <NavItem
+                    href="/user/role"
+                    icon={null}
+                    label="User Role"
+                    open={open}
+                    // sx={{ pl: 5 }}
+                    selected={isSelected("/user/role")}
+                    />
+                    </List>
+                </Collapse>
+
                 <NavItem
                     href={'#'}
                     icon={LogoutIcon}
@@ -303,7 +332,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             variant="h5"
                             noWrap
                             component="div"
-                            sx={{ textTransform: "capitalize", fontSize:{xs:'1.2rem', sm:'1.5rem'} }}
+                            sx={{ textTransform: "capitalize", fontSize:{xs:'1rem', sm:'1.5rem'} }}
                         >
                             {shop_name} | {pageLabel}
                         </Typography>

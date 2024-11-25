@@ -379,8 +379,7 @@ class ReportController extends Controller
         // Item Query
         $itemQuery = ($type === 'sale') ? SaleItem::query() : PurchaseItem::query();
         $itemQuery = $itemQuery->select(
-            'product_id',
-            'batch_id',
+            'batch_number',
             DB::raw(($type === 'sale') ? 'sale_items.quantity as quantity' : 'purchase_items.quantity as quantity'),
             'unit_price',
             'unit_cost',
@@ -392,10 +391,12 @@ class ReportController extends Controller
         // Join with the products table to get the product name
         if ($type === 'sale') {
             $itemQuery = $itemQuery->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
-                ->where('sale_items.sale_id', $transaction_id);
+            ->leftJoin('product_batches', 'sale_items.batch_id', '=', 'product_batches.id')
+            ->where('sale_items.sale_id', $transaction_id);
         } else {
             $itemQuery = $itemQuery->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
-                ->where('purchase_items.purchase_id', $transaction_id);
+            ->leftJoin('product_batches', 'purchase_items.batch_id', '=', 'product_batches.id')
+            ->where('purchase_items.purchase_id', $transaction_id);
         }
 
         // Execute the query and get the item results

@@ -66,9 +66,12 @@ const columns = (handleRowClick) => [
 export default function Expense({ expenses, stores }) {
     const [dataExpenses, setDataExpenses] = useState(expenses);
     const [totalExpense, setTotalExpense] = useState(0)
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
     const [expenseModalOpen, setExpenseModalOpen] = useState(false)
+    const [searchTerms, setSearchTerms] = useState({
+        start_date: '',
+        end_date: '',
+        store: 0,
+    });
 
     const handleRowClick = (expense, action) => {
         if(action==='delete_expense'){
@@ -113,11 +116,7 @@ export default function Expense({ expenses, stores }) {
                 setDataExpenses(response.props.expenses);
             },
         };
-        router.get(url,{
-            start_date: startDate,
-            end_date: endDate,
-        },
-        options);
+        router.get(url,searchTerms,options);
     };
 
     //Get total expenses
@@ -127,6 +126,15 @@ export default function Expense({ expenses, stores }) {
         }, 0);
         setTotalExpense(total);
     }, [dataExpenses]);
+
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearchTerms((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSearch = () => {
+        refreshExpenses(window.location.pathname);
+    };
 
     return (
         <AuthenticatedLayout>
@@ -139,8 +147,19 @@ export default function Expense({ expenses, stores }) {
                 justifyContent={"end"}
                 size={12}
             >
-                <FormControl>
-                    <TextField
+
+<Grid size={{xs:12, sm:3}}>
+                <TextField
+                        label="Search..."
+                        name="search_query"
+                        placeholder="Start typing..."
+                        value={searchTerms.search_query}
+                        onChange={handleSearchChange}
+                        fullWidth
+                    />
+                </Grid>
+                <Grid size={{xs:6, sm:2}}>
+                <TextField
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
@@ -151,13 +170,14 @@ export default function Expense({ expenses, stores }) {
                                 shrink: true,
                             },
                         }}
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        value={searchTerms.start_date}
+                        onChange={handleSearchChange}
                         required
                     />
-                </FormControl>
+                </Grid>
+                    
 
-                <FormControl>
+                <Grid size={{xs:6, sm:2}}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -169,30 +189,35 @@ export default function Expense({ expenses, stores }) {
                                 shrink: true,
                             },
                         }}
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        value={searchTerms.end_date}
+                        onChange={handleSearchChange}
                         required
                     />
-                </FormControl>
+                </Grid>
 
+                <Grid size={{xs:4, sm:1}}>
                 <Button
                     variant="contained"
                     onClick={() => refreshExpenses(window.location.pathname)}
                     sx={{ height: "100%" }}
                     size="large"
+                    fullWidth
                 >
                     <FindReplaceIcon />
                 </Button>
-
+                </Grid>
+                <Grid size={{xs:8, sm:3}}>
                 <Button
                     variant="contained"
                     onClick={() => setExpenseModalOpen(true)}
                     sx={{ height: "100%" }}
                     startIcon={<AddCircleIcon />}
                     size="large"
+                    fullWidth
                 >
                     ADD EXPENSE
                 </Button>
+                </Grid>
             </Grid>
 
             <Box

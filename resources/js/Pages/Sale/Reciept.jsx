@@ -19,6 +19,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { styled } from "@mui/material/styles";
 import numeral from "numeral";
+import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
 
 export default function Reciept({ sale, salesItems, settings, user_name }) {
@@ -30,6 +31,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         width: "500px",
         padding: theme.spacing(3),
         textAlign: "center",
+        '@media print': {
+          boxShadow: 'none', // Remove shadow for print
+        },
     }));
 
     const RecieptPrintContainer = styled(Paper)(({ theme }) => ({
@@ -37,6 +41,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         fontFamily: settings.sale_print_font,
         textAlign: "center",
         boxShadow: "none",
+        '@media print': {
+          boxShadow: 'none', // Remove shadow for print
+        },
     }));
 
     const styles = {
@@ -96,7 +103,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
             <Head title="Sale Reciept" />
             <Box className="flex justify-center mt-10">
                 <RecieptContainer square={false}>
-                    <Box className="flex justify-between mb-3">
+                    <Box className="flex justify-between mb-3 print:hidden">
                         <Button
                             onClick={() => window.history.back()}
                             variant="outlined"
@@ -172,7 +179,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     sx={styles.receiptTopText}
                                     color="initial"
                                 >
-                                    Date: {sale.sale_date} By: {user_name}
+                                    Date: {dayjs(sale.created_at).format('DD-MMM-YYYY, h:mm A')} By: {user_name}
                                 </Typography>
                                 <Typography
                                     sx={styles.receiptTopText}

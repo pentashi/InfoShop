@@ -248,6 +248,7 @@ export default function AddPaymentDialog({
                         fullWidth
                         sx={{ paddingY: "15px", fontSize: "1.5rem" }}
                         type="submit"
+                        color={paymentForm.amount < 0 ? "error" : "primary"}
                         disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit) || loading}
                     >
                         {/* {loading ? 'Loading...' : 'ADD PAYMENT'} */}

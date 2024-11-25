@@ -91,9 +91,7 @@ export default function PurchaseForm({ vendors, purchase, stores }) {
                 showConfirmButton: false,
                 timer: 2000,
                 timerProgressBar: true,
-            });
-            //emptyCart() //Clear the cart from the Context API
-            // router.visit('/reciept/'+resp.data.sale_id)      
+            });     
         })
         .catch((error) => {
             console.error("Submission failed with errors:", error);

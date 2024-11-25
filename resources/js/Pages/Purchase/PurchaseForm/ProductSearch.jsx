@@ -75,16 +75,8 @@ export default function ProductSearch() {
     const handleChange = (selectedOption) => {
         setSelectedProductOption(selectedOption);
         if (selectedOption) {
-            setSelectedProduct(selectedOption);
+            setSelectedProduct(selectedOption); //This option will be used for add to purchase cart form
             setAddToPurchaseOpen(true);
-        }
-    };
-
-    const handleKeyPress = (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent default form submission
-                // Trigger fetch only if barcode is not checked
-            debouncedFetchProducts(event.target.value); // Manually trigger fetching products
         }
     };
 
@@ -113,13 +105,12 @@ export default function ProductSearch() {
                 options={productOptions} // Options to display in the dropdown
                 value={selectedProductOption} // The currently selected option
                 onChange={handleChange} // Triggered when an option is selected
-                onInputChange={handleInputChange} // Triggered when the user types in the input field
-                onKeyDown={handleKeyPress}
+                onInputChange={handleInputChange}
                 inputValue={inputValue} // Current value of the input field
                 isClearable // Allow the user to clear the selected option
                 noOptionsMessage={() => "No products found"}
                 getOptionLabel={(option) =>
-                    `${option.name} | ${option.batch_number} | ${option.barcode} ${option.sku ? `| ${option.sku}` : ""} | ${option.quantity}`
+                    `${option.name} | ${option.batch_number} | Rs.${option.cost}  | Rs.${option.price} | ${option.quantity} | ${option.barcode} ${option.sku ? `| ${option.sku}` : ""}`
                 }
                 getOptionValue={(option) => option.batch_id}
             ></Select2>

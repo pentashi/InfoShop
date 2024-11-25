@@ -31,19 +31,19 @@ class DatabaseSeeder extends Seeder
         $userRole = Role::firstOrCreate(['name' => 'user']);
 
         $permissions = [
-            'manage profile',       // Covers all profile actions (view, edit, delete)
-            'manage dashboard',     // Covers dashboard viewing and summary actions
-            'manage stores',        // Covers store creation, update, and selection
-            'manage products',      // Covers products, collections, quantities, barcodes, etc.
-            'manage pos',           // Covers POS actions like checkout
-            'manage contacts',      // Covers customers, vendors, and contact management
-            'manage sales',         // Covers sales, receipts, and sold items
-            'manage purchases',     // Covers purchases and related actions
-            'manage transactions',  // Covers customer/vendor transactions and payments
-            'manage settings',      // Covers application settings management
-            'manage expenses',      // Covers expenses creation and deletion
-            'manage users',         // Covers user creation, update, and listing
-            'manage reports',       // Covers viewing and storing reports
+            'profile',       // Covers all profile actions (view, edit, delete)
+            'dashboard',     // Covers dashboard viewing and summary actions
+            'stores',        // Covers store creation, update, and selection
+            'products',      // Covers products, collections, quantities, barcodes, etc.
+            'pos',           // Covers POS actions like checkout
+            'contacts',      // Covers customers, vendors, and contact management
+            'sales',         // Covers sales, receipts, and sold items
+            'purchases',     // Covers purchases and related actions
+            'transactions',  // Covers customer/vendor transactions and payments
+            'settings',      // Covers application settings management
+            'expenses',      // Covers expenses creation and deletion
+            'users',         // Covers user creation, update, and listing
+            'reports',       // Covers viewing and storing reports
             'link storage'          // Covers linking storage action
         ];
 
@@ -53,27 +53,27 @@ class DatabaseSeeder extends Seeder
         $superAdminRole->givePermissionTo(Permission::all());
 
         $adminPermissions = [
-            'manage profile',
-            'manage dashboard',
-            'manage stores',
-            'manage products',
-            'manage pos',
-            'manage contacts',
-            'manage sales',
-            'manage purchases',
-            'manage transactions',
-            'manage settings',
-            'manage expenses',
-            'manage users',
-            'manage reports'
+            'profile',
+            'dashboard',
+            'stores',
+            'products',
+            'pos',
+            'contacts',
+            'sales',
+            'purchases',
+            'transactions',
+            'settings',
+            'expenses',
+            'users',
+            'reports'
         ];
         $adminRole->givePermissionTo($adminPermissions);
 
         $userPermissions = [
-            'manage profile',
-            'manage dashboard',
-            'manage products',
-            'manage pos'
+            'profile',
+            'dashboard',
+            'products',
+            'pos'
         ];
         $userRole->givePermissionTo($userPermissions);
         

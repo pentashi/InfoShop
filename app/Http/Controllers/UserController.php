@@ -9,17 +9,82 @@ use App\Models\Store;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function index(){
         $stores = Store::select('id', 'name')->get();
+        $roles = Role::where('name', '!=', 'super-admin')->get();
         $users=User::select('users.id','users.name','user_name', 'user_role', 'email', 'stores.name as store_name', 'users.created_at', 'store_id')->leftJoin('stores','stores.id','=','users.store_id')->where('user_role','!=','super-admin')->get();
         return Inertia::render('User/User',[
             'users'=>$users,
             'stores'=>$stores,
+            'roles'=>$roles,
             'pageLabel'=>'Users',
         ]);
+    }
+
+    public function userRole(){
+        $roles = Role::with('permissions')->where('name', '!=', 'super-admin')->get()->map(function ($role) {
+            // Map each role to include a comma-separated list of permissions
+            $role->permissions_list = $role->permissions->pluck('name')->join(', ');
+            return $role;
+        });
+        $permissions = Permission::select('id', 'name')->get();
+        return Inertia::render('User/UserRole',[
+            'roles'=>$roles,
+            'permissions'=>$permissions,
+            'pageLabel'=>'User Roles',
+        ]);
+    }
+
+    public function storeRole(Request $request)
+    {
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'user_role' => 'required|unique:roles,name',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $role = Role::create([
+            'name' => $request->user_role,  // Set the role name from the request
+        ]);
+
+        $permissions = Permission::whereIn('name', $request->permissions)->get();
+        // Attach the permissions to the new role
+        $role->syncPermissions($permissions);
+
+        // Redirect back to the user roles page with success message
+        return redirect()->route('user.role')
+            ->with('success', 'Role and permissions assigned successfully!');
+    }
+
+    public function updateRole(Request $request, $roleId)
+    {
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'user_role' => 'required|exists:roles,name',  // Ensure the role exists
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // Find role by ID
+        $role = Role::findOrFail($roleId);
+
+         // Sync permissions to the role (replace the existing permissions with the new ones)
+        $permissions = Permission::whereIn('name', $request->permissions)->get();
+        $role->syncPermissions($permissions);
+
+        // Redirect back to the user roles page with success message
+        return redirect()->route('user.role')
+            ->with('success', 'Role and permissions updated successfully!');
     }
 
     public function store(Request $request)

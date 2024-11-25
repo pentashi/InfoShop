@@ -102,7 +102,7 @@ export default function ViewDetailsDialog({
                                 {Array.isArray(items) &&
                                     items.map((item, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{item.name}</TableCell>
+                                            <TableCell>{item.name} {item.batch_number !== null && ` | ${item.batch_number}`}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
                                             <TableCell>{parseFloat(item.unit_price).toFixed(2)}</TableCell>
                                             <TableCell>{parseFloat(item.unit_cost).toFixed(2)}</TableCell>

@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, S
 import Swal from 'sweetalert2';
 
 
-export default function UserFormDialog({ open, handleClose, user, stores }) {
+export default function UserFormDialog({ open, handleClose, user, stores, roles }) {
     const [formState, setFormState] = useState({
       name: '',
       email: '',
@@ -171,9 +171,10 @@ export default function UserFormDialog({ open, handleClose, user, stores }) {
               required
             >
               {/* <MenuItem value="super-admin">Super Admin</MenuItem> */}
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="user">User</MenuItem>
-              {/* Add more roles as needed */}
+              {roles?.map(role => (
+                <MenuItem value={role.name}>{(role.name).toUpperCase()}</MenuItem>
+              ))}
+              
             </Select>
           </FormControl>
 

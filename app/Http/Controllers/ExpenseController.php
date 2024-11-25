@@ -12,8 +12,13 @@ class ExpenseController extends Controller
     public function getExpenses($filters){
         $query = Expense::query();
         $query= $query->orderBy('id', 'desc');
+        
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('expense_date', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        if (!empty($filters['search_query'])) {
+            $query->where('description', 'like', "%{$filters['search_query']}%");
         }
 
         $results = $query->paginate(25);
@@ -22,7 +27,7 @@ class ExpenseController extends Controller
     }
 
     public function index(Request $request){
-        $filters = $request->only(['start_date', 'end_date']);
+        $filters = $request->only(['start_date', 'end_date', 'search_query']);
         $stores = Store::select('id', 'name')->get();
         $expenses = $this->getExpenses($filters);
 

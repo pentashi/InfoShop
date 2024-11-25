@@ -38,17 +38,30 @@ export default function AddToPurchase({
         if (loading) return;
         setLoading(true);
 
-        const formData = new FormData(event.currentTarget)
-        const formJson = Object.fromEntries(formData.entries())
+        let url='/checkBatch';
 
-        if(!isSelectBatch){
-            let url='/storebatch';
+        axios
+        .post(url, formState)
+        .then((resp) => {
+            if(resp.data.status=='invalid'){
+                // setFormState((prevState) => ({
+                //     ...prevState, // Keep the existing formState properties
+                //     batch_number: '', // Add or update the status property
+                // }));
 
-            axios
-            .post(url, formJson)
-            .then((resp) => {
-                formJson.batch_id = resp.data.batch_id; // Adjust the property name based on your response
-                formJson.batch_number = formJson.new_batch;
+                Swal.fire({
+                    title: resp.data.message,
+                    text: 'New Batch',
+                    icon: "warning",
+                });
+            }
+            else{
+
+                const responseStatus = resp.data.status;
+            setFormState((prevState) => ({
+                ...prevState, // Keep the existing formState properties
+                status: responseStatus, // Add or update the status property
+            }));
 
                 Swal.fire({
                     title: "Success!",
@@ -57,28 +70,29 @@ export default function AddToPurchase({
                     showConfirmButton: false,
                     timer: 2000,
                     timerProgressBar: true,
+                    toast: true,
+                    position:'bottom-end'
                 });
-                addToCart(formJson, formJson.quantity);
+
+                addToCart({ ...formState, status: responseStatus }, formState.quantity);
                 handleClose()
-            })
-            .catch((error) => {
-                const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
-                Swal.fire({
-                    title: "Failed!",
-                    text: errorMessages,
-                    icon: "error",
-                    showConfirmButton: true,
-                });
-                console.error(error);
-            }).finally(() => {
-                setLoading(false); // Reset submitting state
+            }
+        })
+        .catch((error) => {
+            const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
+            Swal.fire({
+                title: "Failed!",
+                text: errorMessages,
+                icon: "error",
+                showConfirmButton: true,
             });
-        }
-        else{
-            addToCart(formJson,formJson.quantity)
-            setLoading(false);
-            handleClose()
-        }
+            console.error(error);
+        }).finally(() => {
+            setLoading(false); // Reset submitting state
+        });
+        // addToCart(formState,formState.quantity)
+        // setLoading(false);
+        // handleClose()
     };
 
     // Update selectedBatch when products change
@@ -117,7 +131,7 @@ export default function AddToPurchase({
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"ADD TO PURCHASE"}
+                    {formState.name}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -133,27 +147,33 @@ export default function AddToPurchase({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <input
-                            type="hidden"
-                            name="batch_number"
-                            value={formState.batch_number}
-                        />
-                        <input
-                            type="hidden"
-                            name="batch_id"
-                            value={formState.batch_id}
-                        />
-                        <input
-                            type="hidden"
-                            name="name"
-                            value={formState.name}
-                        />
-                        <input type="hidden" name="id" value={formState.id} />
-                        <input
-                            type="hidden"
-                            name="product_type"
-                            value={formState.product_type}
-                        />
+                        <Grid size={6}>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                name="quantity"
+                                label="Quantity"
+                                variant="outlined"
+                                autoFocus
+                                value={formState.quantity}
+                                onChange={handleInputChange}
+                                sx={{
+                                    input: { fontSize: "1rem" },
+                                }}
+                                required
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }}
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                    input: {
+                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                    },
+                                }}
+                            />
+                        </Grid>
                         {product.product_type !== "custom" && (
                             <Grid size={6}>
                                 <TextField
@@ -161,6 +181,7 @@ export default function AddToPurchase({
                                     label={"Batch"}
                                     value={formState.batch_number}
                                     required
+                                    name="batch_number"
                                     onChange={handleInputChange}
                                     slotProps={{
                                         inputLabel: {
@@ -184,7 +205,6 @@ export default function AddToPurchase({
                                     name={'name'}
                                     value={formState.name}
                                     required
-                                    autoFocus={product.product_type === "custom"}
                                     onChange={handleInputChange}
                                     slotProps={{
                                         inputLabel: {
@@ -197,33 +217,7 @@ export default function AddToPurchase({
                                 />
                             </Grid>
                         )}
-                        <Grid size={6}>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                name="quantity"
-                                label="Quantity"
-                                variant="outlined"
-                                autoFocus={product.product_type !== "custom"}
-                                value={formState.quantity}
-                                onChange={handleInputChange}
-                                sx={{
-                                    input: { fontSize: "1rem" },
-                                }}
-                                required
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                    input: {
-                                        // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                    },
-                                }}
-                            />
-                        </Grid>
+                        
                         <Grid size={6}>
                             <TextField
                                 fullWidth

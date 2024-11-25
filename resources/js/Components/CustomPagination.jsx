@@ -1,5 +1,4 @@
 import React from 'react';
-import { router } from '@inertiajs/react';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 

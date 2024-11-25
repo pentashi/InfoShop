@@ -8,9 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 
 import { DataGrid, GridToolbar} from '@mui/x-data-grid';
-
-import FormDialog from './UserFormDialog';
-
+import UserRoleDialog from './UserRoleDialog';
 
   const columns = (handleEdit) => [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -25,30 +23,26 @@ import FormDialog from './UserFormDialog';
         </Button>
       ),
     },
-    { field: 'user_name', headerName: 'User Name', width: 150 },
-    { field: 'user_role', headerName: 'User Role', width: 150 },
-    { field: 'email', headerName: 'Email', width: 150 },
-    { field: 'store_name', headerName: 'Store', width: 150 },
-    { field: 'created_at', headerName: 'Created At', width: 200 },
+    { field: 'permissions_list', headerName: 'User Name', width: 500 },
   ];
 
- export default function User({users, stores, roles}) {
+ export default function UserRole({roles, permissions}) {
     const auth = usePage().props.auth.user
     const [open, setOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedRole, setSelectedRole] = useState()
 
     const handleClickOpen = () => {
-        setSelectedUser(null);
+        setSelectedRole(null);
         setOpen(true);
     };
 
-    const handleEdit = (user) => {
-        setSelectedUser(user); // Set selected user for editing
+    const handleEdit = (role) => {
+        setSelectedRole(role); // Set selected user for editing
         setOpen(true); // Open the dialog
       };
 
     const handleClose = () => {
-        setSelectedUser(null);
+        setSelectedRole(null);
         setOpen(false);
     };
 
@@ -56,18 +50,16 @@ import FormDialog from './UserFormDialog';
     return (
         <AuthenticatedLayout>
           
-            <Head title="User" />
-                <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
-                    <Grid size={8}>
-                        <Typography variant="h4" component="h2">User</Typography>
+            <Head title="User Roles" />
+                <Grid container spacing={2} alignItems='center' justifyContent={'end'}>
+                    <Grid size={{xs:12, sm:4, md:3}}>
+                        <Button fullWidth variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>Add Role</Button>
                     </Grid>
-                    <Grid size={4} container justifyContent='end'>
-                        <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>Add User</Button>
-                    </Grid>
+                </Grid>
 
-                    <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
+                <Box className='py-6 w-full' sx={{display: 'grid', gridTemplateColumns: '1fr'}}>
                       <DataGrid 
-                      rows={users} 
+                      rows={roles} 
                       columns={columns(handleEdit)}
                       pageSize={5}
                       slots={{ toolbar: GridToolbar }}
@@ -78,9 +70,8 @@ import FormDialog from './UserFormDialog';
                         }}
                       />
                   </Box>
-                </Grid>
 
-                <FormDialog open={open} handleClose={handleClose} stores={stores} user={selectedUser} roles={roles}/>
+                  <UserRoleDialog  open={open} handleClose={handleClose} user_role={selectedRole} permissions={permissions}>  </UserRoleDialog>
             
         </AuthenticatedLayout>
     );
