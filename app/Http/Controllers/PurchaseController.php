@@ -158,7 +158,7 @@ class PurchaseController extends Controller
                     'description' => $description,
                 ]);
 
-                if ($item['product_type'] != 'custom' || $item['product_type'] != 'reload') { //Custom product does not have stock
+                if ($item['product_type'] == 'simple') { //Custom product does not have stock
 
                     // Retrieve or create the product stock using store_id and batch_id
                     $productStock = ProductStock::firstOrCreate(

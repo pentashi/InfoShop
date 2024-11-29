@@ -308,7 +308,8 @@ class TransactionController extends Controller
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('transaction_date', [$filters['start_date'], $filters['end_date']]);
         }
-        $results = $query->paginate(25);
+        $perPage = $filters['per_page'] ?? 100;
+        $results = $query->paginate($perPage);
         $results->appends($filters);
         return $results;
     }

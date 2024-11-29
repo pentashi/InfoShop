@@ -46,7 +46,9 @@ const DrawerFooter = styled("div")(({ theme }) => ({
     zIndex: "999",
 }));
 
-function POS({ products, customers, currentStore }) {
+
+function POS({ products, customers, return_sale }) {
+    const cartType = return_sale ? 'sales_return_cart' : 'sales_cart';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -66,17 +68,10 @@ function POS({ products, customers, currentStore }) {
     };
 
     // useEffect(() => {
-    //     Swal.fire({
-    //         title: currentStore,
-    //         icon: "success",
-    //         showConfirmButton: false,
-    //         position: "bottom-start",
-    //         timer: 2000,
-    //         timerProgressBar: true,
-    //         toast: true,
-    //     });
-    //   },
-    // );
+    //     if(cartType === "sales_return_cart") {
+    //         localStorage.setItem('sales_return_cart', []);
+    //     }
+    // },[cartType])
 
     const drawer = (
         <>
@@ -103,7 +98,7 @@ function POS({ products, customers, currentStore }) {
     );
 
     return (
-        <SalesProvider>
+        <SalesProvider cartType={cartType}>
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -130,7 +125,9 @@ function POS({ products, customers, currentStore }) {
                             </Typography>
                         </Box>
                         {/* Product Search Box  */}
+                        
                         <SearchBox></SearchBox>
+                      
                         <Link href="/dashboard">
                             <IconButton
                                 color="inherit"
@@ -164,7 +161,7 @@ function POS({ products, customers, currentStore }) {
                             <Grid
                                 key={product.id + product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
-                                sx={{ cursor: "pointer" }}
+                                sx={{ cursor: "pointer",}}
                             >
                                 <ProductItem product={product}></ProductItem>
                             </Grid>
@@ -194,7 +191,7 @@ function POS({ products, customers, currentStore }) {
                         anchor="right"
                     >
                         <DrawerHeader>
-                            <CartItemsTop customers={customers} />
+                            <CartItemsTop customers={customers}/>
                             <IconButton onClick={handleDrawerClose}>
                                 <ChevronLeftIcon />
                             </IconButton>

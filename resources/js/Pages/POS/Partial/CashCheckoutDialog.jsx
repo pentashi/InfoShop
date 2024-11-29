@@ -12,11 +12,14 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { router } from '@inertiajs/react';
 import axios from "axios";
 import Swal from "sweetalert2";
+import { usePage } from "@inertiajs/react";
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function CashCheckoutDialog({ disabled }) {
+    const return_sale = usePage().props.return_sale;
+    const return_sale_id = usePage().props.sale_id;
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
     const {selectedCustomer, saleDate} = useContext(SharedContext); 
     const [loading, setLoading] = useState(false);
@@ -54,6 +57,8 @@ export default function CashCheckoutDialog({ disabled }) {
         formJson.sale_date = saleDate;
         formJson.payment_method = 'Cash'
         formJson.contact_id = selectedCustomer.id
+        formJson.return_sale = return_sale;
+        formJson.return_sale_id = return_sale_id;
 
         axios.post('/pos/checkout', formJson)
         .then((resp) => {
@@ -147,7 +152,16 @@ export default function CashCheckoutDialog({ disabled }) {
                         onFocus={event => {
                             event.target.select();
                           }}
-                        onChange={(e)=>{setAmountRecieved(e.target.value)}}
+                        // onChange={(e)=>{setAmountRecieved(e.target.value)}}
+
+                        onChange={(event) => {
+                            const value = event.target.value;
+                            const numericValue = parseFloat(value); // Convert to number
+                            setAmountRecieved(
+                                    return_sale && numericValue > 0 ? -numericValue : numericValue
+                            );
+                        }}
+
                         sx={{ input: {textAlign: "center", fontSize:'2rem'},}}
                         value={amountRecieved}
                         slotProps={{

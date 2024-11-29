@@ -165,6 +165,7 @@ export default function Payment({ payments, transactionType, contacts }) {
                     >
                         <MenuItem value={"All"}>All</MenuItem>
                         <MenuItem value={"Cash"}>Cash</MenuItem>
+                        <MenuItem value={"Credit"}>Credit</MenuItem>
                         <MenuItem value={"Cheque"}>Cheque</MenuItem>
                     </Select>
                 </FormControl>

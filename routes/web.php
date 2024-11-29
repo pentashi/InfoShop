@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/product/{batch_id}/barcode', [ProductController::class, 'getBarcode'])->name('products.barcode');
 
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
+    Route::get('/pos/{sale_id}/return', [POSController::class, 'returnIndex'])->name('pos.return');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 
     Route::get('/customers', [ContactController::class, 'index'])->defaults('type', 'customer')->name('customers.index');
@@ -107,8 +108,11 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/dailycash',[ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
     Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
     Route::get('reports/sales',[ReportController::class, 'getSalesReport'])->name('reports.sales');
+    Route::get('reports/{customer}/customer-pending',[ReportController::class, 'getCustomerPendingReport']);
+    Route::get('reports/{vendor}/vendor-pending',[ReportController::class, 'getVendorPendingReport']);
     Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
     Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
+    
 
     Route::get('/reloads',[ReloadController::class, 'index'])->name('expenses.index');
 

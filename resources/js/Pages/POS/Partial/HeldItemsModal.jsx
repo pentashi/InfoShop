@@ -8,6 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Button from "@mui/material/Button"
 import { useSales as useCart } from "@/Context/SalesContext";
+import dayjs from "dayjs";
 
 import {
     IconButton,
@@ -28,17 +29,19 @@ export default function HeldItemsModal({
     };
 
     const handleClose = () => {
+        setHeldCartKeys([])
         setModalOpen(false);
     };
 
     const handleLoadHeldCart = (key) => {
         setHeldCartToCart(key)       // Remove it from localStorage
         retrieveHeldCartKeys();     // Refresh the held cart keys
+        handleClose()
     };
 
     useEffect(() => {
         retrieveHeldCartKeys(); // Load held cart keys into state on component mount
-    }, []);
+    }, [heldCartKeys]);
 
     return (
         <>
@@ -50,7 +53,7 @@ export default function HeldItemsModal({
                 aria-labelledby="alert-dialog-title"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"HELD ITEMS CART"}
+                    {"HOLD ITEMS"}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -66,20 +69,12 @@ export default function HeldItemsModal({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2} display={'flex'} flexDirection={'column'}>
-                    <Button 
-                        variant="contained"
-                        color="primary"
-                        display="block"
-                        onClick={()=>retrieveHeldCartKeys()}
-                    >
-                        REFRESH
-                    </Button>
                     {heldCartKeys.map((key) => (
                         <ListItemButton
                         key={key}
-                        onClick={() => handleLoadHeldCart(key)} // Set the cart when clicked
+                            onClick={() => handleLoadHeldCart(key)} // Set the cart when clicked
                         >
-                        <ListItemText primary={key} /> {/* Display the cart key */}
+                        <ListItemText primary={dayjs(key).format('MMMM D, YYYY h:mm A')} /> {/* Display the cart key */}
                         </ListItemButton>
                     ))}
                     </Grid>

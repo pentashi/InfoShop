@@ -72,6 +72,67 @@ class POSController extends Controller
             'urlImage' =>url('storage/'),
             'customers'=>$contacts,
             'currentStore'=>$currentStore->name,
+            'return_sale'=>false,
+            'sale_id'=>null,
+        ]);
+    }
+
+    public function returnIndex(Request $request, $sale_id)
+    {
+        $imageUrl = 'storage/';
+        if (app()->environment('production')) $imageUrl='public/storage/';
+
+        $sale = Sale::find($sale_id);
+        $contacts = Contact::select('id', 'name','balance')->where('id',$sale->contact_id)->get();
+        $currentStore = Store::find($sale->store_id);
+
+        if (!$currentStore) {
+            return redirect()->route('store'); // Adjust the route name as necessary
+        }
+
+        $products = Product::select(
+            'products.id',
+            DB::raw("CONCAT('{$imageUrl}', products.image_url) AS image_url"),
+            'products.name',
+            'si.discount',
+            'products.is_stock_managed',
+            DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
+            'si.unit_cost as cost',
+            'si.unit_price as price',
+            'si.quantity',
+            'products.meta_data',
+            'products.product_type',
+            'si.batch_id',
+        )
+        ->join('sale_items AS si', function ($join) use ($sale_id) {
+            $join->on('products.id', '=', 'si.product_id')
+                 ->where('si.sale_id', '=', $sale_id); // Ensure product is associated with the given sale_id
+        })
+        ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
+        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'si.batch_id') // Join with product_stocks using batch_id
+        
+        ->groupBy(
+            'products.id',
+            'products.image_url',
+            'products.name',
+            'si.discount',
+            'products.is_stock_managed',
+            DB::raw("COALESCE(pb.batch_number, 'N/A')"),
+            'si.unit_cost',
+            'si.unit_price', 
+            'si.batch_id',
+            'si.quantity',
+            'products.product_type',
+            'products.meta_data',
+            )
+        ->get();
+        
+        return Inertia::render('POS/POS', [
+            'products' => $products,
+            'urlImage' =>url('storage/'),
+            'customers'=>$contacts,
+            'return_sale'=>true,
+            'sale_id'=>$sale_id,
         ]);
     }
 
@@ -87,6 +148,8 @@ class POSController extends Controller
         $saleDate = $request->input('sale_date');
         $payments = $request->payments;
         $createdBy = Auth::id();
+        $reference_id = $request->input('return_sale_id');
+        $sale_type = $request->input('return_sale')?'return':'sale';
 
         // dd($request);
 
@@ -94,6 +157,8 @@ class POSController extends Controller
         try{
             $sale = Sale::create([
                 'store_id' => session('store_id'), // Assign appropriate store ID
+                'reference_id'=>$reference_id,
+                'sale_type'=>$sale_type,
                 'contact_id' => $customerID, // Assign appropriate customer ID
                 'sale_date' => $saleDate, // Current date and time
                 'total_amount' => $total, //Net total (total after discount)

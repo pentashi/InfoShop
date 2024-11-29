@@ -24,6 +24,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { router } from "@inertiajs/react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { usePage } from "@inertiajs/react";
 
 export default function PaymentsCheckoutDialog({
     useCart,
@@ -34,6 +35,9 @@ export default function PaymentsCheckoutDialog({
     is_sale=false,
 }) {
     const { cartState, cartTotal, emptyCart, totalProfit } = useCart();
+    const return_sale = usePage().props.return_sale;
+    const return_sale_id = usePage().props.sale_id;
+
     const [loading, setLoading] = useState(false);
 
     const [discount, setDiscount] = useState(0);
@@ -88,6 +92,10 @@ export default function PaymentsCheckoutDialog({
         formJson.payments = payments;
         formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
         formJson.profit_amount = totalProfit-discount
+
+        formJson.return_sale = return_sale;
+        formJson.return_sale_id = return_sale_id;
+
         let url='/pos/checkout';
         if(!is_sale){ url="/purchase/store"}
         axios

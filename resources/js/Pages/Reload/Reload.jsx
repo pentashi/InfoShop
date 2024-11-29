@@ -42,8 +42,8 @@ export default function Reload({ reloads, transactionType }) {
     const [totalCommission, setTotalCommission] = useState(0);
     const handleRowClick = () => {};
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
+        start_date: '',
+        end_date: '',
         store: 0,
     });
 
@@ -102,6 +102,11 @@ export default function Reload({ reloads, transactionType }) {
                         value={searchTerms.start_date}
                         onChange={handleSearchChange}
                         fullWidth
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
                     />
                 </Grid>
                 <Grid size={{xs:6, sm:2}}>
@@ -112,6 +117,11 @@ export default function Reload({ reloads, transactionType }) {
                         value={searchTerms.end_date}
                         onChange={handleSearchChange}
                         fullWidth
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
                     />
                 </Grid>
 

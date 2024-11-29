@@ -29,6 +29,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
     },
+    padding:10,
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:last-child td, &:last-child th": {
         border: 0,
     },
+    
 }));
 
 export default function DailyReport({ logs, stores }) {
@@ -48,7 +50,7 @@ export default function DailyReport({ logs, stores }) {
     );
     const [modalOpen, setModalOpen] = useState(false);
 
-    const refreshLogs = (url) => {
+    const refreshLogs = (url=window.location.pathname) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -65,6 +67,10 @@ export default function DailyReport({ logs, stores }) {
             options
         );
     };
+
+    useEffect(() => {
+        refreshLogs();
+    },[transaction_date])
 
     return (
         <AuthenticatedLayout>
@@ -84,7 +90,7 @@ export default function DailyReport({ logs, stores }) {
                         placeholder="Transaction Date"
                         fullWidth
                         type="date"
-                        sx={{ height: "100%", maxWidth:'180px'}}
+                        sx={{ height: "100%"}}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,

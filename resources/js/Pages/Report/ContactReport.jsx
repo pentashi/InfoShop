@@ -17,6 +17,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -41,7 +43,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function ContactReport({ stores, report, contacts, type }) {
+export default function ContactReport({ stores, report, contacts, type, contact }) {
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
@@ -179,6 +181,17 @@ export default function ContactReport({ stores, report, contacts, type }) {
                 </Button>
             </Grid>
 
+<Grid container justifyContent={'center'} width={'100%'} sx={{ mt: 2,}} spacing={2}>
+<Box sx={{maxWidth:'750px', display:'flex', justifyContent:'center', width:'100%'}}>
+<Alert sx={{width:'100%'}} severity="info" icon={false}>
+       <strong>Name: {contact.name}
+       <br />
+       Balance {numeral(contact.balance).format('0,00.00')}
+       </strong>
+      </Alert>
+</Box>
+      
+</Grid>
 
             <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
                 <TableContainer component={Paper} sx={{ width: '100%', maxWidth: { sm: "750px" }, overflow: 'auto', height: '500px' }}>

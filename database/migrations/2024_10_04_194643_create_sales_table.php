@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('reference_id')->nullable();
+            $table->string('sale_type')->default('sale');
             $table->string('invoice_number')->nullable()->unique();
-            $table->unsignedBigInteger('store_id'); // Store ID without foreign key constraint
+            $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('contact_id');
             $table->date('sale_date'); // Sale date
             $table->decimal('total_amount', 10, 2); //Net total (total after discount)

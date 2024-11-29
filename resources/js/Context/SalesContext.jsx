@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import useCartBase from './useCartBase';
 
 const SalesContext = createContext();
 
-const SalesProvider = ({ children }) => {
-  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem, holdCart, setHeldCartToCart, removeHeldItem } = useCartBase('sales_cart');
+const SalesProvider = ({ children, cartType = 'sales_cart'}) => {
+
+  const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem, holdCart, setHeldCartToCart, removeHeldItem } = useCartBase(cartType);
 
   const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
     return cartState.reduce(

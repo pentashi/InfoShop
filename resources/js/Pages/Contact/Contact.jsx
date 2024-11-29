@@ -7,6 +7,7 @@ import { Button, Box, TextField, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PrintIcon from "@mui/icons-material/Print";
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import numeral from 'numeral';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import FormDialog from './Partial/FormDialog';
@@ -26,6 +27,7 @@ const columns = (handleRowClick) => [
       ),
     },
     { field: 'balance', headerName: 'Balance', width: 100,
+        valueGetter: (value) => parseFloat(value),
       renderCell: (params) => (
         <Button
             onClick={() => handleRowClick(params.row, "add_payment")}
@@ -49,15 +51,24 @@ const columns = (handleRowClick) => [
         field: "action",
         headerName: "Actions",
         width: 150,
-        renderCell: (params) => (
+        renderCell: (params) => {
+        const basePath = params.row.type === 'vendor' ? '/purchases' : '/sales';
+        return(
             <>
                 <Link href={"/reports/" + params.row.id+'/'+params.row.type}>
                     <IconButton color="primary">
                         <PrintIcon />
                     </IconButton>
                 </Link>
+
+                {/* Sales or Purchase Link */}
+                <Link href={`${basePath}?contact_id=${params.row.id}&end_date=&query=&start_date=&status=pending&store=0`}>
+                    <IconButton color="alert">
+                        <HourglassTopIcon />
+                    </IconButton>
+                </Link> 
             </>
-        ),
+        )},
     },
 ];
 

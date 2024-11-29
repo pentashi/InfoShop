@@ -1,4 +1,4 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect} from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
@@ -8,17 +8,26 @@ import {Avatar, Box, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
 import CartItemModal from './CartItemModal';
+import { usePage } from "@inertiajs/react";
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
 import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 export default function CartItems() {
-  const { cartState, removeFromCart } = useCart();
+  const return_sale = usePage().props.return_sale;
+  const { cartState, removeFromCart, emptyCart} = useCart();
   const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
+
+  useEffect(() => {
+    if(return_sale){
+      emptyCart()
+    }
+  },[return_sale])
 
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      
       {cartState.map((item, index) =>(
         <React.Fragment key={index}>
           <ListItem alignItems="center" sx={{padding:{sm:1, xs:0}, paddingY:1}}>

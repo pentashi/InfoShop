@@ -6,6 +6,7 @@ import {
     TextField,
     Autocomplete,
 } from "@mui/material";
+import { usePage } from "@inertiajs/react";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 import _ from "lodash";
@@ -14,6 +15,7 @@ import { useSales as useCart } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function SearchBox() {
+    const return_sale = usePage().props.return_sale;
     const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
     const { addToCart, cartState } = useCart();
@@ -83,6 +85,7 @@ export default function SearchBox() {
                 }}
             >
                 <Autocomplete
+                disabled={return_sale}
                     fullWidth
                     freeSolo
                     options={options}

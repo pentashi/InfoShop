@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid2";
 import { Button, Box, IconButton, TextField, MenuItem, Tooltip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Select2 from "react-select";
 import numeral from "numeral";
@@ -100,6 +101,17 @@ const columns = (handleRowClick) => [
                         <PrintIcon />
                     </IconButton>
                 </Link>
+                {params.row.sale_type !== "return" ? (
+                    <Link href={`/pos/${params.row.id}/return`}>
+                        <IconButton color="primary">
+                            <KeyboardReturnIcon />
+                        </IconButton>
+                    </Link>
+                ) : (
+                    <IconButton disabled color="primary">
+                        <KeyboardReturnIcon />
+                    </IconButton>
+                )}
                 <IconButton
                     sx={{ ml: "0.3rem" }}
                     color="primary"
@@ -121,10 +133,10 @@ export default function Sale({ sales, contacts }) {
     const [dataSales, setDataSales] = useState(sales);
 
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().format("YYYY-MM-DD"),
-        end_date: dayjs().format("YYYY-MM-DD"),
+        start_date: '',
+        end_date: '',
         store: 0,
-        contact: '',
+        contact_id: '',
         status: 'all',
         query: '',
     });
@@ -153,12 +165,13 @@ export default function Sale({ sales, contacts }) {
             },
         };
         router.get(
-            url, { ...searchTerms, contact_id: searchTerms.contact?.id },
+            url, { ...searchTerms },
             options
         );
     };
 
     const handleSearchChange = (input) => {
+        
         if (input?.target) {
             // Handle regular inputs (e.g., TextField)
             const { name, value } = input.target;
@@ -167,7 +180,7 @@ export default function Sale({ sales, contacts }) {
             // Handle Select2 inputs (e.g., contact selection)
             setSearchTerms((prev) => ({
                 ...prev,
-                contact: input, // Store selected contact or null
+                contact_id: input?.id, // Store selected contact or null
             }));
         }
     };
@@ -175,108 +188,108 @@ export default function Sale({ sales, contacts }) {
     return (
         <AuthenticatedLayout>
             <Head title="Sales" />
-   
-                <Grid
-                    container
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent={"end"}
-                    sx={{ width: "100%" }}
-                    size={12}
-                >
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Select2
-                            className="w-full"
-                            placeholder="Select a contact..."
-                            styles={{
-                                control: (baseStyles, state) => ({
-                                    ...baseStyles,
-                                    height: "55px",
-                                }),
-                            }}
-                            options={contacts} // Options to display in the dropdown
-                            onChange={(selectedOption) => handleSearchChange(selectedOption)}
-                            isClearable // Allow the user to clear the selected option
-                            getOptionLabel={(option) => option.name + ' | ' + option.balance}
-                            getOptionValue={(option) => option.id}
-                        ></Select2>
-                    </Grid>
 
-                    <Grid size={{ xs: 12, sm: 2 }}>
-                        <TextField
-                            value={searchTerms.status}
-                            label="Status"
-                            onChange={handleSearchChange}
-                            name="status"
-                            select
-                            fullWidth
-                        >
-                            <MenuItem value={"all"}>All</MenuItem>
-                            <MenuItem value={"completed"}>Completed</MenuItem>
-                            <MenuItem value={"pending"}>Pending</MenuItem>
-                        </TextField>
-                    </Grid>
-
-                    <Grid size={{ xs: 6, sm: 2 }}>
-                        <TextField
-                            label="Start Date"
-                            name="start_date"
-                            placeholder="Start Date"
-                            fullWidth
-                            type="date"
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                            value={searchTerms.start_date}
-                            onChange={handleSearchChange}
-                        />
-                    </Grid>
-
-                    <Grid size={{ xs: 6, sm: 2 }}>
-                        <TextField
-                            label="End Date"
-                            name="end_date"
-                            placeholder="End Date"
-                            fullWidth
-                            type="date"
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                },
-                            }}
-                            value={searchTerms.end_date}
-                            onChange={handleSearchChange}
-                            required
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 2 }}>
-                        <TextField
-                            value={searchTerms.query}
-                            label="Search"
-                            onChange={handleSearchChange}
-                            name="query"
-                            fullWidth
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault(); // Prevents form submission if inside a form
-                                    refreshSales(window.location.pathname); // Trigger search on Enter
-                                }
-                            }}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 1 }}>
-                        <Button variant="contained" type="submit" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
-                            <FindReplaceIcon />
-                        </Button>
-                    </Grid>
-
+            <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                justifyContent={"end"}
+                sx={{ width: "100%" }}
+                size={12}
+            >
+                <Grid size={{ xs: 12, sm: 3 }}>
+                    <Select2
+                        className="w-full"
+                        placeholder="Select a contact..."
+                        styles={{
+                            control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                height: "55px",
+                            }),
+                        }}
+                        options={contacts} // Options to display in the dropdown
+                        onChange={(selectedOption) => handleSearchChange(selectedOption)}
+                        isClearable // Allow the user to clear the selected option
+                        getOptionLabel={(option) => option.name + ' | ' + option.balance}
+                        getOptionValue={(option) => option.id}
+                    ></Select2>
                 </Grid>
+
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <TextField
+                        value={searchTerms.status}
+                        label="Status"
+                        onChange={handleSearchChange}
+                        name="status"
+                        select
+                        fullWidth
+                    >
+                        <MenuItem value={"all"}>All</MenuItem>
+                        <MenuItem value={"completed"}>Completed</MenuItem>
+                        <MenuItem value={"pending"}>Pending</MenuItem>
+                    </TextField>
+                </Grid>
+
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
+                        label="Start Date"
+                        name="start_date"
+                        placeholder="Start Date"
+                        fullWidth
+                        type="date"
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={searchTerms.start_date}
+                        onChange={handleSearchChange}
+                    />
+                </Grid>
+
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
+                        label="End Date"
+                        name="end_date"
+                        placeholder="End Date"
+                        fullWidth
+                        type="date"
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={searchTerms.end_date}
+                        onChange={handleSearchChange}
+                        required
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <TextField
+                        value={searchTerms.query}
+                        label="Search"
+                        onChange={handleSearchChange}
+                        name="query"
+                        fullWidth
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault(); // Prevents form submission if inside a form
+                                refreshSales(window.location.pathname); // Trigger search on Enter
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 1 }}>
+                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
+                        <FindReplaceIcon />
+                    </Button>
+                </Grid>
+
+            </Grid>
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '70vh' }}
             >
                 <DataGrid
                     rows={dataSales.data}
@@ -293,6 +306,9 @@ export default function Sale({ sales, contacts }) {
             <Grid size={12} container justifyContent={"end"}>
                 <CustomPagination
                     dataLinks={dataSales?.links}
+                    next_page={dataSales.next_page_url}
+                    prev_page={dataSales?.prev_page_url}
+                    current_page={dataSales?.current_page}
                     refreshTable={refreshSales}
                     dataLastPage={dataSales?.last_page}
                 ></CustomPagination>

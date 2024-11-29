@@ -24,6 +24,8 @@ import QuantityModal from "./Partials/QuantityModal";
 import CustomPagination from "@/Components/CustomPagination";
 import { useState } from "react";
 import numeral from "numeral";
+import { filter } from "lodash";
+import { useEffect } from "react";
 
 const productColumns = (handleProductEdit) => [
     {
@@ -165,25 +167,18 @@ export default function Product({ products, stores }) {
     const [quantityModalOpen, setQuantityModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState(false);
     const [dataProducts, setDataProducts] = useState(products);
-    const [selectedStore, setSelectedStore] = useState(0);
-    const [selectedStatus, setSelectedStatus] = useState(1);
-    const [searchQuery, setSearchQuery] = useState('')
+
+    const [filters, setFilters] = useState({
+        store: 0,
+        status: 1,
+        search_query: "",
+    });
 
     const handleProductEdit = (product, type) => {
         setSelectedProduct(product);
         type === 'batch' && setBatchModalOpen(true);
         type === 'qty' && setQuantityModalOpen(true);
     };
-
-    const handleStoreChange =(e)=>{
-        const newStore = e.target.value;
-        setSelectedStore(newStore);
-    }
-
-    const handleStatusChange =(e)=>{
-        const newStatus = e.target.value;
-        setSelectedStatus(newStatus);
-    }
 
     const refreshProducts = (url=window.location.pathname) => {
         const options = {
@@ -196,14 +191,51 @@ export default function Product({ products, stores }) {
         };
         router.get(
             url,
-            {
-                store:selectedStore, 
-                search_query:searchQuery,
-                status:selectedStatus
-            },
+            filters,
             options
         );
     };
+
+    const loadMoreProducts = () => {
+        if (!dataProducts.next_page_url) return;
+
+        router.get(
+            dataProducts.next_page_url,
+            filters,
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["products"],
+                onSuccess: (response) => {
+                    setDataProducts((prev) => ({
+                        ...response.props.products,
+                        data: [...prev.data, ...response.props.products.data], // Append new data
+                    }));
+                },
+            }
+        );
+    };
+
+    const handleNextPage = () => {
+        if (dataProducts.next_page_url) {
+            loadMoreProducts(dataProducts.next_page_url); // Pass the next page URL
+        }
+    };
+    
+    const handlePreviousPage = () => {
+        if (dataProducts.prev_page_url) {
+            loadMoreProducts(dataProducts.prev_page_url); // Pass the previous page URL
+        }
+    };
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prev) => ({ ...prev, [name]: value }));
+    };
+
+    useEffect(() => {
+        // console.log(dataProducts);
+    })
 
     return (
         <AuthenticatedLayout>
@@ -219,11 +251,11 @@ export default function Product({ products, stores }) {
                     <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
                         <InputLabel>Store</InputLabel>
                         <Select
-                            value={selectedStore}
+                            value={filters.store}
                             label="Store"
-                            onChange={handleStoreChange}
+                            onChange={handleFilterChange}
                             required
-                            name="store_id"
+                            name="store"
                         >
                             <MenuItem value={0}>All</MenuItem>
                             {stores.map((store) => (
@@ -239,9 +271,9 @@ export default function Product({ products, stores }) {
                     <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
                         <InputLabel>Status</InputLabel>
                         <Select
-                            value={selectedStatus}
+                            value={filters.status}
                             label="Status"
-                            onChange={handleStatusChange}
+                            onChange={handleFilterChange}
                             required
                             name="status"
                         >
@@ -257,8 +289,8 @@ export default function Product({ products, stores }) {
                         name="search_query"
                         label="Search"
                         variant="outlined"
-                          value={searchQuery}
-                          onChange={(e)=>setSearchQuery(e.target.value)}
+                          value={filters.search_query}
+                          onChange={handleFilterChange}
                           placeholder="Barcode or Name"
                         required
                         onFocus={(event) => {
@@ -280,20 +312,20 @@ export default function Product({ products, stores }) {
                     <FindReplaceIcon />
           </Button>
           <Link href="/products/create">
-                        <Button variant="contained" startIcon={<AddIcon />}>
+                        <Button variant="contained" startIcon={<AddIcon />} fullWidth>
                             Add Product
                         </Button>
                     </Link>
                 </Grid>
 
                 <Box
-                    className="py-6 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
+                    className="py-2 w-full"
+                    sx={{ display: "grid", gridTemplateColumns: "1fr", height:'70vh'}}
                 >
                     <DataGrid
                         rows={dataProducts.data}
                         columns={productColumns(handleProductEdit)}
-                        slots={{ toolbar: GridToolbar }}
+                        slots={{ toolbar: GridToolbar, }}
                         getRowId={(row) => row.id + row.batch_number+row.store_id}
                         slotProps={{
                             toolbar: {
@@ -312,7 +344,7 @@ export default function Product({ products, stores }) {
                         hideFooter
                     />
                 </Box>
-                <Grid size={12} spacing={2} container justifyContent={"end"}>
+                <Grid size={12} spacing={2} container justifyContent={"end"} alignItems={'center'}>
                     <Chip size="large" label={'Total Items :'+dataProducts.total} color="primary" />
                 <CustomPagination
                     dataLinks={dataProducts?.links}

@@ -82,6 +82,7 @@ class ProductController extends Controller
             'products' => $products,
             'stores' => $stores,
             'pageLabel' => 'Products',
+            'remember' => true,
         ]);
     }
 
@@ -367,12 +368,14 @@ class ProductController extends Controller
         $batch = ProductBatch::where('product_id', $product_id)
             ->where('batch_number', $batchNumber)
             ->first();
+        
+        $product = Product::find($product_id);
 
         $status = 'new'; // Default to 'new' batch
         $message = 'New batch created'; // Default message
         $batchResponse = null;
 
-        if ($batch) {
+        if ($batch && $product->product_type=='simple') {
             if ($batch->cost == $cost) {
                 // Same cost and batch, set to existing
                 $status = 'existing';

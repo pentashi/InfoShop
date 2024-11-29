@@ -1,4 +1,5 @@
 import { useReducer, useEffect, useMemo } from 'react';
+import dayjs from 'dayjs';
 
 // Define a generic cart reducer
 const cartReducer = (state, action) => {
@@ -76,7 +77,8 @@ const cartReducer = (state, action) => {
 
     case 'HOLD_CART': {
       const heldCarts = JSON.parse(localStorage.getItem('heldCarts')) || {};
-      const newKey = `heldCart_${Date.now()}`; // Unique key for the held cart
+      const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      const newKey = currentDateTime; // Unique key for the held cart
       heldCarts[newKey] = [...state];
       localStorage.setItem('heldCarts', JSON.stringify(heldCarts));
       return []; // Clear the current cart state
@@ -92,6 +94,7 @@ const cartReducer = (state, action) => {
 };
 
 // Custom hook for cart logic, common for both sales and purchase contexts
+// State key can be both purchase_cart or sales_cart
 const useCartBase = (initialStateKey) => {
   const persistedState = localStorage.getItem(initialStateKey);
   const [cartState, dispatch] = useReducer(cartReducer, persistedState ? JSON.parse(persistedState) : []);

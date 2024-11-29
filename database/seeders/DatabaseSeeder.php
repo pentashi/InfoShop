@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
             'expenses',      // Covers expenses creation and deletion
             'users',         // Covers user creation, update, and listing
             'reports',       // Covers viewing and storing reports
-            'link storage'          // Covers linking storage action
+            'reload'          // Covers linking storage action
         ];
 
         foreach ($permissions as $permission) {
@@ -65,7 +65,8 @@ class DatabaseSeeder extends Seeder
             'settings',
             'expenses',
             'users',
-            'reports'
+            'reports',
+            'reload'
         ];
         $adminRole->givePermissionTo($adminPermissions);
 

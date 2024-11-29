@@ -28,6 +28,7 @@ class SaleController extends Controller
             'contacts.balance',
             'store_id',
             'invoice_number',
+            'sale_type'
         )
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
         ->orderBy('sales.id', 'desc');
@@ -48,7 +49,8 @@ class SaleController extends Controller
             $query->where('invoice_number', 'LIKE', '%' . $filters['query'] . '%');
         }
 
-        $results = $query->paginate(25);
+        $perPage = $filters['per_page'] ?? 100;
+        $results = $query->paginate($perPage);
         $results->appends($filters);
         return $results;
     }
@@ -142,7 +144,8 @@ class SaleController extends Controller
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
         }
-        $results = $query->paginate(25);
+        $perPage = $filters['per_page'] ?? 100;
+        $results = $query->paginate($perPage);
         $results->appends($filters);
         return $results;
     }

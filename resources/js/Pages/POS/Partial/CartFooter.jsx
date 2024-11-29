@@ -8,6 +8,7 @@ import Grid from "@mui/material/Grid2";
 import CashCheckoutDialog from "./CashCheckoutDialog";
 import { useSales as useCart } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
+import { usePage } from "@inertiajs/react";
 
 import HeldItemsModal from "./HeldItemsModal";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
@@ -15,6 +16,7 @@ import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 import Swal from "sweetalert2";
 
 export default function CartFooter() {
+    const return_sale = usePage().props.return_sale;
     const { cartState, holdCart, emptyCart } = useCart();
     const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [heldModalOpen, setHeldModalOpen] = useState(false);
@@ -53,13 +55,14 @@ export default function CartFooter() {
                 spacing={1}
                 flexDirection={'row'}
             >
+                
                 <Grid size={6}>
                 <Button
                     variant="contained"
                     color="warning"
                     endIcon={<BackHandIcon />}
                     disabled={
-                        cartState.length === 0 || selectedCustomer === null
+                        cartState.length === 0 || selectedCustomer === null || return_sale
                     }
                     onClick={onCartHold}
                     size="large"
@@ -71,14 +74,17 @@ export default function CartFooter() {
                 
                 <Grid size={6}>
                 <Button
-                    sx={{
-                        bgcolor: "text.primary",
-                        color: "white",
-                    }}
+                    // sx={{
+                    //     bgcolor: "text.primary",
+                    //     color: "white",
+                    // }}
                     endIcon={<ShoppingCartIcon />}
+                    color="primary"
+                    variant="contained"
                     onClick={() => setHeldModalOpen(true)}
                     size="large"
                     fullWidth
+                    disabled={return_sale}
                 >
                     HELD ITEMS
                 </Button>

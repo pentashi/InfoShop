@@ -2,10 +2,12 @@ import React,{useState, useEffect, useContext} from 'react';
 import {Box, IconButton, Autocomplete,TextField, FormControl, Grid2 as Grid} from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FormDialog from '@/Pages/Contact/Partial/FormDialog';
+import { usePage } from "@inertiajs/react";
 
 import { SharedContext } from '@/Context/SharedContext';
 
 export default function CartItemsTop({customers}) {
+  const return_sale = usePage().props.return_sale;
   const [open, setOpen] = useState(false);
   const [customerList, setCustomerList] = useState(customers)
   const { selectedCustomer, setSelectedCustomer, saleDate, setSaleDate} = useContext(SharedContext); 
@@ -33,13 +35,14 @@ export default function CartItemsTop({customers}) {
 
   useEffect(() => {
     if (customerList) {
-      const initialCustomer = customerList.find(customer => customer.id === 1);
+      const initialCustomer = customerList.find(customer => customer.id === 1) || customerList[0];
       setSelectedCustomer(initialCustomer || null); 
     }
 }, [customers]);
 
   return (
     <Grid sx={{ width:'100%', marginY:{xs:'1rem', sm:'1.2rem'}, }} container spacing={2} flexDirection={{xs:'column-reverse', sm:'row'}} >
+      {console.log('From cart top1 '+return_sale)}
       <Grid size={{xs:12, sm:4 }} width={'100%'}>
           <TextField
               label="Sale Date"
@@ -79,7 +82,7 @@ export default function CartItemsTop({customers}) {
   </Grid>
      
       <Grid size={2}>
-      <IconButton onClick={() => setOpen(true)}  sx={{ bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
+      <IconButton disabled={return_sale} onClick={() => setOpen(true)}  sx={{ bgcolor: 'success.main', width: '45px', height: '45px', color:'white','&:hover': {
             bgcolor: 'success.dark', // Change the background color on hover
         } }}>
         <PersonAddIcon fontSize="inherit" />

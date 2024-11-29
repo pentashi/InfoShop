@@ -9,11 +9,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
+import { usePage } from "@inertiajs/react";
 
 import { useSales } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
 
 export default function CartItemModal() {
+    const return_sale = usePage().props.return_sale;
     const [showCost, setShowCost] = useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
     const focusInputRef = useRef(null);
@@ -36,7 +38,15 @@ export default function CartItemModal() {
 
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
-        updateCartItem(formState);
+
+        if(return_sale){
+            const updatedFormState = {
+                ...formState,
+                quantity: -Math.abs(formState.quantity), // Ensure quantity is negative
+            };
+            updateCartItem(updatedFormState);
+        }
+        else updateCartItem(formState);
         handleClose();
     };
 
@@ -73,20 +83,32 @@ export default function CartItemModal() {
 
             // If product type is "reload", we need to calculate the cost based on the price and commission
             if (newState.product_type === "reload") {
-                const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
+                const fixedCommission =
+                    parseFloat(newState.meta_data?.fixed_commission) || 0;
                 const price = parseFloat(newState.price) || 0;
-                const additionalCommission = parseFloat(newState.additional_commission) || 0;
-                const extraCommission = parseFloat(newState.extra_commission) || 0;
-                const calculatedCommission = ((price - additionalCommission) * fixedCommission) / 100;
-                const totalCommission = additionalCommission + extraCommission + calculatedCommission;
+                const additionalCommission =
+                    parseFloat(newState.additional_commission) || 0;
+                const extraCommission =
+                    parseFloat(newState.extra_commission) || 0;
+                const calculatedCommission =
+                    ((price - additionalCommission) * fixedCommission) / 100;
+                const totalCommission =
+                    additionalCommission +
+                    extraCommission +
+                    calculatedCommission;
                 newState.extra_commission = extraCommission;
                 newState.commission = totalCommission;
 
                 if (
-                    name === "price" || name === "fixed_commission" || name === "extra_commission" || name ==='additional_commission'
+                    name === "price" ||
+                    name === "fixed_commission" ||
+                    name === "extra_commission" ||
+                    name === "additional_commission"
                 ) {
                     // Recalculate the cost if price or commission changes
-                    const calculatedCost = parseFloat(newState.price) - parseFloat(newState.commission) || 0;
+                    const calculatedCost =
+                        parseFloat(newState.price) -
+                            parseFloat(newState.commission) || 0;
                     newState.cost = calculatedCost; // Update the cost field
                 }
             }
@@ -147,7 +169,17 @@ export default function CartItemModal() {
                                     label="Quantity"
                                     variant="outlined"
                                     value={formState.quantity}
-                                    onChange={handleInputChange}
+                                    // onChange={handleInputChange}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        const numericValue = parseFloat(value); // Convert to number
+                                        handleInputChange({
+                                            target: {
+                                                name: "quantity",
+                                                value: return_sale && numericValue > 0 ? -numericValue : numericValue,
+                                            },
+                                        });
+                                    }}
                                     inputRef={focusInputRef}
                                     sx={{
                                         mt: "0.5rem",
@@ -351,44 +383,44 @@ export default function CartItemModal() {
                                                     Rs.
                                                 </InputAdornment>
                                             ),
-                                            readOnly:true
+                                            readOnly: true,
                                         },
                                     }}
                                 />
                             </Grid>
                         )}
-{formState.product_type !== "reload" && (
-                        <Grid size={6}>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                name="discount"
-                                label="Discount"
-                                variant="outlined"
-                                required
-                                value={formState.discount}
-                                onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                Rs.
-                                            </InputAdornment>
-                                        ),
-                                    },
-                                }}
-                            />
-                        </Grid>
+                        {formState.product_type !== "reload" && (
+                            <Grid size={6}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="discount"
+                                    label="Discount"
+                                    variant="outlined"
+                                    required
+                                    value={formState.discount}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem" },
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    Rs.
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+                            </Grid>
                         )}
                         <Grid size={6}>
                             <TextField
@@ -413,7 +445,8 @@ export default function CartItemModal() {
                                         shrink: true,
                                     },
                                     input: {
-                                        readOnly: formState.product_type === "reload", //Make cost un editable if reload enabled
+                                        readOnly:
+                                            formState.product_type === "reload", //Make cost un editable if reload enabled
                                         startAdornment: (
                                             <InputAdornment position="start">
                                                 Rs.
@@ -454,13 +487,13 @@ export default function CartItemModal() {
                     </Button>
 
                     {formState.quantity > 0 && (
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{ paddingY: "10px", fontSize: "1.2rem" }}
-                        type="button"
-                        color={'error'}
-                        onClick={(e) => {
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                            type="button"
+                            color={"error"}
+                            onClick={(e) => {
                                 // Update the quantity to a negative value before submitting the form
                                 const updatedFormState = {
                                     ...formState,
@@ -472,12 +505,11 @@ export default function CartItemModal() {
 
                                 // Close the form or dialog
                                 handleClose();
-                        }}
-                    >
-                        RETURN
-                    </Button>
+                            }}
+                        >
+                            RETURN
+                        </Button>
                     )}
-
                 </DialogActions>
             </Dialog>
         </React.Fragment>
