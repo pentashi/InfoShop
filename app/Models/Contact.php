@@ -61,4 +61,8 @@ class Contact extends Model
             ])
             ->log('Increased balance from ' . $previousBalance . ' to ' . $this->balance);
     }
+
+    public function quotations() {
+        return $this->hasMany(Quotation::class);
+    }
 }

@@ -360,10 +360,12 @@ class ReportController extends Controller
 
         $stores = Store::select('id', 'name')->get();
         $contacts = Contact::select('id', 'name', 'balance')->vendors()->get();
+        $contact = Contact::find($contact_id);
         return Inertia::render('Report/ContactReport', [
             'stores' => $stores,
             'report' => $report,
             'contacts' => $contacts,
+            'contact'=>$contact,
             'type' => 'vendor',
             'pageLabel' => 'Vendor Report',
             'previousCredits' => $previousCredits,

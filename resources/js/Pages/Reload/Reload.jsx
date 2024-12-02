@@ -135,7 +135,7 @@ export default function Reload({ reloads, transactionType }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height:'73vh'}}
             >
                 <DataGrid
                     rows={dataReloads?.data}

@@ -38,7 +38,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-import oneshopLogo from "./oneshop-logo.png";
+import infoshopLogo from '@/infoshop.png';
 const drawerWidth = 240;
 
 function AuthenticatedLayout({ header, children, ...props }) {
@@ -139,7 +139,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     justifyContent={"space-between"}
                     paddingLeft={"0.5rem"}
                 >
-                    <img src={oneshopLogo} className="h-8"></img>
+                    <img src={infoshopLogo} style={{height:'80px', objectFit:'contain'}}></img>
                 </Grid>
             </Toolbar>
             <Divider />

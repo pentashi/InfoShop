@@ -37,11 +37,21 @@ class ProductController extends Controller
             'product_batches.is_active',
             DB::raw("COALESCE(product_stocks.quantity, '0') AS quantity"),
             'product_stocks.store_id',
-            'products.created_at',
-            'products.updated_at'
+            'products.alert_quantity',
         )
             ->leftJoin('products', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id'); // Join with product_stocks using batch_id
+
+        // Apply dynamic alert_quantity filter
+        if (!empty($filters['alert_quantity'])) {
+            if ($filters['alert_quantity'] === 'alert') {
+                // Compare product_stocks.quantity with products.alert_quantity
+                $query->whereColumn('product_stocks.quantity', '<=', 'products.alert_quantity');
+            } else {
+                // Use the provided alert_quantity value
+                $query->where('product_stocks.quantity', '<=', $filters['alert_quantity']);
+            }
+        }
 
         // Apply filters based on the status
         if (isset($filters['status']) && $filters['status'] == 1) {
@@ -72,7 +82,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['store', 'search_query', 'status']);
+        $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity','per_page']);
 
         $products = $this->getProducts($filters);
         $stores = Store::select('id', 'name')->get();
@@ -88,8 +98,11 @@ class ProductController extends Controller
 
     public function create()
     {
+        $incrementValue = Setting::where('meta_key', 'product_code_increment')->value('meta_value');
+        $incrementValue = $incrementValue ?: 1000;
+
         $lastProduct = Product::latest('id')->first();
-        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + 1000 + 1) : 1001;
+        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : 1001;
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
 
@@ -281,6 +294,7 @@ class ProductController extends Controller
             'product_batches.price',
             'product_batches.id AS batch_id',
             DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity"),
+            DB::raw("COALESCE(product_stocks.quantity, 0) AS stock_quantity"),
             'products.meta_data',
             'products.product_type'
         )
@@ -368,14 +382,14 @@ class ProductController extends Controller
         $batch = ProductBatch::where('product_id', $product_id)
             ->where('batch_number', $batchNumber)
             ->first();
-        
+
         $product = Product::find($product_id);
 
         $status = 'new'; // Default to 'new' batch
         $message = 'New batch created'; // Default message
         $batchResponse = null;
 
-        if ($batch && $product->product_type=='simple') {
+        if ($batch && $product->product_type == 'simple') {
             if ($batch->cost == $cost) {
                 // Same cost and batch, set to existing
                 $status = 'existing';
@@ -392,7 +406,7 @@ class ProductController extends Controller
         return response()->json([
             'message' => $message,
             'status' =>  $status,
-            'batch' =>$batchResponse,
+            'batch' => $batchResponse,
         ]);
     }
 

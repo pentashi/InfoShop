@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Head } from "@inertiajs/react";
 import {
     Button,
@@ -21,10 +21,10 @@ import { styled } from "@mui/material/styles";
 import numeral from "numeral";
 import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
+import ejs from 'ejs';
 
 export default function Reciept({ sale, salesItems, settings, user_name }) {
     const contentRef = useRef(null);
-
     const reactToPrintFn = useReactToPrint({ contentRef });
 
     const RecieptContainer = styled(Paper)(({ theme }) => ({

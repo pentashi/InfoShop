@@ -127,7 +127,6 @@ const productColumns = (handleProductEdit) => [
             </Button>
         ),
     },
-    { field: "created_at", headerName: "Created At" },
     {
         field: "is_featured",
         headerName: "Featured",
@@ -172,6 +171,8 @@ export default function Product({ products, stores }) {
         store: 0,
         status: 1,
         search_query: "",
+        alert_quantity:'',
+        per_page:100,
     });
 
     const handleProductEdit = (product, type) => {
@@ -282,6 +283,21 @@ export default function Product({ products, stores }) {
                         </Select>
                     </FormControl>
                     </Grid>
+
+                    <Grid size={{xs:6, sm:1}}>
+                        <TextField
+                            value={filters.alert_quantity}
+                            label="Alert Qty"
+                            onChange={handleFilterChange}
+                            placeholder="Alert Qty"
+                            name="alert_quantity"
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                        />
+                    </Grid>
                     
                     <TextField
                     sx={{minWidth:'300px', width: { xs: '100%', sm: 'auto' }}}
@@ -292,7 +308,6 @@ export default function Product({ products, stores }) {
                           value={filters.search_query}
                           onChange={handleFilterChange}
                           placeholder="Barcode or Name"
-                        required
                         onFocus={(event) => {
                             event.target.select();
                         }}
@@ -346,6 +361,21 @@ export default function Product({ products, stores }) {
                 </Box>
                 <Grid size={12} spacing={2} container justifyContent={"end"} alignItems={'center'}>
                     <Chip size="large" label={'Total Items :'+dataProducts.total} color="primary" />
+                    <TextField
+                      label="Per page"
+                      value={filters.per_page}
+                      onChange={handleFilterChange}
+                      name="per_page"
+                      select
+                      size="small"
+                      sx={{minWidth:'100px'}}
+                    >
+                        <MenuItem value={100}>100</MenuItem>
+                        <MenuItem value={200}>200</MenuItem>
+                        <MenuItem value={300}>300</MenuItem>
+                        <MenuItem value={400}>400</MenuItem>
+                        <MenuItem value={500}>500</MenuItem>
+                    </TextField>
                 <CustomPagination
                     dataLinks={dataProducts?.links}
                     refreshTable={refreshProducts}

@@ -22,7 +22,6 @@ const columns = (handleRowClick) => [
         headerName: "ID",
         width: 80,
         renderCell: (params) => {
-            // Format the date to 'YYYY-MM-DD'
             return "#" + params.value.toString().padStart(4, "0");
         },
     },
@@ -31,7 +30,6 @@ const columns = (handleRowClick) => [
         headerName: "No",
         width: 150,
         renderCell: (params) => {
-            // Format the date to 'YYYY-MM-DD'
             return "#" + params.value.toString().padStart(4, "0");
         },
     },
@@ -289,7 +287,7 @@ export default function Sale({ sales, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '70vh' }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '75vh' }}
             >
                 <DataGrid
                     rows={dataSales.data}

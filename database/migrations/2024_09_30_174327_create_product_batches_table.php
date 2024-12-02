@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('product_batches', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id'); // Using unsignedInteger for product_id
+            $table->unsignedBigInteger('contact_id')->nullable();
             $table->string('batch_number')->default('DEFAULT'); // Default batch code
             $table->date('expiry_date')->nullable(); // Nullable expiry date
             $table->decimal('cost', 10, 2); // Cost price
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('contact_id')->references('id')->on('contacts');
         });
     }
 

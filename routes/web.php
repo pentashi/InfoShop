@@ -92,6 +92,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/settings/quote-template', [SettingController::class, 'quoteTemplate']);
+    Route::post('/settings/save-quote-template', [SettingController::class, 'updateTemplate']);
 
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
@@ -112,7 +114,6 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{vendor}/vendor-pending',[ReportController::class, 'getVendorPendingReport']);
     Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
     Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
-    
 
     Route::get('/reloads',[ReloadController::class, 'index'])->name('expenses.index');
 

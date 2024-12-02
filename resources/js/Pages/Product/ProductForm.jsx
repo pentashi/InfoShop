@@ -86,7 +86,7 @@ export default function Product({ product, collection, product_code }) {
         brand_id: "",
         category_id: "",
         product_type: "simple",
-        fixed_commission:0,
+        fixed_commission: 0,
     });
 
     // Handle input changes
@@ -311,94 +311,87 @@ export default function Product({ product, collection, product_code }) {
                             Stock
                         </Typography>
                     </Box>
-                    {!product && (
-                        <Box className="sm:columns-1 md:columns-5 xs:columns-2 mb-3 mt-4">
-                            {/* Cost */}
-                            <div className="mb-3">
-                                <TextField
-                                    label="Cost"
-                                    id="cost"
-                                    name="cost"
-                                    type="number"
-                                    fullWidth
-                                    required
-                                    step={0.5}
-                                    slotProps={{
-                                        input: {
-                                            step: 0.5,
-                                        },
-                                    }}
-                                    value={productFormData.cost}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Price */}
-                            <div className="mb-3">
-                                <TextField
-                                    label="Price"
-                                    id="price"
-                                    name="price"
-                                    type="number"
-                                    fullWidth
-                                    required
-                                    slotProps={{
-                                        input: {
-                                            min: 0,
-                                        },
-                                    }}
-                                    value={productFormData.price}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Quantity */}
-                            <div className="mb-3">
-                                <TextField
-                                    label="Quantity"
-                                    id="quantity"
-                                    name="quantity"
-                                    type="number"
-                                    fullWidth
-                                    required
-                                    step={0.5}
-                                    slotProps={{
-                                        input: {
-                                            // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                            step: 0.5,
-                                        },
-                                    }}
-                                    value={productFormData.quantity}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <TextField
-                                    label="Batch number"
-                                    id="batch-number"
-                                    name="batch_number"
-                                    fullWidth
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                    adapterLocale="en-gb"
-                                >
-                                    <DatePicker
-                                        name="expiry_date"
-                                        label="Expiry Date"
-                                        className="w-full"
-                                    />
-                                </LocalizationProvider>
-                            </div>
-                        </Box>
-                    )}
-
                     <Grid container spacing={2}>
-                        <Grid size={2} className="mb-3">
+                        {!product && (
+                            <>
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Cost"
+                                        id="cost"
+                                        name="cost"
+                                        type="number"
+                                        fullWidth
+                                        required
+                                        step={0.5}
+                                        slotProps={{
+                                            input: {
+                                                step: 0.5,
+                                            },
+                                        }}
+                                        value={productFormData.cost}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Price"
+                                        id="price"
+                                        name="price"
+                                        type="number"
+                                        fullWidth
+                                        required
+                                        slotProps={{
+                                            input: {
+                                                min: 0,
+                                            },
+                                        }}
+                                        value={productFormData.price}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Quantity"
+                                        id="quantity"
+                                        name="quantity"
+                                        type="number"
+                                        fullWidth
+                                        required
+                                        step={0.5}
+                                        slotProps={{
+                                            input: {
+                                                // startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                                step: 0.5,
+                                            },
+                                        }}
+                                        value={productFormData.quantity}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Batch number"
+                                        id="batch-number"
+                                        name="batch_number"
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <LocalizationProvider
+                                        dateAdapter={AdapterDayjs}
+                                        adapterLocale="en-gb"
+                                    >
+                                        <DatePicker
+                                            name="expiry_date"
+                                            label="Expiry Date"
+                                            className="w-full"
+                                        />
+                                    </LocalizationProvider>
+                                </Grid>
+                            </>
+                        )}
+
+                        <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                             <ToggleButtonGroup
                                 color="primary"
                                 value={manageStock}
@@ -430,7 +423,7 @@ export default function Product({ product, collection, product_code }) {
                             </ToggleButtonGroup>
                         </Grid>
 
-                        <Grid size={2} className="mb-3">
+                        <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                             <TextField
                                 label="Alert Quantity"
                                 id="alert-quantity"
@@ -442,7 +435,7 @@ export default function Product({ product, collection, product_code }) {
                             />
                         </Grid>
 
-                        <Grid size={2}>
+                        <Grid size={{ xs: 6, sm: 2 }}>
                             <TextField
                                 label="Product Type"
                                 name="product_type"
@@ -457,19 +450,21 @@ export default function Product({ product, collection, product_code }) {
                                 <MenuItem value={"custom"}>CUSTOM</MenuItem>
                             </TextField>
                         </Grid>
-                        {productFormData.product_type=='reload'&&(
-                            <Grid size={2}>
-                            <TextField
-                                label="Fixed Commission"
-                                name="fixed_commission"
-                                type="number"
-                                fullWidth
-                                required
-                                onChange={handleChange}
-                                value={productFormData.fixed_commission}
-                            />
-                        </Grid>
+
+                        {productFormData.product_type == 'reload' && (
+                            <Grid size={{ xs: 6, sm: 2 }} className={'mb-3'}>
+                                <TextField
+                                    label="Fixed Commission"
+                                    name="fixed_commission"
+                                    type="number"
+                                    fullWidth
+                                    required
+                                    onChange={handleChange}
+                                    value={productFormData.fixed_commission}
+                                />
+                            </Grid>
                         )}
+
                     </Grid>
 
                     <Divider></Divider>
@@ -477,33 +472,31 @@ export default function Product({ product, collection, product_code }) {
                         More Information
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1 }} className="pb-16 mt-4">
-                        <Grid container spacing={2}>
-                            <Grid size={{ xs: 12, md: 4 }}>
-                                <div className="mb-3">
-                                    <Autocomplete
-                                        disablePortal
-                                        // defaultValue={brandOptions.find(option => option.id === null)}
-                                        value={selectedBrand || null}
-                                        onChange={(event, newValue) => {
-                                            setSelectedBrand(newValue);
-                                        }}
-                                        getOptionLabel={(options) =>
-                                            options.label
-                                        }
-                                        options={brandOptions}
-                                        fullWidth
-                                        id="brand"
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Brand"
-                                            />
-                                        )}
+                    <Grid container spacing={2} className="mt-3">
+                        <Grid size={{ xs: 6, sm: 2 }}>
+                            <Autocomplete
+                                disablePortal
+                                // defaultValue={brandOptions.find(option => option.id === null)}
+                                value={selectedBrand || null}
+                                onChange={(event, newValue) => {
+                                    setSelectedBrand(newValue);
+                                }}
+                                getOptionLabel={(options) =>
+                                    options.label
+                                }
+                                options={brandOptions}
+                                fullWidth
+                                id="brand"
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Brand"
                                     />
-                                </div>
-                                <div className="mb-3">
-                                    <Autocomplete
+                                )}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 6, sm: 2 }}>
+                        <Autocomplete
                                         disablePortal
                                         value={selectedCategory || null}
                                         onChange={(event, newValue) => {
@@ -522,21 +515,30 @@ export default function Product({ product, collection, product_code }) {
                                             />
                                         )}
                                     />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 8 }}>
+                        <TextField
+                                        label="Product Description"
+                                        id="product-description"
+                                        name="description"
+                                        fullWidth
+                                        value={productFormData.description}
+                                        onChange={handleChange}
+                                    />
+                        </Grid>
+                    </Grid>
+
+                    <Box sx={{ flexGrow: 1 }} className="pb-16 mt-4">
+                        <Grid container spacing={2}>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <div className="mb-3">
+                                    
                                 </div>
                             </Grid>
                             <Grid size={{ xs: 12, md: 8 }}>
                                 {/* Product Description */}
                                 <div className="mb-3">
-                                    <TextField
-                                        label="Product Description"
-                                        id="product-description"
-                                        name="description"
-                                        multiline
-                                        rows={4}
-                                        fullWidth
-                                        value={productFormData.description}
-                                        onChange={handleChange}
-                                    />
+                                    
                                 </div>
                             </Grid>
 

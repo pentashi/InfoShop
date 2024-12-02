@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         Store::create([
-            'name' => 'One Shop store',
-            'address'=>'Your address',
+            'name' => 'INFO SHOP',
+            'address'=>'Main Street, Oddamavadi',
             'contact_number'=>'00000001',
-            'sale_prefix'=>'OS',
+            'sale_prefix'=>'IS',
             'current_sale_number'=>0,
         ]);
 

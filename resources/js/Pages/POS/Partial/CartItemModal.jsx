@@ -132,7 +132,7 @@ export default function CartItemModal() {
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {formState.name}
+                    {formState.name} {formState.stock_quantity && formState.stock_quantity !== '' ? ` | HAND QTY. ${formState.stock_quantity}` : ''}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -432,7 +432,7 @@ export default function CartItemModal() {
                                 variant="outlined"
                                 required
                                 value={formState.cost}
-                                onChange={handleInputChange}
+                                // onChange={handleInputChange}
                                 sx={{
                                     mt: "0.5rem",
                                     input: { fontSize: "1rem" },

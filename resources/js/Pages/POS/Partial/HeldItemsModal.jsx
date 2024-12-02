@@ -2,11 +2,8 @@ import React, { useState, useEffect} from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-import Button from "@mui/material/Button"
 import { useSales as useCart } from "@/Context/SalesContext";
 import dayjs from "dayjs";
 
@@ -40,8 +37,10 @@ export default function HeldItemsModal({
     };
 
     useEffect(() => {
-        retrieveHeldCartKeys(); // Load held cart keys into state on component mount
-    }, [heldCartKeys]);
+        if (modalOpen) {
+            retrieveHeldCartKeys(); // Only fetch keys when modal is open
+        }
+    }, [modalOpen]);
 
     return (
         <>
