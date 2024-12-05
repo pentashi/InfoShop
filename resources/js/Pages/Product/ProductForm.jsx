@@ -25,6 +25,7 @@ import Grid from "@mui/material/Grid2";
 import "dayjs/locale/en-gb";
 import Swal from "sweetalert2";
 import Hotkeys from "react-hot-keys";
+import Select2 from "react-select";
 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -53,7 +54,7 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export default function Product({ product, collection, product_code }) {
+export default function Product({ product, collection, product_code, contacts }) {
     // Filter and map the collection
     const brandOptions = collection
         .filter((item) => item.collection_type === "brand")
@@ -368,6 +369,7 @@ export default function Product({ product, collection, product_code }) {
                                         onChange={handleChange}
                                     />
                                 </Grid>
+                                
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Batch number"
@@ -375,6 +377,24 @@ export default function Product({ product, collection, product_code }) {
                                         name="batch_number"
                                         fullWidth
                                     />
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 4 }} className="mb-3">
+                                <Select2
+                                    className="w-full"
+                                    placeholder="Select a supplier..."
+                                    name="contact_id"
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            height: "55px",
+                                        }),
+                                    }}
+                                    options={contacts} // Options to display in the dropdown
+                                    // onChange={(selectedOption) => handleChange(selectedOption)}
+                                    isClearable // Allow the user to clear the selected option
+                                    getOptionLabel={(option) => option.name}
+                                    getOptionValue={(option) => option.id}
+                                ></Select2>
                                 </Grid>
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <LocalizationProvider

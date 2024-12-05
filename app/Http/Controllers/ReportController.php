@@ -88,7 +88,7 @@ class ReportController extends Controller
 
     public function getSalesReport(Request $request)
     {
-        $start_date = $request->input('start_date', Carbon::now()->subMonth()->toDateString());
+        $start_date = $request->input('start_date', Carbon::now()->toDateString());
         $end_date = $request->input('end_date', Carbon::today()->toDateString());
 
         // Filter Sales within the specified date range

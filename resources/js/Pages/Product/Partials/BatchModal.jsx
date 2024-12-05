@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import Select2 from "react-select";
 
 import Swal from "sweetalert2";
 
@@ -14,7 +15,8 @@ export default function BatchModal({
     setBatchModalOpen,
     selectedBatch,
     refreshProducts,
-    selectedProduct
+    selectedProduct,
+    contacts
 }) {
 
     const initialFormState = {
@@ -25,6 +27,7 @@ export default function BatchModal({
         batch_number:"",
         expiry_date:'',
         is_active:true,
+        contact_id:'',
     }
 
     const [isNew, setIsNew] = useState(false)
@@ -80,22 +83,6 @@ export default function BatchModal({
         }).finally(() => {
             setLoading(false); // Reset submitting state
         });
-
-        // if (response.status === 200 || response.status === 201) {
-           
-        //     Swal.fire({
-        //         title: "Success!",
-        //         text: response.data.message,
-        //         icon: "success",
-        //         showConfirmButton: false,
-        //         timer: 2000,
-        //         timerProgressBar: true,
-        //     });
-
-        //     handleClose();
-        // } else {
-        //     console.error('Error: Response not successful', response);
-        // }
     };
 
     // Function to update form state based on a batch object
@@ -109,6 +96,7 @@ export default function BatchModal({
             expiry_date: batch.expiry_date,
             is_active: batch.is_active === 1 ? true : false,
             is_featured: batch.is_featured === 1 ? true : false,
+            contact_id: batch.contact_id,
         }));
     };
 
@@ -116,6 +104,7 @@ export default function BatchModal({
     useEffect(() => {
 
         if (selectedBatch) {
+            console.log(selectedBatch);
             updateFormStateFromBatch(selectedBatch); // Reuse the function to update state
             setIsNew(false);
         }
@@ -145,6 +134,14 @@ export default function BatchModal({
             }
         });
     };
+
+    const handleSelectChange = (selectedOption) => {
+        // `selectedOption` will contain the selected option object (e.g., { id: 1, name: 'Supplier 1' })
+        setFormState({
+          ...formState,
+          contact_id: selectedOption ? selectedOption.id : null, // Set contact_id to the selected option's id, or null if cleared
+        });
+      };
 
     return (
         <React.Fragment>
@@ -305,6 +302,31 @@ export default function BatchModal({
                                     },
                                 }}
                             />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 12 }} sx={{zIndex:100,}}>
+                        <Select2
+                                    className="w-full"
+                                    placeholder="Select a supplier..."
+                                    name="contact_id"
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            height: "55px",
+                                            zIndex:100,
+                                        }),
+                                        menuPortal: (baseStyles) => ({
+                                            ...baseStyles,
+                                            zIndex: 9999, // Set z-index for the dropdown menu to ensure it appears on top of other elements
+                                          }),
+                                    }}
+                                    value={contacts.find((contact) => contact.id === formState.contact_id) || null}
+                                    onChange={(selectedOption) => handleSelectChange(selectedOption)}
+                                    options={contacts} // Options to display in the dropdown
+                                    // onChange={(selectedOption) => handleChange(selectedOption)}
+                                    isClearable // Allow the user to clear the selected option
+                                    getOptionLabel={(option) => option.name}
+                                    getOptionValue={(option) => option.id}
+                                ></Select2>
                         </Grid>
                         <Grid
                             size={6}

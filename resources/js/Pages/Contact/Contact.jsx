@@ -188,6 +188,7 @@ export default function Contact({contacts, type, stores}) {
                       startIcon={<AddIcon />}
                       onClick={handleClickOpen}
                       fullWidth
+                      color="success"
                   >
                       Add {type[0].toUpperCase() + type.slice(1)}
                   </Button>

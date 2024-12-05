@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Collection;
+use App\Models\Contact;
 use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\ProductStock;
 use App\Models\Store;
 use App\Models\Setting;
+use Illuminate\Support\Facades\File;
 
 use Illuminate\Support\Facades\DB;
 
@@ -38,32 +40,27 @@ class ProductController extends Controller
             DB::raw("COALESCE(product_stocks.quantity, '0') AS quantity"),
             'product_stocks.store_id',
             'products.alert_quantity',
+            'product_batches.contact_id',
         )
             ->leftJoin('products', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id'); // Join with product_stocks using batch_id
 
         // Apply dynamic alert_quantity filter
         if (!empty($filters['alert_quantity'])) {
-            if ($filters['alert_quantity'] === 'alert') {
-                // Compare product_stocks.quantity with products.alert_quantity
-                $query->whereColumn('product_stocks.quantity', '<=', 'products.alert_quantity');
-            } else {
-                // Use the provided alert_quantity value
                 $query->where('product_stocks.quantity', '<=', $filters['alert_quantity']);
-            }
+        }
+
+        if(isset($filters['store']) && !empty($filters['store']!=0)){
+                $query->where('product_stocks.store_id', $filters['store']);
         }
 
         // Apply filters based on the status
-        if (isset($filters['status']) && $filters['status'] == 1) {
-            // If status is 1, filter by store_id and status
-            $query->where('product_batches.is_active', 1); // Assuming 1 means active
-            if ($filters['store'] != 0) {
-                $query->where('product_stocks.store_id', $filters['store']);
-            }
-        } else if (isset($filters['status'])) {
-            // If status is not 1, only filter by status
-            $query->where('product_batches.is_active', $filters['status']);
-        } else $query->where('product_batches.is_active', 1);
+        if (isset($filters['status']) && $filters['status'] == 0) {
+            $query->where('product_batches.is_active', 0);
+        }
+        else if(isset($filters['status']) && $filters['status'] == 'alert'){
+            $query->whereColumn('product_stocks.quantity', '<=', 'products.alert_quantity');
+        }else $query->where('product_batches.is_active', 1);
 
         // Apply search query if provided
         if (!empty($filters['search_query'])) {
@@ -86,13 +83,14 @@ class ProductController extends Controller
 
         $products = $this->getProducts($filters);
         $stores = Store::select('id', 'name')->get();
-
+        $contacts = Contact::select('id','name')->vendors()->get();
         // Render the 'Products' component with data
         return Inertia::render('Product/Product', [
             'products' => $products,
             'stores' => $stores,
             'pageLabel' => 'Products',
             'remember' => true,
+            'contacts'=>$contacts,
         ]);
     }
 
@@ -105,12 +103,13 @@ class ProductController extends Controller
         $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : 1001;
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
-
+        $contacts = Contact::select('id','name')->vendors()->get();
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
             'product_code' => $nextItemCode,
             'pageLabel' => 'Product Details',
+            'contacts'=>$contacts,
         ]);
     }
 
@@ -159,6 +158,8 @@ class ProductController extends Controller
             'category_id' => 'nullable|exists:collections,id', // Assuming categories table exists
         ]);
 
+        // dd($request);
+
         $imageUrl = null;
         if ($request->hasFile('featured_image')) {
             $folderPath = 'uploads/' . date('Y') . '/' . date('m');
@@ -196,12 +197,14 @@ class ProductController extends Controller
             'expiry_date' => $request->expiry_date,
             'cost' => $request->cost,
             'price' => $request->price,
+            'contact_id'=>$request->contact_id,
         ]);
 
         ProductStock::create([
             'store_id' => 1,
             'batch_id' => $productBatch->id, // Use the batch ID from the created ProductBatch
             'quantity' => $request->quantity,
+            'product_id'=> $product->id,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
@@ -364,6 +367,7 @@ class ProductController extends Controller
             'batch_number' => $validatedData['new_batch'], // Map 'new_batch' to 'batch_number'
             'cost' => $validatedData['cost'],
             'price' => $validatedData['price'],
+            'contact_id'=>$request->contact_id,
         ]);
 
         return response()->json([
@@ -432,6 +436,7 @@ class ProductController extends Controller
             'expiry_date' => $request->expiry_date,
             'is_active' => $request->is_active ?? 0,
             'is_featured' => $request->is_featured ?? 0,
+            'contact_id'=>$request->contact_id,
         ]);
 
         return response()->json([
@@ -450,6 +455,9 @@ class ProductController extends Controller
 
     public function getBarcode($batch_id)
     {
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+
         $product = ProductBatch::select('products.name', 'products.barcode', 'product_batches.price')
             ->join('products', 'product_batches.product_id', '=', 'products.id')
             ->where('product_batches.id', $batch_id)
@@ -460,12 +468,20 @@ class ProductController extends Controller
             'show_barcode_product_price',
             'show_barcode_product_name',
             'barcode_settings',
+            'shop_logo',
         ])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+
+        $templateName = 'barcode-template.html'; // or get this from the request
+        $templatePath = storage_path("app/public/templates/{$templateName}");
+        $content = File::exists($templatePath) ? File::get($templatePath) : '';
+//dd($settingArray);
         // Render the 'Products' component with data
         return Inertia::render('Product/Barcode', [
             'product' => $product,
             'barcode_settings' => $settingArray,
+            'template'=>$content,
         ]);
     }
 }

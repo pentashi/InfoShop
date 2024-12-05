@@ -81,6 +81,105 @@ class SettingController extends Controller
             'salesItems'=>$salesItems,
             'settings'=>$settingArray,
             'user_name'=>$user->name,
+            'template_name'=>$templateName,
+        ]);
+    }
+
+    public function receiptTemplate()
+    {
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+        $id=2;
+
+        $settings = Setting::all();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $sale = \App\Models\Sale::select(
+            'sales.id',
+            'contact_id',            // Customer ID
+            'sale_date',              // Sale date
+            'total_amount',           // Total amount (Total amount after discount [net_total - discount])
+            'discount',                // Discount
+            'amount_received',         // Amount received
+            'profit_amount',          // Profit amount
+            'status',                  // Sale status
+            'stores.address',
+            'contacts.name', // Customer name from contacts
+            'sales.created_by',
+            'invoice_number',
+            'stores.sale_prefix',
+            'stores.contact_number',
+            'sales.created_at'
+        )
+        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
+        ->join('stores', 'sales.store_id','=','stores.id')
+        ->where('sales.id',$id)
+        ->first();
+
+        $user = \App\Models\User::find($sale->created_by);
+
+        $salesItems = \App\Models\SaleItem::select(
+            'sale_items.quantity',
+            'sale_items.unit_price',
+            'sale_items.discount',
+            'products.name',
+        )
+        ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
+        ->where('sale_items.sale_id',$id)
+        ->get();
+
+        $templateName = 'receipt-template.html'; // or get this from the request
+        $templatePath = storage_path("app/public/templates/{$templateName}");
+        $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        // $templatePath = resource_path('views/templates/quote-template.html');
+        // $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        return Inertia::render('Settings/QuoteTemplate', [
+            'pageLabel' => 'Receipt Template',
+            'template' => $content,
+            'sale'=>$sale,
+            'salesItems'=>$salesItems,
+            'settings'=>$settingArray,
+            'user_name'=>$user->name,
+            'template_name'=>$templateName,
+        ]);
+    }
+
+    public function barcodeTemplate()
+    {
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+
+        $settings = Setting::whereIn('meta_key', [
+            'show_barcode_store',
+            'show_barcode_product_price',
+            'show_barcode_product_name',
+            'barcode_settings',
+            'shop_logo',
+        ])->get();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+
+        $templateName = 'barcode-template.html'; // or get this from the request
+        $templatePath = storage_path("app/public/templates/{$templateName}");
+        $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        $product = [
+            'name' => 'ABC Product - XML',       // Product name
+            'barcode' => '8718719850268',    // Product barcode
+            'price' => 1000           // Price from the product batch
+        ];
+
+        // $templatePath = resource_path('views/templates/quote-template.html');
+        // $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        return Inertia::render('Settings/BarcodeTemplate', [
+            'pageLabel' => 'Barcode Template',
+            'template' => $content,
+            'barcode_settings'=>$settingArray,
+            'product' => $product,
+            'template_name'=>$templateName,
         ]);
     }
 
@@ -88,9 +187,11 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
             'template' => 'required|string',
+            'template_name'=>'required'
         ]);
 
-        $templateName = 'quote-template.html'; // or get this from the request
+        //$templateName = 'quote-template.html'; // or get this from the request
+        $templateName = $request->template_name;
         $templatePath = storage_path("app/public/templates/{$templateName}");
         // $templatePath = storage_path('views/templates/quote-template.html');
         File::put($templatePath, $validated['template']);

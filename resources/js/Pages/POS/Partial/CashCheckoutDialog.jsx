@@ -258,6 +258,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         type="submit"
                         // onClick={handleClose}
                         disabled={
+                            !amountRecieved ||
                             // (amountRecieved - (cartTotal - discount)) < 0 || loading
                             (cartTotal < 0 && amountRecieved === 0) || // Disable if refund and amount received is 0
                             (cartTotal < 0 && amountRecieved != (cartTotal - discount)) || // Disable if refund and amount received doesn't match cart total minus discount

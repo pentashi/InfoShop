@@ -21,7 +21,7 @@ import { styled } from "@mui/material/styles";
 import numeral from "numeral";
 import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
-import ejs from 'ejs';
+import ejs from "ejs";
 
 export default function Reciept({ sale, salesItems, settings, user_name }) {
     const contentRef = useRef(null);
@@ -31,8 +31,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         width: "500px",
         padding: theme.spacing(3),
         textAlign: "center",
-        '@media print': {
-          boxShadow: 'none', // Remove shadow for print
+        "@media print": {
+            boxShadow: "none", // Remove shadow for print
         },
     }));
 
@@ -41,8 +41,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         fontFamily: settings.sale_print_font,
         textAlign: "center",
         boxShadow: "none",
-        '@media print': {
-          boxShadow: 'none', // Remove shadow for print
+        "@media print": {
+            boxShadow: "none", // Remove shadow for print
         },
     }));
 
@@ -142,6 +142,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     sx={{
                                         fontSize: "20px",
                                         fontFamily: settings.sale_print_font,
+                                        fontWeight:'bold'
                                     }}
                                     color="initial"
                                 >
@@ -179,7 +180,11 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     sx={styles.receiptTopText}
                                     color="initial"
                                 >
-                                    Date: {dayjs(sale.created_at).format('DD-MMM-YYYY, h:mm A')} By: {user_name}
+                                    Date:{" "}
+                                    {dayjs(sale.created_at).format(
+                                        "DD-MMM-YYYY, h:mm A"
+                                    )}{" "}
+                                    By: {user_name}
                                 </Typography>
                                 <Typography
                                     sx={styles.receiptTopText}
@@ -208,16 +213,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     sx={styles.itemsHeaderTyp}
                                                     color="initial"
                                                 >
-                                                    #
-                                                </Typography>
-                                                {/* Add header for index */}
-                                            </TableCell>
-                                            <TableCell sx={styles.itemsHeader}>
-                                                <Typography
-                                                    sx={styles.itemsHeaderTyp}
-                                                    color="initial"
-                                                >
-                                                    Name
+                                                    Item
                                                 </Typography>
                                             </TableCell>
                                             <TableCell
@@ -246,12 +242,12 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 sx={styles.itemsHeader}
                                                 align="right"
                                             >
-                                                {/* <Typography
+                                                <Typography
                                                     sx={styles.itemsHeaderTyp}
                                                     color="initial"
                                                 >
                                                     Disc.
-                                                </Typography> */}
+                                                </Typography>
                                             </TableCell>
                                             <TableCell
                                                 sx={styles.itemsHeader}
@@ -268,89 +264,97 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     </TableHead>
                                     <TableBody>
                                         {salesItems.map((item, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
+                                            <>
+                                                {/* First Row: Product Name */}
+                                                <TableRow
+                                                    key={`name-row-${index}`}
                                                 >
-                                                    <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
+                                                    <TableCell
+                                                        colSpan={5}
+                                                        sx={{...styles.itemsCells, borderBottom:'none', paddingBottom:0}}
                                                     >
-                                                        {index + 1}.
-                                                        {/* Display the index (starting from 1) */}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
+                                                        <Typography
+                                                            sx={
+                                                                styles.itemsCellsTyp
+                                                            }
+                                                            color="initial"
+                                                        >
+                                                            <strong> {index + 1}.{item.name} {item.account_number?'| '+item.account_number:''}</strong>
+                                                           
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+
+                                                <TableRow
+                                                    key={`details-row-${index}`}
                                                 >
-                                                    <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
+                                                    <TableCell
+                                                        sx={styles.itemsCells}
+                                                        align="right"
+                                                        colSpan={2}
                                                     >
-                                                        {item.name}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
-                                                    align="right"
-                                                >
-                                                    <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
+                                                        <Typography
+                                                            sx={
+                                                                styles.itemsCellsTyp
+                                                            }
+                                                            color="initial"
+                                                        >
+                                                            x{numeral(
+                                                                item.quantity
+                                                            ).format("0,0.00")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={styles.itemsCells}
+                                                        align="right"
                                                     >
-                                                        {numeral(item.quantity).format('0,0.00')}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
-                                                    align="right"
-                                                >
-                                                    <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
+                                                        <Typography
+                                                            sx={
+                                                                styles.itemsCellsTyp
+                                                            }
+                                                            color="initial"
+                                                        >
+                                                            {numeral(
+                                                                item.unit_price -
+                                                                    item.discount
+                                                            ).format("0,0.00")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={styles.itemsCells}
+                                                        align="right"
                                                     >
-                                                        {numeral(item.unit_price-item.discount).format('0,0.00')}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
-                                                    align="right"
-                                                >
-                                                    {/* <Typography
+                                                        <Typography
                                                         sx={
                                                             styles.itemsCellsTyp
                                                         }
                                                         color="initial"
                                                     >
                                                         {numeral(item.discount).format('0,0')}
-                                                    </Typography> */}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.itemsCells}
-                                                    align="right"
-                                                >
-                                                    <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
-                                                    >
-                                                        {numeral(
-                                                            parseFloat(item.quantity) *
-                                                            (item.unit_price -
-                                                                item.discount)
-                                                        ).format('0,0.00')}  
                                                     </Typography>
-                                                </TableCell>
-                                            </TableRow>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={styles.itemsCells}
+                                                        align="right"
+                                                    >
+                                                        <Typography
+                                                            sx={
+                                                                styles.itemsCellsTyp
+                                                            }
+                                                            color="initial"
+                                                        >
+                                                            <strong>{numeral(
+                                                                parseFloat(
+                                                                    item.quantity
+                                                                ) *
+                                                                    (item.unit_price -
+                                                                        item.discount)
+                                                            ).format("0,0.00")}</strong>
+                                                            
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </>
                                         ))}
 
                                         {/* Spacer Row */}
@@ -367,7 +371,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={5}
+                                                colSpan={4}
                                                 align="right"
                                                 color="initial"
                                             >
@@ -396,17 +400,17 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         parseFloat(
                                                             sale.total_amount
                                                         ) +
-                                                        parseFloat(
-                                                            sale.discount
-                                                        )
-                                                    ).format('0,0.00')}
+                                                            parseFloat(
+                                                                sale.discount
+                                                            )
+                                                    ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={5}
+                                                colSpan={4}
                                                 align="right"
                                             >
                                                 <Typography
@@ -428,14 +432,17 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.{ numeral(sale.discount).format('0,0.00') }
+                                                    Rs.
+                                                    {numeral(
+                                                        sale.discount
+                                                    ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={5}
+                                                colSpan={4}
                                                 align="right"
                                             >
                                                 <Typography
@@ -460,14 +467,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     Rs.
                                                     {numeral(
                                                         sale.total_amount
-                                                    ).format('0,0.00')}
+                                                    ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={6}
+                                                colSpan={4}
                                                 align="right"
                                             >
                                                 <Typography
@@ -476,15 +483,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     }
                                                     color="initial"
                                                 >
-                                                   <br />
+                                                    <br />
                                                 </Typography>
                                             </TableCell>
-                                            
                                         </TableRow>
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={5}
+                                                colSpan={4}
                                                 align="right"
                                             >
                                                 <Typography
@@ -506,14 +512,17 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.{numeral(sale.amount_received).format('0,0.00')}
+                                                    Rs.
+                                                    {numeral(
+                                                        sale.amount_received
+                                                    ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
                                         <TableRow sx={{ border: "none" }}>
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
-                                                colSpan={5}
+                                                colSpan={4}
                                                 align="right"
                                             >
                                                 <Typography
@@ -540,10 +549,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         parseFloat(
                                                             sale.amount_received
                                                         ) -
-                                                        parseFloat(
-                                                            sale.total_amount
-                                                        )
-                                                    ).format('0,0.00')}
+                                                            parseFloat(
+                                                                sale.total_amount
+                                                            )
+                                                    ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
@@ -559,12 +568,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 }}
                             />
                             <Typography
-                                align="center"
                                 variant="body1"
                                 color="initial"
-                                sx={styles.receiptSummaryText}
+                                sx={{...styles.receiptSummaryText, textAlign:'start'}}
                             >
-                                {settings.sale_receipt_note}
+                                <div
+                        dangerouslySetInnerHTML={{ __html: settings.sale_receipt_note }}
+                    />
+                                {/* {settings.sale_receipt_note} */}
                             </Typography>
                         </RecieptPrintContainer>
                     </div>

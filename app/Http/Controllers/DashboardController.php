@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\Sale;
 use App\Models\Transaction;
 use App\Models\Expense;
+use App\Models\Setting;
 
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $imageUrl='';
+        if (app()->environment('production')) $imageUrl='public/';
+
+        $settings = Setting::where('meta_key','shop_logo')->first();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+
         $data['totalItems'] = number_format(Product::count());
         $data['soldItems'] = number_format(SaleItem::sum('quantity'));
         $data['totalQuantities']=number_format(ProductStock::sum('quantity'));
@@ -34,6 +42,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'pageLabel'=>'Dashboard',
             'data'=>$data,
+            'logo'=>$settings,
         ]);
     }
 

@@ -310,4 +310,10 @@ class POSController extends Controller
             return response()->json(['error' => $e], 500);
         }
     }
+
+    public function customerDisplay(){
+        return Inertia::render('POS/CustomerDisplay', [
+            
+        ]);
+    }
 }

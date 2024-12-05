@@ -2,33 +2,65 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid2";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import Editor from "@monaco-editor/react"; // Import Prism CSS for syntax highlighting
 import ejs from "ejs";
 import axios from "axios";
 import dayjs from "dayjs";
+import JsBarcode from "jsbarcode";
 
-export default function QuoteTemplate({
+export default function BarcodeTemplate({
     template,
-    sale,
-    salesItems,
-    settings,
-    user_name,
+    product,
+    barcode_settings,
     template_name,
 }) {
     const [code, setCode] = useState(template);
     const [renderedTemplate, setRenderedTemplate] = useState("");
 
+    const shop_name = usePage().props.settings.shop_name;
+
+    const parsedBarcodeSettings = barcode_settings.barcode_settings
+        ? JSON.parse(barcode_settings.barcode_settings)
+        : {};
+
+    const [settings] = useState({
+        containerHeight: parsedBarcodeSettings.container_height || "28mm",
+        storeFontSize: parsedBarcodeSettings.store_font_size || "0.8em",
+        priceFontSize: parsedBarcodeSettings.price_font_size || "0.8em",
+        priceMarginTop: parsedBarcodeSettings.price_margin_top || "-3px",
+        priceMarginBottom: parsedBarcodeSettings.price_margin_bottom || "-5px",
+        barcodeMarginTop: parsedBarcodeSettings.barcode_margin_top || "-10px",
+        barcodeHeight: parsedBarcodeSettings.barcode_height || 35,
+        barcodeFontSize: parsedBarcodeSettings.barcode_font_size || 14,
+        barcodeWidth: parsedBarcodeSettings.barcode_width || 1.5,
+        barcodeFormat: parsedBarcodeSettings.barcode_format || "CODE128",
+        productNameMarginTop:
+            parsedBarcodeSettings.product_name_margin_top || "-4px",
+        productNameFontSize:
+            parsedBarcodeSettings.product_name_font_size || "0.7em",
+    });
+
+    function generateBarcode() {
+        // Ensure that the barcode element is available before calling JsBarcode
+        JsBarcode("#barcode", product.barcode, {
+          format: settings.barcodeFormat,
+          width: settings.barcodeWidth,
+          height: settings.barcodeHeight,
+          fontSize: settings.barcodeFontSize,
+        });
+      }
+
     useEffect(() => {
         const fetchTemplateAndRender = async () => {
             try {
                 const data = {
-                    sale,
-                    salesItems,
+                    product,
                     settings,
-                    user_name,
+                    shop_name,
+                    barcode_settings,
                 };
 
                 // Render the EJS template with the fetched data
@@ -41,6 +73,12 @@ export default function QuoteTemplate({
 
         fetchTemplateAndRender();
     }, [code]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          generateBarcode(); // Call the barcode generation function
+        }, 500);
+    }, [renderedTemplate]);
 
     function handleEditorChange(value, event) {
         setCode(value);
@@ -69,7 +107,7 @@ export default function QuoteTemplate({
     return (
         <AuthenticatedLayout>
             <Head title="Settings" />
-            <Grid container justifyContent="flex-end" sx={{ mt: 1, mb: 1 }}>
+            <Grid container justifyContent="flex-start" sx={{ mt: 1, mb: 1 }}>
                 <Button
                     variant="contained"
                     type="button"
@@ -81,7 +119,7 @@ export default function QuoteTemplate({
             </Grid>
 
             <Grid container spacing={2}>
-                <Grid size={12}>
+                <Grid size={8}>
                     <Editor
                         height="85vh"
                         language="html"
@@ -97,7 +135,7 @@ export default function QuoteTemplate({
                         }}
                     />
                 </Grid>
-                <Grid size={12} sx={{ overflowY: "scroll" }}>
+                <Grid size={4}>
                     <div
                         className="quote-preview"
                         dangerouslySetInnerHTML={{ __html: renderedTemplate }}

@@ -97,7 +97,11 @@ const productColumns = (handleProductEdit) => [
         ),
     },
     { field: "cost", headerName: "Cost", width: 100, align:'right',headerAlign: 'right',},
-    { field: "price", headerName: "Price", width: 100, align:'right',headerAlign: 'right', },
+    { field: "price", headerName: "Price", width: 100, align:'right',headerAlign: 'right', 
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
     { field: "valuation", headerName: "Valuation", width: 100, align:'right',headerAlign: 'right',
         renderCell: (params) => {
             const price = params.row.cost;
@@ -160,12 +164,14 @@ const productColumns = (handleProductEdit) => [
     },
 ];
 
-export default function Product({ products, stores }) {
+export default function Product({ products, stores, contacts }) {
     const auth = usePage().props.auth.user;
     const [batchModalOpen, setBatchModalOpen] = useState(false);
     const [quantityModalOpen, setQuantityModalOpen] = useState(false)
     const [selectedProduct, setSelectedProduct] = useState(false);
     const [dataProducts, setDataProducts] = useState(products);
+    const [dataContacts, setContacts] = useState(contacts);
+    const [totalValuation, setTotalValuation] = useState(0)
 
     const [filters, setFilters] = useState({
         store: 0,
@@ -217,26 +223,17 @@ export default function Product({ products, stores }) {
         );
     };
 
-    const handleNextPage = () => {
-        if (dataProducts.next_page_url) {
-            loadMoreProducts(dataProducts.next_page_url); // Pass the next page URL
-        }
-    };
-    
-    const handlePreviousPage = () => {
-        if (dataProducts.prev_page_url) {
-            loadMoreProducts(dataProducts.prev_page_url); // Pass the previous page URL
-        }
-    };
-
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
     useEffect(() => {
-        // console.log(dataProducts);
-    })
+        const total = Object.values(dataProducts.data).reduce((total, product) => {
+            return total + product.cost * product.quantity;
+        }, 0);
+        setTotalValuation(total);
+    }, [dataProducts]);
 
     return (
         <AuthenticatedLayout>
@@ -280,6 +277,7 @@ export default function Product({ products, stores }) {
                         >
                             <MenuItem value={1}>Active</MenuItem>
                             <MenuItem value={0}>Inactive</MenuItem>
+                            <MenuItem value={'alert'}>Alert</MenuItem>
                         </Select>
                     </FormControl>
                     </Grid>
@@ -291,6 +289,7 @@ export default function Product({ products, stores }) {
                             onChange={handleFilterChange}
                             placeholder="Alert Qty"
                             name="alert_quantity"
+                            type="number"
                             slotProps={{
                                 inputLabel: {
                                     shrink: true,
@@ -327,7 +326,7 @@ export default function Product({ products, stores }) {
                     <FindReplaceIcon />
           </Button>
           <Link href="/products/create">
-                        <Button variant="contained" startIcon={<AddIcon />} fullWidth>
+                        <Button variant="contained" color="success" startIcon={<AddIcon />} fullWidth>
                             Add Product
                         </Button>
                     </Link>
@@ -360,7 +359,8 @@ export default function Product({ products, stores }) {
                     />
                 </Box>
                 <Grid size={12} spacing={2} container justifyContent={"end"} alignItems={'center'}>
-                    <Chip size="large" label={'Total Items :'+dataProducts.total} color="primary" />
+                    <Chip size="large" label={'Total results : '+dataProducts.total} color="primary" />
+                    <Chip size="large" label={'Total valuation : '+numeral(totalValuation).format('0,00.00')} color="primary" />
                     <TextField
                       label="Per page"
                       value={filters.per_page}
@@ -375,6 +375,7 @@ export default function Product({ products, stores }) {
                         <MenuItem value={300}>300</MenuItem>
                         <MenuItem value={400}>400</MenuItem>
                         <MenuItem value={500}>500</MenuItem>
+                        <MenuItem value={1000}>1000</MenuItem>
                     </TextField>
                 <CustomPagination
                     dataLinks={dataProducts?.links}
@@ -391,6 +392,7 @@ export default function Product({ products, stores }) {
                 setProducts={setDataProducts}
                 refreshProducts={refreshProducts}
                 selectedProduct={selectedProduct}
+                contacts = {dataContacts}
             />
             <QuantityModal
                 modalOpen={quantityModalOpen}

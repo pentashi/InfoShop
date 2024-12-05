@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
-            $table->id(); // Unique identifier for the quotation
             $table->unsignedBigInteger('contact_id'); // Links to contacts table (customer)
             $table->string('quotation_number')->unique(); // Unique number for the quotation
             $table->date('quotation_date'); // Date of issue

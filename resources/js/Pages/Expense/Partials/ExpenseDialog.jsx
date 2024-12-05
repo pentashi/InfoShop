@@ -105,7 +105,7 @@ export default function ExpenseDialog({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid size={4}>
+                        <Grid size={{xs:6, sm:4}}>
                             <TextField
                                 fullWidth
                                 type="number"
@@ -134,7 +134,7 @@ export default function ExpenseDialog({
                             />
                         </Grid>
 
-                        <Grid size={4}>
+                        <Grid size={{xs:6, sm:4}}>
                             <TextField
                                 label="Date"
                                 name="expense_date"
@@ -150,7 +150,7 @@ export default function ExpenseDialog({
                                 required
                             />
                         </Grid>
-                        <Grid size={4}>
+                        <Grid size={{xs:12, sm:4}}>
                             <TextField
                                 label="Source"
                                 name="source"
@@ -171,15 +171,21 @@ export default function ExpenseDialog({
                                 <MenuItem value={"external"}>External</MenuItem>
                             </TextField>
                         </Grid>
-                        <Grid container size={12} spacing={2}>
+                        <Grid container size={{xs:12, sm:12}} spacing={2}>
                             <TextField
                                 fullWidth
                                 variant="outlined"
                                 label={"Description"}
                                 name="description"
+                                placeholder="Description"
                                 value={expensesForm.note}
                                 onChange={handleFieldChange}
                                 required
+                                slotProps={{
+                                    inputLabel: {
+                                        shrink: true,
+                                    },
+                                }}
                             />
                         </Grid>
 

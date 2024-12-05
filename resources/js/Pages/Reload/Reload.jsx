@@ -25,6 +25,7 @@ const columns = () => [
     { field: "sale_date", headerName: "Date", width: 120,
         renderCell: (params) => dayjs(params.value).format("YYYY-MM-DD"),
     },
+    { field: "contact_name", headerName: "Customer", width: 150 },
     { field: "account_number", headerName: "Account Number", width: 200 },
     { field: "product_name", headerName: "Product Name", width: 150 },
     { field: "unit_price", headerName: "Amount", width: 100 },
@@ -34,7 +35,7 @@ const columns = () => [
     { field: "commission", headerName: "Commission", width: 100, align: "right", headerAlign: "right",
         renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
-    { field: "description", headerName: "Description", width: 250 },
+    // { field: "description", headerName: "Description", width: 250 },
 ];
 
 export default function Reload({ reloads, transactionType }) {

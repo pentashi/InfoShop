@@ -9,6 +9,7 @@ use App\Models\SaleItem;
 use App\Models\Setting;
 use App\Models\Contact;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -104,8 +105,17 @@ class SaleController extends Controller
             'sale_items.unit_price',
             'sale_items.discount',
             'products.name',
+            DB::raw("CASE 
+                WHEN products.product_type = 'reload' 
+                THEN reload_and_bill_metas.account_number 
+                ELSE NULL 
+             END as account_number")
         )
         ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
+        ->leftJoin('reload_and_bill_metas', function ($join) {
+            $join->on('sale_items.id', '=', 'reload_and_bill_metas.sale_item_id')
+                 ->where('products.product_type', '=', 'reload');
+        })
         ->where('sale_items.sale_id',$id)
         ->get();
         

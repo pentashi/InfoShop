@@ -24,9 +24,12 @@ class ReloadController extends Controller
         'sale_items.unit_price',
         'reload_and_bill_metas.description',
         'sale_items.sale_date',
+        'contacts.name AS contact_name'
     )
     ->leftJoin('sale_items', 'reload_and_bill_metas.sale_item_id', '=', 'sale_items.id') // Join with sale_items table
-    ->leftJoin('products', 'sale_items.product_id', '=', 'products.id'); // Join with products table via product_id
+    ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with products table via product_id
+    ->leftJoin('sales', 'sale_items.sale_id', '=', 'sales.id') // Join with sales table via sale_id
+    ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id');
 
     // Apply search query if provided
     if (!empty($filters['search_query'])) {

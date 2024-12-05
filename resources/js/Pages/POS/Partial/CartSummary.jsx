@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import List from "@mui/material/List";
 import { ListItem, TextField, Divider, Typography } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-
+import numeral from "numeral";
 import { useSales as useCart } from '@/Context/SalesContext';
 
 export default function CartSummary() {
@@ -20,7 +20,7 @@ export default function CartSummary() {
             <ListItem
                 secondaryAction={
                     <Typography variant="h5" color="initial" sx={{fontSize:{sm:'1rem', xs:'1.2rem'}}}>
-                        {cartState.length} | Qty. {totalQuantity}
+                        <strong>{cartState.length} | Qty. {totalQuantity}</strong>
                     </Typography>
                 }
             >
@@ -30,7 +30,7 @@ export default function CartSummary() {
                 secondaryAction={
                     <Typography variant="h5" color="initial" sx={{fontSize:{sm:'1rem', xs:'1.2rem'}}}>
                         {/* Rs.{(cartTotal-discount).toFixed(2)} */}
-                         Rs.{(cartTotal).toFixed(2)}
+                        <strong>Rs.{numeral(cartTotal).format('0,00.00')}</strong> 
                     </Typography>
                 }
             >

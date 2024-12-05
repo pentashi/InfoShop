@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::get('/pos/{sale_id}/return', [POSController::class, 'returnIndex'])->name('pos.return');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
+    Route::get('/pos/customer-display', [POSController::class, 'customerDisplay']);
 
     Route::get('/customers', [ContactController::class, 'index'])->defaults('type', 'customer')->name('customers.index');
     Route::get('/vendors', [ContactController::class, 'index'])->defaults('type', 'vendor')->name('vendors.index');
@@ -93,7 +94,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/quote-template', [SettingController::class, 'quoteTemplate']);
-    Route::post('/settings/save-quote-template', [SettingController::class, 'updateTemplate']);
+    Route::get('/settings/receipt-template', [SettingController::class, 'receiptTemplate']);
+    Route::get('/settings/barcode-template', [SettingController::class, 'barcodeTemplate']);
+    Route::post('/settings/save-template', [SettingController::class, 'updateTemplate']);
 
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
@@ -115,7 +118,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
     Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
 
-    Route::get('/reloads',[ReloadController::class, 'index'])->name('expenses.index');
+    Route::get('/reloads',[ReloadController::class, 'index']);
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');

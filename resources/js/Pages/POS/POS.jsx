@@ -22,6 +22,7 @@ import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
 import CartIcon from "./Partial/CartIcon";
+import MonitorIcon from '@mui/icons-material/Monitor';
 
 import { SalesProvider } from "@/Context/SalesContext";
 import CartItemsTop from "./Partial/CartItemsTop";
@@ -127,12 +128,30 @@ function POS({ products, customers, return_sale }) {
                         {/* Product Search Box  */}
                         
                         <SearchBox></SearchBox>
+
+                        <a href="/pos/customer-display" target="_blank" rel="noopener noreferrer">
+                            <IconButton
+                                color="inherit"
+                                sx={{
+                                    ml: 1,
+                                    p: "10px",
+                                    color: "default", // Unchecked color
+                                    "& .MuiSvgIcon-root": {
+                                        fontSize: 30, // Customize icon size
+                                    },
+                                    display:{xs:'none',sm:'block'}
+                                }}
+                                type="button"
+                            >
+                                <MonitorIcon />
+                            </IconButton>
+                        </a>
                       
                         <Link href="/dashboard">
                             <IconButton
                                 color="inherit"
                                 sx={{
-                                    ml: 1,
+                                    ml: 0,
                                     p: "10px",
                                     color: "default", // Unchecked color
                                     "& .MuiSvgIcon-root": {
@@ -144,6 +163,7 @@ function POS({ products, customers, return_sale }) {
                                 <HomeIcon />
                             </IconButton>
                         </Link>
+                        
                     </Toolbar>
                 </AppBar>
                 <Box

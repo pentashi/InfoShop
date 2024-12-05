@@ -214,6 +214,7 @@ export default function Expense({ expenses, stores }) {
                     startIcon={<AddCircleIcon />}
                     size="large"
                     fullWidth
+                    color="success"
                 >
                     ADD EXPENSE
                 </Button>
