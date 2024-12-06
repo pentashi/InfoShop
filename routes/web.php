@@ -124,6 +124,13 @@ Route::middleware('auth')->group(function () {
         Artisan::call('storage:link');
         return 'Linked with storage';
     });
+
+    Route::get('/clear', function () {
+        Artisan::call('config:cache');
+        Artisan::call('route:cache');
+        Artisan::call('view:clear');
+        return 'Update completed!';
+    });
 });
 
 // Route::get('/install', function(){

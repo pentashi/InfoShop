@@ -207,7 +207,7 @@ class SettingController extends Controller
             'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name']);
+        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name','show_receipt_shop_name']);
 
         $settingsData['show_barcode_store'] = $request->has('show_barcode_store') ? 'on' : 'off';
         $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';

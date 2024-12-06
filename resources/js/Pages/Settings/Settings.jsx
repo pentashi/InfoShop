@@ -78,9 +78,10 @@ export default function Setting({ settings }) {
         sale_print_padding_right: settings.sale_print_padding_right,
         sale_print_padding_left: settings.sale_print_padding_left,
         sale_print_font: settings.sale_print_font,
+        show_receipt_shop_name: settings.show_receipt_shop_name??1,
         show_barcode_store: settings.show_barcode_store,
         show_barcode_product_price: settings.show_barcode_product_price,
-        show_barcode_product_name: settings.show_barcode_product_name,
+        show_barcode_product_name: settings.show_barcode_product_name,        
     });
 
     const [barcodeSettings, setBarcodeSettings] = useState(() => {
@@ -298,6 +299,25 @@ export default function Setting({ settings }) {
                                                 }
                                                 onChange={handleChange}
                                             />
+                                        </Grid>
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Show shopname"}
+                                                name="show_receipt_shop_name"
+                                                multiline
+                                                required
+                                                value={
+                                                    settingFormData.show_receipt_shop_name
+                                                }
+                                                onChange={handleChange}
+                                                select
+                                            >
+                                                <MenuItem value={1}>Show</MenuItem>
+                                                <MenuItem value={0}>Hide</MenuItem>
+
+                                                </TextField>
                                         </Grid>
                                         <Grid size={3}>
                                             <TextField

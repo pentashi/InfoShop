@@ -33,6 +33,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         textAlign: "center",
         "@media print": {
             boxShadow: "none", // Remove shadow for print
+            // padding:0
         },
     }));
 
@@ -101,7 +102,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
     return (
         <>
             <Head title="Sale Reciept" />
-            <Box className="flex justify-center mt-10">
+            <Box className="flex justify-center mt-10 p-0">
                 <RecieptContainer square={false}>
                     <Box className="flex justify-between mb-3 print:hidden">
                         <Button
@@ -137,7 +138,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                         }
                                     />
                                 </Card>
-                                <Typography
+                                {settings.show_receipt_shop_name==1 &&(
+                                    <Typography
                                     variant="h5"
                                     sx={{
                                         fontSize: "20px",
@@ -148,6 +150,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 >
                                     {settings.shop_name}
                                 </Typography>
+                                )}
+                                
                                 <Typography
                                     variant="h6"
                                     sx={{
@@ -166,7 +170,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     my: "1rem",
                                 }}
                             />
-                            <Box className="flex items-start flex-col">
+                            <Box className="flex items-start flex-col justify-start">
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
@@ -179,13 +183,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
+                                    textAlign={'start'}
                                 >
-                                    Date:{" "}
+                                    Date:
                                     {dayjs(sale.created_at).format(
                                         "DD-MMM-YYYY, h:mm A"
-                                    )}{" "}
-                                    By: {user_name}
+                                    )+' '}By: {user_name}
                                 </Typography>
+                               
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
@@ -299,9 +304,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             }
                                                             color="initial"
                                                         >
-                                                            x{numeral(
+                                                            {
                                                                 item.quantity
-                                                            ).format("0,0.00")}
+                                                           }x
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -330,7 +335,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         }
                                                         color="initial"
                                                     >
-                                                        {numeral(item.discount).format('0,0')}
+                                                        -{numeral(item.discount).format('0,0')}
                                                     </Typography>
                                                     </TableCell>
                                                     <TableCell

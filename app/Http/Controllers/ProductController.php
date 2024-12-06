@@ -97,10 +97,10 @@ class ProductController extends Controller
     public function create()
     {
         $incrementValue = Setting::where('meta_key', 'product_code_increment')->value('meta_value');
-        $incrementValue = $incrementValue ?: 1000;
+        $incrementValue = $incrementValue ?$incrementValue: 1000;
 
         $lastProduct = Product::latest('id')->first();
-        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : 1001;
+        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : (int)$incrementValue + 1;
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $contacts = Contact::select('id','name')->vendors()->get();

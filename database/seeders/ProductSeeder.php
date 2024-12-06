@@ -50,7 +50,7 @@ class ProductSeeder extends Seeder
                         'product_id' => $product->id,           // product_id from the products table
                         'batch_number' => $data['batch_number'],  // batch_number
                         'cost' => (float) str_replace(',', '', $data['cost']),              // cost
-                        'price' => (float) str_replace(',', '', $data['cost']),            // price
+                        'price' => (float) str_replace(',', '', $data['price']),            // price
                         'contact_id' => $contactId,
                         'created_by' => 1,                    // created_by
                     ]);
