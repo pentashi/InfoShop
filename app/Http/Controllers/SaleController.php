@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 class SaleController extends Controller
 {
     public function getSales($filters){
+
         $query = Sale::query();
         $query->select(
             'sales.id',
@@ -42,7 +43,14 @@ class SaleController extends Controller
             $query->where('status', $filters['status']);
         }
 
-        if(isset($filters['start_date']) && isset($filters['end_date'])){
+        if (!isset($filters['start_date']) || !isset($filters['end_date'])) {
+        $today = now()->format('Y-m-d'); // Format current date to 'Y-m-d'
+        // dd($today);
+        $filters['start_date'] = $filters['start_date'] ?? $today;
+        $filters['end_date'] = $filters['end_date'] ?? $today;
+    }
+
+        if(($filters['status'] ?? null) !== 'pending' && isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
         }
 
@@ -58,7 +66,7 @@ class SaleController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'status', 'query']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'status', 'query', 'per_page']);
         $sales = $this->getSales($filters);
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
 
@@ -145,7 +153,7 @@ class SaleController extends Controller
         ->join('products', 'sale_items.product_id', '=', 'products.id')
         ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
         ->join('contacts', 'sales.contact_id', '=', 'contacts.id')
-        ->orderBy('sale_date', 'desc');
+        ->orderBy('sales.id', 'desc');
 
         if(isset($filters['contact_id'])){
             $query->where('sales.contact_id', $filters['contact_id']);
@@ -161,7 +169,7 @@ class SaleController extends Controller
     }
 
     public function solditems(Request $request){
-        $filters = $request->only(['contact_id', 'start_date', 'end_date']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page']);
         $soldItems = $this->getSoldItems($filters);
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
         return Inertia::render('SoldItem/SoldItem',[

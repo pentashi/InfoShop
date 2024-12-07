@@ -156,6 +156,7 @@ export default function CashCheckoutDialog({ disabled }) {
 
                         onChange={(event) => {
                             const value = event.target.value;
+                            
                             const numericValue = parseFloat(value); // Convert to number
                             setAmountRecieved(
                                     return_sale && numericValue > 0 ? -numericValue : numericValue

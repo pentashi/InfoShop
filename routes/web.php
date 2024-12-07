@@ -97,6 +97,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/receipt-template', [SettingController::class, 'receiptTemplate']);
     Route::get('/settings/barcode-template', [SettingController::class, 'barcodeTemplate']);
     Route::post('/settings/save-template', [SettingController::class, 'updateTemplate']);
+    Route::get('/settings/custom-css', [SettingController::class, 'customCSS']);
+    Route::post('/settings/custom-css', [SettingController::class, 'updateCustomCSS']);
 
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
@@ -132,11 +134,5 @@ Route::middleware('auth')->group(function () {
         return 'Update completed!';
     });
 });
-
-// Route::get('/install', function(){
-//     Artisan::call('migrate');
-//     Artisan::call('db:seed');
-//     return 'Migration executed successfully!';
-// });
 
 require __DIR__.'/auth.php';

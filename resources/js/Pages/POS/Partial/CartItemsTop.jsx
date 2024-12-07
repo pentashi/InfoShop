@@ -42,7 +42,6 @@ export default function CartItemsTop({customers}) {
 
   return (
     <Grid sx={{ width:'100%', marginY:{xs:'1rem', sm:'1.2rem'}, }} container spacing={2} flexDirection={{xs:'column-reverse', sm:'row'}} >
-      {console.log('From cart top1 '+return_sale)}
       <Grid size={{xs:12, sm:4 }} width={'100%'}>
           <TextField
               label="Sale Date"

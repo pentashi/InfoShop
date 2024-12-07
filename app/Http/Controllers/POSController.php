@@ -39,16 +39,18 @@ class POSController extends Controller
             'products.discount',
             'products.is_stock_managed',
             DB::raw("COALESCE(pb.batch_number, 'N/A') AS batch_number"),
+            DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity"),
+            DB::raw("COALESCE(product_stocks.quantity, 0) AS stock_quantity"),
             'pb.cost',
             'pb.price',
             'pb.id AS batch_id',
-            'ps.quantity',
             'products.meta_data',
-            'products.product_type'
+            'products.product_type',
+            'products.alert_quantity',
         )
         ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
-        ->leftJoin('product_stocks AS ps', 'pb.id', '=', 'ps.batch_id') // Join with product_stocks using batch_id
-        ->where('ps.store_id', session('store_id')) //Get store ID from session.
+        ->leftJoin('product_stocks', 'pb.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
+        ->where('product_stocks.store_id', session('store_id')) //Get store ID from session.
         ->where('pb.is_featured',1)
         ->groupBy(
             'products.id',
@@ -60,9 +62,10 @@ class POSController extends Controller
             'pb.cost', 
             'pb.price', 
             'pb.id', 
-            'ps.quantity',
+            'product_stocks.quantity',
             'products.product_type',
             'products.meta_data',
+            'products.alert_quantity',
             )
         ->limit(20)
         ->get();

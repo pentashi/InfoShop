@@ -11,21 +11,22 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    TextField, Chip
+    TextField,
+    Chip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import QrCode2Icon from '@mui/icons-material/QrCode2';
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 import { Link, router } from "@inertiajs/react";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import BatchModal from "./Partials/BatchModal";
 import QuantityModal from "./Partials/QuantityModal";
 import CustomPagination from "@/Components/CustomPagination";
 import { useState } from "react";
 import numeral from "numeral";
-import { filter } from "lodash";
 import { useEffect } from "react";
+import Select2 from "react-select";
 
 const productColumns = (handleProductEdit) => [
     {
@@ -76,11 +77,16 @@ const productColumns = (handleProductEdit) => [
             </Link>
         ),
     },
+    {
+        field: "contact_name",
+        headerName: "Supplier",
+        width: 100,
+    },
     { field: "barcode", headerName: "Barcode", width: 170 },
     {
         field: "batch_number",
         headerName: "Batch",
-        width: 150,
+        width: 120,
         renderCell: (params) => (
             <Button
                 onClick={() => handleProductEdit(params.row, "batch")}
@@ -96,23 +102,41 @@ const productColumns = (handleProductEdit) => [
             </Button>
         ),
     },
-    { field: "cost", headerName: "Cost", width: 100, align:'right',headerAlign: 'right',},
-    { field: "price", headerName: "Price", width: 100, align:'right',headerAlign: 'right', 
+    {
+        field: "cost",
+        headerName: "Cost",
+        width: 100,
+        align: "right",
+        headerAlign: "right",
+    },
+    {
+        field: "price",
+        headerName: "Price",
+        width: 100,
+        align: "right",
+        headerAlign: "right",
         renderCell: (params) => {
-            return numeral(params.value).format('0,0.00');
+            return numeral(params.value).format("0,0.00");
         },
     },
-    { field: "valuation", headerName: "Valuation", width: 100, align:'right',headerAlign: 'right',
+    {
+        field: "valuation",
+        headerName: "Valuation",
+        width: 100,
+        align: "right",
+        headerAlign: "right",
         renderCell: (params) => {
             const price = params.row.cost;
-            const quantity =  params.row.quantity;
-            return numeral(price*quantity).format('0,0.00');
+            const quantity = params.row.quantity;
+            return numeral(price * quantity).format("0,0.00");
         },
-     },
+    },
     {
         field: "quantity",
-        headerName: "Quantity",
-        width: 100,align:'right',headerAlign: 'right',
+        headerName: "Qty",
+        width: 80,
+        align: "right",
+        headerAlign: "right",
         valueGetter: (value) => parseFloat(value),
         renderCell: (params) => (
             <Button
@@ -125,35 +149,18 @@ const productColumns = (handleProductEdit) => [
                     justifyContent: "flex-end",
                 }}
                 underline="hover"
-                onClick={() => handleProductEdit(params.row, 'qty')}
+                onClick={() => handleProductEdit(params.row, "qty")}
             >
-                {numeral(params.value).format('0,0.00')}
+                {numeral(params.value).format("0,0.00")}
             </Button>
         ),
     },
-    {
-        field: "is_featured",
-        headerName: "Featured",
-        renderCell: (params) => {
-            if (params.value === 1) {
-                return (
-                    <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100%' }}>
-                        <StarIcon color="primary" />
-                    </Box>
-                );
-            }
-            else{
-                return (
-                    <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '100%' }}>
-                        <StarBorderIcon color="primary" />
-                    </Box>
-                );
-            }
-        },
-    },
+
     {
         field: "action",
         headerName: "Action",
+        align: "center",
+        headerAlign: "center",
         renderCell: (params) => {
             return (
                 <Link href={`/product/${params.row.batch_id}/barcode`}>
@@ -162,32 +169,63 @@ const productColumns = (handleProductEdit) => [
             );
         },
     },
+    {
+        field: "is_featured",
+        headerName: "Featured",
+        headerAlign: "center",
+        renderCell: (params) => {
+            if (params.value === 1) {
+                return (
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        style={{ height: "100%" }}
+                    >
+                        <StarIcon color="primary" />
+                    </Box>
+                );
+            } else {
+                return (
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        style={{ height: "100%" }}
+                    >
+                        <StarBorderIcon color="primary" />
+                    </Box>
+                );
+            }
+        },
+    },
 ];
 
 export default function Product({ products, stores, contacts }) {
     const auth = usePage().props.auth.user;
     const [batchModalOpen, setBatchModalOpen] = useState(false);
-    const [quantityModalOpen, setQuantityModalOpen] = useState(false)
+    const [quantityModalOpen, setQuantityModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(false);
     const [dataProducts, setDataProducts] = useState(products);
     const [dataContacts, setContacts] = useState(contacts);
-    const [totalValuation, setTotalValuation] = useState(0)
+    const [totalValuation, setTotalValuation] = useState(0);
 
     const [filters, setFilters] = useState({
         store: 0,
         status: 1,
         search_query: "",
-        alert_quantity:'',
-        per_page:100,
+        alert_quantity: "",
+        per_page: 100,
+        contact_id: "",
     });
 
     const handleProductEdit = (product, type) => {
         setSelectedProduct(product);
-        type === 'batch' && setBatchModalOpen(true);
-        type === 'qty' && setQuantityModalOpen(true);
+        type === "batch" && setBatchModalOpen(true);
+        type === "qty" && setQuantityModalOpen(true);
     };
 
-    const refreshProducts = (url=window.location.pathname) => {
+    const refreshProducts = (url = window.location.pathname) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -196,42 +234,35 @@ export default function Product({ products, stores, contacts }) {
                 setDataProducts(response.props.products);
             },
         };
-        router.get(
-            url,
-            filters,
-            options
-        );
+        router.get(url, { ...filters }, options);
     };
 
-    const loadMoreProducts = () => {
-        if (!dataProducts.next_page_url) return;
+    // const handleFilterChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setFilters((prev) => ({ ...prev, [name]: value }));
+    // };
 
-        router.get(
-            dataProducts.next_page_url,
-            filters,
-            {
-                preserveState: true,
-                preserveScroll: true,
-                only: ["products"],
-                onSuccess: (response) => {
-                    setDataProducts((prev) => ({
-                        ...response.props.products,
-                        data: [...prev.data, ...response.props.products.data], // Append new data
-                    }));
-                },
-            }
-        );
-    };
-
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilters((prev) => ({ ...prev, [name]: value }));
+    const handleFilterChange = (input) => {
+        if (input?.target) {
+            // Handle regular inputs (e.g., TextField)
+            const { name, value } = input.target;
+            setFilters((prev) => ({ ...prev, [name]: value }));
+        } else {
+            // Handle Select2 inputs (e.g., contact selection)
+            setFilters((prev) => ({
+                ...prev,
+                contact_id: input?.id, // Store selected contact or null
+            }));
+        }
     };
 
     useEffect(() => {
-        const total = Object.values(dataProducts.data).reduce((total, product) => {
-            return total + product.cost * product.quantity;
-        }, 0);
+        const total = Object.values(dataProducts.data).reduce(
+            (total, product) => {
+                return total + product.cost * product.quantity;
+            },
+            0
+        );
         setTotalValuation(total);
     }, [dataProducts]);
 
@@ -244,45 +275,78 @@ export default function Product({ products, stores, contacts }) {
                 alignItems="center"
                 sx={{ width: "100%" }}
             >
-                <Grid size={12} spacing={2} container alignItems={"center"} justifyContent={{xs:'center', sm:'end'}} width={'100%'}>
-                    <Grid size={{xs:6, sm:'auto'}}>
-                    <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
-                        <InputLabel>Store</InputLabel>
-                        <Select
-                            value={filters.store}
-                            label="Store"
-                            onChange={handleFilterChange}
-                            required
-                            name="store"
-                        >
-                            <MenuItem value={0}>All</MenuItem>
-                            {stores.map((store) => (
-                                <MenuItem key={store.id} value={store.id}>
-                                    {store.name}
+                <Grid
+                    size={12}
+                    spacing={2}
+                    container
+                    alignItems={"center"}
+                    justifyContent={{ xs: "center", sm: "end" }}
+                    width={"100%"}
+                >
+                    <Grid size={{ xs: 12, sm: 2 }}>
+                        <FormControl fullWidth>
+                            <InputLabel>Store</InputLabel>
+                            <Select
+                                value={filters.store}
+                                label="Store"
+                                onChange={handleFilterChange}
+                                required
+                                name="store"
+                            >
+                                <MenuItem value={0}>All</MenuItem>
+                                {stores.map((store) => (
+                                    <MenuItem key={store.id} value={store.id}>
+                                        {store.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Select2
+                        fullWidth
+                            className="w-full"
+                            placeholder="Select a contact..."
+                            styles={{
+                                control: (baseStyles, state) => ({
+                                    ...baseStyles,
+                                    height: "55px",
+                                }),
+                            }}
+                            options={contacts} // Options to display in the dropdown
+                            onChange={(selectedOption) =>
+                                handleFilterChange(selectedOption)
+                            }
+                            isClearable // Allow the user to clear the selected option
+                            getOptionLabel={(option) =>
+                                option.name + " | " + option.balance
+                            }
+                            getOptionValue={(option) => option.id}
+                        ></Select2>
+                    </Grid>
+
+                    <Grid size={{ xs: 6, sm: 2 }}>
+                        <FormControl fullWidth>
+                            <InputLabel>Status</InputLabel>
+                            <Select
+                                value={filters.status}
+                                label="Status"
+                                onChange={handleFilterChange}
+                                required
+                                name="status"
+                            >
+                                <MenuItem value={1}>Active</MenuItem>
+                                <MenuItem value={0}>Inactive</MenuItem>
+                                <MenuItem value={"alert"}>Alert</MenuItem>
+                                <MenuItem value={"out_of_stock"}>
+                                    Out of Stock
                                 </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                            </Select>
+                        </FormControl>
                     </Grid>
 
-                    <Grid size={{xs:6, sm:'auto'}}>
-                    <FormControl sx={{ minWidth:{xs:'100%', sm:'200px'}}}>
-                        <InputLabel>Status</InputLabel>
-                        <Select
-                            value={filters.status}
-                            label="Status"
-                            onChange={handleFilterChange}
-                            required
-                            name="status"
-                        >
-                            <MenuItem value={1}>Active</MenuItem>
-                            <MenuItem value={0}>Inactive</MenuItem>
-                            <MenuItem value={'alert'}>Alert</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </Grid>
-
-                    <Grid size={{xs:6, sm:1}}>
+                    <Grid size={{ xs: 6, sm: 2 }}>
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
@@ -297,50 +361,75 @@ export default function Product({ products, stores, contacts }) {
                             }}
                         />
                     </Grid>
-                    
-                    <TextField
-                    sx={{minWidth:'300px', width: { xs: '100%', sm: 'auto' }}}
-                    fullWidth
-                        name="search_query"
-                        label="Search"
-                        variant="outlined"
-                          value={filters.search_query}
-                          onChange={handleFilterChange}
-                          placeholder="Barcode or Name"
-                        onFocus={(event) => {
-                            event.target.select();
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault(); // Prevents form submission if inside a form
-                                refreshProducts(window.location.pathname); // Trigger search on Enter
+
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <TextField
+                            fullWidth
+                            name="search_query"
+                            label="Search"
+                            variant="outlined"
+                            value={filters.search_query}
+                            onChange={handleFilterChange}
+                            placeholder="Barcode or Name"
+                            onFocus={(event) => {
+                                event.target.select();
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault(); // Prevents form submission if inside a form
+                                    refreshProducts(window.location.pathname); // Trigger search on Enter
+                                }
+                            }}
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid size={{ xs: 6, sm: 1 }}>
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                refreshProducts(window.location.pathname)
                             }
-                        }}
-                        slotProps={{
-                            inputLabel: {
-                                shrink: true,
-                            },
-                        }}
-                    />
-                    <Button variant="contained" onClick={()=>refreshProducts(window.location.pathname)} size="large">
-                    <FindReplaceIcon />
-          </Button>
-          <Link href="/products/create">
-                        <Button variant="contained" color="success" startIcon={<AddIcon />} fullWidth>
-                            Add Product
+                            size="large"
+                        >
+                            <FindReplaceIcon />
                         </Button>
-                    </Link>
+                    </Grid>
+
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                        <Link href="/products/create">
+                            <Button
+                                variant="contained"
+                                color="success"
+                                startIcon={<AddIcon />}
+                                fullWidth
+                                sx={{minWidth:'200px'}}
+                            >
+                                Add Product
+                            </Button>
+                        </Link>
+                    </Grid>
                 </Grid>
 
                 <Box
                     className="py-2 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr", height:'70vh'}}
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr",
+                        height: "70vh",
+                    }}
                 >
                     <DataGrid
                         rows={dataProducts.data}
                         columns={productColumns(handleProductEdit)}
-                        slots={{ toolbar: GridToolbar, }}
-                        getRowId={(row) => row.id + row.batch_number+row.store_id}
+                        slots={{ toolbar: GridToolbar }}
+                        getRowId={(row) =>
+                            row.id + row.batch_number + row.store_id
+                        }
                         slotProps={{
                             toolbar: {
                                 showQuickFilter: true,
@@ -348,27 +437,44 @@ export default function Product({ products, stores, contacts }) {
                         }}
                         initialState={{
                             columns: {
-                              columnVisibilityModel: {
-                                // Hide columns status and traderName, the other columns will remain visible
-                                cost: false,
-                                created_at:false
-                              },
+                                columnVisibilityModel: {
+                                    // Hide columns status and traderName, the other columns will remain visible
+                                    cost: false,
+                                    created_at: false,
+                                },
                             },
-                          }}
+                        }}
                         hideFooter
                     />
                 </Box>
-                <Grid size={12} spacing={2} container justifyContent={"end"} alignItems={'center'}>
-                    <Chip size="large" label={'Total results : '+dataProducts.total} color="primary" />
-                    <Chip size="large" label={'Total valuation : '+numeral(totalValuation).format('0,00.00')} color="primary" />
+                <Grid
+                    size={12}
+                    spacing={2}
+                    container
+                    justifyContent={"end"}
+                    alignItems={"center"}
+                >
+                    <Chip
+                        size="large"
+                        label={"Total results : " + dataProducts.total}
+                        color="primary"
+                    />
+                    <Chip
+                        size="large"
+                        label={
+                            "Total valuation : " +
+                            numeral(totalValuation).format("0,00.00")
+                        }
+                        color="primary"
+                    />
                     <TextField
-                      label="Per page"
-                      value={filters.per_page}
-                      onChange={handleFilterChange}
-                      name="per_page"
-                      select
-                      size="small"
-                      sx={{minWidth:'100px'}}
+                        label="Per page"
+                        value={filters.per_page}
+                        onChange={handleFilterChange}
+                        name="per_page"
+                        select
+                        size="small"
+                        sx={{ minWidth: "100px" }}
                     >
                         <MenuItem value={100}>100</MenuItem>
                         <MenuItem value={200}>200</MenuItem>
@@ -377,12 +483,12 @@ export default function Product({ products, stores, contacts }) {
                         <MenuItem value={500}>500</MenuItem>
                         <MenuItem value={1000}>1000</MenuItem>
                     </TextField>
-                <CustomPagination
-                    dataLinks={dataProducts?.links}
-                    refreshTable={refreshProducts}
-                    dataLastPage={dataProducts?.last_page}
-                ></CustomPagination>
-            </Grid>
+                    <CustomPagination
+                        dataLinks={dataProducts?.links}
+                        refreshTable={refreshProducts}
+                        dataLastPage={dataProducts?.last_page}
+                    ></CustomPagination>
+                </Grid>
             </Grid>
             <BatchModal
                 batchModalOpen={batchModalOpen}
@@ -392,7 +498,7 @@ export default function Product({ products, stores, contacts }) {
                 setProducts={setDataProducts}
                 refreshProducts={refreshProducts}
                 selectedProduct={selectedProduct}
-                contacts = {dataContacts}
+                contacts={dataContacts}
             />
             <QuantityModal
                 modalOpen={quantityModalOpen}

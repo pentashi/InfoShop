@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, IconButton, TextField, MenuItem, Tooltip } from "@mui/material";
+import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -48,7 +48,7 @@ const columns = (handleRowClick) => [
         },
     },
     {
-        field: "total_amount", headerName: "Total", width: 120, align: 'right', headerAlign: 'right',
+        field: "total_amount", headerName: "Bill Amount", width: 120, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
@@ -137,6 +137,7 @@ export default function Sale({ sales, contacts }) {
         contact_id: '',
         status: 'all',
         query: '',
+        per_page:100,
     });
 
     const handleRowClick = (sale, action) => {
@@ -301,7 +302,24 @@ export default function Sale({ sales, contacts }) {
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={"end"}>
+            <Grid size={12} spacing={2} container justifyContent={"end"}>
+            <Chip size="large" label={'Total results : '+dataSales.total} color="primary" />
+            <TextField
+                      label="Per page"
+                      value={searchTerms.per_page}
+                      onChange={handleSearchChange}
+                      name="per_page"
+                      select
+                      size="small"
+                      sx={{minWidth:'100px'}}
+                    >
+                        <MenuItem value={100}>100</MenuItem>
+                        <MenuItem value={200}>200</MenuItem>
+                        <MenuItem value={300}>300</MenuItem>
+                        <MenuItem value={400}>400</MenuItem>
+                        <MenuItem value={500}>500</MenuItem>
+                        <MenuItem value={1000}>1000</MenuItem>
+                    </TextField>
                 <CustomPagination
                     dataLinks={dataSales?.links}
                     next_page={dataSales.next_page_url}

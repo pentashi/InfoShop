@@ -183,6 +183,31 @@ class SettingController extends Controller
         ]);
     }
 
+    public function customCSS()
+    {
+        $templatePath = public_path('css/custom.css');
+        $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        // $templatePath = resource_path('views/templates/quote-template.html');
+        // $content = File::exists($templatePath) ? File::get($templatePath) : '';
+
+        return Inertia::render('Settings/CustomCSS', [
+            'pageLabel' => 'Custom CSS',
+            'customCSS' => $content,
+        ]);
+    }
+
+    public function updateCustomCSS(Request $request)
+    {
+        $validated = $request->validate([
+            'template' => 'required|string',
+        ]);
+
+        $filePath = public_path('css/custom.css');
+        file_put_contents($filePath, $request->template);
+
+        return response()->json(['message' => 'Template updated successfully!'],200);
+    }
     public function updateTemplate(Request $request)
     {
         $validated = $request->validate([

@@ -55,6 +55,8 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function Product({ product, collection, product_code, contacts }) {
+    const [loading, setLoading] = useState(false);
+
     // Filter and map the collection
     const brandOptions = collection
         .filter((item) => item.collection_type === "brand")
@@ -159,6 +161,10 @@ export default function Product({ product, collection, product_code, contacts })
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        if (loading) return;
+        setLoading(true);
+
         const submittedFormData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(submittedFormData.entries());
         formJson.brand_id = selectedBrand?.id ?? "";
@@ -180,6 +186,7 @@ export default function Product({ product, collection, product_code, contacts })
                     timerProgressBar: true,
                     toast: true,
                 });
+                setLoading(false);
             },
             onError: (errors) => {
                 const errorMessages = Object.values(errors).flat().join(" | ");
@@ -189,6 +196,7 @@ export default function Product({ product, collection, product_code, contacts })
                     icon: "error",
                     confirmButtonText: "OK",
                 });
+                setLoading(false);
             },
         });
     };
@@ -623,6 +631,7 @@ export default function Product({ product, collection, product_code, contacts })
                                 color="success"
                                 size="large"
                                 endIcon={<SaveIcon />}
+                                disabled={loading}
                             >
                                 SAVE
                             </Button>

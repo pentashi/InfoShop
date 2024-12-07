@@ -14,12 +14,12 @@ class ContactController extends Controller
 
     public function getContacts($type, $filters){
         // Fetch data from the Collection model
-        $contacts = Contact::select('id', 'name','phone','email','address', 'balance','created_at','type')->where('id','!=','1');
+        $query = Contact::select('id', 'name','phone','email','address', 'balance','created_at','type')->where('id','!=','1');
         
         if (!empty($filters['search_query'])) {
             $searchTerm = $filters['search_query'];
             
-            $contacts = $contacts->where(function (Builder $query) use ($searchTerm) {
+            $query->where(function (Builder $query) use ($searchTerm) {
                 $query->where('name', 'LIKE', '%'.$searchTerm.'%')
                       ->orWhere('phone', 'LIKE', '%'.$searchTerm.'%')
                       ->orWhere('email', 'LIKE', '%'.$searchTerm.'%')
@@ -29,17 +29,19 @@ class ContactController extends Controller
         
         // Apply the scope based on the type
         if ($type === 'customer') {
-            $contacts = $contacts->customers()->paginate(25);
+            $query->customers();
         } elseif ($type === 'vendor') {
-            $contacts = $contacts->vendors()->paginate(25); // Assuming you have a vendors scope
+            $query->vendors(); // Assuming you have a vendors scope
         }
-        $contacts->appends($filters);
-        return $contacts;
+        $perPage = $filters['per_page'] ?? 100;
+        $results = $query->paginate($perPage);
+        $results->appends($filters);
+        return $results;
     }
 
     public function index(Request $request, $type)
     {
-        $filters = $request->only(['search_query']);
+        $filters = $request->only(['search_query', 'per_page']);
 
         $contacts = $this->getContacts($type, $filters);
 

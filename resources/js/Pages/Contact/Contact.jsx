@@ -124,7 +124,6 @@ export default function Contact({contacts, type, stores}) {
 
   useEffect(() => {
     if(dataContacts){
-        console.log(Object.values(dataContacts.data));
         // Calculate the total balance from dataContacts
     const sum = Object.values(dataContacts.data).reduce(
         (acc, contact) => acc + parseFloat(contact.balance),

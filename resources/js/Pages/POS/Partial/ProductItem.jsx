@@ -37,7 +37,7 @@ export default function ProductItem({ product }) {
             />
             <CardContent sx={{ paddingBottom: "10px!important" }}>
                 <Typography
-                    variant="subtitle1"
+                    variant="p"
                     component="div"
                     className="text-center"
                     sx={{ lineHeight: "1.2rem" }}

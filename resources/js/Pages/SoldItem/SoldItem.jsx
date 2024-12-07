@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField,Tooltip } from "@mui/material";
+import { Button, Box, FormControl, TextField,Tooltip, MenuItem, Chip } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
 import numeral from "numeral";
@@ -76,6 +76,16 @@ export default function SoldItem({ sold_items, contacts }) {
     const [endDate, setEndDate] = useState("");
     const [selectedFilterContact, setSelectedFilterContact] = useState(null)
 
+    const [searchTerms, setSearchTerms] = useState({
+        start_date: '',
+        end_date: '',
+        store: 0,
+        contact_id: '',
+        status: 'all',
+        query: '',
+        per_page:100,
+    });
+
     const handleRowClick = (sold_item, action) => {
         
     };
@@ -90,18 +100,27 @@ export default function SoldItem({ sold_items, contacts }) {
             },
         };
         router.get(
-            url,
-            {
-                start_date: startDate,
-                end_date: endDate,
-                contact_id: selectedFilterContact?.id,
-            },
-            options
+            url, { ...searchTerms },options
         );
     };
 
     const handleContactChange = (selectedOption) => {
       setSelectedFilterContact(selectedOption);
+    };
+
+    const handleSearchChange = (input) => {
+        
+        if (input?.target) {
+            // Handle regular inputs (e.g., TextField)
+            const { name, value } = input.target;
+            setSearchTerms((prev) => ({ ...prev, [name]: value }));
+        } else {
+            // Handle Select2 inputs (e.g., contact selection)
+            setSearchTerms((prev) => ({
+                ...prev,
+                contact_id: input?.id, // Store selected contact or null
+            }));
+        }
     };
 
     return (
@@ -126,7 +145,7 @@ export default function SoldItem({ sold_items, contacts }) {
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
-                        onChange={handleContactChange} // Triggered when an option is selected
+                        onChange={(selectedOption) => handleSearchChange(selectedOption)}
                         isClearable // Allow the user to clear the selected option
                         getOptionLabel={(option) => option.name}
                         getOptionValue={(option) => option.id}
@@ -145,8 +164,8 @@ export default function SoldItem({ sold_items, contacts }) {
                                 shrink: true,
                             },
                         }}
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        value={searchTerms.start_date}
+                        onChange={handleSearchChange}
                         required
                     />
                 </FormControl>
@@ -163,8 +182,8 @@ export default function SoldItem({ sold_items, contacts }) {
                                 shrink: true,
                             },
                         }}
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        value={searchTerms.end_date}
+                        onChange={handleSearchChange}
                         required
                     />
                 </FormControl>
@@ -189,7 +208,25 @@ export default function SoldItem({ sold_items, contacts }) {
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={"end"}>
+            <Grid size={12} spacing={2} container justifyContent={"end"}>
+            <Chip size="large" label={'Total results : '+dataSoldItems.total} color="primary" />
+            <TextField
+                      label="Per page"
+                      value={searchTerms.per_page}
+                      onChange={handleSearchChange}
+                      name="per_page"
+                      select
+                      size="small"
+                      sx={{minWidth:'100px'}}
+                    >
+                        <MenuItem value={100}>100</MenuItem>
+                        <MenuItem value={200}>200</MenuItem>
+                        <MenuItem value={300}>300</MenuItem>
+                        <MenuItem value={400}>400</MenuItem>
+                        <MenuItem value={500}>500</MenuItem>
+                        <MenuItem value={1000}>1000</MenuItem>
+                    </TextField>
+
                 <CustomPagination
                     dataLinks={dataSoldItems?.links}
                     refreshTable={refreshSoldItems}

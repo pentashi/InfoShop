@@ -103,7 +103,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
         <>
             <Head title="Sale Reciept" />
             <Box className="flex justify-center mt-10 p-0">
-                <RecieptContainer square={false}>
+                <RecieptContainer square={false} className="receipt-container">
                     <Box className="flex justify-between mb-3 print:hidden">
                         <Button
                             onClick={() => window.history.back()}
@@ -138,20 +138,22 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                         }
                                     />
                                 </Card>
-                                {settings.show_receipt_shop_name==1 &&(
+                                {settings.show_receipt_shop_name == 1 && (
                                     <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontSize: "20px",
-                                        fontFamily: settings.sale_print_font,
-                                        fontWeight:'bold'
-                                    }}
-                                    color="initial"
-                                >
-                                    {settings.shop_name}
-                                </Typography>
+                                        variant="h5"
+                                        sx={{
+                                            fontSize: "20px",
+                                            fontFamily:
+                                                settings.sale_print_font,
+                                            fontWeight: "bold",
+                                        }}
+                                        color="initial"
+                                        className="receipt-shop-name"
+                                    >
+                                        {settings.shop_name}
+                                    </Typography>
                                 )}
-                                
+
                                 <Typography
                                     variant="h6"
                                     sx={{
@@ -159,8 +161,11 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                         fontFamily: settings.sale_print_font,
                                     }}
                                     color="initial"
+                                    className="receipt-address"
                                 >
-                                    {sale.address + ", " + sale.contact_number}
+                                    {sale.address}
+                                    <br/>
+                                    {sale.contact_number}
                                 </Typography>
                             </Box>
                             <Divider
@@ -169,8 +174,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     borderColor: "grey.700",
                                     my: "1rem",
                                 }}
+                                className="receipt-divider-after-address"
                             />
-                            <Box className="flex items-start flex-col justify-start">
+                            <Box className="flex items-start flex-col justify-start receipt-meta">
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
@@ -183,14 +189,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
-                                    textAlign={'start'}
+                                    textAlign={"start"}
                                 >
                                     Date:
                                     {dayjs(sale.created_at).format(
                                         "DD-MMM-YYYY, h:mm A"
-                                    )+' '}By: {user_name}
+                                    ) + " "}
+                                    By: {user_name}
                                 </Typography>
-                               
+
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
@@ -204,15 +211,15 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     borderColor: "grey.700",
                                     my: "1rem",
                                 }}
+                                className="receipt-divider-after-details"
                             />
 
                             <TableContainer>
                                 <Table
                                     sx={{ width: "100%", padding: "0" }}
-                                    aria-label="sales table"
                                 >
                                     <TableHead>
-                                        <TableRow>
+                                        <TableRow className="receipt-items-header">
                                             <TableCell sx={styles.itemsHeader}>
                                                 <Typography
                                                     sx={styles.itemsHeaderTyp}
@@ -273,10 +280,16 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 {/* First Row: Product Name */}
                                                 <TableRow
                                                     key={`name-row-${index}`}
+                                                    className="receipt-product-row"
                                                 >
                                                     <TableCell
                                                         colSpan={5}
-                                                        sx={{...styles.itemsCells, borderBottom:'none', paddingBottom:0}}
+                                                        sx={{
+                                                            ...styles.itemsCells,
+                                                            borderBottom:
+                                                                "none",
+                                                            paddingBottom: 0,
+                                                        }}
                                                     >
                                                         <Typography
                                                             sx={
@@ -284,14 +297,22 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             }
                                                             color="initial"
                                                         >
-                                                            <strong> {index + 1}.{item.name} {item.account_number?'| '+item.account_number:''}</strong>
-                                                           
+                                                            <strong>
+                                                                {" "}
+                                                                {index + 1}.
+                                                                {item.name}{" "}
+                                                                {item.account_number
+                                                                    ? "| " +
+                                                                      item.account_number
+                                                                    : ""}
+                                                            </strong>
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
 
                                                 <TableRow
                                                     key={`details-row-${index}`}
+                                                    className="receipt-details-row"
                                                 >
                                                     <TableCell
                                                         sx={styles.itemsCells}
@@ -304,9 +325,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             }
                                                             color="initial"
                                                         >
-                                                            {
-                                                                item.quantity
-                                                           }x
+                                                            {item.quantity}x
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -330,13 +349,16 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         align="right"
                                                     >
                                                         <Typography
-                                                        sx={
-                                                            styles.itemsCellsTyp
-                                                        }
-                                                        color="initial"
-                                                    >
-                                                        -{numeral(item.discount).format('0,0')}
-                                                    </Typography>
+                                                            sx={
+                                                                styles.itemsCellsTyp
+                                                            }
+                                                            color="initial"
+                                                        >
+                                                            -
+                                                            {numeral(
+                                                                item.discount
+                                                            ).format("0,0")}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell
                                                         sx={styles.itemsCells}
@@ -348,14 +370,17 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             }
                                                             color="initial"
                                                         >
-                                                            <strong>{numeral(
-                                                                parseFloat(
-                                                                    item.quantity
-                                                                ) *
-                                                                    (item.unit_price -
-                                                                        item.discount)
-                                                            ).format("0,0.00")}</strong>
-                                                            
+                                                            <strong>
+                                                                {numeral(
+                                                                    parseFloat(
+                                                                        item.quantity
+                                                                    ) *
+                                                                        (item.unit_price -
+                                                                            item.discount)
+                                                                ).format(
+                                                                    "0,0.00"
+                                                                )}
+                                                            </strong>
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
@@ -373,7 +398,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                             />
                                         </TableRow>
                                         {/* Row for Total, Discount, Subtotal, Amount Received, Change */}
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -412,7 +440,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -444,7 +475,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -476,7 +510,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -492,7 +529,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -524,7 +564,10 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow sx={{ border: "none" }}>
+                                        <TableRow
+                                            sx={{ border: "none" }}
+                                            className="receipt-summary-row"
+                                        >
                                             <TableCell
                                                 sx={styles.receiptSummaryText}
                                                 colSpan={4}
@@ -571,15 +614,22 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     borderColor: "grey.700",
                                     my: "1rem",
                                 }}
+                                className="receipt-divider-before-footer"
                             />
                             <Typography
                                 variant="body1"
                                 color="initial"
-                                sx={{...styles.receiptSummaryText, textAlign:'start'}}
+                                sx={{
+                                    ...styles.receiptSummaryText,
+                                    textAlign: "start",
+                                }}
                             >
                                 <div
-                        dangerouslySetInnerHTML={{ __html: settings.sale_receipt_note }}
-                    />
+                                className="receipt-footer"
+                                    dangerouslySetInnerHTML={{
+                                        __html: settings.sale_receipt_note,
+                                    }}
+                                />
                                 {/* {settings.sale_receipt_note} */}
                             </Typography>
                         </RecieptPrintContainer>

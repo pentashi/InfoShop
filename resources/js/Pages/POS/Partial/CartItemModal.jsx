@@ -39,14 +39,13 @@ export default function CartItemModal() {
     const handleAddToCartSubmit = async (event) => {
         event.preventDefault();
 
-        if(return_sale){
+        if (return_sale) {
             const updatedFormState = {
                 ...formState,
                 quantity: -Math.abs(formState.quantity), // Ensure quantity is negative
             };
             updateCartItem(updatedFormState);
-        }
-        else updateCartItem(formState);
+        } else updateCartItem(formState);
         handleClose();
     };
 
@@ -132,7 +131,28 @@ export default function CartItemModal() {
                 }}
             >
                 <DialogTitle id="alert-dialog-title">
-                    {formState.name} {formState.stock_quantity && formState.stock_quantity !== '' ? ` | HAND QTY. ${formState.stock_quantity}` : ''}
+                    {formState.name}
+                    {formState.stock_quantity &&
+                    formState.stock_quantity !== "" ? (
+                        <>
+                            <Button
+                             disableElevation={true}
+                                color={
+                                    formState.stock_quantity <= 0
+                                        ? "error"
+                                        : formState.stock_quantity <= formState.alert_quantity
+                                        ? "warning"
+                                        : "primary"
+                                }
+                                variant="contained"
+                                sx={{ ml: 1.5 }}
+                                type="button"
+                                size="large"
+                            >
+                                QTY. {formState.stock_quantity}
+                            </Button>
+                        </>
+                    ) : null}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -176,7 +196,11 @@ export default function CartItemModal() {
                                         handleInputChange({
                                             target: {
                                                 name: "quantity",
-                                                value: return_sale && numericValue > 0 ? -numericValue : numericValue,
+                                                value:
+                                                    return_sale &&
+                                                    numericValue > 0
+                                                        ? -numericValue
+                                                        : numericValue,
                                             },
                                         });
                                     }}

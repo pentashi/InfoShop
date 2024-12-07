@@ -41,9 +41,11 @@ class ProductController extends Controller
             'product_stocks.store_id',
             'products.alert_quantity',
             'product_batches.contact_id',
+            'contacts.name as contact_name',
         )
             ->leftJoin('products', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
-            ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id'); // Join with product_stocks using batch_id
+            ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
+            ->leftJoin('contacts', 'product_batches.contact_id', '=', 'contacts.id'); // Join with product_stocks using batch_id
 
         // Apply dynamic alert_quantity filter
         if (!empty($filters['alert_quantity'])) {
@@ -54,13 +56,23 @@ class ProductController extends Controller
                 $query->where('product_stocks.store_id', $filters['store']);
         }
 
+        if(isset($filters['contact_id'])){
+                $query->where('product_batches.contact_id', $filters['contact_id']);
+        }
+
         // Apply filters based on the status
         if (isset($filters['status']) && $filters['status'] == 0) {
             $query->where('product_batches.is_active', 0);
         }
         else if(isset($filters['status']) && $filters['status'] == 'alert'){
             $query->whereColumn('product_stocks.quantity', '<=', 'products.alert_quantity');
-        }else $query->where('product_batches.is_active', 1);
+            $query->where('product_batches.is_active', 1);
+        }
+        else if(isset($filters['status']) && $filters['status'] == 'out_of_stock'){
+            $query->where('product_stocks.quantity', '<=', 0);
+            $query->where('product_batches.is_active', 1);
+        }
+        else $query->where('product_batches.is_active', 1);
 
         // Apply search query if provided
         if (!empty($filters['search_query'])) {
@@ -79,11 +91,11 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity','per_page']);
+        $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity','per_page', 'contact_id']);
 
         $products = $this->getProducts($filters);
         $stores = Store::select('id', 'name')->get();
-        $contacts = Contact::select('id','name')->vendors()->get();
+        $contacts = Contact::select('id','name','balance')->vendors()->get();
         // Render the 'Products' component with data
         return Inertia::render('Product/Product', [
             'products' => $products,
@@ -299,15 +311,18 @@ class ProductController extends Controller
             DB::raw("COALESCE(product_stocks.quantity, 0) AS quantity"),
             DB::raw("COALESCE(product_stocks.quantity, 0) AS stock_quantity"),
             'products.meta_data',
-            'products.product_type'
+            'products.product_type',
+            'products.alert_quantity',
         )
             ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
             ->leftJoin('collections', 'products.category_id', '=', 'collections.id')
             ->where('product_batches.is_active', 1)
-            ->where('barcode', 'like', $search_query . '%')
-            ->orWhere('sku', 'like', '%' . $search_query . '%')
-            ->orWhere('products.name', 'like', '%' . $search_query . '%');
+            ->where(function ($query) use ($search_query) {
+                $query->where('barcode', 'like', $search_query . '%')
+                      ->orWhere('sku', 'like', '%' . $search_query . '%')
+                      ->orWhere('products.name', 'like', '%' . $search_query . '%');
+            });
 
         // it means, If it is a sale
         if ($is_purchase == 0) {
@@ -332,7 +347,8 @@ class ProductController extends Controller
                 'products.barcode',
                 'products.sku',
                 'products.meta_data',
-                'products.product_type'
+                'products.product_type',
+                'products.alert_quantity',
             )
             ->limit(10)->get();
 

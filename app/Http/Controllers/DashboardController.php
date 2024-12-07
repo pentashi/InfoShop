@@ -12,6 +12,7 @@ use App\Models\Sale;
 use App\Models\Transaction;
 use App\Models\Expense;
 use App\Models\Setting;
+use App\Models\ProductBatch;
 
 use Illuminate\Support\Facades\DB;
 
@@ -34,9 +35,23 @@ class DashboardController extends Controller
             ->select(DB::raw('SUM(product_stocks.quantity * product_batches.cost) as total_valuation'))
             ->value('total_valuation');
 
+        $countLowStockItems = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
+        ->join('products', 'product_batches.product_id', '=', 'products.id')
+        ->where('product_batches.is_active', 1)
+        ->where('product_stocks.quantity', '<=', DB::raw('products.alert_quantity'))
+        ->count();
+
+        $outOfStockItems = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
+        ->join('products', 'product_batches.product_id', '=', 'products.id')
+        ->where('product_batches.is_active', 1)
+        ->where('product_stocks.quantity', '<=', 0)
+        ->count();
+
         $customerBalance = Contact::customers()->sum('balance');
         $data['totalValuation'] = number_format($totalValuation);
         $data['customerBalance'] = number_format($customerBalance);
+        $data['lowStock'] = number_format($countLowStockItems);
+        $data['outOfStock'] = number_format($outOfStockItems);
         
          // Render the 'Dashboard' component with data
         return Inertia::render('Dashboard', [
