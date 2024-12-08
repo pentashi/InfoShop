@@ -133,6 +133,10 @@ Route::middleware('auth')->group(function () {
         Artisan::call('view:clear');
         return 'Update completed!';
     });
+
+    Route::get('/check-update', function(){
+        return 'Update';
+    });
 });
 
 require __DIR__.'/auth.php';
