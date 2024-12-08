@@ -25,10 +25,10 @@ const QuantityInput = ({cartItem}) => {
         const newQuantity = Math.max(min, Math.min(value, max));
         setQuantity(newQuantity);
         setInputValue(newQuantity);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
+        updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
     } else {
         setInputValue(min);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, min);
+        updateProductQuantity(cartItem.id, cartItem.batch_number, min, cartItem.cart_index);
     }
   };
 
@@ -36,14 +36,14 @@ const QuantityInput = ({cartItem}) => {
     const newQuantity = Math.max(parseFloat(quantity) - 1, min);
     setQuantity(newQuantity);
     setInputValue(newQuantity);
-    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
+    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
   };
 
   const increaseValue = () => {
     const newQuantity = Math.min(parseFloat(quantity) + 1, max);
     setQuantity(newQuantity);
     setInputValue(newQuantity);
-    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity);
+    updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
   };
 
   return (   

@@ -40,7 +40,7 @@ export default function CartItems() {
                   component="h5"
                   sx={{ fontWeight: 'bold', cursor:'pointer', fontSize:{sm:'1rem', xs:'0.9rem'} }}  // Makes the text bold
                   className='hover:underline'
-                  onClick={()=>{setSelectedCartItem(item); setCartItemModalOpen(true);}}
+                  onClick={()=>{setSelectedCartItem({...item, cart_index:index}); setCartItemModalOpen(true);}}
                 >
                   {item.name}
                 </Typography>
@@ -62,7 +62,7 @@ export default function CartItems() {
     
             <Box className="flex flex-row">
               <div className="relative w-full flex flex-row">
-              <QuantityInput cartItem={item}></QuantityInput>
+              <QuantityInput cartItem={{...item, cart_index:index}}></QuantityInput>
               <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(index)}>
                 <DeleteIcon />
                 </IconButton>

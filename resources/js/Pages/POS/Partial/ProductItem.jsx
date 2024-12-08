@@ -12,7 +12,7 @@ import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 export default function ProductItem({ product }) {
     const return_sale = usePage().props.return_sale;
     const { name, price, image_url, quantity } = product;
-    const { addToCart } = useCart();
+    const { addToCart, cartState} = useCart();
     const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
     return (
@@ -25,6 +25,12 @@ export default function ProductItem({ product }) {
                 else product.quantity = 1;
 
                 addToCart(product, product.quantity);
+                
+                if (product.product_type === "reload") {
+                    const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
+                    product.cart_index = lastAddedIndex;
+                }
+
                 setSelectedCartItem(product);
                 setCartItemModalOpen(true);
             }}

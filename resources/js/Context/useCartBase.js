@@ -10,7 +10,7 @@ const cartReducer = (state, action) => {
         (item) =>
           item.id === action.payload.id &&
           item.batch_number === action.payload.batch_number &&
-          item.product_type !== 'custom'
+          (item.product_type !== 'custom' && item.product_type !== 'reload')
       );
       if (existingProductIndex !== -1) {
         cart[existingProductIndex].quantity =
@@ -26,15 +26,11 @@ const cartReducer = (state, action) => {
       const cart = [...state];
       cart.splice(action.payload.index, 1);
       return cart;
-  }
+    }
 
     case 'UPDATE_PRODUCT_QUANTITY': {
       const cart = [...state];
-      const existingProductIndex = cart.findIndex(
-        (item) =>
-          item.id === action.payload.id &&
-          item.batch_number === action.payload.batch_number
-      );
+      let existingProductIndex = action.payload.cart_index;
 
       if (existingProductIndex !== -1) {
         cart[existingProductIndex].quantity = action.payload.newQuantity;
@@ -48,18 +44,21 @@ const cartReducer = (state, action) => {
 
     case 'UPDATE_CART_ITEM': {
       const cart = [...state];
-      const existingProductIndex = cart.findIndex(
-        (item) =>
-          item.id === action.payload.id &&
-          item.batch_number === action.payload.batch_number
-      );
-
+      let existingProductIndex = action.payload.cart_index;
+      if (action.payload.product_type != 'reload' && action.payload.product_type != "custom") {
+        existingProductIndex = cart.findIndex(
+          (item) =>
+            item.id === action.payload.id &&
+            item.batch_number === action.payload.batch_number
+        );
+      }
+      
       if (existingProductIndex !== -1) {
         const updatedItem = {
           ...cart[existingProductIndex],
           ...action.payload,
         };
-        
+
         cart[existingProductIndex] = updatedItem;
 
         // Remove item if quantity becomes 0 or negative
@@ -100,20 +99,20 @@ const useCartBase = (initialStateKey) => {
   const [cartState, dispatch] = useReducer(cartReducer, persistedState ? JSON.parse(persistedState) : []);
 
   const addToCart = (item, quantity = 1) => {
-    dispatch({ type: 'ADD_TO_CART', payload: {...item, quantity} });
+    dispatch({ type: 'ADD_TO_CART', payload: { ...item, quantity } });
   };
 
   const removeFromCart = (index) => {
     dispatch({
       type: 'REMOVE_FROM_CART',
-      payload: {index}, // product should contain at least id and batch_number
+      payload: { index }, // product should contain at least id and batch_number
     });
   };
 
-  const updateProductQuantity = (itemId, batchNumber, newQuantity) => {
+  const updateProductQuantity = (itemId, batchNumber, newQuantity, cart_index) => {
     dispatch({
       type: 'UPDATE_PRODUCT_QUANTITY',
-      payload: { id: itemId, batch_number: batchNumber, newQuantity },
+      payload: { id: itemId, batch_number: batchNumber, newQuantity, cart_index },
     });
   };
 
@@ -140,7 +139,7 @@ const useCartBase = (initialStateKey) => {
     if (cart.length > 0) {
       // Set the current cart to the retrieved cart
       dispatch({ type: 'SET_HELD_CART_TO_CART', payload: { cart } });
-  
+
       // Remove the held cart from localStorage
       delete heldCarts[key];
       localStorage.setItem('heldCarts', JSON.stringify(heldCarts));

@@ -81,20 +81,14 @@ export default function CartItemModal() {
             }
 
             // If product type is "reload", we need to calculate the cost based on the price and commission
+            //Additional commision = customer commissions
             if (newState.product_type === "reload") {
-                const fixedCommission =
-                    parseFloat(newState.meta_data?.fixed_commission) || 0;
+                const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
                 const price = parseFloat(newState.price) || 0;
-                const additionalCommission =
-                    parseFloat(newState.additional_commission) || 0;
-                const extraCommission =
-                    parseFloat(newState.extra_commission) || 0;
-                const calculatedCommission =
-                    ((price - additionalCommission) * fixedCommission) / 100;
-                const totalCommission =
-                    additionalCommission +
-                    extraCommission +
-                    calculatedCommission;
+                const additionalCommission = parseFloat(newState.additional_commission) || 0;
+                const extraCommission = parseFloat(newState.extra_commission) || 0;
+                const calculatedCommission = ((price - additionalCommission) * fixedCommission) / 100;
+                const totalCommission = additionalCommission + extraCommission + calculatedCommission;
                 newState.extra_commission = extraCommission;
                 newState.commission = totalCommission;
 
@@ -132,7 +126,8 @@ export default function CartItemModal() {
             >
                 <DialogTitle id="alert-dialog-title">
                     {formState.name}
-                    {formState.stock_quantity &&
+                   
+                    {formState.stock_quantity && formState.product_type !== "reload" &&
                     formState.stock_quantity !== "" ? (
                         <>
                             <Button

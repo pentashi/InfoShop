@@ -42,7 +42,8 @@ export default function SearchBox() {
                         const existingProductIndex = cartState.findIndex(
                             (item) =>
                               item.id === product[0].id &&
-                              item.batch_number === product[0].batch_number
+                              item.batch_number === product[0].batch_number &&
+                              (item.product_type !== 'custom' && item.product_type !== 'reload')
                         );
 
                         if (existingProductIndex !== -1) {
@@ -51,7 +52,13 @@ export default function SearchBox() {
                         else{
                             product[0].quantity = 1;
                             addToCart(product[0]);
-                        }                 
+                        }
+
+                        // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item
+                        if (product[0].product_type === "reload") {                           
+                            const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
+                            product[0].cart_index = lastAddedIndex;
+                        }
                         setSelectedCartItem(product[0])
                         setCartItemModalOpen(true)
                     }
@@ -108,6 +115,13 @@ export default function SearchBox() {
                         ) {
                             addToCart(product); // Add product to cart
                             product.quantity = 1
+
+                            // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item
+                        if (product.product_type === "reload") {
+                            const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
+                            product.cart_index = lastAddedIndex;
+                        }
+
                             setSelectedCartItem(product)
                             setCartItemModalOpen(true)
                         }
