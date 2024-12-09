@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField } from "@mui/material";
+import { Button, Box, FormControl, TextField, Typography } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import dayjs from "dayjs";
@@ -29,7 +29,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
     },
-    padding:10,
+    padding: 10,
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -40,7 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:last-child td, &:last-child th": {
         border: 0,
     },
-    
+
 }));
 
 export default function DailyReport({ logs, stores }) {
@@ -50,7 +50,7 @@ export default function DailyReport({ logs, stores }) {
     );
     const [modalOpen, setModalOpen] = useState(false);
 
-    const refreshLogs = (url=window.location.pathname) => {
+    const refreshLogs = (url = window.location.pathname, selected_date=transaction_date) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -62,15 +62,18 @@ export default function DailyReport({ logs, stores }) {
         router.get(
             url,
             {
-                transaction_date: transaction_date,
+                transaction_date: selected_date,
             },
             options
         );
     };
 
     useEffect(() => {
-        refreshLogs();
-    },[transaction_date])
+        // refreshLogs();
+    }, [transaction_date])
+
+    const totalCashIn = dataLogs.reduce((sum, row) => sum + parseFloat(row.cash_in), 0);
+    const totalCashOut = dataLogs.reduce((sum, row) => sum + parseFloat(row.cash_out), 0);
 
     return (
         <AuthenticatedLayout>
@@ -83,49 +86,53 @@ export default function DailyReport({ logs, stores }) {
                 justifyContent={"center"}
                 size={12}
             >
-                <Grid size={{xs:8, sm:4, md:2}}>
-                <TextField
+                <Grid size={{ xs: 8, sm: 4, md: 2 }}>
+                    <TextField
                         label="Date"
                         name="transaction_date"
                         placeholder="Transaction Date"
                         fullWidth
                         type="date"
-                        sx={{ height: "100%"}}
+                        sx={{ height: "100%" }}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,
                             },
                         }}
                         value={transaction_date}
-                        onChange={(e) => setTransactionDate(e.target.value)}
+                        onChange={(e) => {
+                            const newDate = e.target.value;
+                            setTransactionDate(newDate); // Update the state with the new date
+                            refreshLogs(window.location.pathname,newDate)
+                        }}
                         required
                     />
                 </Grid>
-                <Grid size={{xs:4, sm:2, md:1}}>
-                <Button
-                    variant="contained"
-                    onClick={() => refreshLogs(window.location.pathname)}
-                    sx={{ height: "100%", }}
-                    fullWidth
-                    size="large"
-                >
-                    <FindReplaceIcon />
-                </Button>
+                <Grid size={{ xs: 4, sm: 2, md: 1 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => refreshLogs(window.location.pathname)}
+                        sx={{ height: "100%", }}
+                        fullWidth
+                        size="large"
+                    >
+                        <FindReplaceIcon />
+                    </Button>
                 </Grid>
-                
-                <Grid size={{xs:12, sm:4, md:2}}>
-                <Button
-                    variant="contained"
-                    onClick={() => setModalOpen(true)}
-                    sx={{ height: "100%", }}
-                    startIcon={<AddCircleIcon />}
-                    size="large"
-                    fullWidth
-                >
-                    ADD A RECORD
-                </Button>
+
+                <Grid size={{ xs: 12, sm: 4, md: 4}}>
+                    <Button
+                        variant="contained"
+                        onClick={() => setModalOpen(true)}
+                        sx={{ height: "100%", }}
+                        startIcon={<AddCircleIcon />}
+                        size="large"
+                        fullWidth
+                    >
+                        ADD A RECORD
+                    </Button>
                 </Grid>
-                
+
             </Grid>
 
             <Box
@@ -144,7 +151,10 @@ export default function DailyReport({ logs, stores }) {
                                     DESCRIPTION
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
-                                    AMOUNT
+                                    CASH IN
+                                </StyledTableCell>
+                                <StyledTableCell align="right">
+                                    CASH OUT
                                 </StyledTableCell>
                             </TableRow>
                         </TableHead>
@@ -165,20 +175,47 @@ export default function DailyReport({ logs, stores }) {
                                                 : "")}
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
-                                        {numeral(row.amount).format('0,0.00')}
+                                        {numeral(row.cash_in).format('0,0.00')}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        {numeral(row.cash_out).format('0,0.00')}
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}
 
-                            {/* Row for displaying the total sum */}
+                            {/* Add Total Row */}
                             <StyledTableRow>
                                 <StyledTableCell colSpan={3} align="right">
-                                    <strong>Balance:</strong>
+                                    <strong>Total:</strong>
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
+                                    <strong>{numeral(totalCashIn).format('0,0.00')}</strong>
+                                </StyledTableCell>
+                                <StyledTableCell align="right">
+                                    <strong>{numeral(totalCashOut).format('0,0.00')}</strong>
+                                </StyledTableCell>
+                            </StyledTableRow>
+
+                            <StyledTableRow>
+                                <StyledTableCell colSpan={5} align="right">
+                                  
+                                </StyledTableCell>
+                            </StyledTableRow>
+
+                            {/* Row for displaying the total sum */}
+                            <StyledTableRow>
+                                <StyledTableCell colSpan={4} align="right">
+                                <Typography variant="h5" color="initial">
+                                    <strong>Balance:</strong>
+                                    </Typography>
+                                </StyledTableCell>
+                                <StyledTableCell align="right">
+                                    <Typography variant="h5" color="initial">
                                     <strong>
                                         {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
                                     </strong>
+                                    </Typography>
+                                    
                                 </StyledTableCell>
                             </StyledTableRow>
                         </TableBody>

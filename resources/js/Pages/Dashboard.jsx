@@ -68,10 +68,10 @@ export default function Dashboard({ data, logo}) {
         >
             <Head title="Dashboard" />
             <Grid size={12} spacing={2} flexDirection={'row'} container>
-            <Link href={"/products/?status=alert&per_page="+data.lowStock}>
+            <Link href={"/products?status=alert&per_page="+data.lowStock}>
             <Alert sx={{mb:2}} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
             </Link>
-            <Link href={"/products/?status=out_of_stock&per_page="+data.outOfStock}>
+            <Link href={"/products?status=out_of_stock&per_page="+data.outOfStock}>
             <Alert sx={{mb:2}} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
             </Link>
             <Link href={'#'}>

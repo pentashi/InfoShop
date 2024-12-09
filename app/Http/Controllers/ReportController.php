@@ -26,7 +26,15 @@ class ReportController extends Controller
 
         $stores = Store::select('id', 'name')->get();
         $cashLogs = CashLog::where('transaction_date', $transaction_date)
-            ->select('transaction_date', 'description', 'amount', 'source', 'contacts.name')
+            ->select(
+                'transaction_date',
+                'description', 
+                'amount', 
+                'source', 
+                'contacts.name',
+                DB::raw('CASE WHEN amount > 0 THEN amount ELSE 0 END AS cash_in'),
+                DB::raw('CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END AS cash_out')
+            )
             ->leftJoin('contacts', 'cash_logs.contact_id', '=', 'contacts.id')
             ->get();
 

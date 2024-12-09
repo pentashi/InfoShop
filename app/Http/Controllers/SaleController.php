@@ -43,12 +43,12 @@ class SaleController extends Controller
             $query->where('status', $filters['status']);
         }
 
-        if (!isset($filters['start_date']) || !isset($filters['end_date'])) {
-        $today = now()->format('Y-m-d'); // Format current date to 'Y-m-d'
-        // dd($today);
-        $filters['start_date'] = $filters['start_date'] ?? $today;
-        $filters['end_date'] = $filters['end_date'] ?? $today;
-    }
+        // if (!isset($filters['start_date']) || !isset($filters['end_date'])) {
+        //     $today = now()->format('Y-m-d'); // Format current date to 'Y-m-d'
+        //     // dd($today);
+        //     $filters['start_date'] = $filters['start_date'] ?? $today;
+        //     $filters['end_date'] = $filters['end_date'] ?? $today;
+        // }
 
         if(($filters['status'] ?? null) !== 'pending' && isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
