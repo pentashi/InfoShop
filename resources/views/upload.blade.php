@@ -16,7 +16,7 @@
 
     <form action="{{ route('upload.handle') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <label for="zip_file">Upload update file:</label>
+        <label for="zip_file">Upload upgrade file:</label>
         <input type="file" name="zip_file" id="zip_file" required>
         <button type="submit">Upload</button>
     </form>

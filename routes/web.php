@@ -22,6 +22,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReloadController;
+use App\Http\Controllers\UpgradeController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -126,6 +127,9 @@ Route::middleware('auth')->group(function () {
         Artisan::call('storage:link');
         return 'Linked with storage';
     });
+
+    Route::get('/upload', [UpgradeController::class, 'showUploadForm'])->name('upload.form');
+    Route::post('/upload', [UpgradeController::class, 'handleUpload'])->name('upload.handle');
 
     Route::get('/clear', function () {
         Artisan::call('config:cache');
