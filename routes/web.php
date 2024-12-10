@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments/{type}', [TransactionController::class, 'viewPayments']); //It will be purchases or sales
 
     Route::post('/getpayments/{type}', [TransactionController::class, 'findPayments']); //It will be purchases or sales
+    Route::post('/delete-payment/{type}', [TransactionController::class, 'deletePayment']);
     Route::post('/getorderdetails/{type}', [ReportController::class, 'viewOrderDetails']); //It will be purchases or sales
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

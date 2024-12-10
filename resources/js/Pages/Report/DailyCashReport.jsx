@@ -168,11 +168,14 @@ export default function DailyReport({ logs, stores }) {
                                         {row.transaction_date}
                                     </StyledTableCell>
                                     <StyledTableCell align="left">
-                                        {row.source.charAt(0).toUpperCase() + row.source.slice(1) +
+                                        {
+                                            row.source.charAt(0).toUpperCase() + row.source.slice(1) +
+                                            (row.sales_id ? ' (#'+row.sales_id+')' : "") +
                                             (row.name ? " - " + row.name : "") +
-                                            (row.description
-                                                ? " | " + row.description
-                                                : "")}
+                                            (row.description ? " | " + row.description : "")+
+                                            
+                                            (row.transaction_type=='account' ? " (Balance update)" : "")
+                                        }
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
                                         {numeral(row.cash_in).format('0,0.00')}

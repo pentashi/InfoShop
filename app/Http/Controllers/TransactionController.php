@@ -9,6 +9,7 @@ use App\Models\PurchaseTransaction;
 use App\Models\Purchase;
 use App\Models\Contact;
 use App\Models\Sale;
+use App\Models\CashLog;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function storeCustomerTransaction(Request $request){
+    public function storeCustomerTransaction(Request $request)
+    {
         $amount = $request->input('amount');
         $paymentMethod = $request->input('payment_method');
         $transactionDate = $request->input('transaction_date');
@@ -32,50 +34,46 @@ class TransactionController extends Controller
             'transaction_date' => $transactionDate,
             'amount' => $amount,
             'payment_method' => $paymentMethod,
-            'note'=>$note,
+            'note' => $note,
         ];
 
         DB::beginTransaction();
-        try{
+        try {
             $contact = Contact::findOrFail($contactId);
             $user = Auth::user();
 
             $transactionData['transaction_type'] = 'account';
-            if($paymentMethod=='Account' && $request->has('transaction_id')) {
-                
-            }
-            elseif($paymentMethod !='Account' && $request->has('transaction_id')){
+            if ($paymentMethod == 'Account' && $request->has('transaction_id')) {
+            } elseif ($paymentMethod != 'Account' && $request->has('transaction_id')) {
                 $transactionData['transaction_type'] = 'sale';
                 $contact->incrementBalance($amount, $user);
-            }
-            else{
+            } else {
                 $contact->incrementBalance($amount, $user);
             }
-            
+
             $parentTransaction = Transaction::create($transactionData);
 
             //If it has transaction id, it means, it comes from sale, if not then it's from account (from contact view)
-            if($request->has('transaction_id')){
+            if ($request->has('transaction_id')) {
                 $sale = Sale::where('id', $saleID)->first();
                 if ($sale) {
                     // Increment the amount_received field by the given amount
                     $sale->increment('amount_received', $amount);
-                
+
                     // Check if the total amount received is greater than or equal to the total amount
                     if ($sale->amount_received >= $sale->total_amount) {
                         $sale->status = 'completed';
                         $sale->payment_status = 'completed';
                     }
-                
+
                     // Save the changes to the Sale record
                     $sale->save();
                 }
-            }
-            else{
+            } else {
                 $pendingSales = Sale::where('contact_id', $contactId)
-                ->whereRaw('total_amount > amount_received')
-                ->orderBy('sale_date', 'asc') // Oldest sales first
-                ->get();
+                    ->whereRaw('total_amount > amount_received')
+                    ->orderBy('sale_date', 'asc') // Oldest sales first
+                    ->get();
 
                 // Calculate the total pending amount for all sales
                 $pendingSalesBalance = $pendingSales->sum(function ($sale) {
@@ -84,7 +82,7 @@ class TransactionController extends Controller
 
                 $contactBalance = $contact->balance - $amount;
                 $pendingSalesBalance = -$pendingSalesBalance;
-                
+
                 $openingBalance = $contactBalance - $pendingSalesBalance;
                 $remainingAmount = $amount + $openingBalance;
 
@@ -125,15 +123,14 @@ class TransactionController extends Controller
 
                     // Reduce remaining amount
                     $remainingAmount -= $allocationAmount;
-                }//End of foreach loop | foreach ($pendingSales as $sale)
+                } //End of foreach loop | foreach ($pendingSales as $sale)
             }
 
 
             DB::commit();
             return response()->json([
-                'message'=>"Payment added successfully",
+                'message' => "Payment added successfully",
             ], 200);
-
         } catch (\Exception $e) {
             // Rollback transaction in case of error
             DB::rollBack();
@@ -150,7 +147,8 @@ class TransactionController extends Controller
         }
     }
 
-    public function storeVendorTransaction(Request $request){
+    public function storeVendorTransaction(Request $request)
+    {
         $amount = $request->input('amount');
         $paymentMethod = $request->input('payment_method');
         $transactionDate = $request->input('transaction_date');
@@ -166,46 +164,42 @@ class TransactionController extends Controller
             'transaction_date' => $transactionDate,
             'amount' => $amount,
             'payment_method' => $paymentMethod,
-            'note'=>$note,
+            'note' => $note,
         ];
 
         DB::beginTransaction();
-        try{
+        try {
             $contact = Contact::findOrFail($contactId);
             $user = Auth::user();
-            
+
             $transactionData['transaction_type'] = 'account';
-            if($paymentMethod=='Account' && $request->has('transaction_id')) {
-                
-            }
-            elseif($paymentMethod !='Account' && $request->has('transaction_id')){
+            if ($paymentMethod == 'Account' && $request->has('transaction_id')) {
+            } elseif ($paymentMethod != 'Account' && $request->has('transaction_id')) {
                 $transactionData['transaction_type'] = 'purchase';
                 $contact->incrementBalance($amount, $user);
-            }
-            else{
+            } else {
                 $contact->incrementBalance($amount, $user);
             }
-            
+
             $parentTransaction = PurchaseTransaction::create($transactionData);
 
-            if($request->has('transaction_id')){
+            if ($request->has('transaction_id')) {
                 $purchase = Purchase::where('id', $purchaseID)->first();
                 if ($purchase) {
                     // Increment the amount_paid field by the given amount
                     $purchase->increment('amount_paid', $amount);
-                
+
                     // Check if the total amount received is greater than or equal to the total amount
                     if ($purchase->amount_paid >= $purchase->total_amount) $purchase->status = 'completed';
-                
+
                     // Save the changes to the Purchase record
                     $purchase->save();
                 }
-            }
-            else{
+            } else {
                 $pendingPurchases = Purchase::where('contact_id', $contactId)
-                ->whereRaw('total_amount > amount_paid')
-                ->orderBy('purchase_date', 'asc') // Oldest purchase first
-                ->get();
+                    ->whereRaw('total_amount > amount_paid')
+                    ->orderBy('purchase_date', 'asc') // Oldest purchase first
+                    ->get();
 
                 // Calculate the total pending amount for all purchases
                 $pendingPurchaseBalance = $pendingPurchases->sum(function ($purchase) {
@@ -214,7 +208,7 @@ class TransactionController extends Controller
 
                 $contactBalance = $contact->balance - $amount; //We deduct amount becuase it's already updated on Parent transaction
                 $pendingPurchasesBalance = -$pendingPurchaseBalance; //We convert purchase balance to negative to calculate the pending balance
-                
+
                 $openingBalance = $contactBalance - $pendingPurchasesBalance;
                 $remainingAmount = $amount + $openingBalance;
 
@@ -255,14 +249,13 @@ class TransactionController extends Controller
 
                     // Reduce remaining amount
                     $remainingAmount -= $allocationAmount;
-                }//End of foreach loop | foreach ($pendingPurchases as $purchase)
+                } //End of foreach loop | foreach ($pendingPurchases as $purchase)
             }
 
             DB::commit();
             return response()->json([
-                'message'=>"Payment added successfully",
+                'message' => "Payment added successfully",
             ], 200);
-
         } catch (\Exception $e) {
             // Rollback transaction in case of error
             DB::rollBack();
@@ -279,33 +272,34 @@ class TransactionController extends Controller
         }
     }
 
-    public function getPayments($type, $filters){
+    public function getPayments($type, $filters)
+    {
         $query = ($type === 'sales') ? Transaction::query() : PurchaseTransaction::query();
 
         $query->select(
-                ($type === 'sales' ? 'transactions.id' : 'purchase_transactions.id'),
-                ($type === 'sales' ? 'sales_id as reference_id' : 'purchase_id as reference_id'),
-                'store_id',
-                'contact_id',
-                'contacts.name as contact_name',
-                'transaction_date',
-                'amount',
-                'payment_method',
-                'transaction_type',
-                'note',
-            )
+            ($type === 'sales' ? 'transactions.id' : 'purchase_transactions.id'),
+            ($type === 'sales' ? 'sales_id as reference_id' : 'purchase_id as reference_id'),
+            'store_id',
+            'contact_id',
+            'contacts.name as contact_name',
+            'transaction_date',
+            'amount',
+            'payment_method',
+            'transaction_type',
+            'note',
+        )
             ->join('contacts', 'contact_id', '=', 'contacts.id')
             ->orderBy('transaction_date', 'desc');
 
-        if(isset($filters['contact_id'])){
+        if (isset($filters['contact_id'])) {
             $query->where('contact_id', $filters['contact_id']);
         }
 
-        if(isset($filters['payment_method']) && $filters['payment_method'] !== 'All'){
+        if (isset($filters['payment_method']) && $filters['payment_method'] !== 'All') {
             $query->where('payment_method', $filters['payment_method']);
         }
 
-        if(isset($filters['start_date']) && isset($filters['end_date'])){
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
             $query->whereBetween('transaction_date', [$filters['start_date'], $filters['end_date']]);
         }
         $perPage = $filters['per_page'] ?? 100;
@@ -314,28 +308,84 @@ class TransactionController extends Controller
         return $results;
     }
 
-    public function viewPayments(Request $request, $type='sales'){
+    public function viewPayments(Request $request, $type = 'sales')
+    {
         $filters = $request->only(['contact_id', 'payment_method', 'start_date', 'end_date']);
         $transactions = $this->getPayments($type, $filters);
 
-        if($type==='sales') $contacts = Contact::select('id', 'name','balance')->customers()->get();
-        else $contacts = Contact::select('id', 'name','balance')->vendors()->get();
+        if ($type === 'sales') $contacts = Contact::select('id', 'name', 'balance')->customers()->get();
+        else $contacts = Contact::select('id', 'name', 'balance')->vendors()->get();
 
+        $contact_id = null;
+        if (isset($request->contact_id) && !empty($request->contact_id)) {
+            $contact_id = $request->contact_id;
+        }
         return Inertia::render('Payment/Payment', [
             'payments' => $transactions,
-            'transactionType'=>$type,
-            'pageLabel'=>'Payments',
-            'contacts'=>$contacts,
+            'transactionType' => $type,
+            'pageLabel' => 'Payments',
+            'contacts' => $contacts,
+            'selected_contact' => $contact_id,
         ]);
     }
 
-    public function findPayments(Request $request, $type){
+    public function findPayments(Request $request, $type)
+    {
         $transaction_id = $request->transaction_id;
         $query = ($type === 'sale') ? Transaction::query() : PurchaseTransaction::query();
         $query = $query->select('amount', 'payment_method', 'transaction_date');
         $query = ($type === 'sale') ? $query->where('sales_id', $transaction_id) : $query->where('purchase_id', $transaction_id);
 
-        $results = $query->get ();
+        $results = $query->get();
         return response()->json(['payments' => $results,]);
+    }
+
+    public function deletePayment(Request $request, $type)
+    {
+        $user = Auth::user();
+        if($user->user_role!='admin'){
+            return response()->json(['error' => 'You are not authorized to delete payment'], 403);
+        }
+
+        $transaction_id = $request->transaction_id;
+        $query = ($type === 'sales') ? Transaction::query() : PurchaseTransaction::query();
+
+        $parent_payment = (clone $query)->where('parent_id', $transaction_id)->first();
+
+        if ($parent_payment) {
+            return response()->json(['error' => 'This payment linked with another transaction. Please delete that transaction first. - ' . $parent_payment->id], 406);
+        }
+
+        $transaction = $query->where('id', $transaction_id)->first();
+
+        DB::beginTransaction();
+        try {
+            if ($transaction->transaction_type == 'account') {
+                if ($transaction->payment_method == 'Cash') {
+                    CashLog::where('source', $type)->where('reference_id', $transaction->id)->delete();
+                }
+                $contact = Contact::findOrFail($transaction->contact_id);
+                $contact->incrementBalance($transaction->amount*-1, $user);
+
+                $transaction->delete();
+            }
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+
+            Log::error('Delete transaction failed', [
+                'error_message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Return error response
+            return response()->json(['error' => $e], 500);
+        }
+
+        DB::commit();
+
+        return response()->json(['message' => 'Payment has been deleted']);
     }
 }

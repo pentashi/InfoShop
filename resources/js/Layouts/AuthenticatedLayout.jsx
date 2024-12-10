@@ -67,9 +67,9 @@ function AuthenticatedLayout({ header, children, ...props }) {
 
     const [collapse, setCollapse] = useState(false);
 
-  const handleCollapse = () => {
-    setCollapse(!collapse);
-  };
+    const handleCollapse = () => {
+        setCollapse(!collapse);
+    };
 
     //Logic to selected menu item
     // const isSelected = (href) => pathname === href || pathname.startsWith(href + '/');
@@ -118,7 +118,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             open ? { mr: 3 } : { mr: "auto" },
                         ]}
                     >
-                       {Icon && <Icon />}
+                        {Icon && <Icon />}
                     </ListItemIcon>
                     <ListItemText
                         primary={label}
@@ -139,7 +139,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     justifyContent={"space-between"}
                     paddingLeft={"0.5rem"}
                 >
-                    <img src={infoshopLogo} style={{height:'80px', objectFit:'contain'}}></img>
+                    <img src={infoshopLogo} style={{ height: '80px', objectFit: 'contain' }}></img>
                 </Grid>
             </Toolbar>
             <Divider />
@@ -214,7 +214,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/expenses")}
                 />
-                
+
                 <NavItem
                     href="/customers"
                     icon={CustomerIcon}
@@ -257,33 +257,37 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/profile")}
                 />
-                <ListItemButton onClick={handleCollapse}>
-                    <ListItemIcon>
-                    <PeopleIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="User" />
-                    {collapse ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={collapse} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                    <NavItem
-                    href="/users"
-                    icon={null}
-                    label="All"
-                    open={open}
-                    // sx={{ pl: 5 }}
-                    selected={isSelected("/users")}
-                    />
-                    <NavItem
-                    href="/user/role"
-                    icon={null}
-                    label="User Role"
-                    open={open}
-                    // sx={{ pl: 5 }}
-                    selected={isSelected("/user/role")}
-                    />
-                    </List>
-                </Collapse>
+                {user.user_role == 'admin' && (
+                    <>
+                        <ListItemButton onClick={handleCollapse}>
+                            <ListItemIcon>
+                                <PeopleIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="User" />
+                            {collapse ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        <Collapse in={collapse} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                <NavItem
+                                    href="/users"
+                                    icon={null}
+                                    label="All"
+                                    open={open}
+                                    // sx={{ pl: 5 }}
+                                    selected={isSelected("/users")}
+                                />
+                                <NavItem
+                                    href="/user/role"
+                                    icon={null}
+                                    label="User Role"
+                                    open={open}
+                                    // sx={{ pl: 5 }}
+                                    selected={isSelected("/user/role")}
+                                />
+                            </List>
+                        </Collapse>
+                    </>
+                )}
 
                 <NavItem
                     href={'#'}
@@ -292,7 +296,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     onClick={(e) => {
                         e.preventDefault(); // Prevent default link behavior
-                        router.post(document.location.origin+"/logout"); // Call your logout function here
+                        router.post(document.location.origin + "/logout"); // Call your logout function here
                     }}
                 />
             </List>
@@ -322,17 +326,17 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     <Grid
                         container
                         spacing={2}
-                        alignItems={{sm:"center", xs:'start'}}
+                        alignItems={{ sm: "center", xs: 'start' }}
                         justifyContent={"space-between"}
                         width={"100%"}
                         display={'flex'}
-                        flexDirection={{xs:'column',sm:'row'}}
+                        flexDirection={{ xs: 'column', sm: 'row' }}
                     >
                         <Typography
                             variant="h5"
                             noWrap
                             component="div"
-                            sx={{ textTransform: "capitalize", fontSize:{xs:'1rem', sm:'1.5rem'} }}
+                            sx={{ textTransform: "capitalize", fontSize: { xs: '1rem', sm: '1.5rem' } }}
                         >
                             {shop_name} | {pageLabel}
                         </Typography>
@@ -340,8 +344,8 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             <IconButton
                                 color="white"
                                 size="large"
-                                onClick={(e) => router.post(document.location.origin+"/logout")}
-                                sx={{display: { xs: "none", sm:'block' } }}
+                                onClick={(e) => router.post(document.location.origin + "/logout")}
+                                sx={{ display: { xs: "none", sm: 'block' } }}
                             >
                                 <LogoutIcon
                                     fontSize="large"

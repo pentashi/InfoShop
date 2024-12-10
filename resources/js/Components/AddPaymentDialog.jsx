@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo} from "react";
+import React, { useState, useContext, useMemo } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -25,17 +25,17 @@ const initialPaymentFormState = {
     payment_method: 'Cash',
     transaction_date: dayjs().format("YYYY-MM-DD"), // Today's date in 'YYYY-MM-DD' format
     note: '',
-    store_id:1,
+    store_id: 1,
 };
 
 export default function AddPaymentDialog({
     open,
     setOpen,
     selectedContact,
-    selectedTransaction=null,
+    selectedTransaction = null,
     amountLimit,
-    is_customer=false,
-    stores=null,
+    is_customer = false,
+    stores = null,
     refreshTable
 }) {
     const [loading, setLoading] = useState(false);
@@ -77,39 +77,42 @@ export default function AddPaymentDialog({
         let formJson = Object.fromEntries(submittedFormData.entries());
         formJson.contact_id = selectedContact
 
-        if(selectedTransaction !== null ){
+        const submitter = event.nativeEvent.submitter.name;
+        if(submitter=='credit') formJson.amount = -Math.abs(paymentForm.amount)
+
+        if (selectedTransaction !== null) {
             formJson.transaction_id = selectedTransaction.id
             formJson.store_id = selectedTransaction.store_id
         }
 
-        let url='/customer-transaction';
-        if(!is_customer) url="/vendor-transaction"
+        let url = '/customer-transaction';
+        if (!is_customer) url = "/vendor-transaction"
 
         axios
-        .post(url, formJson)
-        .then((resp) => {
-            Swal.fire({
-                title: "Success!",
-                text: resp.data.message,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .post(url, formJson)
+            .then((resp) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                refreshTable(window.location.pathname)
+                setOpen(false)
+            })
+            .catch((error) => {
+                Swal.fire({
+                    title: "Failed!",
+                    text: error.response.data.error,
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+                console.log(error);
+            }).finally(() => {
+                setLoading(false); // Reset submitting state
             });
-            refreshTable(window.location.pathname)
-            setOpen(false)
-        })
-        .catch((error) => {
-            Swal.fire({
-                title: "Failed!",
-                text: error.response.data.error,
-                icon: "error",
-                showConfirmButton: true,
-            });
-            console.log(error);
-        }).finally(() => {
-            setLoading(false); // Reset submitting state
-        });
     };
 
     return (
@@ -141,14 +144,14 @@ export default function AddPaymentDialog({
                 <DialogContent>
                     <Grid container spacing={2}>
                         <Grid size={4}>
-                        <TextField
+                            <TextField
                                 fullWidth
                                 type="number"
                                 name="amount"
                                 label="Amount"
                                 variant="outlined"
                                 autoFocus
-                                sx={{input:{fontWeight:'bold'}}}
+                                sx={{ input: { fontWeight: 'bold' } }}
                                 value={paymentForm.amount}
                                 onChange={handleFieldChange}
                                 onFocus={(event) => {
@@ -170,24 +173,24 @@ export default function AddPaymentDialog({
                         </Grid>
 
                         <Grid size={4}>
-                        <FormControl sx={{ minWidth: 120, width:'100%' }}>
-                        <InputLabel>Payment Method</InputLabel>
-                            <Select
-                                name="payment_method"
-                                value={paymentForm.payment_method}
-                                onChange={handleFieldChange}
-                                label="Payment Method"
-                            >
-                                <MenuItem value={'Cash'}>Cash</MenuItem>
-                                <MenuItem value={'Cheque'}>Cheque</MenuItem>
-                                {selectedTransaction === null && (
-                                    <MenuItem value={'Account Balance'}>Account Balance</MenuItem>
-                                )}
-                                {selectedTransaction!==null &&(
-                                    <MenuItem value={'Account'}>Account</MenuItem>
-                                )}
-                            </Select>
-                        </FormControl>
+                            <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                                <InputLabel>Payment Method</InputLabel>
+                                <Select
+                                    name="payment_method"
+                                    value={paymentForm.payment_method}
+                                    onChange={handleFieldChange}
+                                    label="Payment Method"
+                                >
+                                    <MenuItem value={'Cash'}>Cash</MenuItem>
+                                    <MenuItem value={'Cheque'}>Cheque</MenuItem>
+                                    {selectedTransaction === null && (
+                                        <MenuItem value={'Account Balance'}>Account Balance</MenuItem>
+                                    )}
+                                    {selectedTransaction !== null && (
+                                        <MenuItem value={'Account'}>Account</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                         <Grid size={4}>
@@ -207,9 +210,9 @@ export default function AddPaymentDialog({
                             />
                         </Grid>
 
-                        {(selectedTransaction===null || amountLimit === undefined) && (
+                        {(selectedTransaction === null || amountLimit === undefined) && (
                             <Grid size={12}>
-                                <FormControl sx={{ width:'100%', mt:'0.6rem' }}>
+                                <FormControl sx={{ width: '100%', mt: '0.6rem' }}>
                                     <InputLabel>Store</InputLabel>
                                     <Select
                                         value={paymentForm.store_id}
@@ -229,7 +232,7 @@ export default function AddPaymentDialog({
                         )}
                     </Grid>
 
-                    <Divider sx={{py:'0.5rem'}}></Divider>
+                    <Divider sx={{ py: '0.5rem' }}></Divider>
 
                     <TextField
                         fullWidth
@@ -254,6 +257,21 @@ export default function AddPaymentDialog({
                         {/* {loading ? 'Loading...' : 'ADD PAYMENT'} */}
                         {getButtonText()}
                     </Button>
+
+                    {(selectedTransaction === null && paymentForm.amount >= 0) && (
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{ paddingY: "15px", fontSize: "1.5rem" }}
+                            type="submit"
+                            color={"error"}
+                            name={"credit"}
+                            value={'credit'}
+                            disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit) || loading}
+                        >
+                            {loading ? 'Loading...' : 'CREDIT'}
+                        </Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </React.Fragment>

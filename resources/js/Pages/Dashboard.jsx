@@ -75,7 +75,7 @@ export default function Dashboard({ data, logo}) {
             <Alert sx={{mb:2}} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
             </Link>
             <Link href={'#'}>
-            <Alert sx={{mb:2}} severity="primary"><strong>System update</strong> coming soon...</Alert>
+            <Alert sx={{mb:2}} severity="primary"><strong>System update</strong> is on the way...</Alert>
             </Link>
             </Grid>
 

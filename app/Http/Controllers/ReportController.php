@@ -25,17 +25,33 @@ class ReportController extends Controller
         if (empty($transaction_date)) $transaction_date = Carbon::today()->toDateString();
 
         $stores = Store::select('id', 'name')->get();
-        $cashLogs = CashLog::where('transaction_date', $transaction_date)
+        $cashLogs = CashLog::where('cash_logs.transaction_date', $transaction_date)
             ->select(
-                'transaction_date',
+                'cash_logs.transaction_date',
                 'description', 
-                'amount', 
-                'source', 
+                'cash_logs.amount',
+                'cash_logs.source',
                 'contacts.name',
-                DB::raw('CASE WHEN amount > 0 THEN amount ELSE 0 END AS cash_in'),
-                DB::raw('CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END AS cash_out')
+                'transactions.sales_id',
+                DB::raw('CASE WHEN cash_logs.amount > 0 THEN cash_logs.amount ELSE 0 END AS cash_in'),
+                DB::raw('CASE WHEN cash_logs.amount < 0 THEN ABS(cash_logs.amount) ELSE 0 END AS cash_out'),
+                DB::raw('
+                    CASE 
+                        WHEN cash_logs.source = "sales" THEN transactions.transaction_type 
+                        WHEN cash_logs.source = "purchases" THEN purchase_transactions.transaction_type 
+                        ELSE NULL 
+                    END AS transaction_type
+                ')
             )
             ->leftJoin('contacts', 'cash_logs.contact_id', '=', 'contacts.id')
+            ->leftJoin('transactions', function($join) {
+                $join->on('cash_logs.reference_id', '=', 'transactions.id')
+                     ->where('cash_logs.source', '=', 'sales');
+            })
+            ->leftJoin('purchase_transactions', function($join) {
+                $join->on('cash_logs.reference_id', '=', 'purchase_transactions.id')
+                     ->where('cash_logs.source', '=', 'purchases');
+            })
             ->get();
 
         return Inertia::render('Report/DailyCashReport', [

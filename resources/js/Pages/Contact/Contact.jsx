@@ -13,6 +13,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import FormDialog from './Partial/FormDialog';
 import CustomPagination from '@/Components/CustomPagination';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
+import PaymentsIcon from "@mui/icons-material/Payments";
 
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -53,6 +54,7 @@ const columns = (handleRowClick) => [
         width: 150,
         renderCell: (params) => {
         const basePath = params.row.type === 'vendor' ? '/purchases' : '/sales';
+        const paymentsPath = params.row.type === 'vendor' ? '/purchases' : '/sales';
         return(
             <>
                 <Link href={"/reports/" + params.row.id+'/'+params.row.type}>
@@ -65,6 +67,13 @@ const columns = (handleRowClick) => [
                 <Link href={`${basePath}?contact_id=${params.row.id}&end_date=&query=&start_date=&status=pending&store=0`}>
                     <IconButton color="alert">
                         <HourglassTopIcon />
+                    </IconButton>
+                </Link>
+
+                {/* Sales or Purchase Link */}
+                <Link href={`/payments${basePath}?contact_id=${params.row.id}&store=0`}>
+                    <IconButton color="success">
+                        <PaymentsIcon />
                     </IconButton>
                 </Link> 
             </>

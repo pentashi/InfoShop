@@ -13,22 +13,36 @@ import {
     MenuItem,
     TextField,
     Chip,
+    IconButton
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import Select2 from "react-select";
 import numeral from "numeral";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import Swal from "sweetalert2";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
-    { field: "id", headerName: "ID", width: 80,
+    {
+        field: "id", headerName: "ID", width: 80,
         renderCell: (params) => {
             return params.value.toString().padStart(4, "0");
         },
     },
-    { field: "transaction_type", headerName: "Type", width: 100,
+    {
+        field: "transaction_date",
+        headerName: "Date",
+        width: 100,
+        renderCell: (params) => {
+            // Format the date to 'YYYY-MM-DD'
+            return dayjs(params.value).format("YYYY-MM-DD");
+        },
+    },
+    {
+        field: "transaction_type", headerName: "Type", width: 100,
         renderCell: (params) => {
             return params.value.toUpperCase();
         },
@@ -46,33 +60,68 @@ const columns = (handleRowClick) => [
         },
     },
     { field: "payment_method", headerName: "Payment Method", width: 150 },
-    { field: "note", headerName: "Note", width: 100 },    
-    { field: "amount", headerName: "Total Amount", width: 120, align:'right',headerAlign: 'right',
+    { field: "note", headerName: "Note", width: 100 },
+    {
+        field: "amount", headerName: "Total Amount", width: 120, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
-     },
-    
+    },
     {
-        field: "transaction_date",
-        headerName: "Date",
+        field: "actions",
+        headerName: "Actions",
         width: 100,
         renderCell: (params) => {
             // Format the date to 'YYYY-MM-DD'
-            return dayjs(params.value).format("YYYY-MM-DD");
+            return (
+                <>
+                    <IconButton disabled={params.row.transaction_type!='account'} color="error" onClick={() => handleRowClick('delete',params.row.id)}>
+                        <HighlightOffIcon />
+                    </IconButton>
+                </>
+            )
         },
     },
 ];
 
-export default function Payment({ payments, transactionType, contacts }) {
+export default function Payment({ payments, transactionType, contacts, selected_contact }) {
     const [dataPayments, setDataPayments] = useState(payments);
     const [paymentSelect, setPaymentSelect] = useState(transactionType);
     const [paymentMethod, setPaymentMethod] = useState("All");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [selectedContact, setSelectedContact] = useState("");
+    const [selectedContact, setSelectedContact] = useState({ name: '', id: selected_contact });
     const [totalAmount, setTotalAmount] = useState(0)
-    const handleRowClick = () => {};
+    const handleRowClick = (type,id) => {
+        if(type=='delete'){
+            Swal.fire({
+                title: "Do you want to remove the payment?",
+                showDenyButton: true,
+                confirmButtonText: "YES",
+                denyButtonText: `NO`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post(`/delete-payment/${transactionType}`,{transaction_id:id})
+                    .then((response) => {
+                        const updatedData = dataPayments.data.filter((item) => item.id !== id);
+                        setDataPayments({ ...dataPayments, data: updatedData });
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.data.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({ title: error.response.data.error,showConfirmButton: true,icon: "error",})
+                        console.error("Deletion failed with errors:", error);
+                    });
+                }
+            });
+        }
+     };
 
     const refreshPayments = (url) => {
         const options = {
@@ -83,13 +132,13 @@ export default function Payment({ payments, transactionType, contacts }) {
                 setDataPayments(response.props.payments);
             },
         };
-        router.get(url,{
+        router.get(url, {
             contact_id: selectedContact?.id,
             payment_method: paymentMethod,
             start_date: startDate,
             end_date: endDate,
         },
-        options);
+            options);
     };
 
     const handleSelectPayments = (type) => {
@@ -167,6 +216,8 @@ export default function Payment({ payments, transactionType, contacts }) {
                         <MenuItem value={"Cash"}>Cash</MenuItem>
                         <MenuItem value={"Credit"}>Credit</MenuItem>
                         <MenuItem value={"Cheque"}>Cheque</MenuItem>
+                        <MenuItem value={"Account Balance"}>Account Balance</MenuItem>
+                        <MenuItem value={"Account"}>Account</MenuItem>
                     </Select>
                 </FormControl>
 
@@ -217,7 +268,7 @@ export default function Payment({ payments, transactionType, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:'73vh'}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '73vh' }}
             >
                 <DataGrid
                     rows={dataPayments?.data}
@@ -232,7 +283,7 @@ export default function Payment({ payments, transactionType, contacts }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={'end'}>
-            <Chip size="large" label={'Total:'+numeral(totalAmount).format('0,0.00')} color="primary" />
+                <Chip size="large" label={'Total:' + numeral(totalAmount).format('0,0.00')} color="primary" />
                 <CustomPagination
                     dataLinks={dataPayments?.links}
                     refreshTable={refreshPayments}
