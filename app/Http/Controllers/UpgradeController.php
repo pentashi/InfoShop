@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UpgradeController extends Controller
 {
@@ -69,6 +71,25 @@ class UpgradeController extends Controller
                 // Now copy the new build folder contents
                 File::copyDirectory($newBuildPath, $existingBuildPath);
             }
+
+            // ** Handling the SQL file within the ZIP**
+        $sqlFilePath = $extractPath . '/database.sql'; // Path to the SQL file in the extracted folder
+        
+        if (File::exists($sqlFilePath)) {
+            try {
+                // Read the SQL file contents
+                $sql = File::get($sqlFilePath);
+                
+                // Execute SQL commands
+                DB::unprepared($sql);  // Executes raw SQL directly
+                
+                // Optionally, log success or handle errors
+                Log::info('SQL file executed successfully.');
+            } catch (\Exception $e) {
+                // Handle any exceptions
+                return redirect()->back()->with('error', 'Failed to execute the SQL file: ' . $e->getMessage());
+            }
+        }
 
             // Clean up temporary files
             File::deleteDirectory($temporaryPath);

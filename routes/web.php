@@ -23,6 +23,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReloadController;
 use App\Http\Controllers\UpgradeController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SalaryRecordController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -105,6 +107,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
     Route::post('/expense/{id}/delete',[ExpenseController::class, 'delete'])->name('expenses.delete');
+
+    Route::get('/employees',[EmployeeController::class, 'index'])->name('employees.index');
+    Route::post('/employee',[EmployeeController::class, 'store'])->name('employees.store');
+    Route::post('/employee/{id}',[EmployeeController::class, 'update'])->name('employees.update');
+    Route::post('/employee/{id}/delete',[EmployeeController::class, 'delete'])->name('employees.delete');
+
+    Route::post('/salary-records', [SalaryRecordController::class, 'store']);
+    Route::post('/salary-records/{id}', [SalaryRecordController::class, 'delete']);
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('user.store');

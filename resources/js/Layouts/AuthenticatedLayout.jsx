@@ -37,6 +37,7 @@ import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
 import WorkIcon from '@mui/icons-material/Work';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import BadgeIcon from '@mui/icons-material/Badge';
 
 import infoshopLogo from '@/infoshop.png';
 const drawerWidth = 240;
@@ -242,6 +243,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     label="Collections"
                     open={open}
                     selected={isSelected("/collections")}
+                />
+                <NavItem
+                    href="/employees"
+                    icon={BadgeIcon}
+                    label="Employees"
+                    open={open}
+                    selected={isSelected("/employees")}
                 />
                 <NavItem
                     href="/settings"

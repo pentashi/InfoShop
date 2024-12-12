@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useEffect} from "react";
+import React, { useState, useContext, useMemo, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -15,11 +15,16 @@ import {
     ListItem,
     ListItemText,
     ListItemButton,
+    Table, TableBody, TableRow, TableCell,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PercentIcon from '@mui/icons-material/Percent';
+import PaymentsIcon from '@mui/icons-material/Payments';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import InputAdornment from "@mui/material/InputAdornment";
 import { router } from "@inertiajs/react";
 import axios from "axios";
@@ -32,7 +37,7 @@ export default function PaymentsCheckoutDialog({
     setOpen,
     selectedContact,
     formData,
-    is_sale=false,
+    is_sale = false,
 }) {
     const { cartState, cartTotal, emptyCart, totalProfit } = useCart();
     const return_sale = usePage().props.return_sale;
@@ -64,14 +69,14 @@ export default function PaymentsCheckoutDialog({
     const handleClose = () => {
         setPayments([])
         setAmountReceived(0)
-        setAmount(cartTotal-discount)
+        setAmount(cartTotal - discount)
         setOpen(false);
     };
 
     useEffect(() => {
-        setAmount(cartTotal-discount);
+        setAmount(cartTotal - discount);
         setAmountReceived(payments.reduce((sum, payment) => sum + payment.amount, 0));
-        setAmount(cartTotal-discount)
+        setAmount(cartTotal - discount)
     }, [])
 
     useEffect(() => {
@@ -80,7 +85,7 @@ export default function PaymentsCheckoutDialog({
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        
+
         if (loading) return;
         setLoading(true);
 
@@ -90,51 +95,50 @@ export default function PaymentsCheckoutDialog({
         formJson.cartItems = cartState;
         formJson.contact_id = selectedContact.id;
         formJson.payments = payments;
-        formJson = {...formJson, ...formData} //Form data from the POS / Purchase form
-        formJson.profit_amount = totalProfit-discount
+        formJson = { ...formJson, ...formData } //Form data from the POS / Purchase form
+        formJson.profit_amount = totalProfit - discount
 
         formJson.return_sale = return_sale;
         formJson.return_sale_id = return_sale_id;
 
-        let url='/pos/checkout';
-        if(!is_sale){ url="/purchase/store"}
+        let url = '/pos/checkout';
+        if (!is_sale) { url = "/purchase/store" }
         axios
-        .post(url, formJson)
-        .then((resp) => {
-            Swal.fire({
-                title: "Success!",
-                text: resp.data.message,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .post(url, formJson)
+            .then((resp) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                emptyCart(); //Clear the cart from the Context API
+                setDiscount(0);
+                setPayments([])
+                if (!is_sale) router.visit("/purchases");
+                setOpen(false)
+            })
+            .catch((error) => {
+                const errorMessages = JSON.stringify(error.response, Object.getOwnPropertyNames(error));
+                Swal.fire({
+                    title: "Failed!",
+                    text: errorMessages,
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+                console.log(error);
+            }).finally(() => {
+                setLoading(false); // Reset submitting state
             });
-            emptyCart(); //Clear the cart from the Context API
-            setDiscount(0);
-            setPayments([])
-            if(!is_sale) router.visit("/purchases");
-            setOpen(false)
-        })
-        .catch((error) => {
-            const errorMessages = JSON.stringify(error.response, Object.getOwnPropertyNames(error));
-            Swal.fire({
-                title: "Failed!",
-                text: errorMessages,
-                icon: "error",
-                showConfirmButton: true,
-            });
-            console.log(error);
-        }).finally(() => {
-            setLoading(false); // Reset submitting state
-        });
     };
 
-     // Function to handle the addition of a payment
-     const addPayment = (paymentMethod) => {
-        const netTotal = cartTotal-discount
-        const balance = amountReceived+parseFloat(amount)
-        if (netTotal<balance)
-        {
+    // Function to handle the addition of a payment
+    const addPayment = (paymentMethod) => {
+        const netTotal = cartTotal - discount
+        const balance = amountReceived + parseFloat(amount)
+        if (netTotal < balance) {
             alert('Payment cannot be exceeded the total amount')
         }
         else if (amount) {
@@ -153,7 +157,7 @@ export default function PaymentsCheckoutDialog({
         setPayments(newPayments);
     };
 
-    const discountPercentage=()=>{
+    const discountPercentage = () => {
         if (discount < 0 || discount > 100) {
             alert("Discount must be between 0 and 100");
             return;
@@ -189,8 +193,8 @@ export default function PaymentsCheckoutDialog({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
-                    <Grid container spacing={2}>
-                        <Grid size={4}>
+                    <Grid container spacing={2} alignItems={'center'}>
+                        {/* <Grid size={4}>
                             <TextField
                                 fullWidth
                                 variant="outlined"
@@ -210,8 +214,8 @@ export default function PaymentsCheckoutDialog({
                                     },
                                 }}
                             />
-                        </Grid>
-                        <Grid size={4}>
+                        </Grid> */}
+                        <Grid size={6}>
                             <TextField
                                 fullWidth
                                 type="number"
@@ -233,10 +237,10 @@ export default function PaymentsCheckoutDialog({
                                                 Rs.
                                             </InputAdornment>
                                         ),
-                                        endAdornment:(
+                                        endAdornment: (
                                             <InputAdornment position="start">
                                                 <IconButton color="primary" onClick={discountPercentage}>
-                                                  <PercentIcon fontSize="small"></PercentIcon>
+                                                    <PercentIcon fontSize="small"></PercentIcon>
                                                 </IconButton>
                                             </InputAdornment>
                                         ),
@@ -245,16 +249,16 @@ export default function PaymentsCheckoutDialog({
                             />
                         </Grid>
 
-                        <Grid size={4}>
-                       
-                        <TextField
+                        <Grid size={6}>
+
+                            <TextField
                                 fullWidth
                                 type="number"
                                 name="net_total"
-                                label="Amount to pay"
+                                label="Total"
                                 variant="outlined"
-                                sx={{input:{fontWeight:'bold'}}}
-                                value={(cartTotal-discount).toFixed(2)}
+                                sx={{ input: { fontWeight: 'bold', } }}
+                                value={(cartTotal - discount).toFixed(2)}
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
@@ -272,113 +276,105 @@ export default function PaymentsCheckoutDialog({
                                     },
                                 }}
                             />
-         
+
                         </Grid>
-                        <Grid size={12} sx={{mt:'1rem'}}>
-                       
-                        <TextField
-                                autoFocus
-                                fullWidth
-                                type="number"
-                                name="amount"
-                                label="Amount"
-                                variant="outlined"
-                                value={amount}
-                                onChange={(e)=>setAmount(e.target.value)}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                sx={{input:{fontSize:'1.4rem'}}}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                Rs.
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <Button
-                                                    id="payment-positioned-button"
-                                                    aria-controls={
-                                                        openPayment
-                                                            ? "payment-menu"
-                                                            : undefined
-                                                    }
-                                                    aria-haspopup="true"
-                                                    aria-expanded={openPayment ? "true" : undefined}
-                                                    onClick={handlePaymentClick}
-                                                    variant="contained"
-                                                > PAYMENT</Button>
-                                                <Menu
-                                                    id="payment-menu"
-                                                    aria-labelledby="payment-positioned-button"
-                                                    anchorEl={anchorEl}
-                                                    open={openPayment}
-                                                    onClose={handlePaymentClose}
-                                                    anchorOrigin={{
-                                                        vertical: "top",
-                                                        horizontal: "right",
-                                                    }}
-                                                    transformOrigin={{
-                                                        vertical: "top",
-                                                        horizontal: "right",
-                                                    }}
-                                                >
-                                                    <MenuItem onClick={() => addPayment('Cash')}>
-                                                        CASH
-                                                    </MenuItem>
-                                                    <MenuItem onClick={() => addPayment('Cheque')}>
-                                                        CHEQUE
-                                                    </MenuItem>
-                                                    <MenuItem onClick={() => addPayment('Credit')}>
-                                                        CREDIT
-                                                    </MenuItem>
-                                                    {selectedContact && selectedContact.id !==1 && (
-                                                        <MenuItem onClick={() => addPayment('Account')}>
-                                                            ACCOUNT
-                                                        </MenuItem>
-                                                    )}
-                                                </Menu>
-                                            </InputAdornment>
-                                        ),
-                                    },
-                                }}
-                            />
+
+                        <Grid container size={12} flexDirection={'column'} alignItems={'center'} justifyContent={'center'}>
+                            <Grid size={12} sx={{ mt: '1rem' }}>
+
+                                <TextField
+                                    autoFocus
+                                    fullWidth
+                                    type="number"
+                                    name="amount"
+                                    label="Amount"
+                                    variant="outlined"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    sx={{ input: { fontSize: '1.4rem' } }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    Rs.
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid size={12} spacing={1} container justifyContent={'center'}>
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    startIcon={<PaymentsIcon />}
+                                    onClick={() => addPayment('Cash')}
+                                    color="success"
+                                >
+                                    CASH
+                                </Button>
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    startIcon={<PauseCircleOutlineIcon />}
+                                    onClick={() => addPayment('Credit')}
+                                    color="error"
+                                >
+                                    CREDIT
+                                </Button>
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    startIcon={<CreditCardIcon />}
+                                    onClick={() => addPayment('Cheque')}
+                                >
+                                    CHEQUE
+                                </Button>
+                            </Grid>
                         </Grid>
                     </Grid>
 
-                    <Divider sx={{py:'0.5rem'}}></Divider>
+                    <Divider sx={{ py: '0.5rem' }}></Divider>
 
-                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                    {payments.map((payment, index) => {
-                const labelId = `checkbox-list-label-${index}`;
+                    <Table sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                        <TableBody>
+                            {payments.map((payment, index) => (
+                                <TableRow key={index}>
+                                    {/* Display Payment Method Icon */}
+                                    <TableCell sx={{ padding: '5px 16px' }}>
+                                        {payment.payment_method === 'Cash' && <PaymentsIcon />}
+                                        {payment.payment_method === 'Cheque' && <CreditCardIcon />}
+                                        {payment.payment_method === 'Credit' && <PauseCircleOutlineIcon />}
+                                        
+                                    </TableCell>
 
-                return (
-                    <React.Fragment key={index}>
-                        <ListItem
-                            secondaryAction={
-                                <IconButton edge="end" onClick={() => deletePayment(index)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            }
-                            disablePadding
-                        >
-                            <ListItemButton role={undefined} dense>
-                                {/* Displaying the payment method and amount */}
-                                <ListItemText primary={payment.payment_method} />
-                                <ListItemText id={labelId} primary={`Rs.${(payment.amount).toFixed(2)}`} />
-                            </ListItemButton>
-                        </ListItem>
-                        {/* Only show Divider between items */}
-                        {index < payments.length - 1 && <Divider variant="inset" component="li" />}
-                    </React.Fragment>
-                );
-            })}
-                    </List>
+                                    <TableCell>
+                                    <strong>{payment.payment_method}</strong>
+                                    </TableCell>
+                                    {/* Display Payment Amount */}
+                                    <TableCell align="right">
+                                        <strong>Rs. {(payment.amount).toFixed(2)}</strong>
+                                    </TableCell>
+                                    {/* Action Button to delete payment */}
+                                    <TableCell align="center">
+                                        <IconButton edge="end" color="error" onClick={() => deletePayment(index)}>
+                                            <HighlightOffIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
 
                     <TextField
                         fullWidth
@@ -387,6 +383,7 @@ export default function PaymentsCheckoutDialog({
                         name="note"
                         multiline
                         sx={{ mt: "1rem" }}
+                        size="small"
                     />
                 </DialogContent>
                 <DialogActions>

@@ -26,7 +26,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import axios from "axios";
 import numeral from "numeral";
 
-export default function Dashboard({ data, logo}) {
+export default function Dashboard({ data, logo }) {
     const auth = usePage().props.auth.user;
     const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -68,15 +68,19 @@ export default function Dashboard({ data, logo}) {
         >
             <Head title="Dashboard" />
             <Grid size={12} spacing={2} flexDirection={'row'} container>
-            <Link href={"/products?status=alert&per_page="+data.lowStock}>
-            <Alert sx={{mb:2}} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
-            </Link>
-            <Link href={"/products?status=out_of_stock&per_page="+data.outOfStock}>
-            <Alert sx={{mb:2}} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
-            </Link>
-            <Link href={'#'}>
-            <Alert sx={{mb:2}} severity="primary"><strong>System update</strong> is on the way...</Alert>
-            </Link>
+                {parseFloat(data.outOfStock) != 0 && (
+                    <Link href={"/products?status=alert&per_page=" + data.lowStock}>
+                        <Alert sx={{ mb: 2 }} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
+                    </Link>
+                )}
+                {parseFloat(data.outOfStock) != 0 && (
+                    <Link href={"/products?status=out_of_stock&per_page=" + data.outOfStock}>
+                        <Alert sx={{ mb: 2 }} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
+                    </Link>
+                )}
+                <Link href={'#'}>
+                    <Alert sx={{ mb: 2 }} severity="primary"><strong>System update</strong> is on the way...</Alert>
+                </Link>
             </Grid>
 
             <Grid
@@ -293,8 +297,8 @@ export default function Dashboard({ data, logo}) {
                     </Card>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-                    <Card sx={{ width: "100%", height: "100%", padding:2, display:'flex', justifyContent:'center'}}>
-                    <img src={logo.meta_value} style={{maxHeight:'250px', objectFit:'contain'}} alt="" />
+                    <Card sx={{ width: "100%", height: "100%", padding: 2, display: 'flex', justifyContent: 'center' }}>
+                        <img src={logo.meta_value} style={{ maxHeight: '250px', objectFit: 'contain' }} alt="" />
                     </Card>
                 </Grid>
             </Grid>
