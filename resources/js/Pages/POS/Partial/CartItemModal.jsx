@@ -375,7 +375,40 @@ export default function CartItemModal() {
                             </Grid>
                         )}
                         {formState.product_type === "reload" && (
-                            <Grid size={6}>
+                            <>
+                            <Grid size={4}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="reload"
+                                    label="Reload amount"
+                                    variant="outlined"
+                                    required
+                                    value={formState.price - formState.additional_commission}
+                                    onChange={handleInputChange}
+                                    sx={{
+                                        mt: "0.5rem",
+                                        input: { fontSize: "1rem", fontWeight:'bold'},
+                                    }}
+                                    onFocus={(event) => {
+                                        event.target.select();
+                                    }}
+                                    slotProps={{
+                                        inputLabel: {
+                                            shrink: true,
+                                        },
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    Rs.
+                                                </InputAdornment>
+                                            ),
+                                            readOnly: true,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                            <Grid size={4}>
                                 <TextField
                                     fullWidth
                                     type="number"
@@ -407,6 +440,7 @@ export default function CartItemModal() {
                                     }}
                                 />
                             </Grid>
+                            </>
                         )}
                         {formState.product_type !== "reload" && (
                             <Grid size={6}>
@@ -441,7 +475,7 @@ export default function CartItemModal() {
                                 />
                             </Grid>
                         )}
-                        <Grid size={6}>
+                        <Grid size={formState.product_type !== "reload"?6:4}>
                             <TextField
                                 fullWidth
                                 type={showCost ? "number" : "password"}

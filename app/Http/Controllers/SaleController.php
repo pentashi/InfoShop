@@ -91,10 +91,10 @@ class SaleController extends Controller
             'total_amount',           // Total amount (Total amount after discount [net_total - discount])
             'discount',                // Discount
             'amount_received',         // Amount received
-            'profit_amount',          // Profit amount
             'status',                  // Sale status
             'stores.address',
             'contacts.name', // Customer name from contacts
+            'contacts.whatsapp',
             'sales.created_by',
             'invoice_number',
             'stores.sale_prefix',
@@ -105,6 +105,10 @@ class SaleController extends Controller
         ->join('stores', 'sales.store_id','=','stores.id')
         ->where('sales.id',$id)
         ->first();
+
+        if (!$sale) {
+            abort(404); // This will trigger the 404 error page
+        }
 
         $user = User::find($sale->created_by);
 
@@ -176,6 +180,81 @@ class SaleController extends Controller
             'sold_items'=>$soldItems,
             'contacts'=>$contacts,
             'pageLabel'=>'Sold Items',
+        ]);
+    }
+
+    public function pendingSalesReceipt(Request $request, $contact_id){
+        $settings = Setting::all();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $sales = Sale::select(
+            'sales.id',
+            'sale_date',              // Sale date
+            'total_amount',           // Total amount (Total amount after discount [net_total - discount])
+            'discount',                // Discount
+            'amount_received',         // Amount received
+            'status',                  // Sale status
+            'stores.address',
+            'contacts.name',
+            'contacts.whatsapp',
+            'contacts.balance',
+            'invoice_number',
+            'stores.sale_prefix',
+            'stores.contact_number',
+            'sales.created_at'
+        )
+        ->where('sales.contact_id', $contact_id) // Filter by contact_id
+        ->where('sales.status', 'pending') // Filter by status = pending
+        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
+        ->join('stores', 'sales.store_id','=','stores.id')
+        ->get(); // Fetch all matching sales
+
+        if ($sales->isEmpty()) {
+            abort(404);
+        }
+    
+        // Fetch all sale items related to the fetched sales
+        $salesItems = SaleItem::select(
+            'sale_items.quantity',
+            'sale_items.unit_price',
+            'sale_items.discount',
+            DB::raw("CONCAT(' [', DATE_FORMAT(sale_items.sale_date, '%Y-%m-%d'), '] - ', products.name) as name"),
+            'sale_items.sale_id', // Include sale_id for mapping
+            DB::raw("CASE 
+                WHEN products.product_type = 'reload'
+                THEN reload_and_bill_metas.account_number 
+                ELSE NULL 
+             END as account_number")
+        )
+        ->whereIn('sale_items.sale_id', $sales->pluck('id')) // Fetch only items for the selected sales
+        ->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
+        ->leftJoin('reload_and_bill_metas', function ($join) {
+            $join->on('sale_items.id', '=', 'reload_and_bill_metas.sale_item_id')
+                 ->where('products.product_type', '=', 'reload');
+        })
+        ->get();
+
+        $mergedSale = [
+            'id' => 'merged', // Use a placeholder ID for the merged sale
+            'sale_date' => now(), // Set the current date for the merged sale
+            'total_amount' => $sales->sum('total_amount'), // Sum of total amounts
+            'discount' => $sales->sum('discount'), // Sum of discounts
+            'amount_received' => $sales->sum('amount_received'), // Sum of amounts received
+            'address' => $sales->first()->address, // Use the first sale's address
+            'name' => $sales->first()->name.' | Balance: '.$sales->first()->balance, // Use the first sale's customer name
+            'created_by' => $sales->first()->created_by, // Use the first sale's creator
+            'invoice_number' => 'Merged-' . uniqid(), // Generate a unique invoice number for the merged sale
+            'sale_prefix' => '', // Use the first sale's prefix
+            'contact_number' => $sales->first()->contact_number, // Use the first sale's contact number
+            'created_at' => now(), // Set current timestamp for the merged sale
+            'balance'=>$sales->first()->balance,
+            'whatsapp'=>$sales->first()->whatsapp
+        ];
+        
+        return Inertia::render('Sale/Reciept',[
+            'sale'=>$mergedSale,
+            'salesItems'=>$salesItems,
+            'settings'=>$settingArray,
+            'credit_sale'=>true,
         ]);
     }
 }

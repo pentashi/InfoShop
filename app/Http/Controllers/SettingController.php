@@ -266,6 +266,6 @@ class SettingController extends Controller
             );
         }
 
-        return redirect()->route('settings.index')->with('success', 'Setting is updated successfully!');
+        return response()->json(['message' => 'Setting has been updated successfully!'],200);
     }
 }

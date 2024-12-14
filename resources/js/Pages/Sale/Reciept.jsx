@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Head } from "@inertiajs/react";
 import {
     Button,
@@ -8,24 +8,47 @@ import {
     Card,
     CardMedia,
     Divider,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
 } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import PrintIcon from "@mui/icons-material/Print";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { styled } from "@mui/material/styles";
 import numeral from "numeral";
 import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
-import ejs from "ejs";
 
-export default function Reciept({ sale, salesItems, settings, user_name }) {
+export default function Reciept({ sale, salesItems, settings, user_name, credit_sale = false }) {
     const contentRef = useRef(null);
     const reactToPrintFn = useReactToPrint({ contentRef });
+
+    const handleWhatsAppShare = () => {
+        const currentUrl = window.location.href; // Get the current URL
+        const message = `Your purchase at ${settings.shop_name} receipt: \n${currentUrl}`; // Customize your message
+        const encodedMessage = encodeURIComponent(message); // URL encode the message
+        let whatsappNumber = sale.whatsapp; // Get the contact number from sale
+    
+        // Check if the WhatsApp number is empty
+        if (!whatsappNumber) {
+            // Prompt the user for their WhatsApp number
+            whatsappNumber = prompt("Please enter the WhatsApp number (including country code):");
+            
+            // If the user cancels the prompt, exit the function
+            if (!whatsappNumber) {
+                alert("WhatsApp number is required to share the message.");
+                return;
+            }
+        }
+    
+        // Construct the WhatsApp URL
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`; 
+        window.open(whatsappUrl, '_blank'); // Open in a new tab
+    };
 
     const RecieptContainer = styled(Paper)(({ theme }) => ({
         width: "500px",
@@ -112,6 +135,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                         >
                             Back
                         </Button>
+                            <Button
+                                onClick={handleWhatsAppShare}
+                                variant="contained"
+                                color="success"
+                                endIcon={<WhatsAppIcon />}
+                            >
+                                Whatsapp
+                            </Button>
                         <Button
                             onClick={reactToPrintFn}
                             variant="contained"
@@ -164,7 +195,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     className="receipt-address"
                                 >
                                     {sale.address}
-                                    <br/>
+                                    <br />
                                     {sale.contact_number}
                                 </Typography>
                             </Box>
@@ -177,32 +208,54 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 className="receipt-divider-after-address"
                             />
                             <Box className="flex items-start flex-col justify-start receipt-meta">
-                                <Typography
-                                    sx={styles.receiptTopText}
-                                    color="initial"
-                                >
-                                    Order:
-                                    {sale.sale_prefix +
-                                        "/" +
-                                        sale.invoice_number}
-                                </Typography>
-                                <Typography
-                                    sx={styles.receiptTopText}
-                                    color="initial"
-                                    textAlign={"start"}
-                                >
-                                    Date:
-                                    {dayjs(sale.created_at).format(
-                                        "DD-MMM-YYYY, h:mm A"
-                                    ) + " "}
-                                    By: {user_name}
-                                </Typography>
+
+
+                                {!credit_sale && (
+                                    <>
+                                        <Typography
+                                            sx={styles.receiptTopText}
+                                            color="initial"
+                                        >
+                                            Order:
+                                            {sale.sale_prefix +
+                                                "/" +
+                                                sale.invoice_number}
+                                        </Typography>
+                                        <Typography
+                                            sx={styles.receiptTopText}
+                                            color="initial"
+                                            textAlign={"start"}
+                                        >
+                                            Date:
+                                            {dayjs(sale.created_at).format(
+                                                "DD-MMM-YYYY, h:mm A"
+                                            ) + " "}
+                                            By: {user_name}
+                                        </Typography>
+                                    </>
+                                )}
+                                {credit_sale && (
+                                    <>
+                                        <Typography
+                                            sx={styles.receiptTopText}
+                                            color="initial"
+                                            textAlign={"start"}
+                                        >
+                                            Print date:
+                                            {dayjs(sale.created_at).format(
+                                                "DD-MMM-YYYY, h:mm A"
+                                            ) + " "}
+                                        </Typography>
+                                    </>
+                                )}
+
+
 
                                 <Typography
                                     sx={styles.receiptTopText}
                                     color="initial"
                                 >
-                                    Client: {sale.name}
+                                    Customer: {sale.name}
                                 </Typography>
                             </Box>
                             <Divider
@@ -276,7 +329,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                     </TableHead>
                                     <TableBody>
                                         {salesItems.map((item, index) => (
-                                            <>
+                                            <React.Fragment key={`item-${index}`}>
                                                 {/* First Row: Product Name */}
                                                 <TableRow
                                                     key={`name-row-${index}`}
@@ -303,7 +356,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                                 {item.name}{" "}
                                                                 {item.account_number
                                                                     ? "| " +
-                                                                      item.account_number
+                                                                    item.account_number
                                                                     : ""}
                                                             </strong>
                                                         </Typography>
@@ -339,8 +392,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             color="initial"
                                                         >
                                                             {numeral(
-                                                                item.unit_price -
-                                                                    item.discount
+                                                                item.unit_price
                                                             ).format("0,0.00")}
                                                         </Typography>
                                                     </TableCell>
@@ -354,10 +406,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                             }
                                                             color="initial"
                                                         >
-                                                            -
                                                             {numeral(
                                                                 item.discount
-                                                            ).format("0,0")}
+                                                            ).format("0,0.00")}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -375,8 +426,8 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                                     parseFloat(
                                                                         item.quantity
                                                                     ) *
-                                                                        (item.unit_price -
-                                                                            item.discount)
+                                                                    (item.unit_price -
+                                                                        item.discount)
                                                                 ).format(
                                                                     "0,0.00"
                                                                 )}
@@ -384,7 +435,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
-                                            </>
+                                            </React.Fragment>
                                         ))}
 
                                         {/* Spacer Row */}
@@ -433,9 +484,9 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         parseFloat(
                                                             sale.total_amount
                                                         ) +
-                                                            parseFloat(
-                                                                sale.discount
-                                                            )
+                                                        parseFloat(
+                                                            sale.discount
+                                                        )
                                                     ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
@@ -579,7 +630,7 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                     }
                                                     color="initial"
                                                 >
-                                                    Change:
+                                                    Balance:
                                                 </Typography>
                                             </TableCell>
                                             <TableCell
@@ -597,13 +648,51 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                                         parseFloat(
                                                             sale.amount_received
                                                         ) -
-                                                            parseFloat(
-                                                                sale.total_amount
-                                                            )
+                                                        parseFloat(
+                                                            sale.total_amount
+                                                        )
                                                     ).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
+
+                                        {/* Conditional row for Old Balance */}
+                                        {credit_sale && parseFloat(sale.amount_received) - parseFloat(sale.total_amount) !== parseFloat(sale.balance) && (
+                                            <TableRow
+                                                sx={{ border: "none" }}
+                                                className="receipt-summary-row"
+                                            >
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    colSpan={4}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={styles.receiptSummaryTyp}
+                                                        color="initial"
+                                                    >
+                                                        Old Balance [{numeral(
+                                                            parseFloat(sale.balance) -
+                                                            (parseFloat(sale.amount_received) -
+                                                                parseFloat(sale.total_amount))
+                                                        ).format("0,0.00")}] +
+                                                        Current Balance:
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={styles.receiptSummaryTyp}
+                                                        color="initial"
+                                                    >
+                                                        Rs.
+                                                        {numeral(sale.balance).format("0,0.00")}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
@@ -616,22 +705,14 @@ export default function Reciept({ sale, salesItems, settings, user_name }) {
                                 }}
                                 className="receipt-divider-before-footer"
                             />
-                            <Typography
-                                variant="body1"
-                                color="initial"
-                                sx={{
-                                    ...styles.receiptSummaryText,
-                                    textAlign: "start",
-                                }}
-                            >
-                                <div
+
+                            <div
                                 className="receipt-footer"
-                                    dangerouslySetInnerHTML={{
-                                        __html: settings.sale_receipt_note,
-                                    }}
-                                />
-                                {/* {settings.sale_receipt_note} */}
-                            </Typography>
+                                style={styles.receiptSummaryText}
+                                dangerouslySetInnerHTML={{
+                                    __html: settings.sale_receipt_note,
+                                }}
+                            />
                         </RecieptPrintContainer>
                     </div>
                 </RecieptContainer>

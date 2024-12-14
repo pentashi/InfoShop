@@ -34,6 +34,9 @@ Route::get('/', function () {
     // ]);
 });
 
+Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
+Route::get('/pending-sales-receipt/{contact_id}', [SaleController::class, 'pendingSalesReceipt']);
+
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -78,7 +81,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/contact/{id}', [ContactController::class, 'update'])->name('contacts.update');
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
-    Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
     Route::get('/sold-items', [SaleController::class, 'solditems'])->name('sales.items');
 
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
@@ -96,7 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/getorderdetails/{type}', [ReportController::class, 'viewOrderDetails']); //It will be purchases or sales
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings-update', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/settings/quote-template', [SettingController::class, 'quoteTemplate']);
     Route::get('/settings/receipt-template', [SettingController::class, 'receiptTemplate']);
     Route::get('/settings/barcode-template', [SettingController::class, 'barcodeTemplate']);
@@ -133,6 +135,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
 
     Route::get('/reloads',[ReloadController::class, 'index']);
+    Route::post('/reloads/{id}/update', [ReloadController::class, 'update']);
 
     Route::get('/link-storage', function () {
         Artisan::call('storage:link');

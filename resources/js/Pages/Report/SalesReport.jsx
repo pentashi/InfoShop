@@ -117,7 +117,7 @@ export default function SalesReport({ stores, report }) {
                 justifyContent={"center"}
                 size={12}
             >
-                <Grid size={3}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                     <TextField
                         label="Store"
                         name="store"
@@ -140,7 +140,8 @@ export default function SalesReport({ stores, report }) {
                         ))}
                     </TextField>
                 </Grid>
-                <FormControl>
+
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <TextField
                         label="Start Date"
                         name="start_date"
@@ -156,8 +157,9 @@ export default function SalesReport({ stores, report }) {
                         onChange={handleFieldChange}
                         required
                     />
-                </FormControl>
-                <FormControl>
+                </Grid>
+
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -173,21 +175,24 @@ export default function SalesReport({ stores, report }) {
                         onChange={handleFieldChange}
                         required
                     />
-                </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => refreshReport(window.location.pathname)}
+                        sx={{ height: "100%" }}
+                        size="large"
+                        fullWidth
+                    >
+                        <FindReplaceIcon />
+                    </Button>
+                </Grid>
 
-                <Button
-                    variant="contained"
-                    onClick={() => refreshReport(window.location.pathname)}
-                    sx={{ height: "100%" }}
-                    size="large"
-                >
-                    <FindReplaceIcon />
-                </Button>
             </Grid>
 
-
-                <Grid container width={'100%'} justifyContent={'center'} sx={{mt:2}}>
-                <TableContainer component={Paper} sx={{ width:'100%', maxWidth: {sm:"750px"}, overflow:'auto',height:'500px' }}>
+            <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
+            <Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'800px' }} >
+                <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', height: '500px' }}>
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>
@@ -209,10 +214,10 @@ export default function SalesReport({ stores, report }) {
                                         <StyledTableCell component="th" scope="row">
                                             {index + 1}
                                         </StyledTableCell>
-                                        <StyledTableCell align="left">
+                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
                                             {row.date} {/* Display the date */}
                                         </StyledTableCell>
-                                        <StyledTableCell align="left">
+                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
                                             {row.description} {/* Display the description */}
                                         </StyledTableCell>
                                         <StyledTableCell align="right">
@@ -234,29 +239,29 @@ export default function SalesReport({ stores, report }) {
                                 </StyledTableRow>
                             )}
 
-                            <StyledTableRow sx={{backgroundColor:'black'}}>
+                            <StyledTableRow sx={{ backgroundColor: 'black' }}>
                                 <StyledTableCell colSpan={3} align="right">
                                     <strong>Total:</strong>
                                 </StyledTableCell>
                                 <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor:'#295F98', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}>
+                                    sx={{
+                                        backgroundColor: '#295F98', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}>
                                     <strong>{numeral(totals.totalReceivable).format('0,0.00')}</strong>
                                 </StyledTableCell>
                                 <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor:'#295F98', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}>
+                                    sx={{
+                                        backgroundColor: '#295F98', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}>
                                     <strong>{numeral(totals.totalSettled).format('0,0.00')}</strong>
                                 </StyledTableCell>
                                 <StyledTableCell align="right"
-                                sx={{
-                                    backgroundColor: totals.totalProfit > 0 ? 'green' : totals.totalProfit < 0 ? 'red' : 'gray', // Conditional color
-                                    color: 'white', // Text color for contrast
-                                }}
+                                    sx={{
+                                        backgroundColor: totals.totalProfit > 0 ? 'green' : totals.totalProfit < 0 ? 'red' : 'gray', // Conditional color
+                                        color: 'white', // Text color for contrast
+                                    }}
                                 >
                                     <strong>{numeral(totals.totalProfit).format('0,0.00')}</strong>
                                 </StyledTableCell>
@@ -286,11 +291,12 @@ export default function SalesReport({ stores, report }) {
                                 </StyledTableCell>
                             </StyledTableRow>
 
-                            
+
                         </TableBody>
                     </Table>
                 </TableContainer>
-                </Grid>
+                </Paper>
+            </Grid>
         </AuthenticatedLayout>
     );
 }

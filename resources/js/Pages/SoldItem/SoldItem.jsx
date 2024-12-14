@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField,Tooltip, MenuItem, Chip } from "@mui/material";
+import { Button, Box, FormControl, TextField, Tooltip, MenuItem, Chip } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
 import numeral from "numeral";
@@ -21,42 +21,47 @@ const columns = (handleRowClick) => [
             return "#" + params.value.toString().padStart(4, "0");
         },
     },
-    { field: "contact_name", headerName: "Customer Name", width: 200,
+    {
+        field: "contact_name", headerName: "Customer Name", width: 200,
         renderCell: (params) => (
-            <Tooltip title={''+params.row.balance} arrow>
+            <Tooltip title={'' + params.row.balance} arrow>
                 <Button>{params.value}</Button>
             </Tooltip>
         ),
-     },
-    { field: "product_name", headerName: "Product Name", width: 200,},
-    { field: "quantity", headerName: "Quantity", width: 100, align:'right', headerAlign: 'right',
-        renderCell: (params) => {
-            return numeral(params.value).format('0,0.00');
-        },
     },
-    { field: "discount", headerName: "Discount", width: 100, align:'right',headerAlign: 'right',
-        renderCell: (params) => {
-            return numeral(params.value).format('0,0.00');
-        },
-    },
-    { field: "unit_cost", headerName: "Cost", width: 100, align:'right', headerAlign: 'right',
-        renderCell: (params) => {
-            return numeral(params.value).format('0,0.00');
-        },
-    },
-    { field: "unit_price", headerName: "Price", width: 100, align:'right', headerAlign: 'right',
+    { field: "product_name", headerName: "Product Name", width: 200, },
+    {
+        field: "quantity", headerName: "Quantity", width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
     },
     {
-        field:'total',
+        field: "discount", headerName: "Discount", width: 100, align: 'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    {
+        field: "unit_cost", headerName: "Cost", width: 100, align: 'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    {
+        field: "unit_price", headerName: "Price", width: 100, align: 'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    {
+        field: 'total',
         headerName: "Total",
         width: 100,
-        align:'right',
+        align: 'right',
         headerAlign: 'right',
         renderCell: (params) => {
-            const change = (params.row.unit_price - params.row.discount)*params.row.quantity;
+            const change = (params.row.unit_price - params.row.discount) * params.row.quantity;
             return numeral(change).format('0,0.00');
         },
     },
@@ -83,11 +88,11 @@ export default function SoldItem({ sold_items, contacts }) {
         contact_id: '',
         status: 'all',
         query: '',
-        per_page:100,
+        per_page: 100,
     });
 
     const handleRowClick = (sold_item, action) => {
-        
+
     };
 
     const refreshSoldItems = (url) => {
@@ -100,16 +105,16 @@ export default function SoldItem({ sold_items, contacts }) {
             },
         };
         router.get(
-            url, { ...searchTerms },options
+            url, { ...searchTerms }, options
         );
     };
 
     const handleContactChange = (selectedOption) => {
-      setSelectedFilterContact(selectedOption);
+        setSelectedFilterContact(selectedOption);
     };
 
     const handleSearchChange = (input) => {
-        
+
         if (input?.target) {
             // Handle regular inputs (e.g., TextField)
             const { name, value } = input.target;
@@ -134,7 +139,8 @@ export default function SoldItem({ sold_items, contacts }) {
                 sx={{ width: "100%" }}
                 size={12}
             >
-              <FormControl sx={{ minWidth: "240px" }}>
+
+                <Grid size={{ xs: 12, sm: 4 }}>
                     <Select2
                         className="w-full"
                         placeholder="Select a contact..."
@@ -150,9 +156,9 @@ export default function SoldItem({ sold_items, contacts }) {
                         getOptionLabel={(option) => option.name}
                         getOptionValue={(option) => option.id}
                     ></Select2>
-                </FormControl>
+                </Grid>
 
-                <FormControl>
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <TextField
                         label="Start Date"
                         name="start_date"
@@ -168,9 +174,8 @@ export default function SoldItem({ sold_items, contacts }) {
                         onChange={handleSearchChange}
                         required
                     />
-                </FormControl>
-
-                <FormControl>
+                </Grid>
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -186,15 +191,17 @@ export default function SoldItem({ sold_items, contacts }) {
                         onChange={handleSearchChange}
                         required
                     />
-                </FormControl>
-                <Button variant="contained" onClick={()=>refreshSoldItems(window.location.pathname)} size="large">
-                    <FindReplaceIcon />
-                </Button>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 1 }}>
+                    <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="large">
+                        <FindReplaceIcon />
+                    </Button>
+                </Grid>
             </Grid>
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:'75vh'}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '75vh' }}
             >
                 <DataGrid
                     rows={dataSoldItems.data}
@@ -209,23 +216,23 @@ export default function SoldItem({ sold_items, contacts }) {
                 />
             </Box>
             <Grid size={12} spacing={2} container justifyContent={"end"}>
-            <Chip size="large" label={'Total results : '+dataSoldItems.total} color="primary" />
-            <TextField
-                      label="Per page"
-                      value={searchTerms.per_page}
-                      onChange={handleSearchChange}
-                      name="per_page"
-                      select
-                      size="small"
-                      sx={{minWidth:'100px'}}
-                    >
-                        <MenuItem value={100}>100</MenuItem>
-                        <MenuItem value={200}>200</MenuItem>
-                        <MenuItem value={300}>300</MenuItem>
-                        <MenuItem value={400}>400</MenuItem>
-                        <MenuItem value={500}>500</MenuItem>
-                        <MenuItem value={1000}>1000</MenuItem>
-                    </TextField>
+                <Chip size="large" label={'Total results : ' + dataSoldItems.total} color="primary" />
+                <TextField
+                    label="Per page"
+                    value={searchTerms.per_page}
+                    onChange={handleSearchChange}
+                    name="per_page"
+                    select
+                    size="small"
+                    sx={{ minWidth: '100px' }}
+                >
+                    <MenuItem value={100}>100</MenuItem>
+                    <MenuItem value={200}>200</MenuItem>
+                    <MenuItem value={300}>300</MenuItem>
+                    <MenuItem value={400}>400</MenuItem>
+                    <MenuItem value={500}>500</MenuItem>
+                    <MenuItem value={1000}>1000</MenuItem>
+                </TextField>
 
                 <CustomPagination
                     dataLinks={dataSoldItems?.links}

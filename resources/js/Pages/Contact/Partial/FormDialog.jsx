@@ -22,6 +22,7 @@ export default function FormDialog({
         email: "",
         phone: "",
         address: "",
+        whatsapp:'',
         type: contactType, // Type of contact (customer or vendor)
     });
 
@@ -40,6 +41,7 @@ export default function FormDialog({
                 name: contact.name || "", // Update name if available
                 email: contact.email || "", // Update email if available
                 phone: contact.phone || "", // Update phone if available
+                whatsapp: contact.whatsapp || "",
                 address: contact.address || "", // Update address if available
                 type: contact.type || "", // Update type if available
             });
@@ -148,6 +150,20 @@ export default function FormDialog({
                         fullWidth
                         variant="outlined" // Changed variant to "outlined"
                         value={formData.phone} // Use formData object
+                        onChange={handleChange}
+                    />
+
+                    {/* Whatsapp number */}
+                    <TextField
+                        className="py-8 mb-4"
+                        margin="dense"
+                        name="whatsapp"
+                        placeholder="94XXXXXXXXX"
+                        label="Whatsapp"
+                        type="text"
+                        fullWidth
+                        variant="outlined" // Changed variant to "outlined"
+                        value={formData.whatsapp} // Use formData object
                         onChange={handleChange}
                     />
 

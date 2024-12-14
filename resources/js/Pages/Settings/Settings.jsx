@@ -26,6 +26,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -157,23 +158,26 @@ export default function Setting({ settings }) {
         const barcodeSettingsObject = Object.fromEntries(barcodeSettings);
         formJson.barcodeSettings = JSON.stringify(barcodeSettingsObject);
 
-        router.post("settings", formJson, {
-            forceFormData: true,
-            onSuccess: (resp) => {
-                Swal.fire({
-                    title: "Success!",
-                    text: "Successfully saved",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                });
-            },
-            onError: (errors) => {
-                console.error("Submission failed with errors:", errors);
-                console.log(formJson);
-            },
+        axios.post('/settings-update', formJson, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then((response) => {
+            Swal.fire({
+                title: "Success!",
+                text: "Successfully saved",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+        })
+        .catch((error) => {
+            console.error("Submission failed with errors:", error);
+            console.log(formJson);
         });
+        
     };
 
     return (

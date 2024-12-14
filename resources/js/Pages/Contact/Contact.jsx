@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid2';
-import { Button, Box, TextField, IconButton } from '@mui/material';
+import { Button, Box, TextField, IconButton, Alert, AlertTitle, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PrintIcon from "@mui/icons-material/Print";
@@ -14,9 +14,7 @@ import FormDialog from './Partial/FormDialog';
 import CustomPagination from '@/Components/CustomPagination';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
 import PaymentsIcon from "@mui/icons-material/Payments";
-
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 
 const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -45,37 +43,55 @@ const columns = (handleRowClick) => [
       ),
     }, // Added balance
     { field: 'phone', headerName: 'Phone', width: 120 },
+    { field: 'whatsapp', headerName: 'Whatsapp', width: 120 },
     { field: 'email', headerName: 'Email', width: 100 },
     { field: 'address', headerName: 'Address', width: 200 }, // Changed from collection_type to address
     { field: 'created_at', headerName: 'Created At', width: 100 },
     {
         field: "action",
         headerName: "Actions",
-        width: 150,
+        width: 180,
         renderCell: (params) => {
         const basePath = params.row.type === 'vendor' ? '/purchases' : '/sales';
         const paymentsPath = params.row.type === 'vendor' ? '/purchases' : '/sales';
         return(
             <>
                 <Link href={"/reports/" + params.row.id+'/'+params.row.type}>
-                    <IconButton color="primary">
+                <Tooltip title="REPORT">
+                <IconButton color="primary">
                         <PrintIcon />
                     </IconButton>
+                </Tooltip>
                 </Link>
+
+                {params.row.type === "customer" && (
+                <Link href={"/pending-sales-receipt/" + params.row.id}>
+                    <Tooltip title="PENDING RECEIPT">
+                    <IconButton color="primary">
+                        <PendingActionsIcon />
+                    </IconButton>
+                    </Tooltip>
+                    
+                </Link>
+                )}
 
                 {/* Sales or Purchase Link */}
                 <Link href={`${basePath}?contact_id=${params.row.id}&end_date=&query=&start_date=&status=pending&store=0`}>
-                    <IconButton color="alert">
+                <Tooltip title="CREDIT SALE">
+                <IconButton color="alert">
                         <HourglassTopIcon />
                     </IconButton>
+                </Tooltip>
                 </Link>
 
                 {/* Sales or Purchase Link */}
                 <Link href={`/payments${basePath}?contact_id=${params.row.id}&store=0`}>
-                    <IconButton color="success">
+                <Tooltip title="PAYMENTS">
+                <IconButton color="success">
                         <PaymentsIcon />
                     </IconButton>
-                </Link> 
+                </Tooltip>
+                </Link>
             </>
         )},
     },

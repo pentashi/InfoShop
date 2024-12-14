@@ -32,14 +32,14 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import PeopleIcon from "@mui/icons-material/People";
 import Tooltip from "@mui/material/Tooltip";
-import Collapse from '@mui/material/Collapse';
-import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
-import WorkIcon from '@mui/icons-material/Work';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import BadgeIcon from '@mui/icons-material/Badge';
+import Collapse from "@mui/material/Collapse";
+import PhoneForwardedIcon from "@mui/icons-material/PhoneForwarded";
+import WorkIcon from "@mui/icons-material/Work";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import BadgeIcon from "@mui/icons-material/Badge";
 
-import infoshopLogo from '@/infoshop.png';
+import infoshopLogo from "@/infoshop.png";
 const drawerWidth = 240;
 
 function AuthenticatedLayout({ header, children, ...props }) {
@@ -140,7 +140,10 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     justifyContent={"space-between"}
                     paddingLeft={"0.5rem"}
                 >
-                    <img src={infoshopLogo} style={{ height: '80px', objectFit: 'contain' }}></img>
+                    <img
+                        src={infoshopLogo}
+                        style={{ height: "80px", objectFit: "contain" }}
+                    ></img>
                 </Grid>
             </Toolbar>
             <Divider />
@@ -265,7 +268,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/profile")}
                 />
-                {user.user_role == 'admin' && (
+                {user.user_role == "admin" && (
                     <>
                         <ListItemButton onClick={handleCollapse}>
                             <ListItemIcon>
@@ -298,7 +301,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                 )}
 
                 <NavItem
-                    href={'#'}
+                    href={"#"}
                     icon={LogoutIcon}
                     label="Logout"
                     open={open}
@@ -334,17 +337,20 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     <Grid
                         container
                         spacing={2}
-                        alignItems={{ sm: "center", xs: 'start' }}
+                        alignItems={{ sm: "center", xs: "start" }}
                         justifyContent={"space-between"}
                         width={"100%"}
-                        display={'flex'}
-                        flexDirection={{ xs: 'column', sm: 'row' }}
+                        display={"flex"}
+                        flexDirection={{ xs: "column", sm: "row" }}
                     >
                         <Typography
                             variant="h5"
                             noWrap
                             component="div"
-                            sx={{ textTransform: "capitalize", fontSize: { xs: '1rem', sm: '1.5rem' } }}
+                            sx={{
+                                textTransform: "capitalize",
+                                fontSize: { xs: "1rem", sm: "1.5rem" },
+                            }}
                         >
                             {shop_name} | {pageLabel}
                         </Typography>
@@ -352,8 +358,12 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             <IconButton
                                 color="white"
                                 size="large"
-                                onClick={(e) => router.post(document.location.origin + "/logout")}
-                                sx={{ display: { xs: "none", sm: 'block' } }}
+                                onClick={(e) =>
+                                    router.post(
+                                        document.location.origin + "/logout"
+                                    )
+                                }
+                                sx={{ display: { xs: "none", sm: "block" } }}
                             >
                                 <LogoutIcon
                                     fontSize="large"

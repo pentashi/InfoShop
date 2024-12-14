@@ -50,7 +50,7 @@ export default function DailyReport({ logs, stores }) {
     );
     const [modalOpen, setModalOpen] = useState(false);
 
-    const refreshLogs = (url = window.location.pathname, selected_date=transaction_date) => {
+    const refreshLogs = (url = window.location.pathname, selected_date = transaction_date) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -85,6 +85,7 @@ export default function DailyReport({ logs, stores }) {
                 // sx={{ width: "100%" }}
                 justifyContent={"center"}
                 size={12}
+                sx={{mb:1}}
             >
                 <Grid size={{ xs: 8, sm: 4, md: 2 }}>
                     <TextField
@@ -103,7 +104,7 @@ export default function DailyReport({ logs, stores }) {
                         onChange={(e) => {
                             const newDate = e.target.value;
                             setTransactionDate(newDate); // Update the state with the new date
-                            refreshLogs(window.location.pathname,newDate)
+                            refreshLogs(window.location.pathname, newDate)
                         }}
                         required
                     />
@@ -120,7 +121,7 @@ export default function DailyReport({ logs, stores }) {
                     </Button>
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 4, md: 4}}>
+                <Grid size={{ xs: 12, sm: 4, md: 4 }}>
                     <Button
                         variant="contained"
                         onClick={() => setModalOpen(true)}
@@ -135,12 +136,10 @@ export default function DailyReport({ logs, stores }) {
 
             </Grid>
 
-            <Box
-                className="py-6 w-full"
-                sx={{ justifyContent: "center", display: "flex" }}
-            >
-                <TableContainer component={Paper} sx={{ maxWidth: "750px" }}>
-                    <Table aria-label="customized table">
+<Grid container justifyContent={'center'}>
+<Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'700px' }} >
+                <TableContainer>
+                    <Table>
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell>#</StyledTableCell>
@@ -164,17 +163,17 @@ export default function DailyReport({ logs, stores }) {
                                     <StyledTableCell component="th" scope="row">
                                         {index + 1}
                                     </StyledTableCell>
-                                    <StyledTableCell align="left">
+                                    <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
                                         {row.transaction_date}
                                     </StyledTableCell>
-                                    <StyledTableCell align="left">
+                                    <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
                                         {
                                             row.source.charAt(0).toUpperCase() + row.source.slice(1) +
-                                            (row.sales_id ? ' (#'+row.sales_id+')' : "") +
+                                            (row.sales_id ? ' (#' + row.sales_id + ')' : "") +
                                             (row.name ? " - " + row.name : "") +
-                                            (row.description ? " | " + row.description : "")+
-                                            
-                                            (row.transaction_type=='account' ? " (Balance update)" : "")
+                                            (row.description ? " | " + row.description : "") +
+
+                                            (row.transaction_type == 'account' ? " (Balance update)" : "")
                                         }
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
@@ -201,30 +200,32 @@ export default function DailyReport({ logs, stores }) {
 
                             <StyledTableRow>
                                 <StyledTableCell colSpan={5} align="right">
-                                  
+
                                 </StyledTableCell>
                             </StyledTableRow>
 
                             {/* Row for displaying the total sum */}
                             <StyledTableRow>
                                 <StyledTableCell colSpan={4} align="right">
-                                <Typography variant="h5" color="initial">
-                                    <strong>Balance:</strong>
+                                    <Typography variant="h5" color="initial">
+                                        <strong>Balance:</strong>
                                     </Typography>
                                 </StyledTableCell>
                                 <StyledTableCell align="right">
                                     <Typography variant="h5" color="initial">
-                                    <strong>
-                                        {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
-                                    </strong>
+                                        <strong>
+                                            {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
+                                        </strong>
                                     </Typography>
-                                    
+
                                 </StyledTableCell>
                             </StyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </Box>
+            </Paper>
+</Grid>
+            
 
             <DailyCashDialog
                 open={modalOpen}

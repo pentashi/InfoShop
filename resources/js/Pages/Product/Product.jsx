@@ -273,7 +273,6 @@ export default function Product({ products, stores, contacts }) {
                 container
                 spacing={2}
                 alignItems="center"
-                sx={{ width: "100%" }}
             >
                 <Grid
                     size={12}
@@ -281,17 +280,17 @@ export default function Product({ products, stores, contacts }) {
                     container
                     alignItems={"center"}
                     justifyContent={{ xs: "center", sm: "end" }}
-                    width={"100%"}
                 >
                     <Grid size={{ xs: 12, sm: 2 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Store</InputLabel>
-                            <Select
+                        
+                            <TextField
                                 value={filters.store}
                                 label="Store"
                                 onChange={handleFilterChange}
                                 required
                                 name="store"
+                                select
+                                fullWidth
                             >
                                 <MenuItem value={0}>All</MenuItem>
                                 {stores.map((store) => (
@@ -299,20 +298,19 @@ export default function Product({ products, stores, contacts }) {
                                         {store.name}
                                     </MenuItem>
                                 ))}
-                            </Select>
-                        </FormControl>
+                            </TextField>
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 3 }}>
                         <Select2
                         fullWidth
-                            className="w-full"
                             placeholder="Select a contact..."
                             styles={{
                                 control: (baseStyles, state) => ({
                                     ...baseStyles,
                                     height: "55px",
                                 }),
+                                menuPortal: base => ({ ...base, zIndex: 9999 })
                             }}
                             options={contacts} // Options to display in the dropdown
                             onChange={(selectedOption) =>
@@ -323,18 +321,19 @@ export default function Product({ products, stores, contacts }) {
                                 option.name + " | " + option.balance
                             }
                             getOptionValue={(option) => option.id}
+                            menuPortalTarget={document.body}
                         ></Select2>
                     </Grid>
 
                     <Grid size={{ xs: 6, sm: 2 }}>
-                        <FormControl fullWidth>
-                            <InputLabel>Status</InputLabel>
-                            <Select
+                            <TextField
                                 value={filters.status}
                                 label="Status"
                                 onChange={handleFilterChange}
                                 required
                                 name="status"
+                                fullWidth
+                                select
                             >
                                 <MenuItem value={1}>Active</MenuItem>
                                 <MenuItem value={0}>Inactive</MenuItem>
@@ -342,8 +341,7 @@ export default function Product({ products, stores, contacts }) {
                                 <MenuItem value={"out_of_stock"}>
                                     Out of Stock
                                 </MenuItem>
-                            </Select>
-                        </FormControl>
+                            </TextField>
                     </Grid>
 
                     <Grid size={{ xs: 6, sm: 2 }}>
@@ -390,11 +388,11 @@ export default function Product({ products, stores, contacts }) {
 
                     <Grid size={{ xs: 6, sm: 1 }}>
                         <Button
+                        fullWidth
                             variant="contained"
                             onClick={() =>
                                 refreshProducts(window.location.pathname)
                             }
-                            size="large"
                         >
                             <FindReplaceIcon />
                         </Button>
@@ -407,7 +405,7 @@ export default function Product({ products, stores, contacts }) {
                                 color="success"
                                 startIcon={<AddIcon />}
                                 fullWidth
-                                sx={{minWidth:'200px'}}
+                                sx={{minWidth:{xs:'100px', sm: '100px'}}}
                             >
                                 Add Product
                             </Button>

@@ -1,13 +1,15 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head,router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
 import {
     Button,
     Box,
     TextField,
     Chip,
+    MenuItem,
+    Link
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
@@ -15,24 +17,38 @@ import numeral from "numeral";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
+import ReloadFormDialog from "./ReloadFormDialog";
 
-const columns = () => [
-    { field: "id", headerName: "ID", width: 80,
+const columns = (handleRowClick) => [
+    {
+        field: "id", headerName: "ID", width: 80,
         renderCell: (params) => {
             return params.value.toString().padStart(4, "0");
         },
     },
-    { field: "sale_date", headerName: "Date", width: 120,
+    {
+        field: "sale_date", headerName: "Date", width: 120,
         renderCell: (params) => dayjs(params.value).format("YYYY-MM-DD"),
     },
     { field: "contact_name", headerName: "Customer", width: 150 },
-    { field: "account_number", headerName: "Account Number", width: 200 },
+    { field: "account_number", headerName: "Account Number", width: 200,
+        renderCell: (params) => (
+            <Link underline="hover" href='#' className='hover:underline' onClick={(event) => { event.preventDefault(); handleRowClick(params.row, 'account_edit'); }}>
+                <p className='font-bold'>{params.value}</p>
+            </Link>
+        ),
+     },
     { field: "product_name", headerName: "Product Name", width: 150 },
-    { field: "unit_price", headerName: "Amount", width: 100 },
-    { field: "additional_commission", headerName: "Additional Commission", width: 150, align: "right", headerAlign: "right",
+    {
+        field: "reload_amount", headerName: "Reload", width: 100,
+        renderCell: (params) => numeral(params.row.unit_price - params.row.additional_commission).format('0,0.00'),
+    },
+    {
+        field: "additional_commission", headerName: "Addl. Comm", width: 150, align: "right", headerAlign: "right",
         renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
-    { field: "commission", headerName: "Commission", width: 100, align: "right", headerAlign: "right",
+    {
+        field: "commission", headerName: "Comm", width: 100, align: "right", headerAlign: "right",
         renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
     // { field: "description", headerName: "Description", width: 250 },
@@ -41,11 +57,13 @@ const columns = () => [
 export default function Reload({ reloads, transactionType }) {
     const [dataReloads, setDataReloads] = useState(reloads);
     const [totalCommission, setTotalCommission] = useState(0);
-    const handleRowClick = () => {};
+    const [reloadModalOpen, setReloadModalOpen] = useState(false)
+    const [selectedReload, setSelectedReload] = useState(0)
     const [searchTerms, setSearchTerms] = useState({
         start_date: '',
         end_date: '',
         store: 0,
+        per_page: 100,
     });
 
     const refreshReloads = (url) => {
@@ -74,6 +92,13 @@ export default function Reload({ reloads, transactionType }) {
         setTotalCommission(total);
     }, [dataReloads]);
 
+    const handleRowClick = (reload, action) => {
+        setSelectedReload(reload);
+        if (action == 'account_edit') {
+            setReloadModalOpen(true);
+        }
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title="Payments" />
@@ -85,8 +110,8 @@ export default function Reload({ reloads, transactionType }) {
                 justifyContent={"center"}
                 size={12}
             >
-                <Grid size={{xs:12, sm:4}}>
-                <TextField
+                <Grid size={{ xs: 12, sm: 4 }}>
+                    <TextField
                         label="Search Query"
                         name="search_query"
                         placeholder="Search by account or product name"
@@ -95,8 +120,8 @@ export default function Reload({ reloads, transactionType }) {
                         fullWidth
                     />
                 </Grid>
-                <Grid size={{xs:6, sm:2}}>
-                <TextField
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
                         label="Start Date"
                         name="start_date"
                         type="date"
@@ -110,8 +135,8 @@ export default function Reload({ reloads, transactionType }) {
                         }}
                     />
                 </Grid>
-                <Grid size={{xs:6, sm:2}}>
-                <TextField
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
                         label="End Date"
                         name="end_date"
                         type="date"
@@ -126,17 +151,17 @@ export default function Reload({ reloads, transactionType }) {
                     />
                 </Grid>
 
-                <Grid size={{xs:12, sm:1}}>
-                <Button variant="contained" fullWidth onClick={handleSearch} sx={{ height: "100%" }}>
-                    <FindReplaceIcon />
-                </Button>
+                <Grid size={{ xs: 12, sm: 1 }}>
+                    <Button variant="contained" fullWidth onClick={handleSearch} sx={{ height: "100%" }}>
+                        <FindReplaceIcon />
+                    </Button>
                 </Grid>
-                
+
             </Grid>
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:'73vh'}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '74vh' }}
             >
                 <DataGrid
                     rows={dataReloads?.data}
@@ -150,14 +175,39 @@ export default function Reload({ reloads, transactionType }) {
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={'end'}>
-            <Chip size="large" label={`Total Commission: ${numeral(totalCommission).format('0,0.00')}`} color="primary" />
+            <Grid size={12} spacing={2} container justifyContent={'end'}>
+                <Chip size="large" label={`Total Commission: ${numeral(totalCommission).format('0,0.00')}`} color="primary" />
+                <TextField
+                    label="Per page"
+                    value={searchTerms.per_page}
+                    onChange={handleSearchChange}
+                    name="per_page"
+                    select
+                    size="small"
+                    sx={{ minWidth: '100px' }}
+                >
+                    <MenuItem value={100}>100</MenuItem>
+                    <MenuItem value={200}>200</MenuItem>
+                    <MenuItem value={300}>300</MenuItem>
+                    <MenuItem value={400}>400</MenuItem>
+                    <MenuItem value={500}>500</MenuItem>
+                    <MenuItem value={1000}>1000</MenuItem>
+                </TextField>
                 <CustomPagination
                     dataLinks={reloads?.links}
                     refreshTable={refreshReloads}
                     dataLastPage={reloads?.last_page}
                 />
             </Grid>
+
+            {selectedReload ? (
+                <ReloadFormDialog
+                    open={reloadModalOpen}
+                    reloadData={selectedReload}
+                    refreshReloads={refreshReloads}
+                    setOpen={setReloadModalOpen}
+                />
+            ) : null}
         </AuthenticatedLayout>
     );
 }

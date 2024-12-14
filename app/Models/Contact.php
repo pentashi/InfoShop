@@ -14,13 +14,14 @@ class Contact extends Model
     use Userstamps;
 
     protected $fillable = [
-        'name',         // Name of the contact (both customers and vendors)
-        'email',        // Contact's email
-        'phone',        // Phone number
-        'address',      // Address
-        'balance',      // Account balance
-        'loyalty_points', // Loyalty points for customers (nullable for vendors)
-        'type',         // Type of contact: customer or vendor
+        'name',
+        'email',
+        'phone',
+        'address',
+        'balance',
+        'loyalty_points',
+        'type',   // Type of contact: customer or vendor
+        'whatsapp'
     ];
 
 

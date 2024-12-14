@@ -137,7 +137,7 @@ export default function Sale({ sales, contacts }) {
         contact_id: '',
         status: 'all',
         query: '',
-        per_page:100,
+        per_page: 100,
     });
 
     const handleRowClick = (sale, action) => {
@@ -170,7 +170,7 @@ export default function Sale({ sales, contacts }) {
     };
 
     const handleSearchChange = (input) => {
-        
+
         if (input?.target) {
             // Handle regular inputs (e.g., TextField)
             const { name, value } = input.target;
@@ -303,23 +303,23 @@ export default function Sale({ sales, contacts }) {
                 />
             </Box>
             <Grid size={12} spacing={2} container justifyContent={"end"}>
-            <Chip size="large" label={'Total results : '+dataSales.total} color="primary" />
-            <TextField
-                      label="Per page"
-                      value={searchTerms.per_page}
-                      onChange={handleSearchChange}
-                      name="per_page"
-                      select
-                      size="small"
-                      sx={{minWidth:'100px'}}
-                    >
-                        <MenuItem value={100}>100</MenuItem>
-                        <MenuItem value={200}>200</MenuItem>
-                        <MenuItem value={300}>300</MenuItem>
-                        <MenuItem value={400}>400</MenuItem>
-                        <MenuItem value={500}>500</MenuItem>
-                        <MenuItem value={1000}>1000</MenuItem>
-                    </TextField>
+                <Chip size="large" label={'Total results : ' + dataSales.total} color="primary" />
+                <TextField
+                    label="Per page"
+                    value={searchTerms.per_page}
+                    onChange={handleSearchChange}
+                    name="per_page"
+                    select
+                    size="small"
+                    sx={{ minWidth: '100px' }}
+                >
+                    <MenuItem value={100}>100</MenuItem>
+                    <MenuItem value={200}>200</MenuItem>
+                    <MenuItem value={300}>300</MenuItem>
+                    <MenuItem value={400}>400</MenuItem>
+                    <MenuItem value={500}>500</MenuItem>
+                    <MenuItem value={1000}>1000</MenuItem>
+                </TextField>
                 <CustomPagination
                     dataLinks={dataSales?.links}
                     next_page={dataSales.next_page_url}

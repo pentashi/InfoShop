@@ -1,24 +1,15 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField, MenuItem } from "@mui/material";
+import { Button, Box, TextField, MenuItem, Table, TableBody, TableContainer, TableHead, TableRow, Paper, Alert } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
-import axios from "axios";
 import numeral from "numeral";
 
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,15 +30,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
         border: 0,
     },
     "& td, & th": {
-        padding: '10px 5px', // Reduce padding on the rows
+        padding: "10px 5px", // Reduce padding on the rows
     },
 }));
 
-export default function ContactReport({ stores, report, contacts, type, contact }) {
+export default function ContactReport({
+    stores,
+    report,
+    contacts,
+    type,
+    contact,
+}) {
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().subtract(3, 'month').format("YYYY-MM-DD"),
+        start_date: dayjs().subtract(3, "month").format("YYYY-MM-DD"),
         end_date: dayjs().format("YYYY-MM-DD"),
         store: 0,
     });
@@ -68,11 +65,7 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                 setDataReport(response.props.report);
             },
         };
-        router.get(
-            url,
-            searchTerms,
-            options
-        );
+        router.get(url, searchTerms, options);
     };
 
     const headers = [
@@ -84,23 +77,24 @@ export default function ContactReport({ stores, report, contacts, type, contact 
     ];
 
     const initialTotals = {
-        totalDebit: 0,     // Total amount owed by the customer (DEBIT)
-        totalCredit: 0,    // Total amount paid by the customer (CREDIT)
-        totalBalance: 0,   // Total balance (calculated as owed - paid)
+        totalDebit: 0, // Total amount owed by the customer (DEBIT)
+        totalCredit: 0, // Total amount paid by the customer (CREDIT)
+        totalBalance: 0, // Total balance (calculated as owed - paid)
     };
 
-    const totals = (dataReport && dataReport.length > 0)
-        ? dataReport.reduce((acc, row) => {
-            const debit = parseFloat(row.debit) || 0;       // DEBIT (Amount Owed)
-            const credit = parseFloat(row.credit) || 0;     // CREDIT (Amount Paid)
+    const totals =
+        dataReport && dataReport.length > 0
+            ? dataReport.reduce((acc, row) => {
+                  const debit = parseFloat(row.debit) || 0; // DEBIT (Amount Owed)
+                  const credit = parseFloat(row.credit) || 0; // CREDIT (Amount Paid)
 
-            acc.totalDebit += debit;   // Add to total debit (amount owed)
-            acc.totalCredit += credit; // Add to total credit (amount paid)
-            acc.totalBalance += debit - credit; // Calculate balance (amount owed - amount paid)
+                  acc.totalDebit += debit; // Add to total debit (amount owed)
+                  acc.totalCredit += credit; // Add to total credit (amount paid)
+                  acc.totalBalance += debit - credit; // Calculate balance (amount owed - amount paid)
 
-            return acc;
-        }, initialTotals)
-        : initialTotals;
+                  return acc;
+              }, initialTotals)
+            : initialTotals;
 
     return (
         <AuthenticatedLayout>
@@ -109,11 +103,11 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                 container
                 spacing={2}
                 alignItems="center"
-                sx={{ width: "100%", mt: "1rem" }}
+                sx={{ width: "100%", mt: "1rem",  }}
                 justifyContent={"center"}
                 size={12}
             >
-                <Grid size={3}>
+                <Grid size={{ xs: 12, sm: 4, md: 2 }}>
                     <TextField
                         label="Store"
                         name="store"
@@ -136,7 +130,8 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                         ))}
                     </TextField>
                 </Grid>
-                <FormControl>
+
+                <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="Start Date"
                         name="start_date"
@@ -152,8 +147,8 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                         onChange={handleFieldChange}
                         required
                     />
-                </FormControl>
-                <FormControl>
+                </Grid>
+                <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -169,32 +164,63 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                         onChange={handleFieldChange}
                         required
                     />
-                </FormControl>
+                </Grid>
 
-                <Button
-                    variant="contained"
-                    onClick={() => refreshReport(window.location.pathname)}
-                    sx={{ height: "100%" }}
-                    size="large"
-                >
-                    <FindReplaceIcon />
-                </Button>
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => refreshReport(window.location.pathname)}
+                        sx={{ height: "100%" }}
+                        size="large"
+                        fullWidth
+                    >
+                        <FindReplaceIcon />
+                    </Button>
+                </Grid>
             </Grid>
 
-<Grid container justifyContent={'center'} width={'100%'} sx={{ mt: 2,}} spacing={2}>
-<Box sx={{maxWidth:'750px', display:'flex', justifyContent:'center', width:'100%'}}>
-<Alert sx={{width:'100%'}} severity="info" icon={false}>
-       <strong>Name: {contact.name}
-       <br />
-       Balance {numeral(contact.balance).format('0,00.00')}
-       </strong>
-      </Alert>
-</Box>
-      
-</Grid>
+            <Grid
+                container
+                justifyContent={"center"}
+                width={"100%"}
+                sx={{ mt: 2,}}
+                spacing={2}
+            >
+                <Box
+                    sx={{
+                        maxWidth: "700px",
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100%",
+                    }}
+                >
+                    <Alert sx={{ width: "100%" }} severity="info" icon={false}>
+                        <strong>
+                            Name: {contact.name}
+                            <br />
+                            Balance {numeral(contact.balance).format("0,00.00")}
+                        </strong>
+                    </Alert>
+                </Box>
+            </Grid>
 
-            <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
-                <TableContainer component={Paper} sx={{ width: '100%', maxWidth: { sm: "750px" }, overflow: 'auto', height: '500px' }}>
+            <Grid
+                container
+                width={"100%"}
+                justifyContent={"center"}
+                sx={{ mt: 2 }}
+            >
+
+<Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'700px' }} >
+    
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        width: "100%",
+                        maxWidth: { sm: "750px" },
+                        overflow: "auto",
+                    }}
+                >
                     <Table aria-label="customized table">
                         <TableHead>
                             <TableRow>
@@ -202,7 +228,7 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                                     <StyledTableCell
                                         key={index}
                                         align={header.align}
-                                        sx={header.sx}
+                                        sx={{...header.sx, whiteSpace:'nowrap'}}
                                     >
                                         {header.label}
                                     </StyledTableCell>
@@ -211,32 +237,42 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                         </TableHead>
                         <TableBody>
                             {dataReport && dataReport.length > 0 ? (
-
                                 dataReport.map((row, index) => (
                                     <StyledTableRow key={index}>
                                         {/* Display the index in the first column */}
-                                        <StyledTableCell component="th" scope="row" align="left">
+                                        <StyledTableCell
+                                            component="th"
+                                            scope="row"
+                                            align="left"
+                                        >
                                             {index + 1}
                                         </StyledTableCell>
 
                                         {/* Display the date in the second column */}
-                                        <StyledTableCell align="left">
+                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
                                             {row.date} {/* Display the date */}
                                         </StyledTableCell>
 
                                         {/* Display the description in the third column */}
-                                        <StyledTableCell align="left">
-                                            {row.description} {/* Display the description */}
+                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
+                                            {row.description}{" "}
+                                            {/* Display the description */}
                                         </StyledTableCell>
 
                                         {/* Display the debit (amount owed) in the fourth column */}
                                         <StyledTableCell align="right">
-                                            {numeral(row.debit).format('0,0.00')} {/* Format debit */}
+                                            {numeral(row.debit).format(
+                                                "0,0.00"
+                                            )}{" "}
+                                            {/* Format debit */}
                                         </StyledTableCell>
 
                                         {/* Display the credit (amount paid) in the fifth column */}
                                         <StyledTableCell align="right">
-                                            {numeral(row.credit).format('0,0.00')} {/* Format credit */}
+                                            {numeral(row.credit).format(
+                                                "0,0.00"
+                                            )}{" "}
+                                            {/* Format credit */}
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 ))
@@ -248,52 +284,79 @@ export default function ContactReport({ stores, report, contacts, type, contact 
                                 </StyledTableRow>
                             )}
 
-                            <StyledTableRow sx={{ backgroundColor: 'black' }}>
+                            <StyledTableRow sx={{ backgroundColor: "black" }}>
                                 <StyledTableCell colSpan={3} align="right">
                                     <strong>Total:</strong>
                                 </StyledTableCell>
 
                                 {/* Total Debit */}
-                                <StyledTableCell align="right"
+                                <StyledTableCell
+                                    align="right"
                                     sx={{
-                                        backgroundColor: '#295F98', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}>
-                                    <strong>{numeral(totals.totalDebit).format('0,0.00')}</strong>
+                                        backgroundColor: "#295F98", // Conditional color
+                                        color: "white", // Text color for contrast
+                                    }}
+                                >
+                                    <strong>
+                                        {numeral(totals.totalDebit).format(
+                                            "0,0.00"
+                                        )}
+                                    </strong>
                                 </StyledTableCell>
 
                                 {/* Total Credit */}
-                                <StyledTableCell align="right"
+                                <StyledTableCell
+                                    align="right"
                                     sx={{
-                                        backgroundColor: '#295F98', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}>
-                                    <strong>{numeral(totals.totalCredit).format('0,0.00')}</strong>
+                                        backgroundColor: "#295F98", // Conditional color
+                                        color: "white", // Text color for contrast
+                                    }}
+                                >
+                                    <strong>
+                                        {numeral(totals.totalCredit).format(
+                                            "0,0.00"
+                                        )}
+                                    </strong>
                                 </StyledTableCell>
-
                             </StyledTableRow>
 
                             <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
-                                </StyledTableCell>
+                                <StyledTableCell
+                                    colSpan={5}
+                                    align="right"
+                                ></StyledTableCell>
                             </StyledTableRow>
 
                             {/* Row for Balance/Receivable */}
                             <StyledTableRow>
                                 <StyledTableCell colSpan={4} align="right">
-                                {type === 'vendor' ? 'Balance/To be paid:' : 'Balance/Receivable:'}
+                                    {type === "vendor"
+                                        ? "Balance/To be paid:"
+                                        : "Balance/Receivable:"}
                                 </StyledTableCell>
-                                <StyledTableCell align="right"
+                                <StyledTableCell
+                                    align="right"
                                     sx={{
-                                        backgroundColor: totals.totalBalance > 0 ? 'red' : totals.totalBalance < 0 ? 'green' : 'gray', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}>
-                                    <strong>{numeral(totals.totalBalance).format('0,0.00')}</strong>
+                                        backgroundColor:
+                                            totals.totalBalance > 0
+                                                ? "red"
+                                                : totals.totalBalance < 0
+                                                ? "green"
+                                                : "gray", // Conditional color
+                                        color: "white", // Text color for contrast
+                                    }}
+                                >
+                                    <strong>
+                                        {numeral(totals.totalBalance).format(
+                                            "0,0.00"
+                                        )}
+                                    </strong>
                                 </StyledTableCell>
                             </StyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
+                </Paper>
             </Grid>
         </AuthenticatedLayout>
     );

@@ -100,7 +100,7 @@ export default function AddPaymentDialog({
                     timerProgressBar: true,
                 });
                 refreshTable(window.location.pathname)
-                setOpen(false)
+                handleClose()
             })
             .catch((error) => {
                 Swal.fire({

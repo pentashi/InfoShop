@@ -75,7 +75,7 @@ const columns = (handleRowClick) => [
             // Format the date to 'YYYY-MM-DD'
             return (
                 <>
-                    <IconButton disabled={params.row.transaction_type!='account'} color="error" onClick={() => handleRowClick('delete',params.row.id)}>
+                    <IconButton disabled={params.row.transaction_type != 'account'} color="error" onClick={() => handleRowClick('delete', params.row.id)}>
                         <HighlightOffIcon />
                     </IconButton>
                 </>
@@ -92,8 +92,8 @@ export default function Payment({ payments, transactionType, contacts, selected_
     const [endDate, setEndDate] = useState("");
     const [selectedContact, setSelectedContact] = useState({ name: '', id: selected_contact });
     const [totalAmount, setTotalAmount] = useState(0)
-    const handleRowClick = (type,id) => {
-        if(type=='delete'){
+    const handleRowClick = (type, id) => {
+        if (type == 'delete') {
             Swal.fire({
                 title: "Do you want to remove the payment?",
                 showDenyButton: true,
@@ -101,27 +101,27 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 denyButtonText: `NO`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.post(`/delete-payment/${transactionType}`,{transaction_id:id})
-                    .then((response) => {
-                        const updatedData = dataPayments.data.filter((item) => item.id !== id);
-                        setDataPayments({ ...dataPayments, data: updatedData });
-                        Swal.fire({
-                            title: "Success!",
-                            text: response.data.message,
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
+                    axios.post(`/delete-payment/${transactionType}`, { transaction_id: id })
+                        .then((response) => {
+                            const updatedData = dataPayments.data.filter((item) => item.id !== id);
+                            setDataPayments({ ...dataPayments, data: updatedData });
+                            Swal.fire({
+                                title: "Success!",
+                                text: response.data.message,
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({ title: error.response.data.error, showConfirmButton: true, icon: "error", })
+                            console.error("Deletion failed with errors:", error);
                         });
-                    })
-                    .catch((error) => {
-                        Swal.fire({ title: error.response.data.error,showConfirmButton: true,icon: "error",})
-                        console.error("Deletion failed with errors:", error);
-                    });
                 }
             });
         }
-     };
+    };
 
     const refreshPayments = (url) => {
         const options = {
@@ -166,27 +166,29 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 spacing={2}
                 alignItems="center"
                 sx={{ width: "100%" }}
-                justifyContent={"center"}
+                justifyContent={"end"}
                 size={12}
             >
-                <FormControl sx={{ minWidth: "210px" }}>
-                    <InputLabel>Select payments</InputLabel>
-                    <Select
+
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <TextField
                         value={paymentSelect}
                         label="Select payments"
                         onChange={(e) => handleSelectPayments(e.target.value)}
                         required
                         name="payment_type"
+                        fullWidth
+                        select
                     >
                         <MenuItem value={"sales"}>Sales Payment</MenuItem>
                         <MenuItem value={"purchases"}>
                             Purchase Payment
                         </MenuItem>
-                    </Select>
-                </FormControl>
+                    </TextField>
+                </Grid>
 
-                <FormControl sx={{ minWidth: "240px" }}>
-                    <Select2
+                <Grid size={{ xs: 12, sm: 3 }}>
+                <Select2
                         className="w-full"
                         placeholder="Select a contact..."
                         styles={{
@@ -201,16 +203,17 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         getOptionLabel={(option) => option.name}
                         getOptionValue={(option) => option.id}
                     ></Select2>
-                </FormControl>
+                </Grid>
 
-                <FormControl sx={{ minWidth: "210px" }}>
-                    <InputLabel>Select Payment Method</InputLabel>
-                    <Select
+                <Grid size={{ xs: 12, sm: 2 }}>
+                <TextField
                         value={paymentMethod}
                         label="Select Payment Method"
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         required
                         name="payment_method"
+                        select
+                        fullWidth
                     >
                         <MenuItem value={"All"}>All</MenuItem>
                         <MenuItem value={"Cash"}>Cash</MenuItem>
@@ -218,11 +221,11 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         <MenuItem value={"Cheque"}>Cheque</MenuItem>
                         <MenuItem value={"Account Balance"}>Account Balance</MenuItem>
                         <MenuItem value={"Account"}>Account</MenuItem>
-                    </Select>
-                </FormControl>
+                    </TextField>
+                </Grid>
 
-                <FormControl>
-                    <TextField
+                <Grid size={{ xs: 6, sm: 2 }}>
+                <TextField
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
@@ -237,10 +240,10 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         onChange={(e) => setStartDate(e.target.value)}
                         required
                     />
-                </FormControl>
+                </Grid>
 
-                <FormControl>
-                    <TextField
+                <Grid size={{ xs: 6, sm: 2 }}>
+                <TextField
                         label="End Date"
                         name="end_date"
                         placeholder="End Date"
@@ -255,15 +258,20 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         onChange={(e) => setEndDate(e.target.value)}
                         required
                     />
-                </FormControl>
+                </Grid>
 
+                <Grid size={{ xs: 6, sm: 1 }}>
                 <Button
                     variant="contained"
                     onClick={() => refreshPayments(window.location.pathname)}
                     sx={{ height: "100%" }}
+                    fullWidth
                 >
                     <FindReplaceIcon />
                 </Button>
+                </Grid>
+
+               
             </Grid>
 
             <Box

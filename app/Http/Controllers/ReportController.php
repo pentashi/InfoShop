@@ -245,7 +245,7 @@ class ReportController extends Controller
             ->get();
 
         foreach ($independentTransactions as $transaction) {
-            $transactionDescription = ucfirst($transaction->payment_method) . ($transaction->note ? ' | ' . $transaction->note : '');
+            $transactionDescription = ucfirst($transaction->payment_method). ' #' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT) . ($transaction->note ? ' | ' . $transaction->note : '');
             // Check if transaction type is 'account' and the amount is negative, then treat it as debit
             if ($transaction->transaction_type === 'account' && $transaction->amount < 0) {
                 $debit = abs($transaction->amount); // Negative amount means debit (amount owed)
