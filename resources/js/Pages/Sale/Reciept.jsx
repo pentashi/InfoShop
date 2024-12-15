@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import {
     Button,
     Box,
@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
 
 export default function Reciept({ sale, salesItems, settings, user_name, credit_sale = false }) {
+    const user = usePage().props.auth.user;
     const contentRef = useRef(null);
     const reactToPrintFn = useReactToPrint({ contentRef });
 
@@ -128,6 +129,8 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
             <Box className="flex justify-center mt-10 p-0">
                 <RecieptContainer square={false} className="receipt-container">
                     <Box className="flex justify-between mb-3 print:hidden">
+
+                        {user&&(
                         <Button
                             onClick={() => window.history.back()}
                             variant="outlined"
@@ -135,6 +138,8 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                         >
                             Back
                         </Button>
+                        )}
+                        {user&&(
                             <Button
                                 onClick={handleWhatsAppShare}
                                 variant="contained"
@@ -143,6 +148,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                             >
                                 Whatsapp
                             </Button>
+                        )}
                         <Button
                             onClick={reactToPrintFn}
                             variant="contained"
@@ -711,6 +717,13 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                 style={styles.receiptSummaryText}
                                 dangerouslySetInnerHTML={{
                                     __html: settings.sale_receipt_note,
+                                }}
+                            />
+                            <div
+                                className="receipt-second-note"
+                                style={styles.receiptSummaryText}
+                                dangerouslySetInnerHTML={{
+                                    __html: settings.sale_receipt_second_note,
                                 }}
                             />
                         </RecieptPrintContainer>

@@ -13,7 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -38,6 +38,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import BadgeIcon from "@mui/icons-material/Badge";
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 import infoshopLogo from "@/infoshop.png";
 const drawerWidth = 240;
@@ -48,8 +49,15 @@ function AuthenticatedLayout({ header, children, ...props }) {
     const pageLabel = usePage().props.pageLabel;
     const pathname = usePage().url;
 
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [isClosing, setIsClosing] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+
+    useEffect(() => {
+        const childDiv = document.querySelector(".scrollParent");
+        if (childDiv) {
+            childDiv.setAttribute("data-custom-attribute", "value");
+        }
+    }, []);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -131,7 +139,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
     );
 
     const drawer = (
-        <div>
+        <>
             <Toolbar>
                 <Grid
                     container
@@ -255,6 +263,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     selected={isSelected("/employees")}
                 />
                 <NavItem
+                    href="/payroll"
+                    icon={ReceiptIcon}
+                    label="Payroll"
+                    open={open}
+                    selected={isSelected("/payroll")}
+                />
+                <NavItem
                     href="/settings"
                     icon={SettingsIcon}
                     label="Settings"
@@ -311,7 +326,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     }}
                 />
             </List>
-        </div>
+        </>
     );
 
     return (
@@ -374,6 +389,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     </Grid>
                 </Toolbar>
             </AppBar>
+
             <Box
                 component="nav"
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -406,6 +422,9 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         },
                     }}
                     open
+                    classes={{
+                        paper: "scrollParent", // Adds class to the child div
+                    }}
                 >
                     {drawer}
                 </Drawer>

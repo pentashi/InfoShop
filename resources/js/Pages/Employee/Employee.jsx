@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid2";
 import {
     Button,
     Box,
-    FormControl,
     TextField,
     IconButton,
     Chip,
@@ -14,7 +13,7 @@ import {
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/HighlightOff';
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -69,7 +68,7 @@ const columns = (handleRowClick) => [
                 sx={{
                     textAlign: "left",
                     fontWeight: "bold",
-                    justifyContent: "flex-start",
+                    justifyContent: "flex-end",
                 }}
             >
                 {numeral(params.value).format('0,0.00') + ' / ' + params.row.salary_frequency}

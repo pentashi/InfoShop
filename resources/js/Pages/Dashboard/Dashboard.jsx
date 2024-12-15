@@ -15,8 +15,8 @@ import {
     ListItemIcon,
     ListItemText,
     Divider,
-    CardMedia,
-    Alert
+    Alert,
+    Box
 } from "@mui/material";
 import dayjs from "dayjs";
 
@@ -26,7 +26,9 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import axios from "axios";
 import numeral from "numeral";
 
-export default function Dashboard({ data, logo }) {
+import Summaries from "./Partials/Summaries";
+
+export default function Dashboard({ data, logo, version }) {
     const auth = usePage().props.auth.user;
     const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -68,7 +70,7 @@ export default function Dashboard({ data, logo }) {
         >
             <Head title="Dashboard" />
             <Grid size={12} spacing={2} flexDirection={'row'} container>
-                {parseFloat(data.outOfStock) != 0 && (
+                {parseFloat(data.lowStock) != 0 && (
                     <Link href={"/products?status=alert&per_page=" + data.lowStock}>
                         <Alert sx={{ mb: 2 }} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
                     </Link>
@@ -171,7 +173,7 @@ export default function Dashboard({ data, logo }) {
             <Grid
                 container
                 size={{ xs: 12, sm: 8, md: 4 }}
-                sx={{ mt: "3rem" }}
+                sx={{ mt: "3rem", paddingBottom:4 }}
                 spacing={2}
             >
                 <Grid size={{ xs: 12, sm: 8, md: 4 }}>
@@ -301,7 +303,13 @@ export default function Dashboard({ data, logo }) {
                         <img src={logo.meta_value} style={{ maxHeight: '250px', objectFit: 'contain' }} alt="" />
                     </Card>
                 </Grid>
+
+                <Summaries></Summaries>
             </Grid>
+
+            <Box sx={{ justifyContent: 'end', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px' }}>
+                VERSION {version}
+            </Box>
         </AuthenticatedLayout>
     );
 }

@@ -234,6 +234,16 @@ export default function Contact({contacts, type, stores}) {
                               showQuickFilter: true,
                           },
                       }}
+                      initialState={{
+                        columns: {
+                            columnVisibilityModel: {
+                                // Hide columns status and traderName, the other columns will remain visible
+                                address: false,
+                                email:false,
+                                created_at: false,
+                            },
+                        },
+                    }}
                       hideFooter
                   />
               </Box>

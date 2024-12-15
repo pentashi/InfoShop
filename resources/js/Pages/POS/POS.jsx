@@ -26,6 +26,7 @@ import MonitorIcon from '@mui/icons-material/Monitor';
 
 import { SalesProvider } from "@/Context/SalesContext";
 import CartItemsTop from "./Partial/CartItemsTop";
+import POSBottomBar from "./Partial/POSBottomBar";
 
 const drawerWidth = 530;
 
@@ -176,6 +177,7 @@ function POS({ products, customers, return_sale }) {
                 >
                     <Toolbar />
 
+                    {/* Product items area  */}
                     <Grid container spacing={2}>
                         {products.map((product) => (
                             <Grid
@@ -186,6 +188,7 @@ function POS({ products, customers, return_sale }) {
                                 <ProductItem product={product}></ProductItem>
                             </Grid>
                         ))}
+                        {/* <POSBottomBar drawerWidth={drawerWidth} /> */}
                     </Grid>
                 </Box>
                 <Box

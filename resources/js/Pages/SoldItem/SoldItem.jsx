@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField, Tooltip, MenuItem, Chip } from "@mui/material";
+import { Button, Box, TextField, Tooltip, MenuItem, Chip } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
 import numeral from "numeral";
@@ -37,19 +37,25 @@ const columns = (handleRowClick) => [
         },
     },
     {
-        field: "discount", headerName: "Discount", width: 100, align: 'right', headerAlign: 'right',
+        field: "discount", headerName: "Unit Disc.", width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
     },
     {
-        field: "unit_cost", headerName: "Cost", width: 100, align: 'right', headerAlign: 'right',
+        field: "unit_cost", headerName: "Unit Cost", width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
     },
     {
-        field: "unit_price", headerName: "Price", width: 100, align: 'right', headerAlign: 'right',
+        field: "unit_price", headerName: "Unit Price", width: 100, align: 'right', headerAlign: 'right',
+        renderCell: (params) => {
+            return numeral(params.value).format('0,0.00');
+        },
+    },
+    {
+        field: "profit", headerName: "Profit", width: 100, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
@@ -77,10 +83,6 @@ const columns = (handleRowClick) => [
 export default function SoldItem({ sold_items, contacts }) {
     const [dataSoldItems, setDataSoldItems] = useState(sold_items);
 
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [selectedFilterContact, setSelectedFilterContact] = useState(null)
-
     const [searchTerms, setSearchTerms] = useState({
         start_date: '',
         end_date: '',
@@ -88,6 +90,7 @@ export default function SoldItem({ sold_items, contacts }) {
         contact_id: '',
         status: 'all',
         query: '',
+        order_by:'default',
         per_page: 100,
     });
 
@@ -107,10 +110,6 @@ export default function SoldItem({ sold_items, contacts }) {
         router.get(
             url, { ...searchTerms }, options
         );
-    };
-
-    const handleContactChange = (selectedOption) => {
-        setSelectedFilterContact(selectedOption);
     };
 
     const handleSearchChange = (input) => {
@@ -140,7 +139,7 @@ export default function SoldItem({ sold_items, contacts }) {
                 size={12}
             >
 
-                <Grid size={{ xs: 12, sm: 4 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                     <Select2
                         className="w-full"
                         placeholder="Select a contact..."
@@ -158,7 +157,7 @@ export default function SoldItem({ sold_items, contacts }) {
                     ></Select2>
                 </Grid>
 
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="Start Date"
                         name="start_date"
@@ -175,7 +174,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         required
                     />
                 </Grid>
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -192,6 +191,26 @@ export default function SoldItem({ sold_items, contacts }) {
                         required
                     />
                 </Grid>
+                {/* <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
+                        label="Order By"
+                        name="order_by"
+                        fullWidth
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={searchTerms.order_by}
+                        onChange={handleSearchChange}
+                        required
+                        select
+                    >
+                        <MenuItem value={'default'}>Default</MenuItem>
+                        <MenuItem value={'top_sold'}>Top Sold</MenuItem>
+                        <MenuItem value={'top_profit'}>Top Profit</MenuItem>
+                        </TextField>
+                </Grid> */}
                 <Grid size={{ xs: 12, sm: 1 }}>
                     <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="large">
                         <FindReplaceIcon />

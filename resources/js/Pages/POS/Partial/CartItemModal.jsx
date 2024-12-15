@@ -133,9 +133,9 @@ export default function CartItemModal() {
                             <Button
                              disableElevation={true}
                                 color={
-                                    formState.stock_quantity <= 0
+                                    parseFloat(formState.stock_quantity) <= 0
                                         ? "error"
-                                        : formState.stock_quantity <= formState.alert_quantity
+                                        : parseFloat(formState.stock_quantity) <= parseFloat(formState.alert_quantity)
                                         ? "warning"
                                         : "primary"
                                 }

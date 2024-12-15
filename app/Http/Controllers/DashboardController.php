@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -20,58 +21,128 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $imageUrl='';
-        if (app()->environment('production')) $imageUrl='public/';
+        $version = config('version.version');
+        $imageUrl = '';
+        if (app()->environment('production')) $imageUrl = 'public/';
 
-        $settings = Setting::where('meta_key','shop_logo')->first();
+        $settings = Setting::where('meta_key', 'shop_logo')->first();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
 
         $data['totalItems'] = number_format(Product::count());
         $data['soldItems'] = number_format(SaleItem::sum('quantity'));
-        $data['totalQuantities']=number_format(ProductStock::sum('quantity'));
+        $data['totalQuantities'] = number_format(ProductStock::sum('quantity'));
 
         $totalValuation = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
             ->select(DB::raw('SUM(product_stocks.quantity * product_batches.cost) as total_valuation'))
             ->value('total_valuation');
 
         $countLowStockItems = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
-        ->join('products', 'product_batches.product_id', '=', 'products.id')
-        ->where('product_batches.is_active', 1)
-        ->where('product_stocks.quantity', '<=', DB::raw('products.alert_quantity'))
-        ->count();
+            ->join('products', 'product_batches.product_id', '=', 'products.id')
+            ->where('product_batches.is_active', 1)
+            ->where('product_stocks.quantity', '<=', DB::raw('products.alert_quantity'))
+            ->count();
 
         $outOfStockItems = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
-        ->join('products', 'product_batches.product_id', '=', 'products.id')
-        ->where('product_batches.is_active', 1)
-        ->where('product_stocks.quantity', '<=', 0)
-        ->count();
+            ->join('products', 'product_batches.product_id', '=', 'products.id')
+            ->where('product_batches.is_active', 1)
+            ->where('product_stocks.quantity', '<=', 0)
+            ->count();
 
         $customerBalance = Contact::customers()->sum('balance');
         $data['totalValuation'] = number_format($totalValuation);
         $data['customerBalance'] = number_format($customerBalance);
         $data['lowStock'] = number_format($countLowStockItems);
         $data['outOfStock'] = number_format($outOfStockItems);
-        
-         // Render the 'Dashboard' component with data
-        return Inertia::render('Dashboard', [
-            'pageLabel'=>'Dashboard',
-            'data'=>$data,
-            'logo'=>$settings,
+
+        // Render the 'Dashboard' component with data
+        return Inertia::render('Dashboard/Dashboard', [
+            'pageLabel' => 'Dashboard',
+            'data' => $data,
+            'logo' => $settings,
+            'version' => $version,
         ]);
     }
 
-    public function getDashboardSummary(Request $request){
+    public function getDashboardSummary(Request $request)
+    {
         $startDate = $request->start_date;
         $endDate = $request->end_date;
 
         $data['total_sales'] = Sale::whereBetween('sale_date', [$startDate, $endDate])->sum('total_amount');
-        $data['cash_in'] = Transaction::where('payment_method','cash')->whereBetween('transaction_date', [$startDate, $endDate])->sum('amount');
+        $data['cash_in'] = Transaction::where('payment_method', 'cash')->whereBetween('transaction_date', [$startDate, $endDate])->sum('amount');
         $data['expenses'] = Expense::whereBetween('expense_date', [$startDate, $endDate])->sum('amount');
         return response()->json([
-            'summary'=>$data,
+            'summary' => $data,
         ], 200);
     }
 
-    //updates
+    public function getSoldItemsSummary(Request $request)
+    {
+        // Get the filters from the request
+        $filters = $request->only(['start_date', 'end_date']);
+
+        // Top Sold Items Query
+        $topSoldItemsQuery = SaleItem::query();
+        $topSoldItemsQuery->select(
+            'products.name as product_name',
+            DB::raw('SUM(sale_items.quantity) as total_quantity')
+        )
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->groupBy('products.name')
+            ->orderByDesc(DB::raw('SUM(sale_items.quantity)'))
+            ->limit(5);  // Top 5 sold items
+
+        // Apply filters if provided
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $topSoldItemsQuery->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $topSoldItems = $topSoldItemsQuery->get();
+
+        // Top Profit Items Query
+        $topProfitItemsQuery = SaleItem::query();
+        $topProfitItemsQuery->select(
+            'products.name as product_name',
+            DB::raw('SUM(((unit_price - sale_items.discount - unit_cost) * sale_items.quantity)) as total_profit')
+        )
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->groupBy('products.name')
+            ->orderByDesc(DB::raw('SUM(((unit_price - sale_items.discount - unit_cost) * sale_items.quantity))'))
+            ->limit(5);  // Top 5 profit items
+
+        // Apply filters if provided
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $topProfitItemsQuery->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $topProfitItems = $topProfitItemsQuery->get();
+
+        // Top Gross Items Query
+        $topGrossItemsQuery = SaleItem::query();
+        $topGrossItemsQuery->select(
+            'products.name as product_name',
+            DB::raw('SUM((unit_price - sale_items.discount) * sale_items.quantity) as total_gross')
+        )
+            ->join('products', 'sale_items.product_id', '=', 'products.id')
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->groupBy('products.name')
+            ->orderByDesc(DB::raw('SUM(unit_price * sale_items.quantity)'))
+            ->limit(5);  // Top 5 gross items
+
+        // Apply filters if provided
+        if (isset($filters['start_date']) && isset($filters['end_date'])) {
+            $topGrossItemsQuery->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
+        }
+
+        $topGrossItems = $topGrossItemsQuery->get();
+
+        return response()->json([
+            'top_sold_items' => $topSoldItems,
+            'top_profit_items' => $topProfitItems,
+            'top_gross_items' => $topGrossItems,
+        ]);
+    }
 }

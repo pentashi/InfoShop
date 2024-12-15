@@ -9,7 +9,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import infomaxlogo from '@/Infomax-logo.png';
 import infoshopLogo from '@/infoshop.png';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, version }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -92,12 +92,12 @@ export default function Login({ status, canResetPassword }) {
             </form>
             <div className="divide-y divide-gray-300 divde-solid">
             <div className="text-center py-2"></div>
-            <div className="text-center py-3 text-gray-400 uppercase">info shop version 1.0 | Developed by: infomax </div>
+            <div className="text-center py-3 text-gray-400 uppercase">info shop version {version} <br></br> Developed by: infomax </div>
             </div>
 
             <div className='flex justify-center'>
+            <img src={infomaxlogo} alt="" style={{height:'60px', objectFit:'contain'}}/>
                 <img src={infoshopLogo} alt="" style={{height:'60px', objectFit:'contain'}}/>
-                <img src={infomaxlogo} alt="" style={{height:'60px', objectFit:'contain'}}/>                
             </div>
             
         </GuestLayout>

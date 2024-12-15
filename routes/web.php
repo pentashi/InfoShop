@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/summary', [DashboardController::class, 'getDashboardSummary'])->name('dashboard.summary');
+    Route::post('/dashboard/sold-items-summary', [DashboardController::class, 'getSoldItemsSummary']);
     
     Route::get('/stores', [StoreController::class, 'index'])->name('store');
     Route::post('/store', [StoreController::class, 'store']);
@@ -115,8 +116,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/employee/{id}',[EmployeeController::class, 'update'])->name('employees.update');
     Route::post('/employee/{id}/delete',[EmployeeController::class, 'delete'])->name('employees.delete');
 
+    Route::get('/payroll', [SalaryRecordController::class, 'index']);
     Route::post('/salary-records', [SalaryRecordController::class, 'store']);
-    Route::post('/salary-records/{id}', [SalaryRecordController::class, 'delete']);
+    Route::post('/salary/{id}/delete', [SalaryRecordController::class, 'delete']);
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('user.store');

@@ -153,6 +153,7 @@ class SaleController extends Controller
             'sales.sale_date',
             'contacts.name as contact_name',
             'contacts.balance',
+            DB::raw('((unit_price - sale_items.discount - unit_cost) * sale_items.quantity) as profit'),
         )
         ->join('products', 'sale_items.product_id', '=', 'products.id')
         ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
@@ -173,7 +174,7 @@ class SaleController extends Controller
     }
 
     public function solditems(Request $request){
-        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page','order_by']);
         $soldItems = $this->getSoldItems($filters);
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
         return Inertia::render('SoldItem/SoldItem',[

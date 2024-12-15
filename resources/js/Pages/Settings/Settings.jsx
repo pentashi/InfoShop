@@ -20,6 +20,8 @@ import {
     Typography,
     FormControl,
     InputLabel,
+    Tab,
+    Tabs,
 } from "@mui/material";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -79,26 +81,27 @@ export default function Setting({ settings }) {
         sale_print_padding_right: settings.sale_print_padding_right,
         sale_print_padding_left: settings.sale_print_padding_left,
         sale_print_font: settings.sale_print_font,
-        show_receipt_shop_name: settings.show_receipt_shop_name??1,
+        show_receipt_shop_name: settings.show_receipt_shop_name ?? 1,
         show_barcode_store: settings.show_barcode_store,
         show_barcode_product_price: settings.show_barcode_product_price,
-        show_barcode_product_name: settings.show_barcode_product_name,        
+        show_barcode_product_name: settings.show_barcode_product_name,
+        sale_receipt_second_note: settings.sale_receipt_second_note,
     });
 
     const [barcodeSettings, setBarcodeSettings] = useState(() => {
         const initialBarcodeSettings = new Map([
-          ["container_height", "28mm"],
-          ["store_font_size", "0.8em"],
-          ["price_font_size", "0.8em"],
-          ["price_margin_top", "-3px"],
-          ["price_margin_bottom", "-5px"],
-          ["barcode_margin_top", "-10px"],
-          ["barcode_height", 35],
-          ["barcode_font_size", 14],
-          ["barcode_width", 1.5],
-          ["barcode_format", "CODE128"],
-          ["product_name_margin_top", "-4px"],
-          ["product_name_font_size", "0.7em"],
+            ["container_height", "28mm"],
+            ["store_font_size", "0.8em"],
+            ["price_font_size", "0.8em"],
+            ["price_margin_top", "-3px"],
+            ["price_margin_bottom", "-5px"],
+            ["barcode_margin_top", "-10px"],
+            ["barcode_height", 35],
+            ["barcode_font_size", 14],
+            ["barcode_width", 1.5],
+            ["barcode_format", "CODE128"],
+            ["product_name_margin_top", "-4px"],
+            ["product_name_font_size", "0.7em"],
         ]);
 
         // Parse JSON if barcode_settings exists in settings
@@ -116,10 +119,10 @@ export default function Setting({ settings }) {
         return initialBarcodeSettings;
     });
 
-      const handleBarcodeFieldChange = (e) => {
+    const handleBarcodeFieldChange = (e) => {
         const { name, value } = e.target;
         setBarcodeSettings((prevSettings) => new Map(prevSettings).set(name, value));
-      };
+    };
 
     const handleFontChange = (event) => {
         const selectedFontFamily = event.target.value;
@@ -163,30 +166,65 @@ export default function Setting({ settings }) {
                 'Content-Type': 'multipart/form-data'
             }
         })
-        .then((response) => {
-            Swal.fire({
-                title: "Success!",
-                text: "Successfully saved",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .then((response) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Successfully saved",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+            })
+            .catch((error) => {
+                console.error("Submission failed with errors:", error);
+                console.log(formJson);
             });
-        })
-        .catch((error) => {
-            console.error("Submission failed with errors:", error);
-            console.log(formJson);
-        });
-        
+    };
+
+    function TabPanel(props) {
+        const { children, value, index, ...other } = props;
+
+        return (
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`vertical-tabpanel-${index}`}
+                aria-labelledby={`vertical-tab-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box sx={{ p: 3 }}>
+                        {children}
+                    </Box>
+                )}
+            </div>
+        );
+    }
+
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
     };
 
     return (
         <AuthenticatedLayout>
             <Head title="Settings" />
+
+            <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                <Tabs value={tabValue} onChange={handleTabChange} centered>
+                    <Tab label="GENERAL SETTING" />
+                    <Tab label="OTHER SETTING" />
+                </Tabs>
+            </Box>
+
+            <TabPanel value={tabValue} index={0}>
             <form
                 id="settings-form"
                 encType="multipart/form-data"
                 onSubmit={handleSubmit}
+                method="post"
             >
                 <Box
                     sx={{
@@ -203,7 +241,7 @@ export default function Setting({ settings }) {
                         width={{ xs: "100%", sm: "60%" }}
                     >
                         <Grid size={12}>
-                            <Accordion defaultExpanded>
+                            <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >
@@ -275,7 +313,7 @@ export default function Setting({ settings }) {
                                     />
                                 </AccordionDetails>
                             </Accordion>
-                            <Accordion defaultExpanded>
+                            <Accordion>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                 >
@@ -308,6 +346,20 @@ export default function Setting({ settings }) {
                                             <TextField
                                                 fullWidth
                                                 variant="outlined"
+                                                label={"Second note"}
+                                                name="sale_receipt_second_note"
+                                                multiline
+                                                required
+                                                value={
+                                                    settingFormData.sale_receipt_second_note
+                                                }
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
                                                 label={"Show shopname"}
                                                 name="show_receipt_shop_name"
                                                 multiline
@@ -321,7 +373,7 @@ export default function Setting({ settings }) {
                                                 <MenuItem value={1}>Show</MenuItem>
                                                 <MenuItem value={0}>Hide</MenuItem>
 
-                                                </TextField>
+                                            </TextField>
                                         </Grid>
                                         <Grid size={3}>
                                             <TextField
@@ -463,18 +515,18 @@ export default function Setting({ settings }) {
                                         </Grid>
                                     </Grid>
                                     <Grid spacing={2} container sx={{ mt: 2 }}>
-                                    {[...barcodeSettings.keys()].map((key) => (
-                                    <Grid item size={3} key={key}>
-                                        <TextField
-                                        fullWidth
-                                        variant="outlined"
-                                        label={key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}
-                                        name={key}
-                                        value={barcodeSettings.get(key)}
-                                        onChange={handleBarcodeFieldChange}
-                                        />
-                                    </Grid>
-                                    ))}
+                                        {[...barcodeSettings.keys()].map((key) => (
+                                            <Grid item size={3} key={key}>
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    label={key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}
+                                                    name={key}
+                                                    value={barcodeSettings.get(key)}
+                                                    onChange={handleBarcodeFieldChange}
+                                                />
+                                            </Grid>
+                                        ))}
                                     </Grid>
                                 </AccordionDetails>
                             </Accordion>
@@ -496,6 +548,12 @@ export default function Setting({ settings }) {
                     </Grid>
                 </Box>
             </form>
+            </TabPanel>
+
+            <TabPanel value={tabValue} index={1}>
+                OTHER SETTINGS
+            </TabPanel>
+
         </AuthenticatedLayout>
     );
 }

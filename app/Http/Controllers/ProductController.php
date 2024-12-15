@@ -327,9 +327,6 @@ class ProductController extends Controller
         // it means, If it is a sale
         if ($is_purchase == 0) {
             $products = $products->where('product_stocks.store_id', session('store_id'));
-        } else {
-            // $products = $products->whereNotNull('product_stocks.store_id');
-            $products = $products->where('products.product_type', '!=', 'reload');
         }
 
         $products = $products

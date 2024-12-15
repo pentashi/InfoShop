@@ -1,15 +1,11 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
 import {
     Button,
     Box,
-    Typography,
-    FormControl,
-    InputLabel,
-    Select,
     MenuItem,
     TextField,
     Chip,

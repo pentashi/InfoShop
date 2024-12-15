@@ -42,8 +42,7 @@ export default function SearchBox() {
                         const existingProductIndex = cartState.findIndex(
                             (item) =>
                               item.id === product[0].id &&
-                              item.batch_number === product[0].batch_number &&
-                              (item.product_type !== 'custom' && item.product_type !== 'reload')
+                              item.batch_number === product[0].batch_number && (item.product_type !== 'custom' && item.product_type !== 'reload')
                         );
 
                         if (existingProductIndex !== -1) {

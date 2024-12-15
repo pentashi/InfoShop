@@ -137,7 +137,7 @@ export default function DailyReport({ logs, stores }) {
             </Grid>
 
 <Grid container justifyContent={'center'}>
-<Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'700px' }} >
+<Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'900px' }} >
                 <TableContainer>
                     <Table>
                         <TableHead>
