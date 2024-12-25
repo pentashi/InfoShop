@@ -304,7 +304,7 @@ export default function Product({ products, stores, contacts }) {
                     <Grid size={{ xs: 12, sm: 3 }}>
                         <Select2
                         fullWidth
-                            placeholder="Select a contact..."
+                            placeholder="Select a supplier..."
                             styles={{
                                 control: (baseStyles, state) => ({
                                     ...baseStyles,

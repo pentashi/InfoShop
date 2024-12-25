@@ -175,6 +175,7 @@ export default function Contact({contacts, type, stores}) {
                 {numeral(totalBalance).format('0,00.00')}
             </Alert>
             </Grid>
+            
               <Grid size={{xs:12, sm:10, md:9}} spacing={2} container justifyContent="end" alignItems={'center'} flexDirection={{xs:'column',sm:'row'}}>
                 <Grid size={{xs:12, sm:8}}>
                 <TextField
@@ -222,7 +223,7 @@ export default function Contact({contacts, type, stores}) {
 
               <Box
                   className="py-6 w-full"
-                  sx={{ display: "grid", gridTemplateColumns: "1fr", height:520}}
+                  sx={{ display: "grid", gridTemplateColumns: "1fr", height:'75vh'}}
               >
                   <DataGrid
                       rows={dataContacts.data}

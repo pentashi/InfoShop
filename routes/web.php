@@ -25,6 +25,7 @@ use App\Http\Controllers\ReloadController;
 use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SalaryRecordController;
+use App\Http\Controllers\EmployeeBalanceController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -119,6 +120,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/payroll', [SalaryRecordController::class, 'index']);
     Route::post('/salary-records', [SalaryRecordController::class, 'store']);
     Route::post('/salary/{id}/delete', [SalaryRecordController::class, 'delete']);
+
+    Route::post('/employee-balance', [EmployeeBalanceController::class, 'store']);
+    Route::get('/employee-balance-log', [EmployeeBalanceController::class, 'balanceLog']);
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/user', [UserController::class, 'store'])->name('user.store');

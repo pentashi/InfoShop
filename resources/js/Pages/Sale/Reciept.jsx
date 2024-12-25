@@ -123,6 +123,16 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
         },
     };
 
+    if (!sale || Object.keys(sale).length === 0) {
+        return (
+            <Box className="flex justify-center mt-10 p-0">
+                <Typography variant="h6" color="error">
+                    No pending sales available.
+                </Typography>
+            </Box>
+        );
+    }
+
     return (
         <>
             <Head title="Sale Reciept" />
@@ -149,6 +159,8 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                 Whatsapp
                             </Button>
                         )}
+
+{user&&(
                         <Button
                             onClick={reactToPrintFn}
                             variant="contained"
@@ -156,6 +168,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                         >
                             Print
                         </Button>
+                        )}
                     </Box>
                     <div
                         id="print-area"
@@ -664,6 +677,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
 
                                         {/* Conditional row for Old Balance */}
                                         {credit_sale && parseFloat(sale.amount_received) - parseFloat(sale.total_amount) !== parseFloat(sale.balance) && (
+                                            <>
                                             <TableRow
                                                 sx={{ border: "none" }}
                                                 className="receipt-summary-row"
@@ -677,12 +691,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                                         sx={styles.receiptSummaryTyp}
                                                         color="initial"
                                                     >
-                                                        Old Balance [{numeral(
-                                                            parseFloat(sale.balance) -
-                                                            (parseFloat(sale.amount_received) -
-                                                                parseFloat(sale.total_amount))
-                                                        ).format("0,0.00")}] +
-                                                        Current Balance:
+                                                        Old Balance:
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell
@@ -693,11 +702,43 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                                         sx={styles.receiptSummaryTyp}
                                                         color="initial"
                                                     >
-                                                        Rs.
-                                                        {numeral(sale.balance).format("0,0.00")}
+                                                        Rs.{numeral(
+                                                            parseFloat(sale.balance) -
+                                                            (parseFloat(sale.amount_received) -
+                                                                parseFloat(sale.total_amount))
+                                                        ).format("0,0.00")}
                                                     </Typography>
                                                 </TableCell>
                                             </TableRow>
+                                            <TableRow
+                                                sx={{ border: "none" }}
+                                                className="receipt-summary-row"
+                                            >
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    colSpan={4}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={styles.receiptSummaryTyp}
+                                                        color="initial"
+                                                    >
+                                                        Total Balance:
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={styles.receiptSummaryTyp}
+                                                        color="initial"
+                                                    >
+                                                        Rs.{numeral(sale.balance).format("0,0.00")}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                            </>
                                         )}
                                     </TableBody>
                                 </Table>

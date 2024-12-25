@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
+import React, { useState, useContext, useRef, useEffect, useCallback } from "react";
 import {
     Box,
     Divider,
@@ -25,8 +25,7 @@ export default function SearchBox() {
     const [inputValue, setInputValue] = useState("");
     const searchRef = useRef(null);
 
-    const handleSearchQuery = (search_query) => {
-        setQuery(search_query);
+    const fetchProducts  =  (search_query) => {
         if (search_query.length > 2) {
             setLoading(true);
             axios
@@ -39,18 +38,18 @@ export default function SearchBox() {
 
                     if (response.data.products.length === 1) {
                         const product = response.data.products;
-                        const existingProductIndex = cartState.findIndex(
-                            (item) =>
-                              item.id === product[0].id &&
-                              item.batch_number === product[0].batch_number && (item.product_type !== 'custom' && item.product_type !== 'reload')
+                        const existingProductIndex = _.findIndex(cartState, (item) =>
+                            item.id === product.id &&
+                            item.batch_number === product.batch_number &&
+                            !['custom', 'reload'].includes(item.product_type)
                         );
-
                         if (existingProductIndex !== -1) {
                             product[0].quantity = cartState[existingProductIndex].quantity
                         }
                         else{
                             product[0].quantity = 1;
                             addToCart(product[0]);
+                            console.log(product[0])
                         }
 
                         // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item
@@ -69,11 +68,27 @@ export default function SearchBox() {
         }
     };
 
+    const debouncedFetchProducts = useCallback(
+        _.debounce((search_query) => {
+            fetchProducts(search_query);
+        }, 300), // 500ms debounce delay
+        []
+    );
+
     useEffect(() => {
         if (searchRef.current) {
             searchRef.current.focus();
         }
-    }, []);
+        return () => {
+            debouncedFetchProducts.cancel(); // Cleanup: Cancel pending debounced calls
+        };
+    }, [debouncedFetchProducts]);
+
+    const onSearchInputChange = (e) => {
+        const input = e.target.value;
+        setQuery(input); // Update query state immediately for responsive UI
+        debouncedFetchProducts(input); // Call the debounced fetch logic
+    };
 
     return (
         <>
@@ -131,8 +146,8 @@ export default function SearchBox() {
                             inputRef={searchRef}
                             fullWidth
                             placeholder="Search product..."
-                            onChange={(event) =>
-                                handleSearchQuery(event.target.value)
+                            onChange={
+                                onSearchInputChange
                             }
                             onFocus={(event) => {
                                 event.target.select();

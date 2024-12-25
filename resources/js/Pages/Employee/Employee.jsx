@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, Link } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
 import {
     Button,
@@ -9,7 +9,6 @@ import {
     TextField,
     IconButton,
     Chip,
-    Link
 } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -23,6 +22,8 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
 import EmployeeDialog from "./Partials/EmployeeDialog";
 import SalaryFormDialog from "./Partials/SalaryFormDialog";
+import EmployeeBalanceDialog from "./Partials/EmployeeBalanceDialog";
+import PrintIcon from "@mui/icons-material/Print";
 
 const columns = (handleRowClick) => [
     { field: "id", headerName: "ID", width: 80 },
@@ -80,9 +81,20 @@ const columns = (handleRowClick) => [
         headerName: "Balance",
         width: 120,
         align: 'right', headerAlign: 'right',
-        renderCell: (params) => {
-            return numeral(params.value).format('0,0.00');
-        },
+        renderCell: (params) => (
+            <Button
+                onClick={() => handleRowClick(params.row, 'update_balance')}
+                variant="text"
+                fullWidth
+                sx={{
+                    textAlign: "left",
+                    fontWeight: "bold",
+                    justifyContent: "flex-end",
+                }}
+            >
+                {numeral(params.value).format('0,0.00')}
+            </Button>
+        ),
     },
     {
         field: "role",
@@ -100,6 +112,12 @@ const columns = (handleRowClick) => [
         width: 150, align: 'right', headerAlign: 'right',
         renderCell: (params) => (
             <>
+            <Link href={"/employee-balance-log?employee=" + params.row.id}>
+            <IconButton sx={{ ml: '0.3rem' }} color="primary">
+                    <PrintIcon />
+                </IconButton>
+            </Link>
+                
                 <IconButton sx={{ ml: '0.3rem' }} color="error" onClick={() => handleRowClick(params.row, "delete_employee")}>
                     <DeleteIcon />
                 </IconButton>
@@ -113,7 +131,9 @@ export default function Employee({ employees, stores, }) {
     const [totalEmployees, setTotalEmployees] = useState(0)
     const [employeeModalOpen, setEmployeeModalOpen] = useState(false)
     const [salaryModalOpen, setSalaryModalOpen] = useState(false)
+    const [balanceModalOpen, setBalanceModalOpen] = useState(false)
     const [selectedEmployee, setSelectedEmployee] = useState(0)
+
     const [searchTerms, setSearchTerms] = useState({
         start_date: '',
         end_date: '',
@@ -125,6 +145,9 @@ export default function Employee({ employees, stores, }) {
         setSelectedEmployee(employee);
         if (action == 'employee_edit') {
             setEmployeeModalOpen(true);
+        }
+        else if (action == "update_balance") {
+            setBalanceModalOpen(true)
         }
         else if (action === 'delete_employee') {
             deleteEmployee(employee.id);
@@ -291,6 +314,16 @@ export default function Employee({ employees, stores, }) {
                             showQuickFilter: true,
                         },
                     }}
+                    initialState={{
+                        columns: {
+                            columnVisibilityModel: {
+                                // Hide columns status and traderName, the other columns will remain visible
+                                address: false,
+                                email: false,
+                                created_at: false,
+                            },
+                        },
+                    }}
                     hideFooter
                 />
             </Box>
@@ -311,13 +344,24 @@ export default function Employee({ employees, stores, }) {
                 refreshEmployees={refreshEmployees}
             />
             {selectedEmployee ? (
-                <SalaryFormDialog
-                    open={salaryModalOpen}
-                    employee={selectedEmployee}
-                    stores={stores}
-                    refreshEmployees={refreshEmployees}
-                    setOpen={setSalaryModalOpen}
-                />
+                <>
+                    <SalaryFormDialog
+                        open={salaryModalOpen}
+                        employee={selectedEmployee}
+                        stores={stores}
+                        refreshEmployees={refreshEmployees}
+                        setOpen={setSalaryModalOpen}
+                    />
+
+                    <EmployeeBalanceDialog
+                        open={balanceModalOpen}
+                        employee={selectedEmployee}
+                        stores={stores}
+                        refreshEmployees={refreshEmployees}
+                        setOpen={setBalanceModalOpen}
+                    />
+
+                </>
             ) : null}
         </AuthenticatedLayout>
     );

@@ -11,7 +11,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { MenuItem, Button } from "@mui/material";
 
-export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
+export default function SalaryFormDialog({ open, setOpen, employee, stores, refreshEmployees }) {
     const [formData, setFormData] = useState({
         employee_id: employee?.id,
         salary_date: dayjs().format("YYYY-MM-DD"),
@@ -41,6 +41,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
                     icon: "success",
                     showConfirmButton: true,
                 });
+                refreshEmployees(window.location.pathname)
                 setOpen(false)
             })
             .catch((error) => {
@@ -57,7 +58,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
     useEffect(() => {
         if (employee) {
             setFormData((prevData) => ({
-                ...prevData, store_id: employee.store_id, employee_id: employee.id, net_salary: employee.salary,
+                ...prevData, store_id: employee.store_id, employee_id: employee.id, net_salary: employee.balance,
             }))
         }
     }, [employee])
@@ -85,7 +86,6 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            id="salary_date"
                             name="salary_date"
                             label="Salary Date"
                             type="date"
@@ -99,7 +99,6 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            id="net_salary"
                             name="net_salary"
                             label="Net Salary"
                             type="number"
@@ -113,7 +112,6 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                             fullWidth
-                            id="salary_from"
                             name="salary_from"
                             label="Salary From"
                             type="text"
@@ -150,8 +148,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores }) {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setOpen(false)}>Cancel</Button>
-                <Button type="submit">SAVE</Button>
+                <Button fullWidth size="large" variant="contained" type="submit" disabled={!formData.net_salary || formData.net_salary <= 0}>SAVE</Button>
             </DialogActions>
         </Dialog>
     );

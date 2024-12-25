@@ -104,6 +104,12 @@ class SalaryRecordController extends Controller
                 ]);
             }
 
+            $employee = Employee::find($validatedData['employee_id']);
+            if ($employee) {
+                // Decrement the balance by the provided amount
+                $employee->decrement('balance', $salaryRecord->net_salary);
+            }
+
             DB::commit();
             return response()->json(['message' => 'Salary added successfully'], 200);
         } catch (\Exception $e) {
@@ -144,6 +150,11 @@ class SalaryRecordController extends Controller
                     // Delete the related CashLog entry
                     $cashLog->delete();
                 }
+            }
+
+            $employee = Employee::find($salaryRecord->employee_id);
+            if ($employee) {
+                $employee->increment('balance', $salaryRecord->net_salary); // Reverse the amount using increment
             }
 
             // Delete the salary record

@@ -171,7 +171,7 @@ class ReportController extends Controller
 
     public function getCustomerReport(Request $request, $id)
     {
-        $start_date = $request->input('start_date', Carbon::now()->subMonth(3)->toDateString());
+        $start_date = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
         $end_date = $request->input('end_date', Carbon::today()->toDateString());
         $contact_id = $id;
 

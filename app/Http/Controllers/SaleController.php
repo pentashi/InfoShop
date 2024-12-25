@@ -210,7 +210,12 @@ class SaleController extends Controller
         ->get(); // Fetch all matching sales
 
         if ($sales->isEmpty()) {
-            abort(404);
+            return Inertia::render('Sale/Reciept',[
+                'sale'=>'',
+                'salesItems'=>'',
+                'settings'=>$settingArray,
+                'credit_sale'=>true,
+            ]);
         }
     
         // Fetch all sale items related to the fetched sales

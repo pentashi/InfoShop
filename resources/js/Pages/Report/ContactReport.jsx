@@ -44,7 +44,7 @@ export default function ContactReport({
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().subtract(3, "month").format("YYYY-MM-DD"),
+        start_date: dayjs().startOf("month").format("YYYY-MM-DD"),
         end_date: dayjs().format("YYYY-MM-DD"),
         store: 0,
     });
