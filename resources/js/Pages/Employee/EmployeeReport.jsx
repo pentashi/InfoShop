@@ -42,7 +42,7 @@ export default function EmployeeReport({
     const [dataReport, setDataReport] = useState(report);
 
     const [searchTerms, setSearchTerms] = useState({
-        start_date: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
+        start_date: dayjs().startOf("month").format("YYYY-MM-DD"),
         end_date: dayjs().format("YYYY-MM-DD"),
         employee: employee.id,
     });

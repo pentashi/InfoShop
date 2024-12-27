@@ -83,7 +83,9 @@ class SalaryRecordController extends Controller
             'gross_salary' => 'nullable|numeric',
             'net_salary' => 'required|numeric',
             'salary_from' => 'required|string', // Change to appropriate validation
-            'store_id' => 'required'
+            'store_id' => 'required',
+            'adjusts_balance'=> 'required',
+            'remarks' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -104,10 +106,12 @@ class SalaryRecordController extends Controller
                 ]);
             }
 
-            $employee = Employee::find($validatedData['employee_id']);
-            if ($employee) {
-                // Decrement the balance by the provided amount
-                $employee->decrement('balance', $salaryRecord->net_salary);
+            if ($validatedData['adjusts_balance']) {
+                $employee = Employee::find($validatedData['employee_id']);
+                if ($employee) {
+                    // Decrement the balance by the provided amount
+                    $employee->decrement('balance', $salaryRecord->net_salary);
+                }
             }
 
             DB::commit();
@@ -152,9 +156,11 @@ class SalaryRecordController extends Controller
                 }
             }
 
-            $employee = Employee::find($salaryRecord->employee_id);
-            if ($employee) {
-                $employee->increment('balance', $salaryRecord->net_salary); // Reverse the amount using increment
+            if ($salaryRecord->adjusts_balance) {
+                $employee = Employee::find($salaryRecord->employee_id);
+                if ($employee) {
+                    $employee->increment('balance', $salaryRecord->net_salary); // Reverse the amount using increment
+                }
             }
 
             // Delete the salary record

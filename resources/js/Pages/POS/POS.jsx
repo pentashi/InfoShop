@@ -49,10 +49,11 @@ const DrawerFooter = styled("div")(({ theme }) => ({
 }));
 
 
-function POS({ products, customers, return_sale }) {
+function POS({ products, customers, return_sale, categories }) {
     const cartType = return_sale ? 'sales_return_cart' : 'sales_cart';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [dataProducts, setProducts] = useState(products);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -178,8 +179,8 @@ function POS({ products, customers, return_sale }) {
                     <Toolbar />
 
                     {/* Product items area  */}
-                    <Grid container spacing={2}>
-                        {products.map((product) => (
+                    <Grid container spacing={2} sx={{ mb: 8 }}>
+                        {dataProducts.map((product) => (
                             <Grid
                                 key={product.id + product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
@@ -188,7 +189,11 @@ function POS({ products, customers, return_sale }) {
                                 <ProductItem product={product}></ProductItem>
                             </Grid>
                         ))}
-                        {/* <POSBottomBar drawerWidth={drawerWidth} /> */}
+
+                        {/* Featured and categories */}
+                        {!return_sale && (
+                            <POSBottomBar drawerWidth={drawerWidth} categories={categories} setProducts={setProducts}/>
+                        )}
                     </Grid>
                 </Box>
                 <Box

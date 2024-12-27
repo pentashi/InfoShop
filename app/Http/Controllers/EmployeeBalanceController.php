@@ -32,8 +32,8 @@ class EmployeeBalanceController extends Controller
             ->orderBy('employee_balance_logs.log_date', 'desc');
 
         // Apply filters if provided
-        if (isset($filters['employee_id'])) {
-            $balanceLogs->where('employee_balance_logs.employee_id', $filters['employee_id']);
+        if (isset($filters['employee'])) {
+            $balanceLogs->where('employee_balance_logs.employee_id', $filters['employee']);
         }
 
         if (isset($filters['store_id'])) {
@@ -51,12 +51,14 @@ class EmployeeBalanceController extends Controller
             DB::raw("'Salary Settled' as description"),
             'salary_records.net_salary as settled',
             'salary_records.salary_date as log_date',
+            'salary_records.adjusts_balance',
+            'salary_records.remarks'
         )
             ->orderBy('salary_records.salary_date', 'desc');
 
         // Apply filters if provided
-        if (isset($filters['employee_id'])) {
-            $salaryRecords->where('salary_records.employee_id', $filters['employee_id']);
+        if (isset($filters['employee'])) {
+            $salaryRecords->where('salary_records.employee_id', $filters['employee']);
         }
 
         if (isset($filters['store_id'])) {
@@ -83,9 +85,19 @@ class EmployeeBalanceController extends Controller
     
         // Add Salary Records to the report
         foreach ($salaryRecords as $record) {
+            // If the record adjusts the balance, create another record
+            if (!$record->adjusts_balance) {
+                $report[] = [
+                    'log_date' => $record->log_date,
+                    'description' => "Balance Update: Salary", // Better description
+                    'salary' => $record->settled, // Add settled amount to salary
+                    'settled' => 0, // Settled is set to 0 for this record
+                ];
+            }
+
             $report[] = [
                 'log_date' => $record->log_date,
-                'description' => $record->description,
+                'description' => $record->remarks ? $record->description . ' | ' . $record->remarks : $record->description,
                 'salary' => 0, // Salary records don't contribute to receivables
                 'settled' => $record->settled, // Settled amount for the salary
             ];

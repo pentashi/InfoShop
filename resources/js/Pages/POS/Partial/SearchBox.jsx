@@ -108,6 +108,7 @@ export default function SearchBox() {
                 <Autocomplete
                 disabled={return_sale}
                     fullWidth
+                    disableCloseOnSelect
                     freeSolo
                     options={options}
                     inputValue={inputValue}
@@ -152,7 +153,6 @@ export default function SearchBox() {
                             onFocus={(event) => {
                                 event.target.select();
                             }}
-                            disableCloseOnSelect
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": {

@@ -18,6 +18,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores, refr
         net_salary: "",
         salary_from: "Cash Drawer",
         store_id: 1,
+        adjusts_balance: 0,
     });
 
     const handleChange = (event) => {
@@ -106,6 +107,9 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores, refr
                             required
                             value={formData.net_salary}
                             onChange={handleChange}
+                            onFocus={event => {
+                                event.target.select();
+                            }}
                         />
                     </Grid>
 
@@ -113,8 +117,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores, refr
                         <TextField
                             fullWidth
                             name="salary_from"
-                            label="Salary From"
-                            type="text"
+                            label="Salary"
                             variant="outlined"
                             required
                             select
@@ -122,10 +125,40 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores, refr
                             onChange={handleChange}
                         >
                             <MenuItem value={'Cash Drawer'}>Cash Drawer</MenuItem>
+                            {/* <MenuItem value={'Pending Salary'}>Pending Salary</MenuItem> */}
                             <MenuItem value={'External'}>External</MenuItem>
                         </TextField>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                            fullWidth
+                            name="adjusts_balance"
+                            label="Adjust Balance"
+                            variant="outlined"
+                            required
+                            select
+                            value={formData.adjusts_balance}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value={1}>Yes</MenuItem>
+                            <MenuItem value={0}>No</MenuItem>
+                        </TextField>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 12 }}>
+                        <TextField
+                            fullWidth
+                            name="remarks"
+                            label="Note"
+                            type="text"
+                            variant="outlined"
+                            value={formData.remarks}
+                            onChange={handleChange}
+                            onFocus={event => {
+                                event.target.select();
+                            }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 12 }}>
                         <TextField
                             value={formData.store_id}
                             label="Store"
@@ -148,7 +181,7 @@ export default function SalaryFormDialog({ open, setOpen, employee, stores, refr
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button fullWidth size="large" variant="contained" type="submit" disabled={!formData.net_salary || formData.net_salary <= 0}>SAVE</Button>
+                <Button fullWidth size="large" variant="contained" type="submit" disabled={!formData.net_salary }>SAVE</Button>
             </DialogActions>
         </Dialog>
     );

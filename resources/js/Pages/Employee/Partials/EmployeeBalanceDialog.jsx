@@ -14,8 +14,8 @@ import { MenuItem, Button } from "@mui/material";
 const getInitialFormData = (employee) => ({
     employee_id: employee?.id || "",
     amount: "",
-    description: 'Salary',         // Default to 'Pending Salary'
-    select_description: 'Salary',  // Default to 'Pending Salary'
+    description: 'Pending Salary',         // Default to 'Pending Salary'
+    select_description: 'Pending Salary',  // Default to 'Pending Salary'
     store_id: employee?.store_id || 1, // Default to employee's store_id or 1
     log_date:dayjs().format("YYYY-MM-DD")
 });
@@ -156,7 +156,7 @@ export default function EmployeeBalanceDialog({ open, setOpen, employee, stores,
                             value={formData.select_description}
                             onChange={handleChange}
                         >
-                                <MenuItem value={'Salary'}> Salary </MenuItem>
+                                <MenuItem value={'Pending Salary'}> Pending Salary </MenuItem>
                                 <MenuItem value={'Deduct Balance'}> Deduct Balance </MenuItem>
                                 <MenuItem value={'Other'}> Other </MenuItem>
                         </TextField>

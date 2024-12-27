@@ -24,5 +24,7 @@ class SalaryRecord extends Model
         'salary_from',
         'created_by',
         'store_id',
+        'remarks',   
+        'adjusts_balance',
     ];
 }

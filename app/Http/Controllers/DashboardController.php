@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductStock;
@@ -13,7 +12,6 @@ use App\Models\Sale;
 use App\Models\Transaction;
 use App\Models\Expense;
 use App\Models\Setting;
-use App\Models\ProductBatch;
 
 use Illuminate\Support\Facades\DB;
 

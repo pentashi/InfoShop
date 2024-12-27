@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos/{sale_id}/return', [POSController::class, 'returnIndex'])->name('pos.return');
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
     Route::get('/pos/customer-display', [POSController::class, 'customerDisplay']);
+    Route::post('/pos/filter', [POSController::class, 'getProductsByFilter']);
 
     Route::get('/customers', [ContactController::class, 'index'])->defaults('type', 'customer')->name('customers.index');
     Route::get('/vendors', [ContactController::class, 'index'])->defaults('type', 'vendor')->name('vendors.index');
@@ -151,12 +152,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/upload', [UpgradeController::class, 'showUploadForm'])->name('upload.form');
     Route::post('/upload', [UpgradeController::class, 'handleUpload'])->name('upload.handle');
 
-    Route::get('/clear', function () {
+    Route::get('/clear-cache', function () {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('event:clear');
+        // Artisan::call('optimize:clear'); // This command is deprecated
+        
         Artisan::call('config:cache');
         Artisan::call('route:cache');
-        Artisan::call('view:clear');
-        return 'Update completed!';
-    });
+        Artisan::call('view:cache');
+        Artisan::call('event:cache');
+        
+        return 'All caches cleared and configurations updated!';
+        });
 
     Route::get('/check-update', function(){
         return 'Update';

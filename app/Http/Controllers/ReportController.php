@@ -119,7 +119,7 @@ class ReportController extends Controller
         $salesQuery = Sale::with(['transactions' => function ($query) use ($start_date, $end_date) {
             // Filter transactions within the date range
             $query->whereBetween('transaction_date', [$start_date, $end_date])
-                ->whereNotIn('payment_method', ['Credit', 'Account'])
+                ->whereNotIn('payment_method', ['Credit'])
                 ->select('id', 'sales_id', 'transaction_date', 'amount', 'payment_method', 'transaction_type')
                 ->orderBy('transaction_date', 'asc');
         }])
@@ -286,7 +286,7 @@ class ReportController extends Controller
 
     public function getVendorReport(Request $request, $id)
     {
-        $start_date = $request->input('start_date', Carbon::now()->subMonth(3)->toDateString());
+        $start_date = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
         $end_date = $request->input('end_date', Carbon::today()->toDateString());
         $contact_id = $id;
 

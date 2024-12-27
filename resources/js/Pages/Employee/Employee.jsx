@@ -321,6 +321,7 @@ export default function Employee({ employees, stores, }) {
                                 address: false,
                                 email: false,
                                 created_at: false,
+                                joined_at: false,
                             },
                         },
                     }}
