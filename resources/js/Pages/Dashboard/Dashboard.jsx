@@ -8,7 +8,6 @@ import {
     Typography,
     Grid2 as Grid,
     TextField,
-    FormControl,
     ListItem,
     List,
     ListItemButton,
@@ -186,7 +185,6 @@ export default function Dashboard({ data, logo, version }) {
                                 width={"100%"}
                             >
                                 <Grid size={6}>
-                                    <FormControl sx={{ width: "100%" }}>
                                         <TextField
                                             label="Start Date"
                                             name="start_date"
@@ -204,10 +202,8 @@ export default function Dashboard({ data, logo, version }) {
                                             }
                                             required
                                         />
-                                    </FormControl>
                                 </Grid>
                                 <Grid size={6}>
-                                    <FormControl sx={{ width: "100%" }}>
                                         <TextField
                                             label="End Date"
                                             name="end_date"
@@ -225,7 +221,6 @@ export default function Dashboard({ data, logo, version }) {
                                             }
                                             required
                                         />
-                                    </FormControl>
                                 </Grid>
                             </Grid>
 

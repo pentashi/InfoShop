@@ -1,32 +1,24 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Grid2 as Grid } from '@mui/material';
+
 import Swal from 'sweetalert2';
 
 
 export default function FormDialog({ open, handleClose, collection }) {
   const [name, setName] = useState('');
-  const [collectionType, setCollectionType] = useState('');
+  const [collectionType, setCollectionType] = useState('category');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (collection) {
       setName(collection.name || '');
-      setCollectionType(collection.collection_type || '');
+      setCollectionType(collection.collection_type || 'category');
       setDescription(collection.description || '');
     } else {
       setName('');
-      setCollectionType('');
+      setCollectionType('category');
       setDescription('');
     }
   }, [collection]);
@@ -59,13 +51,13 @@ export default function FormDialog({ open, handleClose, collection }) {
       onError: (errors) => {
         const errorMessages = Object.values(errors).flat().join(' | ');
         Swal.fire({
-            title: 'Error!',
-            text: errorMessages || 'An unexpected error occurred.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        },
+          title: 'Error!',
+          text: errorMessages || 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
         });
+      },
+    });
   };
 
   // Collection type select box
@@ -85,51 +77,57 @@ export default function FormDialog({ open, handleClose, collection }) {
       >
         <DialogTitle>Collection Information</DialogTitle>
         <DialogContent>
-          {/* Collection Name */}
-          <TextField
-            className="py-8 mb-4"
-            autoFocus
-            required
-            margin="dense"
-            id="name"
-            name="name"
-            label="Collection Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-
-            <FormControl fullWidth className="py-8" style={{marginTop:'1.5rem', marginBottom:'0.5rem'}} margin="dense">
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              {/* Collection Name */}
               <TextField
-                id="collection_type"
+                autoFocus
+                required
+                margin="dense"
+                name="name"
+                label="Collection Name"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Grid>
+
+            <Grid size={12}>
+              {/* Collection Type */}
+              <TextField
                 value={collectionType}
                 label="Type"
                 onChange={handleChange}
                 name="collection_type"
                 required
                 select
+                fullWidth
+                margin="dense"
+                variant="outlined"
+                style={{ marginTop: '1.5rem', marginBottom: '0.5rem' }}
               >
-              <MenuItem value={'category'}>Category</MenuItem>
-              <MenuItem value={'brand'}>Brand</MenuItem>
-              <MenuItem value={'tag'}>Tag</MenuItem>
+                <MenuItem value={'category'}>Category</MenuItem>
+                <MenuItem value={'brand'}>Brand</MenuItem>
+                <MenuItem value={'tag'}>Tag</MenuItem>
               </TextField>
-          </FormControl>
+            </Grid>
 
-          {/* Collection Description */}
-          <TextField
-            className="py-8"
-            margin="dense"
-            id="description"
-            name="description"
-            label="Description"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+            <Grid size={12}>
+              {/* Collection Description */}
+              <TextField
+                margin="dense"
+                name="description"
+                label="Description"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

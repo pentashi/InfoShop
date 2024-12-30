@@ -8,10 +8,7 @@ import {
     Box,
     Divider,
     Typography,
-    Select,
     MenuItem,
-    InputLabel,
-    FormControl,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -23,6 +20,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Grid from "@mui/material/Grid2";
 import "dayjs/locale/en-gb";
+import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import Hotkeys from "react-hot-keys";
 import Select2 from "react-select";
@@ -83,13 +81,14 @@ export default function Product({ product, collection, product_code, contacts })
         featured_image: productplaceholder, // For file input
         unit: "PC",
         quantity: "",
-        alert_quantity: 5,
+        alert_quantity: 1,
         is_stock_managed: 1,
         is_active: 1,
         brand_id: "",
         category_id: "",
         product_type: "simple",
         fixed_commission: 0,
+        batch_number: dayjs().format('DDMMYYYY'), // Initial value for batch number
     });
 
     // Handle input changes
@@ -287,27 +286,18 @@ export default function Product({ product, collection, product_code, contacts })
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 2 }}>
-                            <FormControl
-                                fullWidth
-                                style={{ marginTop: "0", marginBottom: "0" }}
-                                margin="dense"
-                            >
-                                <InputLabel id="product-unit-label">
-                                    Product Unit
-                                </InputLabel>
-                                <Select
+                                <TextField
                                     labelId="product-unit-label"
-                                    id="product_unit"
                                     value={productFormData.unit}
                                     label="Product Unit"
                                     onChange={handleChange}
                                     name="unit"
+                                    select
                                 >
                                     <MenuItem value={"PC"}>PC</MenuItem>
                                     <MenuItem value={"KG"}>KG</MenuItem>
                                     <MenuItem value={"Meter"}>Meter</MenuItem>
-                                </Select>
-                            </FormControl>
+                                </TextField>
                         </Grid>
                     </Grid>
                     <Box className="sm:columns-1 md:columns-2 mb-4">
@@ -326,7 +316,6 @@ export default function Product({ product, collection, product_code, contacts })
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Cost"
-                                        id="cost"
                                         name="cost"
                                         type="number"
                                         fullWidth
@@ -344,7 +333,6 @@ export default function Product({ product, collection, product_code, contacts })
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Price"
-                                        id="price"
                                         name="price"
                                         type="number"
                                         fullWidth
@@ -361,7 +349,6 @@ export default function Product({ product, collection, product_code, contacts })
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Quantity"
-                                        id="quantity"
                                         name="quantity"
                                         type="number"
                                         fullWidth
@@ -381,9 +368,10 @@ export default function Product({ product, collection, product_code, contacts })
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Batch number"
-                                        id="batch-number"
                                         name="batch_number"
                                         fullWidth
+                                        value={productFormData.batch_number}
+                                        onChange={handleChange}
                                     />
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4 }} className="mb-3">

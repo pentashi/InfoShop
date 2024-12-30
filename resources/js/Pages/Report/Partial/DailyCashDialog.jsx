@@ -172,13 +172,13 @@ export default function DailyCashDialog({
                                 required
                                 onChange={(e) => {
                                     const { name, value } = e.target;
-                                    
+                                    const currentTime = dayjs().format('h:mm A');
                                     // Set default description based on transaction type
                                     let defaultDescription = "";
                                     if (e.target.value === "open_cashier") {
-                                        defaultDescription = "Opening Cashier Balance";
+                                        defaultDescription = "Opening Cashier Balance - "+currentTime;
                                     } else if (e.target.value === "close_cashier") {
-                                        defaultDescription = "Closing Cashier Balance";
+                                        defaultDescription = "Closing Cashier Balance - "+currentTime;
                                     }else defaultDescription = '';
                                     
                                     setFormState({

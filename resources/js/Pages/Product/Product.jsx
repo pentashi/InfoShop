@@ -7,9 +7,6 @@ import {
     Button,
     Box,
     Grid2 as Grid,
-    FormControl,
-    InputLabel,
-    Select,
     MenuItem,
     TextField,
     Chip,
@@ -38,14 +35,15 @@ const productColumns = (handleProductEdit) => [
                 <img
                     src={params.value} // Use the value from the image_url field
                     style={{
-                        width: "100%",
-                        height: "100%",
+                        width: "75px",
+                        height: "51px",
                         objectFit: "cover",
                         padding: "5px",
                         paddingBottom: "5px",
                         paddingLeft: "0",
                     }} // Adjust the size as needed
                     alt="Product Image" // Alt text for accessibility
+                    loading="lazy" // Lazy load the image
                 />
             ) : (
                 <span
@@ -210,13 +208,16 @@ export default function Product({ products, stores, contacts }) {
     const [dataContacts, setContacts] = useState(contacts);
     const [totalValuation, setTotalValuation] = useState(0);
 
-    const [filters, setFilters] = useState({
-        store: 0,
-        status: 1,
-        search_query: "",
-        alert_quantity: "",
-        per_page: 100,
-        contact_id: "",
+    const [filters, setFilters] = useState(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return {
+            store: 0,
+            status: urlParams.get("status") || 1,
+            search_query: "",
+            alert_quantity: "",
+            per_page: 100,
+            contact_id: "",
+        };
     });
 
     const handleProductEdit = (product, type) => {
@@ -282,28 +283,27 @@ export default function Product({ products, stores, contacts }) {
                     justifyContent={{ xs: "center", sm: "end" }}
                 >
                     <Grid size={{ xs: 12, sm: 2 }}>
-                        
-                            <TextField
-                                value={filters.store}
-                                label="Store"
-                                onChange={handleFilterChange}
-                                required
-                                name="store"
-                                select
-                                fullWidth
-                            >
-                                <MenuItem value={0}>All</MenuItem>
-                                {stores.map((store) => (
-                                    <MenuItem key={store.id} value={store.id}>
-                                        {store.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                        <TextField
+                            value={filters.store}
+                            label="Store"
+                            onChange={handleFilterChange}
+                            required
+                            name="store"
+                            select
+                            fullWidth
+                        >
+                            <MenuItem value={0}>All</MenuItem>
+                            {stores.map((store) => (
+                                <MenuItem key={store.id} value={store.id}>
+                                    {store.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 3 }}>
                         <Select2
-                        fullWidth
+                            fullWidth
                             placeholder="Select a supplier..."
                             styles={{
                                 control: (baseStyles, state) => ({
@@ -326,22 +326,22 @@ export default function Product({ products, stores, contacts }) {
                     </Grid>
 
                     <Grid size={{ xs: 6, sm: 2 }}>
-                            <TextField
-                                value={filters.status}
-                                label="Status"
-                                onChange={handleFilterChange}
-                                required
-                                name="status"
-                                fullWidth
-                                select
-                            >
-                                <MenuItem value={1}>Active</MenuItem>
-                                <MenuItem value={0}>Inactive</MenuItem>
-                                <MenuItem value={"alert"}>Alert</MenuItem>
-                                <MenuItem value={"out_of_stock"}>
-                                    Out of Stock
-                                </MenuItem>
-                            </TextField>
+                        <TextField
+                            value={filters.status}
+                            label="Status"
+                            onChange={handleFilterChange}
+                            required
+                            name="status"
+                            fullWidth
+                            select
+                        >
+                            <MenuItem value={1}>Active</MenuItem>
+                            <MenuItem value={0}>Inactive</MenuItem>
+                            <MenuItem value={"alert"}>Alert</MenuItem>
+                            <MenuItem value={"out_of_stock"}>
+                                Out of Stock
+                            </MenuItem>
+                        </TextField>
                     </Grid>
 
                     <Grid size={{ xs: 6, sm: 2 }}>
@@ -388,7 +388,7 @@ export default function Product({ products, stores, contacts }) {
 
                     <Grid size={{ xs: 6, sm: 1 }}>
                         <Button
-                        fullWidth
+                            fullWidth
                             variant="contained"
                             onClick={() =>
                                 refreshProducts(window.location.pathname)
@@ -405,7 +405,7 @@ export default function Product({ products, stores, contacts }) {
                                 color="success"
                                 startIcon={<AddIcon />}
                                 fullWidth
-                                sx={{minWidth:{xs:'100px', sm: '100px'}}}
+                                sx={{ minWidth: { xs: '100px', sm: '100px' } }}
                             >
                                 Add Product
                             </Button>

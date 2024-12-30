@@ -9,9 +9,6 @@ import {
     TextField,
     Grid2 as Grid,
     Divider,
-    Select,
-    InputLabel,
-    FormControl,
     MenuItem
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -190,14 +187,14 @@ export default function ExpenseDialog({
                         </Grid>
 
                         <Grid size={12}>
-                            <FormControl sx={{ width: "100%", mt: "0.6rem" }}>
-                                <InputLabel>Store</InputLabel>
-                                <Select
+                                <TextField
                                     value={expensesForm.store_id}
                                     label="Store"
+                                    fullWidth
                                     onChange={handleFieldChange}
                                     required
                                     name="store_id"
+                                    select
                                 >
                                     {stores?.map((store) => (
                                         <MenuItem
@@ -207,8 +204,7 @@ export default function ExpenseDialog({
                                             {store.name}
                                         </MenuItem>
                                     ))}
-                                </Select>
-                            </FormControl>
+                                </TextField>
                         </Grid>
                     </Grid>
 

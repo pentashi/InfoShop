@@ -33,21 +33,21 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
         const message = `Your purchase at ${settings.shop_name} receipt: \n${currentUrl}`; // Customize your message
         const encodedMessage = encodeURIComponent(message); // URL encode the message
         let whatsappNumber = sale.whatsapp; // Get the contact number from sale
-    
+
         // Check if the WhatsApp number is empty
         if (!whatsappNumber) {
             // Prompt the user for their WhatsApp number
-            whatsappNumber = prompt("Please enter the WhatsApp number (including country code):");
-            
+            whatsappNumber = prompt("Please enter the WhatsApp number (including country code):",'94');
+
             // If the user cancels the prompt, exit the function
             if (!whatsappNumber) {
                 alert("WhatsApp number is required to share the message.");
                 return;
             }
         }
-    
+
         // Construct the WhatsApp URL
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`; 
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         window.open(whatsappUrl, '_blank'); // Open in a new tab
     };
 
@@ -140,16 +140,16 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                 <RecieptContainer square={false} className="receipt-container">
                     <Box className="flex justify-between mb-3 print:hidden">
 
-                        {user&&(
-                        <Button
-                            onClick={() => window.history.back()}
-                            variant="outlined"
-                            startIcon={<ArrowBackIosIcon />}
-                        >
-                            Back
-                        </Button>
+                        {user && (
+                            <Button
+                                onClick={() => window.history.back()}
+                                variant="outlined"
+                                startIcon={<ArrowBackIosIcon />}
+                            >
+                                Back
+                            </Button>
                         )}
-                        {user&&(
+                        {user && (
                             <Button
                                 onClick={handleWhatsAppShare}
                                 variant="contained"
@@ -160,14 +160,14 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                             </Button>
                         )}
 
-{user&&(
-                        <Button
-                            onClick={reactToPrintFn}
-                            variant="contained"
-                            endIcon={<PrintIcon />}
-                        >
-                            Print
-                        </Button>
+                        {user && (
+                            <Button
+                                onClick={reactToPrintFn}
+                                variant="contained"
+                                endIcon={<PrintIcon />}
+                            >
+                                Print
+                            </Button>
                         )}
                     </Box>
                     <div
@@ -678,66 +678,66 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                         {/* Conditional row for Old Balance */}
                                         {credit_sale && parseFloat(sale.amount_received) - parseFloat(sale.total_amount) !== parseFloat(sale.balance) && (
                                             <>
-                                            <TableRow
-                                                sx={{ border: "none" }}
-                                                className="receipt-summary-row"
-                                            >
-                                                <TableCell
-                                                    sx={styles.receiptSummaryText}
-                                                    colSpan={4}
-                                                    align="right"
+                                                <TableRow
+                                                    sx={{ border: "none" }}
+                                                    className="receipt-summary-row"
                                                 >
-                                                    <Typography
-                                                        sx={styles.receiptSummaryTyp}
-                                                        color="initial"
+                                                    <TableCell
+                                                        sx={styles.receiptSummaryText}
+                                                        colSpan={4}
+                                                        align="right"
                                                     >
-                                                        Old Balance:
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.receiptSummaryText}
-                                                    align="right"
+                                                        <Typography
+                                                            sx={styles.receiptSummaryTyp}
+                                                            color="initial"
+                                                        >
+                                                            Old Balance:
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={styles.receiptSummaryText}
+                                                        align="right"
+                                                    >
+                                                        <Typography
+                                                            sx={styles.receiptSummaryTyp}
+                                                            color="initial"
+                                                        >
+                                                            Rs.{numeral(
+                                                                parseFloat(sale.balance) -
+                                                                (parseFloat(sale.amount_received) -
+                                                                    parseFloat(sale.total_amount))
+                                                            ).format("0,0.00")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow
+                                                    sx={{ border: "none" }}
+                                                    className="receipt-summary-row"
                                                 >
-                                                    <Typography
-                                                        sx={styles.receiptSummaryTyp}
-                                                        color="initial"
+                                                    <TableCell
+                                                        sx={styles.receiptSummaryText}
+                                                        colSpan={4}
+                                                        align="right"
                                                     >
-                                                        Rs.{numeral(
-                                                            parseFloat(sale.balance) -
-                                                            (parseFloat(sale.amount_received) -
-                                                                parseFloat(sale.total_amount))
-                                                        ).format("0,0.00")}
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow
-                                                sx={{ border: "none" }}
-                                                className="receipt-summary-row"
-                                            >
-                                                <TableCell
-                                                    sx={styles.receiptSummaryText}
-                                                    colSpan={4}
-                                                    align="right"
-                                                >
-                                                    <Typography
-                                                        sx={styles.receiptSummaryTyp}
-                                                        color="initial"
+                                                        <Typography
+                                                            sx={styles.receiptSummaryTyp}
+                                                            color="initial"
+                                                        >
+                                                            Total Balance:
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={styles.receiptSummaryText}
+                                                        align="right"
                                                     >
-                                                        Total Balance:
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={styles.receiptSummaryText}
-                                                    align="right"
-                                                >
-                                                    <Typography
-                                                        sx={styles.receiptSummaryTyp}
-                                                        color="initial"
-                                                    >
-                                                        Rs.{numeral(sale.balance).format("0,0.00")}
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
+                                                        <Typography
+                                                            sx={styles.receiptSummaryTyp}
+                                                            color="initial"
+                                                        >
+                                                            Rs.{numeral(sale.balance).format("0,0.00")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
                                             </>
                                         )}
                                     </TableBody>

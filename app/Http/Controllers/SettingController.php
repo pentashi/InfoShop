@@ -26,13 +26,13 @@ class SettingController extends Controller
 
     public function quoteTemplate()
     {
-        $imageUrl='';
-        if (app()->environment('production')) $imageUrl='public/';
-        $id=2;
+        $imageUrl = '';
+        if (app()->environment('production')) $imageUrl = 'public/';
+        $id = 2;
 
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
         $sale = \App\Models\Sale::select(
             'sales.id',
             'contact_id',            // Customer ID
@@ -50,10 +50,10 @@ class SettingController extends Controller
             'stores.contact_number',
             'sales.created_at'
         )
-        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
-        ->join('stores', 'sales.store_id','=','stores.id')
-        ->where('sales.id',$id)
-        ->first();
+            ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
+            ->join('stores', 'sales.store_id', '=', 'stores.id')
+            ->where('sales.id', $id)
+            ->first();
 
         $user = \App\Models\User::find($sale->created_by);
 
@@ -63,9 +63,9 @@ class SettingController extends Controller
             'sale_items.discount',
             'products.name',
         )
-        ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
-        ->where('sale_items.sale_id',$id)
-        ->get();
+            ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
+            ->where('sale_items.sale_id', $id)
+            ->get();
 
         $templateName = 'quote-template.html'; // or get this from the request
         $templatePath = storage_path("app/public/templates/{$templateName}");
@@ -77,23 +77,23 @@ class SettingController extends Controller
         return Inertia::render('Settings/QuoteTemplate', [
             'pageLabel' => 'Quote Template',
             'template' => $content,
-            'sale'=>$sale,
-            'salesItems'=>$salesItems,
-            'settings'=>$settingArray,
-            'user_name'=>$user->name,
-            'template_name'=>$templateName,
+            'sale' => $sale,
+            'salesItems' => $salesItems,
+            'settings' => $settingArray,
+            'user_name' => $user->name,
+            'template_name' => $templateName,
         ]);
     }
 
     public function receiptTemplate()
     {
-        $imageUrl='';
-        if (app()->environment('production')) $imageUrl='public/';
-        $id=2;
+        $imageUrl = '';
+        if (app()->environment('production')) $imageUrl = 'public/';
+        $id = 2;
 
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
         $sale = \App\Models\Sale::select(
             'sales.id',
             'contact_id',            // Customer ID
@@ -111,10 +111,10 @@ class SettingController extends Controller
             'stores.contact_number',
             'sales.created_at'
         )
-        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
-        ->join('stores', 'sales.store_id','=','stores.id')
-        ->where('sales.id',$id)
-        ->first();
+            ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
+            ->join('stores', 'sales.store_id', '=', 'stores.id')
+            ->where('sales.id', $id)
+            ->first();
 
         $user = \App\Models\User::find($sale->created_by);
 
@@ -124,9 +124,9 @@ class SettingController extends Controller
             'sale_items.discount',
             'products.name',
         )
-        ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
-        ->where('sale_items.sale_id',$id)
-        ->get();
+            ->leftJoin('products', 'sale_items.product_id', '=', 'products.id') // Join with contacts table using customer_id
+            ->where('sale_items.sale_id', $id)
+            ->get();
 
         $templateName = 'receipt-template.html'; // or get this from the request
         $templatePath = storage_path("app/public/templates/{$templateName}");
@@ -138,18 +138,18 @@ class SettingController extends Controller
         return Inertia::render('Settings/QuoteTemplate', [
             'pageLabel' => 'Receipt Template',
             'template' => $content,
-            'sale'=>$sale,
-            'salesItems'=>$salesItems,
-            'settings'=>$settingArray,
-            'user_name'=>$user->name,
-            'template_name'=>$templateName,
+            'sale' => $sale,
+            'salesItems' => $salesItems,
+            'settings' => $settingArray,
+            'user_name' => $user->name,
+            'template_name' => $templateName,
         ]);
     }
 
     public function barcodeTemplate()
     {
-        $imageUrl='';
-        if (app()->environment('production')) $imageUrl='public/';
+        $imageUrl = '';
+        if (app()->environment('production')) $imageUrl = 'public/';
 
         $settings = Setting::whereIn('meta_key', [
             'show_barcode_store',
@@ -159,7 +159,7 @@ class SettingController extends Controller
             'shop_logo',
         ])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
 
         $templateName = 'barcode-template.html'; // or get this from the request
         $templatePath = storage_path("app/public/templates/{$templateName}");
@@ -177,9 +177,9 @@ class SettingController extends Controller
         return Inertia::render('Settings/BarcodeTemplate', [
             'pageLabel' => 'Barcode Template',
             'template' => $content,
-            'barcode_settings'=>$settingArray,
+            'barcode_settings' => $settingArray,
             'product' => $product,
-            'template_name'=>$templateName,
+            'template_name' => $templateName,
         ]);
     }
 
@@ -206,13 +206,13 @@ class SettingController extends Controller
         $filePath = public_path('css/custom.css');
         file_put_contents($filePath, $request->template);
 
-        return response()->json(['message' => 'Template updated successfully!'],200);
+        return response()->json(['message' => 'Template updated successfully!'], 200);
     }
     public function updateTemplate(Request $request)
     {
         $validated = $request->validate([
             'template' => 'required|string',
-            'template_name'=>'required'
+            'template_name' => 'required'
         ]);
 
         //$templateName = 'quote-template.html'; // or get this from the request
@@ -221,26 +221,29 @@ class SettingController extends Controller
         // $templatePath = storage_path('views/templates/quote-template.html');
         File::put($templatePath, $validated['template']);
 
-        return response()->json(['message' => 'Template updated successfully!'],200);
+        return response()->json(['message' => 'Template updated successfully!'], 200);
     }
 
     public function update(Request $request)
     {
-        $request->validate([
-            'sale_receipt_note' => 'required|string',
-            'shop_name' => 'required|string',
-            'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $setting_type = $request->setting_type;
+        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name', 'show_receipt_shop_name', 'sale_receipt_second_note']);
 
-        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name','show_receipt_shop_name', 'sale_receipt_second_note']);
+        if ($setting_type == 'shop_information') {
+            $request->validate([
+                'shop_name' => 'required|string',
+                'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        } else if ($setting_type == "receipt") {
+        } else if ($setting_type == "barcode") {
+            $settingsData['show_barcode_store'] = $request->has('show_barcode_store') ? 'on' : 'off';
+            $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';
+            $settingsData['show_barcode_product_name'] = $request->has('show_barcode_product_name') ? 'on' : 'off';
 
-        $settingsData['show_barcode_store'] = $request->has('show_barcode_store') ? 'on' : 'off';
-        $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';
-        $settingsData['show_barcode_product_name'] = $request->has('show_barcode_product_name') ? 'on' : 'off';
-
-        // Add barcode settings JSON string to settingsData if it exists
-        if ($request->has('barcodeSettings')) {
-            $settingsData['barcode_settings'] = $request->input('barcodeSettings');
+            // Add barcode settings JSON string to settingsData if it exists
+            if ($request->has('barcodeSettings')) {
+                $settingsData['barcode_settings'] = $request->input('barcodeSettings');
+            }
         }
 
         foreach ($settingsData as $metaKey => $metaValue) {
@@ -266,6 +269,20 @@ class SettingController extends Controller
             );
         }
 
-        return response()->json(['message' => 'Setting has been updated successfully!'],200);
+        // Handle image upload if a file is present for app_icon
+        if ($request->hasFile('app_icon')) {
+            $image = $request->file('app_icon');
+
+            $folderPath = 'uploads/' . date('Y') . '/' . date('m');
+            $imageUrl = $image->store($folderPath, 'public');
+
+            // Update the 'app_icon' setting in the database with the image path
+            Setting::updateOrCreate(
+                ['meta_key' => 'app_icon'],
+                ['meta_value' => 'storage/' . $imageUrl]
+            );
+        }
+
+        return response()->json(['message' => 'Setting has been updated successfully!'], 200);
     }
 }

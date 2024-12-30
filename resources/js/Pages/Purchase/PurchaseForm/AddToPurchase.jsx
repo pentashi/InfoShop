@@ -8,8 +8,6 @@ import {
     IconButton,
     TextField,
     Grid2 as Grid,
-    FormControl,
-    MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";

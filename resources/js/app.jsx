@@ -7,7 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { PurchaseProvider } from './Context/PurchaseContext';
 import { SharedProvider } from './Context/SharedContext';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'InfoShop';
 
 import { InertiaProgress } from '@inertiajs/progress';
 

@@ -41,7 +41,7 @@ class POSController extends Controller
             'pb.id AS batch_id',
             'products.meta_data',
             'products.product_type',
-            'products.alert_quantity',
+            'products.alert_quantity'
         )
             ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'pb.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
@@ -68,7 +68,7 @@ class POSController extends Controller
             'product_stocks.quantity',
             'products.product_type',
             'products.meta_data',
-            'products.alert_quantity',
+            'products.alert_quantity'
         )
             ->limit(20)
             ->get();
@@ -136,7 +136,7 @@ class POSController extends Controller
             'si.quantity',
             'products.meta_data',
             'products.product_type',
-            'si.batch_id',
+            'si.batch_id'
         )
             ->join('sale_items AS si', function ($join) use ($sale_id) {
                 $join->on('products.id', '=', 'si.product_id')
@@ -157,7 +157,7 @@ class POSController extends Controller
                 'si.batch_id',
                 'si.quantity',
                 'products.product_type',
-                'products.meta_data',
+                'products.meta_data'
             )
             ->get();
 

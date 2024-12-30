@@ -1,31 +1,25 @@
 import * as React from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid2";
-import Card from "@mui/material/Card";
-import Box from "@mui/material/Box";
-import CardActions from "@mui/material/CardActions";
-import CardMedia from "@mui/material/CardMedia";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import {
-    Select,
     MenuItem,
     Typography,
-    FormControl,
-    InputLabel,
     Tab,
     Tabs,
+    Switch,
+    TextField,
+    CardMedia,
+    CardActions,
+    Box,
+    FormControlLabel,
+    Card,
+    Paper
 } from "@mui/material";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -73,9 +67,30 @@ const fontOptions = [
     { label: "Space Mono", fontFamily: "'Space Mono', monospace" },
 ];
 
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`vertical-tabpanel-${index}`}
+            aria-labelledby={`vertical-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
+
 export default function Setting({ settings }) {
     const [settingFormData, setSettingFormData] = useState({
         shop_logo: settings.shop_logo,
+        app_icon: settings.app_icon,
         sale_receipt_note: settings.sale_receipt_note,
         shop_name: settings.shop_name,
         sale_print_padding_right: settings.sale_print_padding_right,
@@ -142,12 +157,13 @@ export default function Setting({ settings }) {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        const { name } = e.target;
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setSettingFormData({
                     ...settingFormData,
-                    shop_logo: reader.result,
+                    [name]: reader.result,
                 });
             };
             reader.readAsDataURL(file);
@@ -158,8 +174,11 @@ export default function Setting({ settings }) {
         event.preventDefault();
         const submittedFormData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(submittedFormData.entries());
-        const barcodeSettingsObject = Object.fromEntries(barcodeSettings);
-        formJson.barcodeSettings = JSON.stringify(barcodeSettingsObject);
+
+        if(formJson.setting_type === 'barcode') {
+            const barcodeSettingsObject = Object.fromEntries(barcodeSettings);
+            formJson.barcodeSettings = JSON.stringify(barcodeSettingsObject);
+        }
 
         axios.post('/settings-update', formJson, {
             headers: {
@@ -182,26 +201,6 @@ export default function Setting({ settings }) {
             });
     };
 
-    function TabPanel(props) {
-        const { children, value, index, ...other } = props;
-
-        return (
-            <div
-                role="tabpanel"
-                hidden={value !== index}
-                id={`vertical-tabpanel-${index}`}
-                aria-labelledby={`vertical-tab-${index}`}
-                {...other}
-            >
-                {value === index && (
-                    <Box sx={{ p: 3 }}>
-                        {children}
-                    </Box>
-                )}
-            </div>
-        );
-    }
-
     const [tabValue, setTabValue] = useState(0);
 
     const handleTabChange = (event, newValue) => {
@@ -211,349 +210,385 @@ export default function Setting({ settings }) {
     return (
         <AuthenticatedLayout>
             <Head title="Settings" />
+            <Box component="div">
+                <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    <Tabs value={tabValue} onChange={handleTabChange} centered>
+                        <Tab label="SHOP" />
+                        <Tab label="RECEIPT" />
+                        <Tab label="BARCODE" />
+                    </Tabs>
+                </Box>
 
-            <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                <Tabs value={tabValue} onChange={handleTabChange} centered>
-                    <Tab label="GENERAL SETTING" />
-                    <Tab label="OTHER SETTING" />
-                </Tabs>
-            </Box>
-
-            <TabPanel value={tabValue} index={0}>
-            <form
-                id="settings-form"
-                encType="multipart/form-data"
-                onSubmit={handleSubmit}
-                method="post"
-            >
-                <Box
-                    sx={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                    }}
-                >
-                    <Grid
-                        container
-                        spacing={2}
-                        width={{ xs: "100%", sm: "60%" }}
+                <TabPanel value={tabValue} index={0}>
+                    <form
+                        encType="multipart/form-data"
+                        onSubmit={handleSubmit}
+                        method="post"
                     >
-                        <Grid size={12}>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >
-                                    SHOP INFORMATION
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            width: "100%",
-                                            justifyContent: "start",
-                                            mt: "1rem",
-                                        }}
-                                    >
-                                        <Card
-                                            sx={{
-                                                width: { xs: "100%", sm: 250 },
-                                            }}
-                                        >
-                                            <CardMedia
-                                                sx={{
-                                                    height: 200,
-                                                    contain: "content",
-                                                    padding: "8px",
-                                                    backgroundSize: "contain",
-                                                    backgroundOrigin:
-                                                        "content-box",
-                                                }}
-                                                image={
-                                                    settingFormData.shop_logo
-                                                }
-                                                title="shop logo"
-                                            />
+                        <input type="hidden" name="setting_type" value={'shop_information'} />
+                        <Box
+                            sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <Grid
+                                container
+                                spacing={2}
+                                width={{ xs: "100%", sm: "60%" }}
+                            >
+                                <Grid size={12} spacing={2}>
+                                    <Paper sx={{ padding: {xs:'0.5rem', sm:"1rem"}, marginBottom: "1rem" }}>
+                                        <Grid size={12} container spacing={2}>
+                                            <Grid size={{xs: 12, sm: 6}}>
+                                            <Card>
+                                                <CardMedia
+                                                    sx={{
+                                                        width: "100%",
+                                                        height: 200,
+                                                        contain: "content",
+                                                        padding: "8px",
+                                                        backgroundSize: "contain",
+                                                        backgroundOrigin: "content-box",
+                                                    }}
+                                                    image={settingFormData.shop_logo}
+                                                    title="shop logo"
+                                                />
+                                                <CardActions className="mt-0">
+                                                    <Button
+                                                        component="label"
+                                                        role={undefined}
+                                                        variant="contained"
+                                                        tabIndex={-1}
+                                                        startIcon={<CloudUploadIcon />}
+                                                        fullWidth
+                                                    >
+                                                        Upload shop logo
+                                                        <VisuallyHiddenInput
+                                                            type="file"
+                                                            onChange={handleFileChange}
+                                                            name="shop_logo"
+                                                        />
+                                                    </Button>
+                                                </CardActions>
+                                            </Card>
+                                            </Grid>
 
-                                            <CardActions className="mt-0">
-                                                {/* <Box sx={{ flexGrow: 1 }} /> */}
-                                                <Button
-                                                    component="label"
-                                                    role={undefined}
-                                                    variant="contained"
-                                                    tabIndex={-1}
-                                                    startIcon={
-                                                        <CloudUploadIcon />
-                                                    }
-                                                    fullWidth
-                                                >
-                                                    Upload shop logo
-                                                    <VisuallyHiddenInput
-                                                        type="file"
-                                                        onChange={
-                                                            handleFileChange
-                                                        }
-                                                        name="shop_logo"
-                                                    />
-                                                </Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Box>
-                                    <TextField
-                                        fullWidth
+                                            <Grid size={{xs: 12, sm: 6}}>
+                                            <Card>
+                                                <CardMedia
+                                                    sx={{
+                                                        width: "100%",
+                                                        height: 200,
+                                                        contain: "content",
+                                                        padding: "8px",
+                                                        backgroundSize: "contain",
+                                                        backgroundOrigin: "content-box",
+                                                    }}
+                                                    image={settingFormData.app_icon}
+                                                    title="app icon"
+                                                />
+                                                <CardActions className="mt-0">
+                                                    <Button
+                                                        component="label"
+                                                        role={undefined}
+                                                        variant="contained"
+                                                        tabIndex={-1}
+                                                        startIcon={<CloudUploadIcon />}
+                                                        fullWidth
+                                                    >
+                                                        Upload app icon
+                                                        <VisuallyHiddenInput
+                                                            type="file"
+                                                            onChange={handleFileChange}
+                                                            name="app_icon"
+                                                        />
+                                                    </Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+
+                                        <Grid size={12}>
+                                        <TextField
+                                            fullWidth
+                                            variant="outlined"
+                                            label={"Shop name"}
+                                            name="shop_name"
+                                            multiline
+                                            required
+                                            sx={{ mt: "2rem" }}
+                                            value={settingFormData.shop_name}
+                                            onChange={handleChange}
+                                        />
+                                        </Grid>
+                                        </Grid>
+                                        
+                                        
+                                    </Paper>
+                                </Grid>
+                                <Grid
+                                    size={12}
+                                    justifyContent={"end"}
+                                    sx={{ display: "flex" }}
+                                >
+                                    <Button
+                                        type="submit"
                                         variant="outlined"
-                                        label={"Shop name"}
-                                        name="shop_name"
-                                        multiline
-                                        required
-                                        sx={{ mt: "2rem" }}
-                                        value={settingFormData.shop_name}
-                                        onChange={handleChange}
-                                    />
-                                </AccordionDetails>
-                            </Accordion>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >
-                                    RECEIPT PRINT
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Grid
-                                        container
-                                        sx={{
-                                            display: "flex",
-                                            width: "100%",
-                                        }}
-                                        spacing={3}
+                                        size="large"
+                                        color="success"
                                     >
-                                        <Grid size={12}>
-                                            <TextField
-                                                fullWidth
-                                                variant="outlined"
-                                                label={"Receipt note"}
-                                                name="sale_receipt_note"
-                                                multiline
-                                                required
-                                                value={
-                                                    settingFormData.sale_receipt_note
-                                                }
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid size={12}>
-                                            <TextField
-                                                fullWidth
-                                                variant="outlined"
-                                                label={"Second note"}
-                                                name="sale_receipt_second_note"
-                                                multiline
-                                                required
-                                                value={
-                                                    settingFormData.sale_receipt_second_note
-                                                }
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid size={12}>
-                                            <TextField
-                                                fullWidth
-                                                variant="outlined"
-                                                label={"Show shopname"}
-                                                name="show_receipt_shop_name"
-                                                multiline
-                                                required
-                                                value={
-                                                    settingFormData.show_receipt_shop_name
-                                                }
-                                                onChange={handleChange}
-                                                select
-                                            >
-                                                <MenuItem value={1}>Show</MenuItem>
-                                                <MenuItem value={0}>Hide</MenuItem>
+                                        UPDATE
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </form>
+                </TabPanel>
 
-                                            </TextField>
-                                        </Grid>
-                                        <Grid size={3}>
-                                            <TextField
-                                                fullWidth
-                                                variant="outlined"
-                                                label={"Padding Right"}
-                                                name="sale_print_padding_right"
-                                                multiline
-                                                required
-                                                value={
-                                                    settingFormData.sale_print_padding_right
-                                                }
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid size={3}>
-                                            <TextField
-                                                fullWidth
-                                                variant="outlined"
-                                                label={"Padding Left"}
-                                                name="sale_print_padding_left"
-                                                multiline
-                                                required
-                                                value={
-                                                    settingFormData.sale_print_padding_left
-                                                }
-                                                onChange={handleChange}
-                                            />
-                                        </Grid>
-                                        <Grid size={6}>
-                                            <FormControl fullWidth>
-                                                <InputLabel>
-                                                    Choose Font for Receipt
-                                                </InputLabel>
-                                                <Select
-                                                    name="sale_print_font"
-                                                    label="Choose Font for Receipt"
-                                                    value={
-                                                        settingFormData.sale_print_font
-                                                    }
-                                                    onChange={handleFontChange}
-                                                >
-                                                    {fontOptions.map(
-                                                        (option) => (
-                                                            <MenuItem
-                                                                key={
-                                                                    option.fontFamily
-                                                                }
-                                                                value={
-                                                                    option.fontFamily
-                                                                }
-                                                            >
-                                                                <Typography
-                                                                    style={{
-                                                                        fontFamily:
-                                                                            option.fontFamily,
-                                                                    }}
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </Typography>
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                    </Grid>
-                                </AccordionDetails>
-                            </Accordion>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                >
-                                    BARCODE PRINT
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Grid
-                                        container
-                                        sx={{
-                                            display: "flex",
-                                            width: "100%",
-                                        }}
-                                    >
-                                        <Grid size={6}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        name="show_barcode_store"
-                                                        value={
-                                                            settingFormData.show_barcode_store
-                                                        }
-                                                        onChange={handleChange}
-                                                        checked={
-                                                            settingFormData.show_barcode_store ===
-                                                            "on"
-                                                        }
-                                                    />
-                                                }
-                                                label="STORE NAME"
-                                            />
-                                        </Grid>
-                                        <Grid size={6}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        name="show_barcode_product_price"
-                                                        value={
-                                                            settingFormData.show_barcode_product_price
-                                                        }
-                                                        onChange={handleChange}
-                                                        checked={
-                                                            settingFormData.show_barcode_product_price ===
-                                                            "on"
-                                                        }
-                                                    />
-                                                }
-                                                label="PRODUCT PRICE"
-                                            />
-                                        </Grid>
-                                        <Grid size={6}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Switch
-                                                        name="show_barcode_product_name"
-                                                        value={
-                                                            settingFormData.show_barcode_product_name
-                                                        }
-                                                        onChange={handleChange}
-                                                        checked={
-                                                            settingFormData.show_barcode_product_name ===
-                                                            "on"
-                                                        }
-                                                    />
-                                                }
-                                                label="PRODUCT NAME"
-                                            />
-                                        </Grid>
-                                    </Grid>
-                                    <Grid spacing={2} container sx={{ mt: 2 }}>
-                                        {[...barcodeSettings.keys()].map((key) => (
-                                            <Grid item size={3} key={key}>
+                <TabPanel value={tabValue} index={1}>
+                    <form
+                        encType="multipart/form-data"
+                        onSubmit={handleSubmit}
+                        method="post"
+                    >
+                        <input type="hidden" name="setting_type" value={'receipt'} />
+                        <Box
+                            sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <Grid
+                                container
+                                spacing={2}
+                                width={{ xs: "100%", sm: "60%" }}
+                            >
+                                <Grid size={12}>
+                                    <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                                        <Grid
+                                            container
+                                            sx={{
+                                                display: "flex",
+                                                width: "100%",
+                                            }}
+                                            spacing={3}
+                                        >
+                                            <Grid size={12}>
                                                 <TextField
                                                     fullWidth
                                                     variant="outlined"
-                                                    label={key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}
-                                                    name={key}
-                                                    value={barcodeSettings.get(key)}
-                                                    onChange={handleBarcodeFieldChange}
+                                                    label={"Receipt note"}
+                                                    name="sale_receipt_note"
+                                                    multiline
+                                                    required
+                                                    value={settingFormData.sale_receipt_note}
+                                                    onChange={handleChange}
                                                 />
                                             </Grid>
-                                        ))}
-                                    </Grid>
-                                </AccordionDetails>
-                            </Accordion>
-                        </Grid>
-                        <Grid
-                            size={12}
-                            justifyContent={"end"}
-                            sx={{ display: "flex" }}
+                                            <Grid size={12}>
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    label={"Second note"}
+                                                    name="sale_receipt_second_note"
+                                                    multiline
+                                                    value={settingFormData.sale_receipt_second_note}
+                                                    onChange={handleChange}
+                                                />
+                                            </Grid>
+                                            <Grid size={12}>
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    label={"Show shopname"}
+                                                    name="show_receipt_shop_name"
+                                                    multiline
+                                                    required
+                                                    value={settingFormData.show_receipt_shop_name}
+                                                    onChange={handleChange}
+                                                    select
+                                                >
+                                                    <MenuItem value={1}>Show</MenuItem>
+                                                    <MenuItem value={0}>Hide</MenuItem>
+                                                </TextField>
+                                            </Grid>
+                                            <Grid size={3}>
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    label={"Padding Right"}
+                                                    name="sale_print_padding_right"
+                                                    multiline
+                                                    required
+                                                    value={settingFormData.sale_print_padding_right}
+                                                    onChange={handleChange}
+                                                />
+                                            </Grid>
+                                            <Grid size={3}>
+                                                <TextField
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    label={"Padding Left"}
+                                                    name="sale_print_padding_left"
+                                                    multiline
+                                                    required
+                                                    value={settingFormData.sale_print_padding_left}
+                                                    onChange={handleChange}
+                                                />
+                                            </Grid>
+                                            <Grid size={6}>
+                                                <TextField
+                                                    fullWidth
+                                                    name="sale_print_font"
+                                                    label="Choose Font for Receipt"
+                                                    value={settingFormData.sale_print_font}
+                                                    onChange={handleFontChange}
+                                                    select
+                                                >
+                                                    {fontOptions.map((option) => (
+                                                        <MenuItem
+                                                            key={option.fontFamily}
+                                                            value={option.fontFamily}
+                                                        >
+                                                            <Typography style={{ fontFamily: option.fontFamily }}>
+                                                                {option.label}
+                                                            </Typography>
+                                                        </MenuItem>
+                                                    ))}
+                                                </TextField>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper>
+                                </Grid>
+                                <Grid
+                                    size={12}
+                                    justifyContent={"end"}
+                                    sx={{ display: "flex" }}
+                                >
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        size="large"
+                                        color="success"
+                                    >
+                                        UPDATE
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </form>
+                </TabPanel>
+                <TabPanel value={tabValue} index={2}>
+                    <form
+                        encType="multipart/form-data"
+                        onSubmit={handleSubmit}
+                        method="post"
+                    >
+                        <input type="hidden" name="setting_type" value={'barcode'} />
+                        <Box
+                            sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
                         >
-                            <Button
-                                type="submit"
-                                variant="outlined"
-                                size="large"
-                                color="success"
+                            <Grid
+                                container
+                                spacing={2}
+                                width={{ xs: "100%", sm: "60%" }}
                             >
-                                UPDATE
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </form>
-            </TabPanel>
-
-            <TabPanel value={tabValue} index={1}>
-                OTHER SETTINGS
-            </TabPanel>
-
+                                <Grid size={12}>
+                                    <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                                        <Grid
+                                            container
+                                            sx={{
+                                                display: "flex",
+                                                width: "100%",
+                                            }}
+                                        >
+                                            <Grid size={6}>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            name="show_barcode_store"
+                                                            value={settingFormData.show_barcode_store}
+                                                            onChange={handleChange}
+                                                            checked={settingFormData.show_barcode_store === "on"}
+                                                        />
+                                                    }
+                                                    label="STORE NAME"
+                                                />
+                                            </Grid>
+                                            <Grid size={6}>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            name="show_barcode_product_price"
+                                                            value={settingFormData.show_barcode_product_price}
+                                                            onChange={handleChange}
+                                                            checked={settingFormData.show_barcode_product_price === "on"}
+                                                        />
+                                                    }
+                                                    label="PRODUCT PRICE"
+                                                />
+                                            </Grid>
+                                            <Grid size={6}>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            name="show_barcode_product_name"
+                                                            value={settingFormData.show_barcode_product_name}
+                                                            onChange={handleChange}
+                                                            checked={settingFormData.show_barcode_product_name === "on"}
+                                                        />
+                                                    }
+                                                    label="PRODUCT NAME"
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                        <Grid spacing={2} container sx={{ mt: 2 }}>
+                                            {[...barcodeSettings.keys()].map((key) => (
+                                                <Grid size={3} key={key}>
+                                                    <TextField
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        label={key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}
+                                                        name={key}
+                                                        value={barcodeSettings.get(key)}
+                                                        onChange={handleBarcodeFieldChange}
+                                                    />
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </Paper>
+                                </Grid>
+                                <Grid
+                                    size={12}
+                                    justifyContent={"end"}
+                                    sx={{ display: "flex" }}
+                                >
+                                    <Button
+                                        type="submit"
+                                        variant="outlined"
+                                        size="large"
+                                        color="success"
+                                    >
+                                        UPDATE
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </form>
+                </TabPanel>
+            </Box>
         </AuthenticatedLayout>
     );
 }

@@ -1,21 +1,18 @@
 import React, { useState, useContext, useMemo } from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
     IconButton,
     TextField,
     Grid2 as Grid,
     Divider,
-    Select,
-    InputLabel,
-    FormControl,
-    MenuItem
+    MenuItem,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    InputAdornment
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
@@ -143,7 +140,7 @@ export default function AddPaymentDialog({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid size={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type="number"
@@ -172,14 +169,14 @@ export default function AddPaymentDialog({
                             />
                         </Grid>
 
-                        <Grid size={4}>
-                            <FormControl sx={{ minWidth: 120, width: '100%' }}>
-                                <InputLabel>Payment Method</InputLabel>
-                                <Select
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                                <TextField
                                     name="payment_method"
                                     value={paymentForm.payment_method}
                                     onChange={handleFieldChange}
                                     label="Payment Method"
+                                    select
+                                    fullWidth
                                 >
                                     <MenuItem value={'Cash'}>Cash</MenuItem>
                                     <MenuItem value={'Cheque'}>Cheque</MenuItem>
@@ -189,11 +186,10 @@ export default function AddPaymentDialog({
                                     {selectedTransaction !== null && (
                                         <MenuItem value={'Account'}>Account</MenuItem>
                                     )}
-                                </Select>
-                            </FormControl>
+                                </TextField>
                         </Grid>
 
-                        <Grid size={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 label="Date"
                                 name="transaction_date"
@@ -211,23 +207,22 @@ export default function AddPaymentDialog({
                         </Grid>
 
                         {(selectedTransaction === null || amountLimit === undefined) && (
-                            <Grid size={12}>
-                                <FormControl sx={{ width: '100%', mt: '0.6rem' }}>
-                                    <InputLabel>Store</InputLabel>
-                                    <Select
+                            <Grid size={{ xs: 12, sm: 12 }}>
+                                    <TextField
                                         value={paymentForm.store_id}
                                         label="Store"
                                         onChange={handleFieldChange}
                                         required
                                         name="store_id"
+                                        select
+                                        fullWidth
                                     >
                                         {stores?.map((store) => (
                                             <MenuItem key={store.id} value={store.id}>
                                                 {store.name}
                                             </MenuItem>
                                         ))}
-                                    </Select>
-                                </FormControl>
+                                    </TextField>
                             </Grid>
                         )}
                     </Grid>
