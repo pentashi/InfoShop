@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Head, Link } from "@inertiajs/react";
 import {
     AppBar,
@@ -22,7 +22,6 @@ import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
 import CartIcon from "./Partial/CartIcon";
-import MonitorIcon from '@mui/icons-material/Monitor';
 
 import { SalesProvider } from "@/Context/SalesContext";
 import CartItemsTop from "./Partial/CartItemsTop";
@@ -80,21 +79,21 @@ function POS({ products, customers, return_sale, categories }) {
         <>
             <form action="/pos" method="post">
                 <Toolbar sx={{ display: { xs: "none", sm: "flex" } }}>
-                    <CustomerSelect customers={customers}/>
+                    <CustomerSelect customers={customers} />
                 </Toolbar>
                 <Divider />
                 <Box
                     className="flex flex-col overflow-auto"
-                    sx={{ height: {sm:"calc(100vh - 275px);", xs:"calc(100vh - 350px);"} }}
+                    sx={{ height: { sm: "calc(100vh - 275px);", xs: "calc(100vh - 350px);" } }}
                 >
                     {/* Cart Items - List of all items */}
-                    <CartItems/>
+                    <CartItems />
                     {/* Cart Summary - Total and discount area */}
-                    <CartSummary/>
+                    <CartSummary />
                 </Box>
                 <DrawerFooter>
                     {/* Cart footer - Buttons */}
-                    <CartFooter/>
+                    <CartFooter />
                 </DrawerFooter>
             </form>
         </>
@@ -120,7 +119,7 @@ function POS({ products, customers, return_sale, categories }) {
                             onClick={handleDrawerToggle}
                             sx={{ mr: 0, display: { sm: "none" } }}
                         >
-                           <CartIcon></CartIcon>
+                            <CartIcon></CartIcon>
                         </IconButton>
                         <Box sx={{ display: { xs: "none", sm: "flex" } }}>
                             <Typography variant="h4" noWrap component="div">
@@ -128,27 +127,9 @@ function POS({ products, customers, return_sale, categories }) {
                             </Typography>
                         </Box>
                         {/* Product Search Box  */}
-                        
+
                         <SearchBox></SearchBox>
 
-                        <a href="/pos/customer-display" target="_blank" rel="noopener noreferrer">
-                            <IconButton
-                                color="inherit"
-                                sx={{
-                                    ml: 1,
-                                    p: "10px",
-                                    color: "default", // Unchecked color
-                                    "& .MuiSvgIcon-root": {
-                                        fontSize: 30, // Customize icon size
-                                    },
-                                    display:{xs:'none',sm:'block'}
-                                }}
-                                type="button"
-                            >
-                                <MonitorIcon />
-                            </IconButton>
-                        </a>
-                      
                         <Link href="/dashboard">
                             <IconButton
                                 color="inherit"
@@ -165,7 +146,7 @@ function POS({ products, customers, return_sale, categories }) {
                                 <HomeIcon />
                             </IconButton>
                         </Link>
-                        
+
                     </Toolbar>
                 </AppBar>
                 <Box
@@ -184,7 +165,7 @@ function POS({ products, customers, return_sale, categories }) {
                             <Grid
                                 key={product.id + product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
-                                sx={{ cursor: "pointer",}}
+                                sx={{ cursor: "pointer", }}
                             >
                                 <ProductItem product={product}></ProductItem>
                             </Grid>
@@ -192,7 +173,7 @@ function POS({ products, customers, return_sale, categories }) {
 
                         {/* Featured and categories */}
                         {!return_sale && (
-                            <POSBottomBar drawerWidth={drawerWidth} categories={categories} setProducts={setProducts}/>
+                            <POSBottomBar drawerWidth={drawerWidth} categories={categories} setProducts={setProducts} />
                         )}
                     </Grid>
                 </Box>
@@ -219,7 +200,7 @@ function POS({ products, customers, return_sale, categories }) {
                         anchor="right"
                     >
                         <DrawerHeader>
-                            <CartItemsTop customers={customers}/>
+                            <CartItemsTop customers={customers} />
                             <IconButton onClick={handleDrawerClose}>
                                 <ChevronLeftIcon />
                             </IconButton>

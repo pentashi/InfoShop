@@ -39,6 +39,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import PermMediaIcon from '@mui/icons-material/PermMedia';
 
 import infoshopLogo from "@/infoshop.png";
 const drawerWidth = 240;
@@ -268,6 +269,13 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     label="Payroll"
                     open={open}
                     selected={isSelected("/payroll")}
+                />
+                <NavItem
+                    href="/media"
+                    icon={PermMediaIcon}
+                    label="Media"
+                    open={open}
+                    selected={isSelected("/media")}
                 />
                 <NavItem
                     href="/settings"

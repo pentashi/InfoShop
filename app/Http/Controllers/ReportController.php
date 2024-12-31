@@ -140,6 +140,7 @@ class ReportController extends Controller
                 'receivable' => $sale->total_amount,
                 'settled' => 0, // To be calculated based on transactions
                 'profit' => $sale->profit_amount,
+                'sales_id' => $sale->id,
             ];
 
             // Add the related Transaction records
@@ -151,6 +152,7 @@ class ReportController extends Controller
                     'receivable' => 0, // Transactions don’t affect receivables
                     'settled' => $transaction->amount, // Amount settled in the transaction
                     'profit' => 0, // Transactions don’t affect profit directly
+                    'sales_id' => $sale->id,
                 ];
             }
         }

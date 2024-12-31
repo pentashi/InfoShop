@@ -30,6 +30,7 @@ class Product extends Model
         'is_featured',
         'product_type',
         'meta_data',
+        'attachment_id',
     ];
 
     // Accessor for formatted updated_at date

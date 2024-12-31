@@ -46,7 +46,7 @@ export default function AddPaymentDialog({
             return paymentForm.amount < 0 ? 'REFUND' : 'PAY';
         }
         if (paymentForm.payment_method === 'Account Balance') {
-            return paymentForm.amount < 0 ? 'CREDIT' : 'ADD PAYMENT';
+            return paymentForm.amount < 0 ? 'CREDIT' : 'UPDATE BALANCE';
         }
         return 'ADD PAYMENT'; // Default text
     };
@@ -264,7 +264,7 @@ export default function AddPaymentDialog({
                             value={'credit'}
                             disabled={paymentForm.amount == 0 || (amountLimit !== undefined && paymentForm.amount > amountLimit) || loading}
                         >
-                            {loading ? 'Loading...' : 'CREDIT'}
+                            {loading ? 'Loading...' : (paymentForm.payment_method === 'Cash' || paymentForm.payment_method === 'Cheque' ? 'REFUND' : 'CREDIT')}
                         </Button>
                     )}
                 </DialogActions>

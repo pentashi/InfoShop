@@ -479,7 +479,7 @@ export default function CartItemModal() {
                             <TextField
                                 fullWidth
                                 type={showCost ? "number" : "password"}
-                                autoComplete={'off'}
+                                autoComplete={showCost ? 'off' : 'new-password'}
                                 disabled={showCost ? false : true}
                                 name="cost"
                                 label="Cost"

@@ -26,6 +26,7 @@ use App\Http\Controllers\UpgradeController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SalaryRecordController;
 use App\Http\Controllers\EmployeeBalanceController;
+use App\Http\Controllers\MediaController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -50,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/summary', [DashboardController::class, 'getDashboardSummary'])->name('dashboard.summary');
     Route::post('/dashboard/sold-items-summary', [DashboardController::class, 'getSoldItemsSummary']);
-    
+
     Route::get('/stores', [StoreController::class, 'index'])->name('store');
     Route::post('/store', [StoreController::class, 'store']);
     Route::post('/store/{id}', [StoreController::class, 'update']);
@@ -109,14 +110,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/custom-css', [SettingController::class, 'customCSS']);
     Route::post('/settings/custom-css', [SettingController::class, 'updateCustomCSS']);
 
-    Route::get('/expenses',[ExpenseController::class, 'index'])->name('expenses.index');
-    Route::post('/expense',[ExpenseController::class, 'store'])->name('expenses.store');
-    Route::post('/expense/{id}/delete',[ExpenseController::class, 'delete'])->name('expenses.delete');
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('/expense', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::post('/expense/{id}/delete', [ExpenseController::class, 'delete'])->name('expenses.delete');
 
-    Route::get('/employees',[EmployeeController::class, 'index'])->name('employees.index');
-    Route::post('/employee',[EmployeeController::class, 'store'])->name('employees.store');
-    Route::post('/employee/{id}',[EmployeeController::class, 'update'])->name('employees.update');
-    Route::post('/employee/{id}/delete',[EmployeeController::class, 'delete'])->name('employees.delete');
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::post('/employee', [EmployeeController::class, 'store'])->name('employees.store');
+    Route::post('/employee/{id}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::post('/employee/{id}/delete', [EmployeeController::class, 'delete'])->name('employees.delete');
 
     Route::get('/payroll', [SalaryRecordController::class, 'index']);
     Route::post('/salary-records', [SalaryRecordController::class, 'store']);
@@ -133,15 +134,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/{id}', [UserController::class, 'update'])->name('user.update');
 
     // Route::get('reports/daily',[ReportController::class, 'getDailyReport'])->name('reports.daily');
-    Route::get('reports/dailycash',[ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
-    Route::post('reports/dailycash',[ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
-    Route::get('reports/sales',[ReportController::class, 'getSalesReport'])->name('reports.sales');
-    Route::get('reports/{customer}/customer-pending',[ReportController::class, 'getCustomerPendingReport']);
-    Route::get('reports/{vendor}/vendor-pending',[ReportController::class, 'getVendorPendingReport']);
-    Route::get('reports/{id}/customer',[ReportController::class, 'getCustomerReport'])->name('reports.customer');
-    Route::get('reports/{id}/vendor',[ReportController::class, 'getVendorReport'])->name('reports.vendor');
+    Route::get('reports/dailycash', [ReportController::class, 'getDailyCashReport'])->name('reports.dailycash');
+    Route::post('reports/dailycash', [ReportController::class, 'storeDailyCashReport'])->name('reports.store.dailycash');
+    Route::get('reports/sales', [ReportController::class, 'getSalesReport'])->name('reports.sales');
+    Route::get('reports/{customer}/customer-pending', [ReportController::class, 'getCustomerPendingReport']);
+    Route::get('reports/{vendor}/vendor-pending', [ReportController::class, 'getVendorPendingReport']);
+    Route::get('reports/{id}/customer', [ReportController::class, 'getCustomerReport'])->name('reports.customer');
+    Route::get('reports/{id}/vendor', [ReportController::class, 'getVendorReport'])->name('reports.vendor');
 
-    Route::get('/reloads',[ReloadController::class, 'index']);
+    Route::get('/reloads', [ReloadController::class, 'index']);
     Route::post('/reloads/{id}/update', [ReloadController::class, 'update']);
 
     Route::get('/link-storage', function () {
@@ -152,6 +153,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/upload', [UpgradeController::class, 'showUploadForm'])->name('upload.form');
     Route::post('/upload', [UpgradeController::class, 'handleUpload'])->name('upload.handle');
 
+    Route::get('/media', [MediaController::class, 'index']);
+    Route::get('/migrate-images', [MediaController::class, 'migrateImages']);
+
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
@@ -159,18 +163,18 @@ Route::middleware('auth')->group(function () {
         Artisan::call('view:clear');
         Artisan::call('event:clear');
         // Artisan::call('optimize:clear'); // This command is deprecated
-        
-        Artisan::call('config:cache');
-        Artisan::call('route:cache');
-        Artisan::call('view:cache');
-        Artisan::call('event:cache');
-        
-        return 'All caches cleared and configurations updated!';
-        });
 
-    Route::get('/check-update', function(){
+        // Artisan::call('config:cache');
+        // Artisan::call('route:cache');
+        // Artisan::call('view:cache');
+        // Artisan::call('event:cache');
+
+        return 'All caches cleared and configurations updated!';
+    });
+
+    Route::get('/check-update', function () {
         return 'Update';
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

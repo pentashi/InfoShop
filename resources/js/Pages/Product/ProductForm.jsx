@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import Hotkeys from "react-hot-keys";
 import Select2 from "react-select";
+import imageCompression from 'browser-image-compression';
 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -54,7 +55,9 @@ const VisuallyHiddenInput = styled("input")({
 
 export default function Product({ product, collection, product_code, contacts }) {
     const [loading, setLoading] = useState(false);
+    const [compressedFile, setCompressedFile] = useState(null);
 
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     // Filter and map the collection
     const brandOptions = collection
         .filter((item) => item.collection_type === "brand")
@@ -101,17 +104,32 @@ export default function Product({ product, collection, product_code, contacts })
     };
 
     // Handle file input change
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
+        if (file && file.size > MAX_FILE_SIZE) {
+            alert('File size exceeds the 2MB limit.');
+            return;
+        }
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData({
-                    ...productFormData,
-                    featured_image: reader.result,
-                });
-            };
-            reader.readAsDataURL(file);
+            try {
+                const options = {
+                    maxSizeMB: 0.5, // Maximum size in MB
+                    maxWidthOrHeight: 900, // Max width or height
+                    useWebWorker: true, // Use web worker for faster compression
+                };
+                const compressedFile = await imageCompression(file, options);
+                setCompressedFile(compressedFile);
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData({
+                        ...productFormData,
+                        featured_image: reader.result,
+                    });
+                };
+                reader.readAsDataURL(compressedFile);
+            } catch (error) {
+                console.error('Error compressing the image:', error);
+            }
         }
     };
 
@@ -165,6 +183,11 @@ export default function Product({ product, collection, product_code, contacts })
         setLoading(true);
 
         const submittedFormData = new FormData(event.currentTarget);
+
+        if (compressedFile) {
+            submittedFormData.append('featured_image', compressedFile);
+        }
+
         const formJson = Object.fromEntries(submittedFormData.entries());
         formJson.brand_id = selectedBrand?.id ?? "";
         formJson.category_id = selectedCategory?.id ?? "";
@@ -584,6 +607,7 @@ export default function Product({ product, collection, product_code, contacts })
                                             Upload image
                                             <VisuallyHiddenInput
                                                 type="file"
+                                                accept="image/*"
                                                 onChange={handleFileChange}
                                                 name="featured_image"
                                             />

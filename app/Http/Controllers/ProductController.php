@@ -12,6 +12,8 @@ use App\Models\ProductStock;
 use App\Models\Store;
 use App\Models\Setting;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Attachment;
 
 use Illuminate\Support\Facades\DB;
 
@@ -49,30 +51,27 @@ class ProductController extends Controller
 
         // Apply dynamic alert_quantity filter
         if (!empty($filters['alert_quantity'])) {
-                $query->where('product_stocks.quantity', '<=', $filters['alert_quantity']);
+            $query->where('product_stocks.quantity', '<=', $filters['alert_quantity']);
         }
 
-        if(isset($filters['store']) && !empty($filters['store']!=0)){
-                $query->where('product_stocks.store_id', $filters['store']);
+        if (isset($filters['store']) && !empty($filters['store'] != 0)) {
+            $query->where('product_stocks.store_id', $filters['store']);
         }
 
-        if(isset($filters['contact_id'])){
-                $query->where('product_batches.contact_id', $filters['contact_id']);
+        if (isset($filters['contact_id'])) {
+            $query->where('product_batches.contact_id', $filters['contact_id']);
         }
 
         // Apply filters based on the status
         if (isset($filters['status']) && $filters['status'] == 0) {
             $query->where('product_batches.is_active', 0);
-        }
-        else if(isset($filters['status']) && $filters['status'] == 'alert'){
+        } else if (isset($filters['status']) && $filters['status'] == 'alert') {
             $query->whereColumn('product_stocks.quantity', '<=', 'products.alert_quantity');
             $query->where('product_batches.is_active', 1);
-        }
-        else if(isset($filters['status']) && $filters['status'] == 'out_of_stock'){
+        } else if (isset($filters['status']) && $filters['status'] == 'out_of_stock') {
             $query->where('product_stocks.quantity', '<=', 0);
             $query->where('product_batches.is_active', 1);
-        }
-        else $query->where('product_batches.is_active', 1);
+        } else $query->where('product_batches.is_active', 1);
 
         // Apply search query if provided
         if (!empty($filters['search_query'])) {
@@ -91,37 +90,37 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity','per_page', 'contact_id']);
+        $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity', 'per_page', 'contact_id']);
 
         $products = $this->getProducts($filters);
         $stores = Store::select('id', 'name')->get();
-        $contacts = Contact::select('id','name','balance')->vendors()->get();
+        $contacts = Contact::select('id', 'name', 'balance')->vendors()->get();
         // Render the 'Products' component with data
         return Inertia::render('Product/Product', [
             'products' => $products,
             'stores' => $stores,
             'pageLabel' => 'Products',
             'remember' => true,
-            'contacts'=>$contacts,
+            'contacts' => $contacts,
         ]);
     }
 
     public function create()
     {
         $incrementValue = Setting::where('meta_key', 'product_code_increment')->value('meta_value');
-        $incrementValue = $incrementValue ?$incrementValue: 1000;
+        $incrementValue = $incrementValue ? $incrementValue : 1000;
 
         $lastProduct = Product::latest('id')->first();
         $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : (int)$incrementValue + 1;
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
-        $contacts = Contact::select('id','name')->vendors()->get();
+        $contacts = Contact::select('id', 'name')->vendors()->get();
         // Render the 'Product/ProductForm' component for adding a new product
         return Inertia::render('Product/ProductForm', [
             'collection' => $collection, // Example if you have categories
             'product_code' => $nextItemCode,
             'pageLabel' => 'Product Details',
-            'contacts'=>$contacts,
+            'contacts' => $contacts,
         ]);
     }
 
@@ -170,12 +169,22 @@ class ProductController extends Controller
             'category_id' => 'nullable|exists:collections,id', // Assuming categories table exists
         ]);
 
-        // dd($request);
-
         $imageUrl = null;
+        $attachment = null;
         if ($request->hasFile('featured_image')) {
             $folderPath = 'uploads/' . date('Y') . '/' . date('m');
             $imageUrl = $request->file('featured_image')->store($folderPath, 'public'); // Store the image in the public disk
+
+            // Create an attachment using the Attachment model
+            $attachment = Attachment::create([
+                'path' => $imageUrl, // Path where the image is stored
+                'file_name' => $request->name,
+                'size' => $request->file('featured_image')->getSize(), // File size in bytes
+                'attachment_type' => 'image', // Type of attachment
+                'alt_text' => $request->name, // Optional alt text
+                'title' => $request->name, // Optional title
+                'description' => $request->description ?? null, // Optional description
+            ]);
         }
 
         // Prepare meta_data (convert to JSON)
@@ -192,6 +201,7 @@ class ProductController extends Controller
             'sku' => $request->sku,
             'barcode' => $request->barcode,
             'image_url' => $imageUrl, // Save the image path
+            'attachment_id' => $attachment ? $attachment->id : null,
             'unit' => $request->unit,
             'quantity' => $request->quantity,
             'alert_quantity' => $request->alert_quantity ?? 5,
@@ -209,14 +219,14 @@ class ProductController extends Controller
             'expiry_date' => $request->expiry_date,
             'cost' => $request->cost,
             'price' => $request->price,
-            'contact_id'=>$request->contact_id,
+            'contact_id' => $request->contact_id,
         ]);
 
         ProductStock::create([
             'store_id' => 1,
             'batch_id' => $productBatch->id, // Use the batch ID from the created ProductBatch
             'quantity' => $request->quantity,
-            'product_id'=> $product->id,
+            'product_id' => $product->id,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
@@ -247,9 +257,32 @@ class ProductController extends Controller
 
             // Handle the image upload
             $imageUrl = $product->image_url; // Retain the current image URL
+            $attachment = null;
             if ($request->hasFile('featured_image')) {
-                $folderPath = 'uploads/' . date('Y') . '/' . date('m') . '/';
+                $folderPath = 'uploads/' . date('Y') . '/' . date('m');
                 $imageUrl = $request->file('featured_image')->store($folderPath, 'public'); // Store new image and replace the old one
+
+                // Create an attachment using the Attachment model
+                $attachment = Attachment::create([
+                    'path' => $imageUrl, // Path where the image is stored
+                    'file_name' => $request->name, // Original file name
+                    'size' => $request->file('featured_image')->getSize(), // File size in bytes
+                    'attachment_type' => 'image', // Type of attachment
+                    'alt_text' => $request->name, // Optional alt text
+                    'title' => $request->name, // Optional title
+                    'description' => $request->description ?? null, // Optional description
+                ]);
+
+                // If the product already has an attachment_id, delete the old attachment
+                if ($product->attachment_id) {
+                    $oldAttachment = Attachment::find($product->attachment_id);
+                    if ($oldAttachment) {
+                        // Delete the file from storage
+                        Storage::disk('public')->delete($oldAttachment->path);
+                        // Delete the old attachment record
+                        $oldAttachment->delete();
+                    }
+                }
             }
 
             $metaData = $product->meta_data ?? [];
@@ -265,6 +298,7 @@ class ProductController extends Controller
                 'sku' => $request->sku,
                 'barcode' => $request->barcode,
                 'image_url' => $imageUrl, // Update the image URL if a new image was uploaded
+                'attachment_id' => $attachment ? $attachment->id : $product->attachment_id,
                 'unit' => $request->unit,
                 'alert_quantity' => $request->alert_quantity ?? 5, // Use default alert_quantity if null
                 'is_stock_managed' => $request->is_stock_managed,
@@ -320,8 +354,8 @@ class ProductController extends Controller
             ->where('product_batches.is_active', 1)
             ->where(function ($query) use ($search_query) {
                 $query->where('barcode', 'like', $search_query . '%')
-                      ->orWhere('sku', 'like', '%' . $search_query . '%')
-                      ->orWhere('products.name', 'like', '%' . $search_query . '%');
+                    ->orWhere('sku', 'like', '%' . $search_query . '%')
+                    ->orWhere('products.name', 'like', '%' . $search_query . '%');
             });
 
         // it means, If it is a sale
@@ -380,7 +414,7 @@ class ProductController extends Controller
             'batch_number' => $validatedData['new_batch'], // Map 'new_batch' to 'batch_number'
             'cost' => $validatedData['cost'],
             'price' => $validatedData['price'],
-            'contact_id'=>$request->contact_id,
+            'contact_id' => $request->contact_id,
         ]);
 
         return response()->json([
@@ -449,7 +483,7 @@ class ProductController extends Controller
             'expiry_date' => $request->expiry_date,
             'is_active' => $request->is_active ?? 0,
             'is_featured' => $request->is_featured ?? 0,
-            'contact_id'=>$request->contact_id,
+            'contact_id' => $request->contact_id,
         ]);
 
         return response()->json([
@@ -468,8 +502,8 @@ class ProductController extends Controller
 
     public function getBarcode($batch_id)
     {
-        $imageUrl='';
-        if (app()->environment('production')) $imageUrl='public/';
+        $imageUrl = '';
+        if (app()->environment('production')) $imageUrl = 'public/';
 
         $product = ProductBatch::select('products.name', 'products.barcode', 'product_batches.price')
             ->join('products', 'product_batches.product_id', '=', 'products.id')
@@ -484,17 +518,17 @@ class ProductController extends Controller
             'shop_logo',
         ])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
-        $settingArray['shop_logo'] = $imageUrl.$settingArray['shop_logo'];
+        $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
 
         $templateName = 'barcode-template.html'; // or get this from the request
         $templatePath = storage_path("app/public/templates/{$templateName}");
         $content = File::exists($templatePath) ? File::get($templatePath) : '';
-//dd($settingArray);
+        //dd($settingArray);
         // Render the 'Products' component with data
         return Inertia::render('Product/Barcode', [
             'product' => $product,
             'barcode_settings' => $settingArray,
-            'template'=>$content,
+            'template' => $content,
         ]);
     }
 }

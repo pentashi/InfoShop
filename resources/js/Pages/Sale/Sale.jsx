@@ -125,7 +125,7 @@ const columns = (handleRowClick) => [
 export default function Sale({ sales, contacts }) {
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-    const [viewPaymentsModalOpen, setViewPaymentsModalOpen] = useState(false);
+    const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
     const [selectedContact, setSelectedContact] = useState(null);
     const [amountLimit, setAmountLimit] = useState(0);
     const [dataSales, setDataSales] = useState(sales);
@@ -150,7 +150,7 @@ export default function Sale({ sales, contacts }) {
             setAmountLimit(amountLimit);
             setPaymentModalOpen(true);
         } else if (action == "view_details") {
-            setViewPaymentsModalOpen(true);
+            setViewDetailsModalOpen(true);
         }
     };
 
@@ -340,8 +340,8 @@ export default function Sale({ sales, contacts }) {
                 refreshTable={refreshSales}
             />
             <ViewDetailsDialog
-                open={viewPaymentsModalOpen}
-                setOpen={setViewPaymentsModalOpen}
+                open={viewDetailsModalOpen}
+                setOpen={setViewDetailsModalOpen}
                 type={"sale"}
                 selectedTransaction={selectedTransaction?.id}
             />

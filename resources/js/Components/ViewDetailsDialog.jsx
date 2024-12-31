@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,8 +6,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
     IconButton,
-    Grid2 as Grid,
-    Divider,
     Table, TableHead, TableBody, TableRow, TableCell,
     Box
 } from "@mui/material";
@@ -91,7 +89,7 @@ export default function ViewDetailsDialog({
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>Name</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Qty</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Price</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Cost</TableCell>
@@ -102,7 +100,7 @@ export default function ViewDetailsDialog({
                                 {Array.isArray(items) &&
                                     items.map((item, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{item.name} {item.batch_number !== null && ` | ${item.batch_number}`}</TableCell>
+                                            <TableCell  className="whitespace-nowrap" sx={{ whiteSpace: 'nowrap' }}>{item.name} {item.batch_number !== null && ` | ${item.batch_number}`}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
                                             <TableCell>{parseFloat(item.unit_price).toFixed(2)}</TableCell>
                                             <TableCell>{parseFloat(item.unit_cost).toFixed(2)}</TableCell>

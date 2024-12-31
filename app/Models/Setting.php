@@ -14,5 +14,5 @@ class Setting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['meta_value', 'meta_value'];
+    protected $fillable = ['meta_key', 'meta_value'];
 }

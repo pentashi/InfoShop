@@ -18,6 +18,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -43,6 +45,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SalesReport({ stores, report }) {
     const [dataReport, setDataReport] = useState(report);
+    const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     const [searchTerms, setSearchTerms] = useState({
         start_date: dayjs().format("YYYY-MM-DD"),
@@ -191,112 +195,127 @@ export default function SalesReport({ stores, report }) {
             </Grid>
 
             <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
-            <Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'800px' }} >
-                <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', height: '500px' }}>
-                    <Table aria-label="customized table">
-                        <TableHead>
-                            <TableRow>
-                                {headers.map((header, index) => (
-                                    <StyledTableCell
-                                        key={index}
-                                        align={header.align}
-                                        sx={header.sx}
-                                    >
-                                        {header.label}
-                                    </StyledTableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {dataReport && dataReport.length > 0 ? (
-                                dataReport.map((row, index) => (
-                                    <StyledTableRow key={index}>
-                                        <StyledTableCell component="th" scope="row">
-                                            {index + 1}
+                <Paper sx={{ width: { xs: '94vw', sm: '100%' }, overflow: 'hidden', maxWidth: '800px' }} >
+                    <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', height: '500px' }}>
+                        <Table aria-label="customized table">
+                            <TableHead>
+                                <TableRow>
+                                    {headers.map((header, index) => (
+                                        <StyledTableCell
+                                            key={index}
+                                            align={header.align}
+                                            sx={header.sx}
+                                        >
+                                            {header.label}
                                         </StyledTableCell>
-                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
-                                            {row.date} {/* Display the date */}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
-                                            {row.description} {/* Display the description */}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="right">
-                                            {numeral(row.receivable).format('0,0.00')} {/* Format receivable */}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="right">
-                                            {numeral(row.settled).format('0,0.00')} {/* Format settled */}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="right">
-                                            {numeral(row.profit).format('0,0.00')} {/* Format profit */}
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {dataReport && dataReport.length > 0 ? (
+                                    dataReport.map((row, index) => (
+                                        <StyledTableRow key={index}>
+                                            <StyledTableCell component="th" scope="row">
+                                                {index + 1}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}>
+                                                {row.date} {/* Display the date */}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
+                                                onClick={() => {
+                                                    setSelectedTransaction(row.sales_id);
+                                                    setViewDetailsModalOpen(true);
+                                                }}
+                                            >
+                                                {row.description} {/* Display the description */}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
+                                                {numeral(row.receivable).format('0,0.00')} {/* Format receivable */}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
+                                                {numeral(row.settled).format('0,0.00')} {/* Format settled */}
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
+                                                {numeral(row.profit).format('0,0.00')} {/* Format profit */}
+                                            </StyledTableCell>
+                                        </StyledTableRow>
+                                    ))
+                                ) : (
+                                    <StyledTableRow>
+                                        <StyledTableCell colSpan={6} align="center">
+                                            No data available
                                         </StyledTableCell>
                                     </StyledTableRow>
-                                ))
-                            ) : (
-                                <StyledTableRow>
-                                    <StyledTableCell colSpan={6} align="center">
-                                        No data available
+                                )}
+
+                                <StyledTableRow sx={{ backgroundColor: 'black' }}>
+                                    <StyledTableCell colSpan={3} align="right">
+                                        <strong>Total:</strong>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right"
+                                        sx={{
+                                            backgroundColor: '#295F98', // Conditional color
+                                            color: 'white', // Text color for contrast
+                                        }}>
+                                        <strong>{numeral(totals.totalReceivable).format('0,0.00')}</strong>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right"
+                                        sx={{
+                                            backgroundColor: '#295F98', // Conditional color
+                                            color: 'white', // Text color for contrast
+                                        }}>
+                                        <strong>{numeral(totals.totalSettled).format('0,0.00')}</strong>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right"
+                                        sx={{
+                                            backgroundColor: totals.totalProfit > 0 ? 'green' : totals.totalProfit < 0 ? 'red' : 'gray', // Conditional color
+                                            color: 'white', // Text color for contrast
+                                        }}
+                                    >
+                                        <strong>{numeral(totals.totalProfit).format('0,0.00')}</strong>
                                     </StyledTableCell>
                                 </StyledTableRow>
-                            )}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={6} align="right">
+                                    </StyledTableCell>
+                                </StyledTableRow>
 
-                            <StyledTableRow sx={{ backgroundColor: 'black' }}>
-                                <StyledTableCell colSpan={3} align="right">
-                                    <strong>Total:</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right"
-                                    sx={{
-                                        backgroundColor: '#295F98', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}>
-                                    <strong>{numeral(totals.totalReceivable).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right"
-                                    sx={{
-                                        backgroundColor: '#295F98', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}>
-                                    <strong>{numeral(totals.totalSettled).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right"
-                                    sx={{
-                                        backgroundColor: totals.totalProfit > 0 ? 'green' : totals.totalProfit < 0 ? 'red' : 'gray', // Conditional color
-                                        color: 'white', // Text color for contrast
-                                    }}
-                                >
-                                    <strong>{numeral(totals.totalProfit).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                            </StyledTableRow>
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={6} align="right">
-                                </StyledTableCell>
-                            </StyledTableRow>
+                                {/* Row for Revenue */}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={5} align="right">
+                                        <strong>Revenue:</strong>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        <strong>{numeral(totals.totalRevenue).format('0,0.00')}</strong>
+                                    </StyledTableCell>
+                                </StyledTableRow>
 
-                            {/* Row for Revenue */}
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
-                                    <strong>Revenue:</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <strong>{numeral(totals.totalRevenue).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                            </StyledTableRow>
-
-                            {/* Row for Balance */}
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
-                                    <strong>Balance/Receivable:</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <strong>{numeral(totals.totalBalance).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                            </StyledTableRow>
+                                {/* Row for Balance */}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={5} align="right">
+                                        <strong>Balance/Receivable:</strong>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        <strong>{numeral(totals.totalBalance).format('0,0.00')}</strong>
+                                    </StyledTableCell>
+                                </StyledTableRow>
 
 
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Paper>
             </Grid>
+
+            {selectedTransaction && (
+                <ViewDetailsDialog
+                    open={viewDetailsModalOpen}
+                    setOpen={setViewDetailsModalOpen}
+                    type={"sale"}
+                    selectedTransaction={selectedTransaction}
+                />
+            )}
+
         </AuthenticatedLayout>
     );
 }
