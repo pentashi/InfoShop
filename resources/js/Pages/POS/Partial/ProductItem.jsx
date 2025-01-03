@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { usePage } from "@inertiajs/react";
 
 import { useSales as useCart } from "@/Context/SalesContext";
@@ -34,14 +34,14 @@ export default function ProductItem({ product }) {
                 setSelectedCartItem(product);
                 setCartItemModalOpen(true);
             }}
-            sx={{height:'100%'}}
+            sx={{ height: '100%', position: 'relative' }}
         >
             <CardMedia
                 sx={{ height: 120 }}
                 image={image_url ? image_url : productplaceholder}
                 title={name}
             />
-            <CardContent sx={{ paddingBottom: "10px!important" }}>
+            <CardContent sx={{ paddingBottom: "10px!important", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                 <Typography
                     variant="p"
                     component="div"
@@ -51,10 +51,20 @@ export default function ProductItem({ product }) {
                     {name}
                     {/* - ({quantity}) */}
                 </Typography>
-                <div className="flex justify-center mt-1">
-                    <p className="font-extrabold">RS.{price}</p>
-                </div>
             </CardContent>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                }}
+            >
+                Rs.{price}
+            </Box>
         </Card>
     );
 }

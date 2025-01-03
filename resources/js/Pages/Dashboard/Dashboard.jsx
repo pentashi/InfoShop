@@ -70,18 +70,33 @@ export default function Dashboard({ data, logo, version }) {
             <Head title="Dashboard" />
             <Grid size={12} spacing={2} flexDirection={'row'} container>
                 {parseFloat(data.lowStock) != 0 && (
-                    <Link href={"/products?status=alert&per_page=" + data.lowStock}>
-                        <Alert sx={{ mb: 2 }} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
-                    </Link>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Link href={"/products?status=alert&per_page=" + data.lowStock}>
+                            <Alert sx={{ mb: 2 }} severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
+                        </Link>
+                    </Grid>
                 )}
                 {parseFloat(data.outOfStock) != 0 && (
-                    <Link href={"/products?status=out_of_stock&per_page=" + data.outOfStock}>
-                        <Alert sx={{ mb: 2 }} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
-                    </Link>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Link href={"/products?status=out_of_stock&per_page=" + data.outOfStock}>
+                            <Alert sx={{ mb: 2 }} severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
+                        </Link>
+                    </Grid>
                 )}
-                <Link href={'#'}>
-                    <Alert sx={{ mb: 2 }} severity="primary"><strong>System update</strong> is on the way...</Alert>
-                </Link>
+                {parseFloat(data.pending_cheque_count) != 0 && (
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Link href={"/cheques?status=pending&per_page=" + data.pending_cheque_count}>
+                            <Alert sx={{ mb: 2 }} severity="primary"><strong>{data.pending_cheque_count}</strong> Pending Cheque/s</Alert>
+                        </Link>
+                    </Grid>
+                )}
+                {parseFloat(data.cheque_alert_count) != 0 && (
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                        <Link href={`/cheques?status=alert&per_page=${data.cheque_alert_count}`}>
+                            <Alert sx={{ mb: 2 }} severity="error"><strong>{data.cheque_alert_count}</strong> Alert Cheque/s</Alert>
+                        </Link>
+                    </Grid>
+                )}
             </Grid>
 
             <Grid
@@ -124,13 +139,13 @@ export default function Dashboard({ data, logo, version }) {
                                 Total valuation
                             </Typography>
                             <Typography variant="h5" component="div">
-                                RS. {data.totalValuation}
+                                Rs. {data.totalValuation}
                             </Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                    <Card sx={{ height: "100%", backgroundColor: "#FAE7F3" }}>
+                    <Card sx={{ height: "100%", backgroundColor: "#FFEBD4" }}>
                         <CardContent>
                             <Typography
                                 gutterBottom
@@ -162,7 +177,7 @@ export default function Dashboard({ data, logo, version }) {
                                 Customer balance
                             </Typography>
                             <Typography variant="h5" component="div">
-                                RS. {data.customerBalance}
+                                Rs. {data.customerBalance}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -172,7 +187,7 @@ export default function Dashboard({ data, logo, version }) {
             <Grid
                 container
                 size={{ xs: 12, sm: 8, md: 4 }}
-                sx={{ mt: "3rem", paddingBottom:4 }}
+                sx={{ mt: "3rem", paddingBottom: 4 }}
                 spacing={2}
             >
                 <Grid size={{ xs: 12, sm: 8, md: 4 }}>
@@ -185,42 +200,42 @@ export default function Dashboard({ data, logo, version }) {
                                 width={"100%"}
                             >
                                 <Grid size={6}>
-                                        <TextField
-                                            label="Start Date"
-                                            name="start_date"
-                                            placeholder="Start Date"
-                                            type="date"
-                                            fullWidth
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: true,
-                                                },
-                                            }}
-                                            value={startDate}
-                                            onChange={(e) =>
-                                                setStartDate(e.target.value)
-                                            }
-                                            required
-                                        />
+                                    <TextField
+                                        label="Start Date"
+                                        name="start_date"
+                                        placeholder="Start Date"
+                                        type="date"
+                                        fullWidth
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                        }}
+                                        value={startDate}
+                                        onChange={(e) =>
+                                            setStartDate(e.target.value)
+                                        }
+                                        required
+                                    />
                                 </Grid>
                                 <Grid size={6}>
-                                        <TextField
-                                            label="End Date"
-                                            name="end_date"
-                                            placeholder="End Date"
-                                            type="date"
-                                            fullWidth
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: true,
-                                                },
-                                            }}
-                                            value={endDate}
-                                            onChange={(e) =>
-                                                setEndDate(e.target.value)
-                                            }
-                                            required
-                                        />
+                                    <TextField
+                                        label="End Date"
+                                        name="end_date"
+                                        placeholder="End Date"
+                                        type="date"
+                                        fullWidth
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                        }}
+                                        value={endDate}
+                                        onChange={(e) =>
+                                            setEndDate(e.target.value)
+                                        }
+                                        required
+                                    />
                                 </Grid>
                             </Grid>
 
@@ -250,7 +265,7 @@ export default function Dashboard({ data, logo, version }) {
                                             <ListItemIcon>
                                                 <PaymentsIcon />
                                             </ListItemIcon>
-                                            <ListItemText primary="Cash In" />
+                                            <ListItemText primary="Cash" />
                                         </ListItemButton>
                                     </ListItem>
                                 </Link>
@@ -295,7 +310,7 @@ export default function Dashboard({ data, logo, version }) {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4, md: 4 }}>
                     <Card sx={{ width: "100%", height: "100%", padding: 2, display: 'flex', justifyContent: 'center' }}>
-                        <img src={logo.meta_value} style={{ maxHeight: '250px', objectFit: 'contain' }} alt="" />
+                        <img src={logo} style={{ maxHeight: '250px', objectFit: 'contain' }} alt="" />
                     </Card>
                 </Grid>
 

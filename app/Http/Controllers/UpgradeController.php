@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 class UpgradeController extends Controller
 {
@@ -93,6 +94,12 @@ class UpgradeController extends Controller
 
             // Clean up temporary files
             File::deleteDirectory($temporaryPath);
+
+            Artisan::call('cache:clear');
+            Artisan::call('config:clear');
+            Artisan::call('route:clear');
+            Artisan::call('view:clear');
+            Artisan::call('event:clear');
 
             return redirect()->back()->with('success', 'Application upgrade applied successfully.');
         }

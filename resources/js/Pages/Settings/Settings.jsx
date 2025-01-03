@@ -15,7 +15,7 @@ import {
     Box,
     FormControlLabel,
     Card,
-    Paper
+    Paper,
 } from "@mui/material";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -23,6 +23,8 @@ import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
+import MiscSetting from "./Partials/MiscSetting";
+import ModuleSetting from "./Partials/ModuleSetting";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -216,6 +218,8 @@ export default function Setting({ settings }) {
                         <Tab label="SHOP" />
                         <Tab label="RECEIPT" />
                         <Tab label="BARCODE" />
+                        <Tab label="MISC" />
+                        <Tab label="MODULES" />
                     </Tabs>
                 </Box>
 
@@ -240,8 +244,8 @@ export default function Setting({ settings }) {
                                 spacing={2}
                                 width={{ xs: "100%", sm: "60%" }}
                             >
-                                <Grid size={12} spacing={2}>
-                                    <Paper sx={{ padding: {xs:'0.5rem', sm:"1rem"}, marginBottom: "1rem" }}>
+                                <Grid container size={12} spacing={2}>
+                                    <Paper sx={{ padding: {xs:'0.5rem', sm:"1rem"}, marginBottom: "1rem", width:'100%' }}>
                                         <Grid size={12} container spacing={2}>
                                             <Grid size={{xs: 12, sm: 6}}>
                                             <Card>
@@ -587,6 +591,13 @@ export default function Setting({ settings }) {
                             </Grid>
                         </Box>
                     </form>
+                </TabPanel>
+
+                <TabPanel value={tabValue} index={3}>
+                  <MiscSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                </TabPanel>
+                <TabPanel value={tabValue} index={4}>
+                  <ModuleSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
                 </TabPanel>
             </Box>
         </AuthenticatedLayout>

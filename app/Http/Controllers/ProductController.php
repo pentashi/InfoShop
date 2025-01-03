@@ -107,6 +107,7 @@ class ProductController extends Controller
 
     public function create()
     {
+        $miscSettings = Setting::getMiscSettings();
         $incrementValue = Setting::where('meta_key', 'product_code_increment')->value('meta_value');
         $incrementValue = $incrementValue ? $incrementValue : 1000;
 
@@ -121,6 +122,8 @@ class ProductController extends Controller
             'product_code' => $nextItemCode,
             'pageLabel' => 'Product Details',
             'contacts' => $contacts,
+            'product_alert'=> $miscSettings['product_alert'] ?? 3,
+            'misc_setting'=> $miscSettings,
         ]);
     }
 

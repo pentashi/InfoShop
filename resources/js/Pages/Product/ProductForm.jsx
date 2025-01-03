@@ -53,7 +53,7 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-export default function Product({ product, collection, product_code, contacts }) {
+export default function Product({ product, collection, product_code, contacts, product_alert, misc_setting }) {
     const [loading, setLoading] = useState(false);
     const [compressedFile, setCompressedFile] = useState(null);
 
@@ -84,7 +84,7 @@ export default function Product({ product, collection, product_code, contacts })
         featured_image: productplaceholder, // For file input
         unit: "PC",
         quantity: "",
-        alert_quantity: 1,
+        alert_quantity: product_alert,
         is_stock_managed: 1,
         is_active: 1,
         brand_id: "",
@@ -113,10 +113,11 @@ export default function Product({ product, collection, product_code, contacts })
         if (file) {
             try {
                 const options = {
-                    maxSizeMB: 0.5, // Maximum size in MB
-                    maxWidthOrHeight: 900, // Max width or height
+                    maxSizeMB: (misc_setting && misc_setting.optimize_image_size) || 0.5, // Maximum size in MB
+                    maxWidthOrHeight:(misc_setting && misc_setting.optimize_image_width) || 720, // Max width or height
                     useWebWorker: true, // Use web worker for faster compression
                 };
+                console.log(options)
                 const compressedFile = await imageCompression(file, options);
                 setCompressedFile(compressedFile);
                 const reader = new FileReader();
@@ -300,7 +301,6 @@ export default function Product({ product, collection, product_code, contacts })
                         <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 label="Product Name"
-                                id="product-name"
                                 name="name"
                                 fullWidth
                                 required
@@ -310,7 +310,6 @@ export default function Product({ product, collection, product_code, contacts })
                         </Grid>
                         <Grid size={{ xs: 12, sm: 2 }}>
                                 <TextField
-                                    labelId="product-unit-label"
                                     value={productFormData.unit}
                                     label="Product Unit"
                                     onChange={handleChange}

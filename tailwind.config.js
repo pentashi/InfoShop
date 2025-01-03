@@ -10,13 +10,7 @@ export default {
         './resources/js/**/*.jsx',
     ],
     safelist: [
-        {pattern: /bg-./},
-        {pattern: /border-./},
         {pattern: /flex-./},
-        { pattern: /text-/ },
-        { pattern: /p-/ },
-        { pattern: /m-/ },       
-        { pattern: /rounded-/ },
       ],
 
     theme: {

@@ -40,13 +40,15 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
 import infoshopLogo from "@/infoshop.png";
 const drawerWidth = 240;
 
 function AuthenticatedLayout({ header, children, ...props }) {
     const user = usePage().props.auth.user;
     const shop_name = usePage().props.settings.shop_name;
+    const modules = usePage().props.modules;
     const pageLabel = usePage().props.pageLabel;
     const pathname = usePage().url;
 
@@ -88,7 +90,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
         return pathname === baseHref || pathname.startsWith(baseHref);
     };
 
-    const NavItem = ({ href, icon: Icon, label, open, selected, onClick }) => (
+    const NavItem = ({ href, icon: Icon, label, open, selected, onClick, icontype }) => (
         <Link preserveScroll href={href}>
             <ListItem disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -128,7 +130,11 @@ function AuthenticatedLayout({ header, children, ...props }) {
                             open ? { mr: 3 } : { mr: "auto" },
                         ]}
                     >
-                        {Icon && <Icon />}
+                        {icontype && icontype === 'fa' ? (
+                            <FontAwesomeIcon icon={Icon} size="xl"/>
+                        ) : (
+                            Icon && <Icon />
+                        )}
                     </ListItemIcon>
                     <ListItemText
                         primary={label}
@@ -186,48 +192,12 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     selected={isSelected("/sales")}
                 />
                 <NavItem
-                    href="/sold-items"
-                    icon={ShoppingCartCheckoutIcon}
-                    label="Sold Items"
-                    open={open}
-                    selected={isSelected("/sold-items")}
-                />
-                <NavItem
-                    href="/purchases"
-                    icon={AddShoppingCartIcon}
-                    label="Purchases"
-                    open={open}
-                    selected={isSelected("/purchases")}
-                />
-                <NavItem
                     href="/reports/dailycash"
                     icon={WorkIcon}
                     label="Cash Drawer"
                     open={open}
                     selected={isSelected("/reports/dailycash")}
                 />
-                <NavItem
-                    href="/payments/sales"
-                    icon={PaymentsIcon}
-                    label="Payments"
-                    open={open}
-                    selected={isSelected("/payments")}
-                />
-                <NavItem
-                    href="/reloads"
-                    icon={PhoneForwardedIcon}
-                    label="Reloads"
-                    open={open}
-                    selected={isSelected("/reloads")}
-                />
-                <NavItem
-                    href="/expenses"
-                    icon={AccountBalanceWalletIcon}
-                    label="Expenses"
-                    open={open}
-                    selected={isSelected("/expenses")}
-                />
-
                 <NavItem
                     href="/customers"
                     icon={CustomerIcon}
@@ -242,19 +212,70 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/vendors")}
                 />
-                <NavItem
-                    href="/stores"
-                    icon={StoreIcon}
-                    label="Stores"
-                    open={open}
-                    selected={isSelected("/stores")}
-                />
+                
                 <NavItem
                     href="/collections"
                     icon={AccountTreeIcon}
                     label="Collections"
                     open={open}
                     selected={isSelected("/collections")}
+                />
+
+                <NavItem
+                    href="/expenses"
+                    icon={AccountBalanceWalletIcon}
+                    label="Expenses"
+                    open={open}
+                    selected={isSelected("/expenses")}
+                />
+
+                {modules.includes("Reloads") && (
+                <NavItem
+                    href="/reloads"
+                    icon={PhoneForwardedIcon}
+                    label="Reloads"
+                    open={open}
+                    selected={isSelected("/reloads")}
+                />
+                )}
+
+                {modules.includes("Cheques") && (
+                <NavItem
+                    href="/cheques"
+                    icon={faMoneyCheck}
+                    icontype={'fa'}
+                    label="Cheques"
+                    open={open}
+                    selected={isSelected("/cheques")}
+                />
+                )}
+                <NavItem
+                    href="/sold-items"
+                    icon={ShoppingCartCheckoutIcon}
+                    label="Sold Items"
+                    open={open}
+                    selected={isSelected("/sold-items")}
+                />
+                <NavItem
+                    href="/purchases"
+                    icon={AddShoppingCartIcon}
+                    label="Purchases"
+                    open={open}
+                    selected={isSelected("/purchases")}
+                />
+                <NavItem
+                    href="/payments/sales"
+                    icon={PaymentsIcon}
+                    label="Payments"
+                    open={open}
+                    selected={isSelected("/payments")}
+                />
+                <NavItem
+                    href="/stores"
+                    icon={StoreIcon}
+                    label="Stores"
+                    open={open}
+                    selected={isSelected("/stores")}
                 />
                 <NavItem
                     href="/employees"

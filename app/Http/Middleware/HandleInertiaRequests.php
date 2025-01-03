@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $shopNameMeta = Setting::where('meta_key', 'shop_name')->first();
+        $modules = Setting::getModules();
         return [
             ...parent::share($request),
             'auth' => [
@@ -38,7 +39,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'settings'=>[
                 'shop_name'=>$shopNameMeta->meta_value,
-            ]
+            ],
+            'modules'=>$modules,
         ];
     }
 }

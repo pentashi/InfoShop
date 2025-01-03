@@ -24,6 +24,7 @@ class SettingSeeder extends Seeder
             ['meta_key' => 'show_barcode_product_price', 'meta_value' => 'on'],
             ['meta_key' => 'show_barcode_product_name', 'meta_value' => 'on'],
             ['meta_key' => 'product_code_increment', 'meta_value' => '1000'],
+            ['meta_key' => 'modules', 'meta_value' => 'Cheques'],
         ];
 
         Setting::insert($settings);

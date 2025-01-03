@@ -22,6 +22,10 @@
     "dependencies": {
         "@emotion/react": "^11.13.3",
         "@emotion/styled": "^11.13.0",
+        "@fortawesome/fontawesome-svg-core": "^6.7.2",
+        "@fortawesome/free-regular-svg-icons": "^6.7.2",
+        "@fortawesome/free-solid-svg-icons": "^6.7.2",
+        "@fortawesome/react-fontawesome": "^0.2.2",
         "@inertiajs/progress": "^0.2.7",
         "@monaco-editor/react": "^4.6.0",
         "@mui/icons-material": "^6.1.6",
@@ -33,6 +37,7 @@
         "ejs": "^3.1.10",
         "jsbarcode": "^3.11.6",
         "lodash": "^4.17.21",
+        "notistack": "^3.0.1",
         "nprogress": "^0.2.0",
         "numeral": "^2.0.6",
         "react-barcode": "^1.5.3",

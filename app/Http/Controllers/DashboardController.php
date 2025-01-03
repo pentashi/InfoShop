@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cheque;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -23,13 +24,29 @@ class DashboardController extends Controller
         $imageUrl = '';
         if (app()->environment('production')) $imageUrl = 'public/';
 
-        $settings = Setting::where('meta_key', 'shop_logo')->first();
+        $settings = Setting::whereIn('meta_key', ['shop_logo', 'misc_settings'])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
         $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
+
+        if (isset($settingArray['misc_settings'])) {
+            $miscSettings = json_decode($settingArray['misc_settings'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $settingArray = array_merge($settingArray, $miscSettings);
+            }
+        }
+
+        $cheque_alert = isset($settingArray['cheque_alert']) ? (int)$settingArray['cheque_alert'] : 2;
+        $pending_cheque_count = Cheque::where('status', 'pending')->count();
+
+        $cheque_alert_count = Cheque::where('status', 'pending')
+            ->where('cheque_date', '<=', now()->addDays($cheque_alert))
+            ->count();
 
         $data['totalItems'] = number_format(Product::count());
         $data['soldItems'] = number_format(SaleItem::sum('quantity'));
         $data['totalQuantities'] = number_format(ProductStock::sum('quantity'));
+        $data['cheque_alert_count'] = $cheque_alert_count;
+        $data['pending_cheque_count'] = $pending_cheque_count;
 
         $totalValuation = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
             ->select(DB::raw('SUM(product_stocks.quantity * product_batches.cost) as total_valuation'))
@@ -57,7 +74,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Dashboard', [
             'pageLabel' => 'Dashboard',
             'data' => $data,
-            'logo' => $settings,
+            'logo' => $settingArray['shop_logo'],
             'version' => $version,
         ]);
     }

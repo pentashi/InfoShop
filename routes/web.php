@@ -1,11 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -27,6 +24,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SalaryRecordController;
 use App\Http\Controllers\EmployeeBalanceController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\ChequeController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -109,6 +107,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/save-template', [SettingController::class, 'updateTemplate']);
     Route::get('/settings/custom-css', [SettingController::class, 'customCSS']);
     Route::post('/settings/custom-css', [SettingController::class, 'updateCustomCSS']);
+    Route::post('/settings/module/{action}', [SettingController::class, 'updateModule']);
 
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -155,6 +154,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/media', [MediaController::class, 'index']);
     Route::get('/migrate-images', [MediaController::class, 'migrateImages']);
+    Route::post('/optimize-image', [MediaController::class, 'optimizeImages']);
+
+    Route::get('/cheques', [ChequeController::class, 'index'])->name('cheques.index');
+    Route::post('/cheques/store', [ChequeController::class, 'store'])->name('cheques.store');
+    Route::post('/cheques/{cheque}/update', [ChequeController::class, 'update'])->name('cheques.update');
+    Route::post('/cheques/{cheque}/destroy', [ChequeController::class, 'destroy'])->name('cheques.destroy');
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

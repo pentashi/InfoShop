@@ -1,17 +1,19 @@
-CREATE TABLE `attachments` (
+CREATE TABLE `cheques` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `path` VARCHAR(255) NOT NULL,
-    `file_name` VARCHAR(255) NULL,
-    `attachment_type` VARCHAR(255) NULL,
-    `size` BIGINT UNSIGNED NULL,
-    `alt_text` VARCHAR(255) NULL,
-    `title` VARCHAR(255) NULL,
-    `description` TEXT NULL,
+    `cheque_number` VARCHAR(255) NOT NULL,
+    `cheque_date` DATE NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `amount` DECIMAL(15, 2) NOT NULL,
+    `issued_date` DATE NOT NULL,
+    `bank` VARCHAR(255) DEFAULT NULL,
+    `status` VARCHAR(255) NOT NULL,
+    `remark` TEXT DEFAULT NULL,
+    `direction` ENUM('issued', 'received') NOT NULL,
+    `store_id` BIGINT UNSIGNED NOT NULL,
+    `created_by` BIGINT UNSIGNED NOT NULL,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
     `created_at` TIMESTAMP NULL DEFAULT NULL,
-    `updated_at` TIMESTAMP NULL DEFAULT NULL
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (`store_id`) REFERENCES `stores`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-ALTER TABLE `products` 
-ADD COLUMN `attachment_id` BIGINT UNSIGNED NULL AFTER `image_url`,
-ADD CONSTRAINT `products_attachment_id_foreign` FOREIGN KEY (`attachment_id`) REFERENCES `attachments`(`id`) ON DELETE SET NULL;
-

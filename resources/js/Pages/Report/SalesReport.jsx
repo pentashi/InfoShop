@@ -1,12 +1,11 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, FormControl, TextField, MenuItem } from "@mui/material";
+import { Button, TextField, MenuItem } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
-import axios from "axios";
 import numeral from "numeral";
 
 import { styled } from "@mui/material/styles";
@@ -191,12 +190,11 @@ export default function SalesReport({ stores, report }) {
                         <FindReplaceIcon />
                     </Button>
                 </Grid>
-
             </Grid>
 
             <Grid container width={'100%'} justifyContent={'center'} sx={{ mt: 2 }}>
-                <Paper sx={{ width: { xs: '94vw', sm: '100%' }, overflow: 'hidden', maxWidth: '800px' }} >
-                    <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', height: '500px' }}>
+                <Paper sx={{ width: { xs: '94vw', sm: '100%' }, overflow: 'hidden', maxWidth: '820px' }} >
+                    <TableContainer component={Paper} sx={{ width: '100%', overflow: 'auto', height: 'auto' }}>
                         <Table aria-label="customized table">
                             <TableHead>
                                 <TableRow>

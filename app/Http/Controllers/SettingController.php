@@ -227,7 +227,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $setting_type = $request->setting_type;
-        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name', 'show_receipt_shop_name', 'sale_receipt_second_note']);
+        $settingsData = $request->only(['sale_receipt_note', 'shop_name', 'sale_print_padding_right', 'sale_print_padding_left', 'sale_print_font', 'show_barcode_store', 'show_barcode_product_price', 'show_barcode_product_name', 'show_receipt_shop_name', 'sale_receipt_second_note',]);
 
         if ($setting_type == 'shop_information') {
             $request->validate([
@@ -244,6 +244,14 @@ class SettingController extends Controller
             if ($request->has('barcodeSettings')) {
                 $settingsData['barcode_settings'] = $request->input('barcodeSettings');
             }
+        } else if ($setting_type == 'misc_settings') {
+            $miscSettings['optimize_image_size'] = $request->input('optimize_image_size');
+            $miscSettings['optimize_image_width'] = $request->input('optimize_image_width');
+            $miscSettings['cheque_alert'] = $request->input('cheque_alert');
+            $miscSettings['product_alert'] = $request->input('product_alert');
+            $settingsData['misc_settings'] = json_encode($miscSettings);
+        } else if ($setting_type == 'modules') {
+            $settingsData['modules'] = $request->input('modules');
         }
 
         foreach ($settingsData as $metaKey => $metaValue) {
@@ -259,6 +267,18 @@ class SettingController extends Controller
         if ($request->hasFile('shop_logo')) {
             $image = $request->file('shop_logo');
 
+            // Retrieve the current shop logo path from the database
+            $currentImage = Setting::where('meta_key', 'shop_logo')->first();
+
+            if ($currentImage) {
+                $currentImagePath = public_path($currentImage->meta_value);
+
+                // Check if the file exists and delete it
+                if (file_exists($currentImagePath)) {
+                    unlink($currentImagePath);
+                }
+            }
+
             $folderPath = 'uploads/' . date('Y') . '/' . date('m');
             $imageUrl = $image->store($folderPath, 'public');
 
@@ -273,6 +293,18 @@ class SettingController extends Controller
         if ($request->hasFile('app_icon')) {
             $image = $request->file('app_icon');
 
+            // Retrieve the current shop logo path from the database
+            $currentImage = Setting::where('meta_key', 'app_icon')->first();
+
+            if ($currentImage) {
+                $currentImagePath = public_path($currentImage->meta_value);
+
+                // Check if the file exists and delete it
+                if (file_exists($currentImagePath)) {
+                    unlink($currentImagePath);
+                }
+            }
+
             $folderPath = 'uploads/' . date('Y') . '/' . date('m');
             $imageUrl = $image->store($folderPath, 'public');
 
@@ -284,5 +316,31 @@ class SettingController extends Controller
         }
 
         return response()->json(['message' => 'Setting has been updated successfully!'], 200);
+    }
+
+    public function updateModule($action, Request $request)
+    {
+        $module = $request->input('module');
+        $setting = Setting::where('meta_key', 'modules')->first();
+        $modules = $setting ? explode(',', $setting->meta_value) : [];
+
+        if ($action == 'activate') {
+            if (!in_array($module, $modules)) {
+                $modules[] = $module;
+            }
+        } elseif ($action == 'deactivate') {
+            if (($key = array_search($module, $modules)) !== false) {
+                unset($modules[$key]);
+            }
+        }
+    
+        $modules = implode(',', array_filter($modules));
+
+        Setting::updateOrCreate(
+            ['meta_key' => 'modules'],
+            ['meta_value' => $modules]
+        );
+
+        return response()->json(['message' => 'Modules have been updated successfully!'], 200);
     }
 }
