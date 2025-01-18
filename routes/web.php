@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use Inertia\Inertia;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -32,6 +33,10 @@ Route::get('/', function () {
     //     'canLogin' => Route::has('login'),
     //     'canRegister' => Route::has('register'),
     // ]);
+});
+
+Route::get('/editor', function () {
+    return Inertia::render('BlockEditor/Editor');
 });
 
 Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');

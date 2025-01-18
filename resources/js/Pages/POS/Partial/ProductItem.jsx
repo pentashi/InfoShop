@@ -52,6 +52,7 @@ export default function ProductItem({ product }) {
                     {/* - ({quantity}) */}
                 </Typography>
             </CardContent>
+            {price > 0 && (
             <Box
                 sx={{
                     position: 'absolute',
@@ -65,6 +66,7 @@ export default function ProductItem({ product }) {
             >
                 Rs.{price}
             </Box>
+            )}
         </Card>
     );
 }

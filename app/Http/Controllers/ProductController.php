@@ -70,6 +70,7 @@ class ProductController extends Controller
             $query->where('product_batches.is_active', 1);
         } else if (isset($filters['status']) && $filters['status'] == 'out_of_stock') {
             $query->where('product_stocks.quantity', '<=', 0);
+            $query->where('products.is_stock_managed', 1);
             $query->where('product_batches.is_active', 1);
         } else $query->where('product_batches.is_active', 1);
 
@@ -93,6 +94,8 @@ class ProductController extends Controller
         $filters = $request->only(['store', 'search_query', 'status', 'alert_quantity', 'per_page', 'contact_id']);
 
         $products = $this->getProducts($filters);
+
+        // return response()->json($products);
         $stores = Store::select('id', 'name')->get();
         $contacts = Contact::select('id', 'name', 'balance')->vendors()->get();
         // Render the 'Products' component with data
@@ -132,6 +135,7 @@ class ProductController extends Controller
         $imageUrl = 'storage/';
         if (app()->environment('production')) $imageUrl = 'public/storage/';
 
+        $miscSettings = Setting::getMiscSettings();
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $product = Product::findOrFail($id);
 
@@ -150,6 +154,7 @@ class ProductController extends Controller
             'collection' => $collection, // Example if you have categories
             'product' => $product,
             'pageLabel' => 'Product Details',
+            'misc_setting'=> $miscSettings,
         ]);
     }
 

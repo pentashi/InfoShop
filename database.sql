@@ -1,4 +1,4 @@
-CREATE TABLE `cheques` (
+CREATE TABLE IF NOT EXISTS `cheques` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `cheque_number` VARCHAR(255) NOT NULL,
     `cheque_date` DATE NOT NULL,

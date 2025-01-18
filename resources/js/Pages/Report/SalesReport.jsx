@@ -228,13 +228,13 @@ export default function SalesReport({ stores, report }) {
                                                 {row.description} {/* Display the description */}
                                             </StyledTableCell>
                                             <StyledTableCell align="right">
-                                                {numeral(row.receivable).format('0,0.00')} {/* Format receivable */}
+                                            {row.receivable === 0 ? '-' : numeral(row.receivable).format('0,0.00')}
                                             </StyledTableCell>
                                             <StyledTableCell align="right">
-                                                {numeral(row.settled).format('0,0.00')} {/* Format settled */}
+                                            {row.settled === 0 ? '-' : numeral(row.settled).format('0,0.00')}
                                             </StyledTableCell>
                                             <StyledTableCell align="right">
-                                                {numeral(row.profit).format('0,0.00')} {/* Format profit */}
+                                            {row.profit === 0 ? '-' : numeral(row.profit).format('0,0.00')}
                                             </StyledTableCell>
                                         </StyledTableRow>
                                     ))

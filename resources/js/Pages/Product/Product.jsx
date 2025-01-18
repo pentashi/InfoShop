@@ -25,6 +25,151 @@ import numeral from "numeral";
 import { useEffect } from "react";
 import Select2 from "react-select";
 
+import DataTable from 'react-data-table-component';
+
+const columns = [
+    {
+        name: 'Image',
+        selector: row => row.image_url,
+        cell: row =>
+            row.image_url ? (
+                <img
+                    src={row.image_url}
+                    style={{
+                        width: "75px",
+                        height: "51px",
+                        objectFit: "cover",
+                        padding: "5px",
+                        paddingBottom: "5px",
+                        paddingLeft: "0",
+                    }}
+                    alt="Product Image"
+                    loading="lazy"
+                />
+            ) : (
+                <span
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        padding: "5px",
+                        paddingBottom: "5px",
+                        paddingLeft: "0",
+                    }}
+                    className="text-center"
+                >
+                    No Image
+                </span>
+            ),
+    },
+    {
+        name: 'Product Name',
+        selector: row => row.name,
+        sortable: true,
+        width: '200px',
+        cell: row => (
+            <a
+                href={`/products/${row.id}/edit`}
+                style={{ textDecoration: "underline", fontWeight: "bold" }}
+            >
+                {row.name}
+            </a>
+        ),
+    },
+    {
+        name: 'Supplier',
+        selector: row => row.contact_name,
+        sortable: true,
+    },
+    {
+        name: 'Barcode',
+        selector: row => row.barcode,
+        sortable: true,
+    },
+    {
+        name: 'Batch',
+        selector: row => row.batch_number,
+        cell: row => (
+            <button
+                onClick={() => handleProductEdit(row, "batch")}
+                style={{
+                    textAlign: "left",
+                    fontWeight: "bold",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                }}
+            >
+                {row.batch_number}
+            </button>
+        ),
+    },
+    {
+        name: 'Cost',
+        selector: row => row.cost,
+        sortable: true,
+    },
+    {
+        name: 'Price',
+        selector: row => row.price,
+        sortable: true,
+        cell: row => numeral(row.price).format("0,0.00"),
+    },
+    {
+        name: 'Valuation',
+        selector: row => row.valuation,
+        sortable: true,
+        cell: row => {
+            const price = row.cost;
+            const quantity = row.quantity;
+            return numeral(price * quantity).format("0,0.00");
+        },
+    },
+    {
+        name: 'Qty',
+        selector: row => row.quantity,
+        sortable: true,
+        cell: row => (
+            <button
+                onClick={() => handleProductEdit(row, "qty")}
+                style={{
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    width: "100%",
+                    background: "none",
+                    border: "none",
+                }}
+            >
+                {numeral(row.quantity).format("0,0.00")}
+            </button>
+        ),
+    },
+    {
+        name: 'Action',
+        selector: row => row.action,
+        cell: row => (
+            <a href={`/product/${row.batch_id}/barcode`}>
+                <QrCode2Icon color="primary" />
+            </a>
+        ),
+    },
+    {
+        name: 'Featured',
+        selector: row => row.is_featured,
+        cell: row =>
+            row.is_featured === 1 ? (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <StarIcon color="primary" />
+                </div>
+            ) : (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <StarBorderIcon color="primary" />
+                </div>
+            ),
+    },
+];
+
+
 const productColumns = (handleProductEdit) => [
     {
         field: "image_url",
@@ -442,8 +587,20 @@ export default function Product({ products, stores, contacts }) {
                                 },
                             },
                         }}
-                        hideFooter
+                        hideFooter={true}
                     />
+                    {/* <DataTable
+                        columns={columns}
+                        data={dataProducts.data}
+                        pagination
+                        highlightOnHover
+                        paginationPerPage={100} 
+                        paginationRowsPerPageOptions={[100, 200, 300, 400, 500, 1000]}
+                        keyField="stock_id"
+                        fixedHeaderScrollHeight='300px'
+                        responsive={true}
+                    /> */}
+
                 </Box>
                 <Grid
                     size={12}

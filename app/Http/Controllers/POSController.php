@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 
 class POSController extends Controller
 {
@@ -180,7 +181,7 @@ class POSController extends Controller
         $cartItems = $request->input('cartItems');
         $paymentMethod = $request->input('payment_method', 'none');
         $customerID = $request->input('contact_id');
-        $saleDate = $request->input('sale_date');
+        $saleDate = $request->input('sale_date', Carbon::now()->toDateString());
         $payments = $request->payments;
         $createdBy = Auth::id();
         $reference_id = $request->input('return_sale_id');

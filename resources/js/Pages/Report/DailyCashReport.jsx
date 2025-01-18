@@ -85,7 +85,7 @@ export default function DailyReport({ logs, stores }) {
                 // sx={{ width: "100%" }}
                 justifyContent={"center"}
                 size={12}
-                sx={{mb:1}}
+                sx={{ mb: 1 }}
             >
                 <Grid size={{ xs: 8, sm: 4, md: 2 }}>
                     <TextField
@@ -136,96 +136,96 @@ export default function DailyReport({ logs, stores }) {
 
             </Grid>
 
-<Grid container justifyContent={'center'}>
-<Paper sx={{ width:{xs:'94vw', sm:'100%'}, overflow: 'hidden', maxWidth:'900px' }} >
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell>#</StyledTableCell>
-                                <StyledTableCell align="left" sx={{ width: "120px" }}>
-                                    DATE
-                                </StyledTableCell>
-                                <StyledTableCell align="left">
-                                    DESCRIPTION
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    CASH IN
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    CASH OUT
-                                </StyledTableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {dataLogs.map((row, index) => (
-                                <StyledTableRow key={index}>
-                                    <StyledTableCell component="th" scope="row">
-                                        {index + 1}
+            <Grid container justifyContent={'center'}>
+                <Paper sx={{ width: { xs: '94vw', sm: '100%' }, overflow: 'hidden', maxWidth: '900px' }} >
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <StyledTableCell>#</StyledTableCell>
+                                    <StyledTableCell align="left" sx={{ width: "120px" }}>
+                                        DATE
                                     </StyledTableCell>
-                                    <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
-                                        {row.transaction_date}
+                                    <StyledTableCell align="left">
+                                        DESCRIPTION
                                     </StyledTableCell>
-                                    <StyledTableCell align="left" sx={{whiteSpace:'nowrap'}}>
-                                        {
-                                            row.source.charAt(0).toUpperCase() + row.source.slice(1) +
-                                            (row.sales_id ? ' (#' + row.sales_id + ')' : "") +
-                                            (row.name ? " - " + row.name : "") +
-                                            (row.description ? " | " + row.description : "") +
+                                    <StyledTableCell align="right">
+                                        CASH IN
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        CASH OUT
+                                    </StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {dataLogs.map((row, index) => (
+                                    <StyledTableRow key={index}>
+                                        <StyledTableCell component="th" scope="row">
+                                            {index + 1}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}>
+                                            {row.transaction_date}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}>
+                                            {
+                                                row.source.charAt(0).toUpperCase() + row.source.slice(1) +
+                                                (row.sales_id ? ' (#' + row.sales_id + ')' : "") +
+                                                (row.name ? " - " + row.name : "") +
+                                                (row.description ? " | " + row.description : "") +
 
-                                            (row.transaction_type == 'account' ? " (Balance update)" : "")
-                                        }
+                                                (row.transaction_type == 'account' ? " (Balance update)" : "")
+                                            }
+                                        </StyledTableCell>
+                                        <StyledTableCell align="right">
+                                            {row.cash_in == 0 ? '-' : numeral(row.cash_in).format('0,0.00')}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="right">
+                                            {row.cash_out == 0 ? '-' : numeral(row.cash_out).format('0,0.00')}
+                                        </StyledTableCell>
+                                    </StyledTableRow>
+                                ))}
+
+                                {/* Add Total Row */}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={3} align="right">
+                                        <strong>Total:</strong>
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
-                                        {numeral(row.cash_in).format('0,0.00')}
+                                        <strong>{numeral(totalCashIn).format('0,0.00')}</strong>
                                     </StyledTableCell>
                                     <StyledTableCell align="right">
-                                        {numeral(row.cash_out).format('0,0.00')}
+                                        <strong>{numeral(totalCashOut).format('0,0.00')}</strong>
                                     </StyledTableCell>
                                 </StyledTableRow>
-                            ))}
 
-                            {/* Add Total Row */}
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={3} align="right">
-                                    <strong>Total:</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <strong>{numeral(totalCashIn).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <strong>{numeral(totalCashOut).format('0,0.00')}</strong>
-                                </StyledTableCell>
-                            </StyledTableRow>
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={5} align="right">
 
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={5} align="right">
+                                    </StyledTableCell>
+                                </StyledTableRow>
 
-                                </StyledTableCell>
-                            </StyledTableRow>
+                                {/* Row for displaying the total sum */}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={4} align="right">
+                                        <Typography variant="h5" color="initial">
+                                            <strong>Balance:</strong>
+                                        </Typography>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        <Typography variant="h5" color="initial">
+                                            <strong>
+                                                {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
+                                            </strong>
+                                        </Typography>
 
-                            {/* Row for displaying the total sum */}
-                            <StyledTableRow>
-                                <StyledTableCell colSpan={4} align="right">
-                                    <Typography variant="h5" color="initial">
-                                        <strong>Balance:</strong>
-                                    </Typography>
-                                </StyledTableCell>
-                                <StyledTableCell align="right">
-                                    <Typography variant="h5" color="initial">
-                                        <strong>
-                                            {numeral(dataLogs.reduce((total, row) => total + parseFloat(row.amount), 0)).format('0,0.00')}
-                                        </strong>
-                                    </Typography>
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+            </Grid>
 
-                                </StyledTableCell>
-                            </StyledTableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
-</Grid>
-            
 
             <DailyCashDialog
                 open={modalOpen}

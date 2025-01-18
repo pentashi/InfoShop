@@ -110,7 +110,7 @@ export default function CartFooter() {
                     variant="contained"
                     endIcon={<AddCardIcon />}
                     disabled={
-                        selectedCustomer?.id === 1 || cartState.length === 0 || selectedCustomer === null
+                        selectedCustomer?.id === 1 || cartState.length === 0 || selectedCustomer === null || !saleDate
                     }
                     onClick={() => setPaymentsModalOpen(true)}
                     size="large"
@@ -124,7 +124,7 @@ export default function CartFooter() {
             <Grid container sx={{ width: "100%" }}>
                 <CashCheckoutDialog
                     disabled={
-                        cartState.length === 0 || selectedCustomer === null
+                        cartState.length === 0 || selectedCustomer === null || !saleDate
                     }
                 />
             </Grid>

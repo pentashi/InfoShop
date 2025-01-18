@@ -61,6 +61,7 @@ class DashboardController extends Controller
         $outOfStockItems = ProductStock::join('product_batches', 'product_stocks.batch_id', '=', 'product_batches.id')
             ->join('products', 'product_batches.product_id', '=', 'products.id')
             ->where('product_batches.is_active', 1)
+            ->where('products.is_stock_managed', 1)
             ->where('product_stocks.quantity', '<=', 0)
             ->count();
 

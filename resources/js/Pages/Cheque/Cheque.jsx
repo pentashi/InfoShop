@@ -65,7 +65,23 @@ const columns = (handleRowClick) => [
             const chequeDate = dayjs(params.row.cheque_date).startOf('day');
             const today = dayjs().startOf('day');
             const remainingDays = chequeDate.diff(today, 'day');
-            return params.row.status === 'pending' ? `${remainingDays} days remaining` : '---';
+            const isPending = params.row.status === 'pending';
+
+            return (
+                <span
+                    style={{
+                        color: isPending && remainingDays < 0 ? "red" : "inherit", // Red if remainingDays < 0 and status is pending
+                    }}
+                >
+                    {isPending
+                        ? remainingDays >= 0
+                            ? `${remainingDays} days remaining`
+                            : `${remainingDays} days passed`
+                        : "---"}
+                </span>
+            );
+
+            // return params.row.status === 'pending' ? `${remainingDays} days remaining` : '---';
         },
     },
     {

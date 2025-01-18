@@ -18,7 +18,12 @@ class ChequeController extends Controller
         $cheque_alert = isset($settingArray['cheque_alert']) ? (int)$settingArray['cheque_alert'] : 3;
 
         $query = Cheque::query();
-        $query = $query->orderBy('id', 'desc');
+        $query->orderByRaw("
+            CASE 
+                WHEN status = 'pending' THEN 1 
+                ELSE 2 
+            END
+        ")->orderBy('cheque_date', 'asc');
 
         if (!empty($filters['store']) && $filters['store'] != 0) {
             $query->where('store_id', $filters['store']);
