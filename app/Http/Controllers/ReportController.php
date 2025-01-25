@@ -15,20 +15,29 @@ use App\Models\Transaction;
 use App\Models\PurchaseTransaction;
 use App\Models\PurchaseItem;
 use App\Models\SaleItem;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
     public function getDailyCashReport(Request $request)
     {
         $transaction_date = $request->only(['transaction_date']);
+        $user = $request->user;
 
         if (empty($transaction_date)) $transaction_date = Carbon::today()->toDateString();
 
         $stores = Store::select('id', 'name')->get();
+        if (Auth::user()->user_role !== 'admin' && Auth::user()->user_role !== 'super-admin') {
+            $users = User::where('id', Auth::id())->select('id', 'name')->get();
+        } else {
+            $users = User::where('user_role', '!=', 'super-admin')->select('id', 'name')->get();
+        }
+
         $cashLogs = CashLog::where('cash_logs.transaction_date', $transaction_date)
             ->select(
                 'cash_logs.transaction_date',
-                'description', 
+                'description',
                 'cash_logs.amount',
                 'cash_logs.source',
                 'contacts.name',
@@ -44,19 +53,31 @@ class ReportController extends Controller
                 ')
             )
             ->leftJoin('contacts', 'cash_logs.contact_id', '=', 'contacts.id')
-            ->leftJoin('transactions', function($join) {
+            ->leftJoin('transactions', function ($join) {
                 $join->on('cash_logs.reference_id', '=', 'transactions.id')
-                     ->where('cash_logs.source', '=', 'sales');
+                    ->where('cash_logs.source', '=', 'sales');
             })
-            ->leftJoin('purchase_transactions', function($join) {
+            ->leftJoin('purchase_transactions', function ($join) {
                 $join->on('cash_logs.reference_id', '=', 'purchase_transactions.id')
-                     ->where('cash_logs.source', '=', 'purchases');
-            })
-            ->get();
+                    ->where('cash_logs.source', '=', 'purchases');
+            });
 
+        if (isset($user) && $user !== 'All') {
+            $cashLogs = $cashLogs->where('cash_logs.created_by', $user);
+        }
+
+        if (Auth::user()->user_role === 'admin' || Auth::user()->user_role === 'super-admin') {
+            // Admin or super-admin can access all cash logs, no filtering needed
+        } else {
+            // $cashLogs = $cashLogs->where('cash_logs.created_by', Auth::id());
+        }
+
+
+        $cashLogs = $cashLogs->get();
         return Inertia::render('Report/DailyCashReport', [
             'stores' => $stores,
             'logs' => $cashLogs,
+            'users' => $users,
             'pageLabel' => 'Daily Cash Report',
         ]);
     }
@@ -247,7 +268,7 @@ class ReportController extends Controller
             ->get();
 
         foreach ($independentTransactions as $transaction) {
-            $transactionDescription = ucfirst($transaction->payment_method). ' #' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT) . ($transaction->note ? ' | ' . $transaction->note : '');
+            $transactionDescription = ucfirst($transaction->payment_method) . ' #' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT) . ($transaction->note ? ' | ' . $transaction->note : '');
             // Check if transaction type is 'account' and the amount is negative, then treat it as debit
             if ($transaction->transaction_type === 'account' && $transaction->amount < 0) {
                 $debit = abs($transaction->amount); // Negative amount means debit (amount owed)
@@ -278,7 +299,7 @@ class ReportController extends Controller
             'stores' => $stores,
             'report' => $report,
             'contacts' => $contacts,
-            'contact'=>$contact,
+            'contact' => $contact,
             'type' => 'customer',
             'pageLabel' => 'Customer Report',
             'previousCredits' => $previousCredits,
@@ -391,7 +412,7 @@ class ReportController extends Controller
             'stores' => $stores,
             'report' => $report,
             'contacts' => $contacts,
-            'contact'=>$contact,
+            'contact' => $contact,
             'type' => 'vendor',
             'pageLabel' => 'Vendor Report',
             'previousCredits' => $previousCredits,
@@ -414,19 +435,19 @@ class ReportController extends Controller
             'unit_price',
             'unit_cost',
             DB::raw(($type === 'sale') ? 'sale_items.discount as discount' : 'purchase_items.discount as discount'),
-            DB::raw('COALESCE(products.name, ' . 
-    ($type === 'sale' ? 'sale_items.description' : 'purchase_items.description') . ') as name')
+            DB::raw('COALESCE(products.name, ' .
+                ($type === 'sale' ? 'sale_items.description' : 'purchase_items.description') . ') as name')
         );
 
         // Join with the products table to get the product name
         if ($type === 'sale') {
             $itemQuery = $itemQuery->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
-            ->leftJoin('product_batches', 'sale_items.batch_id', '=', 'product_batches.id')
-            ->where('sale_items.sale_id', $transaction_id);
+                ->leftJoin('product_batches', 'sale_items.batch_id', '=', 'product_batches.id')
+                ->where('sale_items.sale_id', $transaction_id);
         } else {
             $itemQuery = $itemQuery->leftJoin('products', 'purchase_items.product_id', '=', 'products.id')
-            ->leftJoin('product_batches', 'purchase_items.batch_id', '=', 'product_batches.id')
-            ->where('purchase_items.purchase_id', $transaction_id);
+                ->leftJoin('product_batches', 'purchase_items.batch_id', '=', 'product_batches.id')
+                ->where('purchase_items.purchase_id', $transaction_id);
         }
 
         // Get the details of the sale or purchase

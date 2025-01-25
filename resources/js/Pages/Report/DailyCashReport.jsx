@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography, MenuItem } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import dayjs from "dayjs";
@@ -43,14 +43,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 }));
 
-export default function DailyReport({ logs, stores }) {
+export default function DailyReport({ logs, stores, users }) {
+    const auth = usePage().props.auth.user
     const [dataLogs, setDataLogs] = useState(logs);
+    const [selectedUser, setSelectedUser] = useState(auth.user_role === "admin" ? "All" : auth.id);
     const [transaction_date, setTransactionDate] = useState(
         dayjs().format("YYYY-MM-DD")
     );
     const [modalOpen, setModalOpen] = useState(false);
 
-    const refreshLogs = (url = window.location.pathname, selected_date = transaction_date) => {
+    const refreshLogs = (url = window.location.pathname, selected_date = transaction_date, user=selectedUser) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -63,6 +65,7 @@ export default function DailyReport({ logs, stores }) {
             url,
             {
                 transaction_date: selected_date,
+                user: user,
             },
             options
         );
@@ -109,6 +112,30 @@ export default function DailyReport({ logs, stores }) {
                         required
                     />
                 </Grid>
+                <Grid size={{ xs: 8, sm: 3, md: 2 }}>
+                    <TextField
+                        value={selectedUser}
+                        fullWidth
+                        name="user_id"
+                        label="User/Cashier"
+                        onChange={(e) => {
+                            const user = e.target.value;
+                            setSelectedUser(user); // Update the state with the new user
+                            refreshLogs(window.location.pathname, transaction_date, user);
+                        }}
+                        select
+                    >
+                        {/* {auth.user_role === 'admin' || auth.user_role === 'super-admin' ? (
+                            <MenuItem value="All">All</MenuItem>
+                        ) : null} */}
+                        <MenuItem value="All">All</MenuItem>
+                        {users.map((user) => (
+                            <MenuItem key={user.id} value={user.id}>
+                                {user.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid>
                 <Grid size={{ xs: 4, sm: 2, md: 1 }}>
                     <Button
                         variant="contained"
@@ -121,7 +148,7 @@ export default function DailyReport({ logs, stores }) {
                     </Button>
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 4, md: 4 }}>
+                <Grid size={{ xs: 12, sm: 3, md: 3 }}>
                     <Button
                         variant="contained"
                         onClick={() => setModalOpen(true)}
@@ -129,8 +156,9 @@ export default function DailyReport({ logs, stores }) {
                         startIcon={<AddCircleIcon />}
                         size="large"
                         fullWidth
+                        color="success"
                     >
-                        ADD A RECORD
+                        MANUAL
                     </Button>
                 </Grid>
 

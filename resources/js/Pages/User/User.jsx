@@ -58,10 +58,7 @@ import FormDialog from './UserFormDialog';
           
             <Head title="User" />
                 <Grid container spacing={2} alignItems='center' sx={{ width: "100%" }}>
-                    <Grid size={8}>
-                        <Typography variant="h4" component="h2">User</Typography>
-                    </Grid>
-                    <Grid size={4} container justifyContent='end'>
+                    <Grid size={12} container justifyContent='end'>
                         <Button variant="contained" startIcon={<AddIcon />} onClick={handleClickOpen}>Add User</Button>
                     </Grid>
 

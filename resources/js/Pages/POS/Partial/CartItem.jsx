@@ -18,7 +18,7 @@ import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 export default function CartItems() {
   const return_sale = usePage().props.return_sale;
   const { cartState, removeFromCart, emptyCart} = useCart();
-  const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
+  const { setCartItemModalOpen, setSelectedCartItem, cartItemModalOpen } = useContext(SharedContext);
 
   useEffect(() => {
     if(return_sale){
@@ -74,7 +74,9 @@ export default function CartItems() {
           <Divider variant="inset" component="li" />
         </React.Fragment>
       ))}
-      <CartItemModal/>
+      
+      {cartItemModalOpen && <CartItemModal />}
+
     </List>
   );
 }

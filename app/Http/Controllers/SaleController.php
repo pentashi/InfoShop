@@ -272,4 +272,13 @@ class SaleController extends Controller
             'credit_sale'=>true,
         ]);
     }
+
+    public function deleteSale(Request $request, $id){
+        $sale = Sale::find($id);
+        if (!$sale) {
+            return response()->json(['error' => 'Sale not found'], 404);
+        }
+        // $sale->delete();
+        return response()->json(['success' => 'Sale deleted successfully'], 200);
+    }
 }

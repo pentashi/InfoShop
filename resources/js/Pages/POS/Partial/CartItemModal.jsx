@@ -52,16 +52,13 @@ export default function CartItemModal() {
     // Update selectedBatch when products change
     useEffect(() => {
         if (selectedCartItem) {
-            setFormState((prevState) => ({
-                ...prevState,
-                ...selectedCartItem,
-            }));
+            // setFormState((prevState) => ({
+            //     ...prevState,
+            //     ...selectedCartItem,
+            // }));
+            setFormState(selectedCartItem);
         }
     }, [selectedCartItem]);
-
-    useEffect(() => {
-        focusInputRef.current?.focus();
-    }, [focusInputRef.current]);
 
     // Handle form input changes
     const handleInputChange = (e) => {
@@ -69,7 +66,10 @@ export default function CartItemModal() {
         // Update other fields (e.g., quantity, cost, price)
         setFormState((prevState) => {
             let newState = { ...prevState };
-
+            if(name === "quantity" && value === "") {
+                newState.quantity = 0;
+            }
+            
             if (name === "fixed_commission") {
                 // We store the percentage value of fixed_commission, but it's only used for calculation
                 newState.meta_data = {
@@ -115,14 +115,24 @@ export default function CartItemModal() {
                 fullWidth={true}
                 maxWidth={"sm"}
                 open={cartItemModalOpen}
-                // disableRestoreFocus={true}
-                autoFocus={true}
+                disableRestoreFocus={true}
+                disableEnforceFocus
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 PaperProps={{
                     component: "form",
                     onSubmit: handleAddToCartSubmit,
                 }}
+                slotProps={{
+                    backdrop: {
+                        onTransitionEnd: () => {
+                            if (focusInputRef.current) {
+                                focusInputRef.current.focus();
+                            }
+                        },
+                    },
+                }}
+                aria-describedby="dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
                     {formState.name}
@@ -131,6 +141,7 @@ export default function CartItemModal() {
                     formState.stock_quantity !== "" ? (
                         <>
                             <Button
+                            inert
                              disableElevation={true}
                                 color={
                                     parseFloat(formState.stock_quantity) <= 0
@@ -147,7 +158,7 @@ export default function CartItemModal() {
                                 QTY. {formState.stock_quantity}
                             </Button>
                         </>
-                    ) : null}
+                    ) : ''}
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -167,13 +178,17 @@ export default function CartItemModal() {
                             type="hidden"
                             name="batch_number"
                             value={formState.batch_number}
+                            onChange={handleInputChange}
+                            inert
                         />
                         <input
                             type="hidden"
                             name="name"
                             value={formState.name}
+                            onChange={handleInputChange}
+                            inert
                         />
-                        <input type="hidden" name="id" value={formState.id} />
+                        <input type="hidden" name="id" value={formState.id} onChange={handleInputChange} inert/>
 
                         <Grid size={6}>
                             {formState.product_type !== "reload" ? (
@@ -218,18 +233,17 @@ export default function CartItemModal() {
                             ) : (
                                 <TextField
                                     fullWidth
-                                    autoFocus
                                     type="text"
                                     name="account_number"
                                     label="Account Number"
                                     variant="outlined"
                                     value={formState.account_number}
-                                    inputRef={focusInputRef}
                                     onChange={handleInputChange}
                                     sx={{
                                         mt: "0.5rem",
                                         input: { fontSize: "1rem" },
                                     }}
+                                    autoFocus
                                     required
                                     onFocus={(event) => {
                                         event.target.select();
@@ -485,6 +499,7 @@ export default function CartItemModal() {
                                 label="Cost"
                                 variant="outlined"
                                 required
+                                onChange={handleInputChange}
                                 value={formState.cost}
                                 // onChange={handleInputChange}
                                 sx={{
