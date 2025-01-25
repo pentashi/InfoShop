@@ -7,15 +7,17 @@ import DialogTitle from "@mui/material/DialogTitle";
 import {
     IconButton,
     Table, TableHead, TableBody, TableRow, TableCell,
-    Box
+    Box, Typography, Card, CardContent, Grid2 as Grid
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
+import Swal from "sweetalert2";
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 export default function ViewDetailsDialog({
     open,
@@ -24,6 +26,7 @@ export default function ViewDetailsDialog({
     type = 'sale',
 }) {
     const [tabValue, setTabValue] = React.useState(0);
+    const [details, setDetails] = useState([]);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
@@ -43,17 +46,48 @@ export default function ViewDetailsDialog({
 
     const fetchDetails = async (type) => {
         try {
-            const response = await axios.post(`/getorderdetails/${type}`, { transaction_id: selectedTransaction });
+            const transactionType = type === 'sales' ? 'sale' : type;
+            const response = await axios.post(`/getorderdetails/${transactionType}`, { transaction_id: selectedTransaction });
             setPayments(response.data.payments);
             setItems(response.data.items);
+            setDetails(response.data.details)
         } catch (error) {
             console.error('Error fetching payments: ', error);
         }
     };
 
+    const handleDeletePayment = async (paymentId) => {
+        Swal.fire({
+            title: "Do you want to remove the payment?",
+            showDenyButton: true,
+            confirmButtonText: "YES",
+            denyButtonText: `NO`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.post(`/delete-payment/${type}`, { transaction_id: paymentId })
+                    .then((response) => {
+                        const updatedData = payments.filter((item) => item.id !== paymentId);
+                        setPayments(updatedData);
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.data.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({ title: error.response.data.error, showConfirmButton: true, icon: "error", })
+                        console.error("Deletion failed with errors:", error);
+                    });
+            }
+        });
+    }
+
     useEffect(() => {
         if (open) {
-            fetchDetails(type); 
+            fetchDetails(type);
         }
     }, [open]);
 
@@ -79,7 +113,32 @@ export default function ViewDetailsDialog({
                 >
                     <CloseIcon />
                 </IconButton>
-                <DialogContent sx={{paddingY:'5px'}}>
+                <DialogContent sx={{ paddingY: '5px' }}>
+                    <Table size="small">
+                        <TableBody>
+                            <TableRow>
+                                <TableCell align="left">Date</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }} align="right">{type === 'sales' || type === 'sale' ? dayjs(details.sale_date).format('DD-MM-YYYY') : dayjs(details.purchase_date).format('DD-MM-YYYY')}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Contact Name</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{details.contact_name}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Total</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{numeral(details.total_amount).format('0,0.00')}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Discount</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{numeral(details.discount).format('0,0.00')}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell align="left">Created At</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{dayjs(details.created_at).format('DD-MM-YYYY hh:mm A')}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                    
                     <Tabs value={tabValue} onChange={handleChange} aria-label="icon label tabs example">
                         <Tab icon={<InventoryIcon />} iconPosition="start" label="ITEMS" />
                         <Tab icon={<PaymentsIcon />} iconPosition="start" label="PAYMENTS" />
@@ -100,7 +159,7 @@ export default function ViewDetailsDialog({
                                 {Array.isArray(items) &&
                                     items.map((item, index) => (
                                         <TableRow key={index}>
-                                            <TableCell  className="whitespace-nowrap" sx={{ whiteSpace: 'nowrap' }}>{item.name} {item.batch_number !== null && ` | ${item.batch_number}`}</TableCell>
+                                            <TableCell className="whitespace-nowrap" sx={{ whiteSpace: 'nowrap' }}>{item.name} {item.batch_number !== null && ` | ${item.batch_number}`}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
                                             <TableCell>{parseFloat(item.unit_price).toFixed(2)}</TableCell>
                                             <TableCell>{parseFloat(item.unit_cost).toFixed(2)}</TableCell>
@@ -119,15 +178,23 @@ export default function ViewDetailsDialog({
                                     <TableCell sx={{ fontWeight: 'bold' }}>Method</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}> Action </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {Array.isArray(payments) &&
                                     payments.map((payment, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{payment.payment_method}</TableCell>
-                                            <TableCell>{payment.amount}</TableCell>
+                                            <TableCell>{payment.amount < 0 ? `${payment.payment_method} Refund` : payment.payment_method}</TableCell>
+                                            <TableCell>{payment.payment_method === 'Credit' ? `- ${payment.amount}` : payment.amount}</TableCell>
                                             <TableCell>{payment.transaction_date}</TableCell>
+                                            <TableCell align="left">
+                                                {!payment.parent_id && payment.payment_method !== 'Credit' && (
+                                                    <IconButton onClick={() => handleDeletePayment(payment.id)} edge="start" color="error" aria-label="delete">
+                                                        <HighlightOffIcon />
+                                                    </IconButton>
+                                                )}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>

@@ -4,6 +4,7 @@ import BackHandIcon from "@mui/icons-material/BackHand";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import Grid from "@mui/material/Grid2";
 import CashCheckoutDialog from "./CashCheckoutDialog";
 import { useSales as useCart } from "@/Context/SalesContext";
@@ -12,6 +13,7 @@ import { usePage } from "@inertiajs/react";
 
 import HeldItemsModal from "./HeldItemsModal";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
+import QuotationDialog from "./QuotationDialog";
 
 import Swal from "sweetalert2";
 
@@ -21,6 +23,7 @@ export default function CartFooter() {
     const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [heldModalOpen, setHeldModalOpen] = useState(false);
     const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
+    const [quotationModalOpen, setQuotationModalOpen] = useState(false);
 
     const onCartHold = () => {
         Swal.fire({
@@ -56,7 +59,7 @@ export default function CartFooter() {
                 flexDirection={'row'}
             >
                 
-                <Grid size={6}>
+                <Grid size={4}>
                 <Button
                     variant="contained"
                     color="warning"
@@ -72,7 +75,7 @@ export default function CartFooter() {
                 </Button>
                 </Grid>
                 
-                <Grid size={6}>
+                <Grid size={5}>
                 <Button
                     // sx={{
                     //     bgcolor: "text.primary",
@@ -86,10 +89,10 @@ export default function CartFooter() {
                     fullWidth
                     disabled={return_sale}
                 >
-                    HELD ITEMS
+                    HOLD ITEMS
                 </Button>
                 </Grid>
-                <Grid size={6}>
+                <Grid size={3}>
                 <Button
                     variant="contained"
                     color="error"
@@ -105,6 +108,26 @@ export default function CartFooter() {
                 </Button>
                 </Grid>
 
+                <Grid size={6}>
+                <Button
+                    variant="contained"
+                    endIcon={<ReceiptIcon />}
+                    disabled={
+                        selectedCustomer?.id === 1 || cartState.length === 0 || selectedCustomer === null
+                    }
+                    onClick={() => setQuotationModalOpen(true)}
+                    size="large"
+                    fullWidth
+                    sx={{
+                        bgcolor: "#1A2027",
+                        '&:hover': {
+                            bgcolor: "#2A3346",
+                        },
+                    }}
+                >
+                    QUOTATION
+                </Button>
+                </Grid>
                 <Grid size={6}>
                 <Button
                     variant="contained"
@@ -140,6 +163,12 @@ export default function CartFooter() {
                 selectedContact={selectedCustomer}
                 is_sale={true}
                 formData={{sale_date:saleDate}}
+            />
+            <QuotationDialog
+                useCart={useCart}
+                open={quotationModalOpen}
+                setOpen={setQuotationModalOpen}
+                selectedContact={selectedCustomer}
             />
         </Grid>
     );

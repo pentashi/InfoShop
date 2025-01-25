@@ -403,7 +403,7 @@ class ReportController extends Controller
     {
         $transaction_id = $request->transaction_id;
         $query = ($type === 'sale') ? Transaction::query() : PurchaseTransaction::query();
-        $query = $query->select('amount', 'payment_method', 'transaction_date');
+        $query = $query->select('amount', 'payment_method', 'transaction_date', 'id', 'parent_id');
         $query = ($type === 'sale') ? $query->where('sales_id', $transaction_id) : $query->where('purchase_id', $transaction_id);
         $paymentResults = $query->get();
         // Item Query
@@ -429,13 +429,26 @@ class ReportController extends Controller
             ->where('purchase_items.purchase_id', $transaction_id);
         }
 
+        // Get the details of the sale or purchase
+        $detailsQuery = ($type === 'sale') ? Sale::query() : Purchase::query();
+        $detailsQuery = $detailsQuery->select(
+            'contacts.name as contact_name',
+            'total_amount',
+            'discount',
+            DB::raw(($type === 'sale') ? 'sales.sale_date as date' : 'purchases.purchase_date as date')
+        );
+        $detailsQuery = $detailsQuery->leftJoin('contacts', ($type === 'sale') ? 'sales.contact_id' : 'purchases.contact_id', '=', 'contacts.id');
+        $detailsQuery = $detailsQuery->where(($type === 'sale') ? 'sales.id' : 'purchases.id', $transaction_id);
+        $details = $detailsQuery->first();
+
         // Execute the query and get the item results
         $itemResults = $itemQuery->get();
 
         // Return both payment and item results as a JSON response
         return response()->json([
             'payments' => $paymentResults,
-            'items' => $itemResults
+            'items' => $itemResults,
+            'details' => $details
         ]);
     }
 }

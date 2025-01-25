@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
+import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 
 const columns = (handleRowClick) => [
     {
@@ -48,11 +49,17 @@ const columns = (handleRowClick) => [
         field: "reference_id",
         headerName: "Reference",
         width: 120,
+        headerAlign: 'center',
+        align: 'center',
         renderCell: (params) => {
             if (params.value === null) {
                 return "N/A"; // Or any other suitable message for null values
             }
-            return "#" + params.value.toString().padStart(4, "0");
+            return (
+                <Button variant="text" onClick={() => handleRowClick("view_details",params.value)}>
+                    {"#" + params.value.toString().padStart(4, "0")}
+                </Button>
+            );
         },
     },
     { field: "payment_method", headerName: "Payment Method", width: 150 },
@@ -71,7 +78,7 @@ const columns = (handleRowClick) => [
             // Format the date to 'YYYY-MM-DD'
             return (
                 <>
-                    <IconButton disabled={params.row.transaction_type != 'account'} color="error" onClick={() => handleRowClick('delete', params.row.id)}>
+                    <IconButton disabled={params.row.payment_method === 'Credit' || params.row.parent_id !== null} color="error" onClick={() => handleRowClick('delete', params.row.id)}>
                         <HighlightOffIcon />
                     </IconButton>
                 </>
@@ -88,6 +95,9 @@ export default function Payment({ payments, transactionType, contacts, selected_
     const [endDate, setEndDate] = useState("");
     const [selectedContact, setSelectedContact] = useState({ name: '', id: selected_contact });
     const [totalAmount, setTotalAmount] = useState(0)
+    const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
+
     const handleRowClick = (type, id) => {
         if (type == 'delete') {
             Swal.fire({
@@ -116,6 +126,9 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         });
                 }
             });
+        }else if (type == 'view_details') {
+            setSelectedTransaction(id);
+            setViewDetailsModalOpen(true);
         }
     };
 
@@ -184,7 +197,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 3 }}>
-                <Select2
+                    <Select2
                         className="w-full"
                         placeholder="Select a contact..."
                         styles={{
@@ -202,7 +215,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 2 }}>
-                <TextField
+                    <TextField
                         value={paymentMethod}
                         label="Select Payment Method"
                         onChange={(e) => setPaymentMethod(e.target.value)}
@@ -221,7 +234,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 </Grid>
 
                 <Grid size={{ xs: 6, sm: 2 }}>
-                <TextField
+                    <TextField
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
@@ -239,7 +252,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 </Grid>
 
                 <Grid size={{ xs: 6, sm: 2 }}>
-                <TextField
+                    <TextField
                         label="End Date"
                         name="end_date"
                         placeholder="End Date"
@@ -257,17 +270,17 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 </Grid>
 
                 <Grid size={{ xs: 6, sm: 1 }}>
-                <Button
-                    variant="contained"
-                    onClick={() => refreshPayments(window.location.pathname)}
-                    sx={{ height: "100%" }}
-                    fullWidth
-                >
-                    <FindReplaceIcon />
-                </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => refreshPayments(window.location.pathname)}
+                        sx={{ height: "100%" }}
+                        fullWidth
+                    >
+                        <FindReplaceIcon />
+                    </Button>
                 </Grid>
 
-               
+
             </Grid>
 
             <Box
@@ -294,6 +307,15 @@ export default function Payment({ payments, transactionType, contacts, selected_
                     dataLastPage={dataPayments?.last_page}
                 ></CustomPagination>
             </Grid>
+
+            {viewDetailsModalOpen && (
+                <ViewDetailsDialog
+                    open={viewDetailsModalOpen}
+                    setOpen={setViewDetailsModalOpen}
+                    type={"sale"}
+                    selectedTransaction={selectedTransaction}
+                />
+            )}
         </AuthenticatedLayout>
     );
 }

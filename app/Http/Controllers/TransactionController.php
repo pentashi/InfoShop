@@ -44,6 +44,7 @@ class TransactionController extends Controller
 
             $transactionData['transaction_type'] = 'account';
             if ($paymentMethod == 'Account' && $request->has('transaction_id')) {
+                $transactionData['transaction_type'] = 'sale';
             } elseif ($paymentMethod != 'Account' && $request->has('transaction_id')) {
                 $transactionData['transaction_type'] = 'sale';
                 $contact->incrementBalance($amount, $user);
@@ -174,6 +175,7 @@ class TransactionController extends Controller
 
             $transactionData['transaction_type'] = 'account';
             if ($paymentMethod == 'Account' && $request->has('transaction_id')) {
+                $transactionData['transaction_type'] = 'purchase';
             } elseif ($paymentMethod != 'Account' && $request->has('transaction_id')) {
                 $transactionData['transaction_type'] = 'purchase';
                 $contact->incrementBalance($amount, $user);
@@ -286,6 +288,7 @@ class TransactionController extends Controller
             'amount',
             'payment_method',
             'transaction_type',
+            'parent_id',
             'note',
         )
             ->join('contacts', 'contact_id', '=', 'contacts.id')
@@ -348,27 +351,68 @@ class TransactionController extends Controller
         }
 
         $transaction_id = $request->transaction_id;
+        $type = ($type === 'sales' || $type === 'sale') ? 'sales' : 'purchases';
         $query = ($type === 'sales') ? Transaction::query() : PurchaseTransaction::query();
 
-        $parent_payment = (clone $query)->where('parent_id', $transaction_id)->first();
-
-        if ($parent_payment) {
-            return response()->json(['error' => 'This payment linked with another transaction. Please delete that transaction first. - ' . $parent_payment->id], 406);
+        if ($query->where('id', $transaction_id)->value('parent_id')) {
+            return response()->json(['error' => 'This payment have a parent transaction. Please delete the parent transaction first.'], 406);
         }
 
         $transaction = $query->where('id', $transaction_id)->first();
 
         DB::beginTransaction();
         try {
-            if ($transaction->transaction_type == 'account') {
-                if ($transaction->payment_method == 'Cash') {
-                    CashLog::where('source', $type)->where('reference_id', $transaction->id)->delete();
-                }
+            if ($transaction->payment_method == 'Cash') {
+                CashLog::where('source', $type)->where('reference_id', $transaction->id)->delete();
+            }
+
+            if ($transaction->payment_method !== 'Account') {
                 $contact = Contact::findOrFail($transaction->contact_id);
                 $contact->incrementBalance($transaction->amount*-1, $user);
-
-                $transaction->delete();
             }
+
+            // Handle the parent transaction
+            $reference = ($type === 'sales') ? Sale::where('id', $transaction->sales_id)->first() : Purchase::where('id', $transaction->purchase_id)->first();
+            if ($reference) {
+                if ($type === 'sales') {
+                    $reference->decrement('amount_received', $transaction->amount);
+                } else {
+                    $reference->decrement('amount_paid', $transaction->amount);
+                }
+
+                if ($reference->amount_received != $reference->total_amount) {
+                    $reference->status = 'pending';
+                } else {
+                    $reference->status = 'completed';
+                }
+                $reference->save();
+            }
+
+            // Handle child transactions
+            $child_transactions = ($type === 'sales') ? Transaction::where('parent_id', $transaction->id)->get() : PurchaseTransaction::where('parent_id', $transaction->id)->get();
+            if ($child_transactions->count() > 0) {
+                foreach ($child_transactions as $child) {
+                    $reference = ($type === 'sales') ? Sale::where('id', $child->sales_id)->first() : Purchase::where('id', $child->purchase_id)->first();
+                    if ($reference) {
+                        if ($type === 'sales') {
+                            $reference->decrement('amount_received', $child->amount);
+                        } else {
+                            $reference->decrement('amount_paid', $child->amount);
+                        }
+
+                        if ($reference->amount_received != $reference->total_amount) {
+                            $reference->status = 'pending';
+                        } else {
+                            $reference->status = 'completed';
+                        }
+                        $reference->save();
+                    }
+                    $child->delete();
+                }
+            }
+
+            $transaction->delete();
+
         } catch (\Exception $e) {
             // Rollback transaction in case of error
             DB::rollBack();

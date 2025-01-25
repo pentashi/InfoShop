@@ -41,7 +41,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoneyCheck } from "@fortawesome/free-solid-svg-icons";
+import { faMoneyCheck, faFileInvoice } from "@fortawesome/free-solid-svg-icons";
 import infoshopLogo from "@/infoshop.png";
 const drawerWidth = 240;
 
@@ -229,6 +229,15 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     selected={isSelected("/expenses")}
                 />
 
+                <NavItem
+                    href="/quotations"
+                    icon={faFileInvoice}
+                    icontype={'fa'}
+                    label="Quotations"
+                    open={open}
+                    selected={isSelected("/quotations")}
+                />
+
                 {modules.includes("Reloads") && (
                 <NavItem
                     href="/reloads"
@@ -241,7 +250,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
 
                 {modules.includes("Cheques") && (
                 <NavItem
-                    href="/cheques"
+                    href="/cheques?status=pending"
                     icon={faMoneyCheck}
                     icontype={'fa'}
                     label="Cheques"

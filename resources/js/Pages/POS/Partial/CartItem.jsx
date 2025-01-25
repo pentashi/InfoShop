@@ -5,7 +5,8 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import {Avatar, Box, Typography, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import CancelIcon from '@mui/icons-material/Cancel';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import QuantityInput from './QuantityInput';
 import CartItemModal from './CartItemModal';
 import { usePage } from "@inertiajs/react";
@@ -64,7 +65,7 @@ export default function CartItems() {
               <div className="relative w-full flex flex-row">
               <QuantityInput cartItem={{...item, cart_index:index}}></QuantityInput>
               <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(index)}>
-                <DeleteIcon />
+                <DeleteForeverIcon />
                 </IconButton>
               </div>
             </Box>

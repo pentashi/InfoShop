@@ -226,7 +226,6 @@ export default function DailyReport({ logs, stores }) {
                 </Paper>
             </Grid>
 
-
             <DailyCashDialog
                 open={modalOpen}
                 setOpen={setModalOpen}

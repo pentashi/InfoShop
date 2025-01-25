@@ -41,7 +41,7 @@ export default function CartItemsTop({ customers }) {
   }, [customers]);
 
   return (
-    <Grid sx={{ width: '100%', marginY: { xs: '1rem', sm: '1.2rem' }, alignItems: 'center' }} container spacing={2} flexDirection={{ xs: 'column-reverse', sm: 'row' }} alignItems={'center'}>
+    <Grid sx={{ width: '100%', marginY: { xs: '1rem', sm: '1.2rem' }, alignItems: 'center', justifyContent:'space-between' }} container spacing={2} flexDirection={{ xs: 'column-reverse', sm: 'row' }} alignItems={'center'}>
       <Tooltip
           title={!saleDate ? "Sale date is required" : ""} // Tooltip message if saleDate is empty
           arrow
@@ -96,7 +96,7 @@ export default function CartItemsTop({ customers }) {
 
         <Grid size={2}>
           <IconButton disabled={return_sale} onClick={() => setOpen(true)} sx={{
-            bgcolor: 'success.main', width: '45px', height: '45px', color: 'white', '&:hover': {
+            bgcolor: 'success.main', width: '35px', height: '35px', color: 'white', '&:hover': {
               bgcolor: 'success.dark', // Change the background color on hover
             }
           }}>

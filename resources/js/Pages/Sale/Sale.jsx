@@ -7,7 +7,6 @@ import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip } from "@mu
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import Select2 from "react-select";
 import numeral from "numeral";
 import dayjs from "dayjs";
@@ -28,10 +27,15 @@ const columns = (handleRowClick) => [
     {
         field: "invoice_number",
         headerName: "No",
-        width: 150,
-        renderCell: (params) => {
-            return "#" + params.value.toString().padStart(4, "0");
-        },
+        width: 160,
+        renderCell: (params) => (
+            <Button
+                variant="text"
+                onClick={() => handleRowClick(params.row, "view_details")}
+            >
+                {"#" + params.value.toString().padStart(4, "0")}
+            </Button>
+        ),
     },
     {
         field: "name", headerName: "Customer Name", width: 200,
@@ -110,13 +114,6 @@ const columns = (handleRowClick) => [
                         <KeyboardReturnIcon />
                     </IconButton>
                 )}
-                <IconButton
-                    sx={{ ml: "0.3rem" }}
-                    color="primary"
-                    onClick={() => handleRowClick(params.row, "view_details")}
-                >
-                    <VisibilityIcon />
-                </IconButton>
             </>
         ),
     },
@@ -143,9 +140,10 @@ export default function Sale({ sales, contacts }) {
     const handleRowClick = (sale, action) => {
         setSelectedTransaction(sale);
         if (action == "add_payment") {
-            const amountLimit =
-                parseFloat(sale.total_amount) -
-                parseFloat(sale.amount_received);
+            const amountLimit = Math.max(
+                0,
+                parseFloat(sale.total_amount) - parseFloat(sale.amount_received)
+            );
             setSelectedContact(sale.contact_id);
             setAmountLimit(amountLimit);
             setPaymentModalOpen(true);

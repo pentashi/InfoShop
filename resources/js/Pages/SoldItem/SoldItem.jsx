@@ -3,12 +3,13 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
-import { Button, Box, TextField, Tooltip, MenuItem, Chip } from "@mui/material";
+import { Button, Box, TextField, Tooltip, MenuItem, Chip, IconButton } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
 import numeral from "numeral";
-
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import CustomPagination from "@/Components/CustomPagination";
 
 const columns = (handleRowClick) => [
@@ -29,6 +30,7 @@ const columns = (handleRowClick) => [
             </Tooltip>
         ),
     },
+    {field: 'barcode', headerName: 'Barcode', width: 200, selector: row => row.barcode, sortable: true,hideable: true},
     { field: "product_name", headerName: "Product Name", width: 200, },
     {
         field: "quantity", headerName: "Quantity", width: 100, align: 'right', headerAlign: 'right',
@@ -76,6 +78,21 @@ const columns = (handleRowClick) => [
         field: "sale_date",
         headerName: "Date",
         width: 100,
+    },
+    {
+        field: "action",
+        headerName: "Action",
+        width: 150,
+        renderCell: (params) => {
+            if (params.row.quantity < 0) return null;
+            return (
+                <Link href={`/pos/${params.row.sale_id}/return`}>
+                    <IconButton color="primary">
+                        <KeyboardReturnIcon />
+                    </IconButton>
+                </Link>
+            );
+        },
     },
 
 ];
@@ -181,6 +198,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         placeholder="End Date"
                         fullWidth
                         type="date"
+                        slots={{ toolbar: GridToolbar }}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,
@@ -189,6 +207,27 @@ export default function SoldItem({ sold_items, contacts }) {
                         value={searchTerms.end_date}
                         onChange={handleSearchChange}
                         required
+                    />
+                </Grid>
+
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
+                        label="Search"
+                        name="query"
+                        placeholder="Search"
+                        fullWidth
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={searchTerms.query}
+                        onChange={handleSearchChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                refreshSoldItems(window.location.pathname);
+                            }
+                        }}
                     />
                 </Grid>
                 {/* <Grid size={{ xs: 6, sm: 2 }}>
@@ -229,6 +268,14 @@ export default function SoldItem({ sold_items, contacts }) {
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,
+                        },
+                    }}
+                    initialState={{
+                        columns: {
+                            columnVisibilityModel: {
+                                barcode: false,
+                                profit: false,
+                            },
                         },
                     }}
                     hideFooter

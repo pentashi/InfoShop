@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './QuantityInput.css'; // Import your CSS file
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-
+import { IconButton } from '@mui/material';
 import { useSales as useCart } from '@/Context/SalesContext';
 
-const QuantityInput = ({cartItem}) => {
+const QuantityInput = ({ cartItem }) => {
   const { cartState, updateProductQuantity } = useCart();
 
   const [quantity, setQuantity] = useState(cartItem.quantity);
@@ -16,19 +16,19 @@ const QuantityInput = ({cartItem}) => {
   useEffect(() => {
     setQuantity(cartItem.quantity);
     setInputValue(cartItem.quantity);
-  }, [cartState]);                                                                
+  }, [cartState]);
 
 
   const handleQuantityChange = (event) => {
     const value = parseFloat(event.target.value);
     if (!isNaN(value)) {
-        const newQuantity = Math.max(min, Math.min(value, max));
-        setQuantity(newQuantity);
-        setInputValue(newQuantity);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
+      const newQuantity = Math.max(min, Math.min(value, max));
+      setQuantity(newQuantity);
+      setInputValue(newQuantity);
+      updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
     } else {
-        setInputValue(min);
-        updateProductQuantity(cartItem.id, cartItem.batch_number, min, cartItem.cart_index);
+      setInputValue(min);
+      updateProductQuantity(cartItem.id, cartItem.batch_number, min, cartItem.cart_index);
     }
   };
 
@@ -46,11 +46,11 @@ const QuantityInput = ({cartItem}) => {
     updateProductQuantity(cartItem.id, cartItem.batch_number, newQuantity, cartItem.cart_index);
   };
 
-  return (   
+  return (
     <div className="quantity">
-      <button type='button' className="minus" aria-label="Decrease" onClick={decreaseValue} disabled={quantity <= min}>
+      <IconButton onClick={decreaseValue} disabled={quantity <= min}>
         <RemoveIcon></RemoveIcon>
-      </button>
+      </IconButton>
       <input
         type="number"
         className="input-box"
@@ -60,9 +60,9 @@ const QuantityInput = ({cartItem}) => {
         max={max}
         onChange={handleQuantityChange}
       />
-      <button type='button' className="plus" aria-label="Increase" onClick={increaseValue} disabled={quantity >= max}>
-       <AddIcon></AddIcon>
-      </button>
+      <IconButton onClick={increaseValue} disabled={quantity >= max}>
+        <AddIcon></AddIcon>
+      </IconButton>
     </div>
   );
 };

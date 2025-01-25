@@ -26,6 +26,7 @@ use App\Http\Controllers\SalaryRecordController;
 use App\Http\Controllers\EmployeeBalanceController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ChequeController;
+use App\Http\Controllers\QuotaionController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -165,6 +166,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/cheques/store', [ChequeController::class, 'store'])->name('cheques.store');
     Route::post('/cheques/{cheque}/update', [ChequeController::class, 'update'])->name('cheques.update');
     Route::post('/cheques/{cheque}/destroy', [ChequeController::class, 'destroy'])->name('cheques.destroy');
+
+    Route::post('/quotations', [QuotaionController::class, 'store'])->name('quotations.store');
+    Route::get('/quotations', [QuotaionController::class, 'index'])->name('quotations.index');
+    Route::post('/quotations/{quotation}', [QuotaionController::class, 'destroy'])->name('quotations.destroy');
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

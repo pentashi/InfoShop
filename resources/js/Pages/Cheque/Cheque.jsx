@@ -108,12 +108,11 @@ export default function Cheque({ cheques, stores }) {
         start_date: '',      // Filter for start of date range
         search_query: '',
         end_date: '',        // Filter for end of date range
-        status: 'all',          // Filter for cheque status (e.g., cleared, pending)
+        status: 'pending',          // Filter for cheque status (e.g., cleared, pending)
         direction: 'all',       // Filter for type (issued/received)
         store: 0,            // Store ID (default 0 for "All Stores")
         per_page: 100,       // Number of results per page
     });
-
 
     const refreshCheques = (url) => {
         const options = {
@@ -137,7 +136,7 @@ export default function Cheque({ cheques, stores }) {
     };
 
     useEffect(() => {
-        const total = dataCheques.data.reduce((acc, curr) => acc + parseFloat(curr.cheque_amount || 0), 0);
+        const total = dataCheques.data.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
         setTotalAmount(total);
     }, [dataCheques]);
 

@@ -150,6 +150,7 @@ class SaleController extends Controller
             'sale_items.unit_cost',
             'sale_items.discount',
             'products.name as product_name',
+            'products.barcode',
             'sales.sale_date',
             'contacts.name as contact_name',
             'contacts.balance',
@@ -167,6 +168,14 @@ class SaleController extends Controller
         if(isset($filters['start_date']) && isset($filters['end_date'])){
             $query->whereBetween('sales.sale_date', [$filters['start_date'], $filters['end_date']]);
         }
+
+        if (isset($filters['query'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('products.name', 'LIKE', '%' . $filters['query'] . '%')
+                ->orWhere('products.barcode', 'LIKE', '%' . $filters['query'] . '%');
+            });
+        }
+
         $perPage = $filters['per_page'] ?? 100;
         $results = $query->paginate($perPage);
         $results->appends($filters);
@@ -174,7 +183,7 @@ class SaleController extends Controller
     }
 
     public function solditems(Request $request){
-        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page','order_by']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page','order_by', 'query']);
         $soldItems = $this->getSoldItems($filters);
         $contacts = Contact::select('id', 'name','balance')->customers()->get();
         return Inertia::render('SoldItem/SoldItem',[
