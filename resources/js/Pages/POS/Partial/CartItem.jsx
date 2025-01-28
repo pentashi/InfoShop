@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import {Avatar, Box, Typography, IconButton } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import QuantityInput from './QuantityInput';
 import CartItemModal from './CartItemModal';

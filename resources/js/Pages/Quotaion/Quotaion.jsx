@@ -45,13 +45,13 @@ const columns = (handleRowClick) => [
     {
         field: "expiry_date",
         headerName: "Expiry Date",
-        width: 150,
+        width: 100,
         renderCell: (params) => dayjs(params.value).format("YYYY-MM-DD"),
     },
     {
         field: "total",
         headerName: "Total",
-        width: 180,
+        width: 100,
         align: 'right', headerAlign: 'right',
         renderCell: (params) => numeral(params.value).format('0,0.00'),
     },
@@ -61,9 +61,11 @@ const columns = (handleRowClick) => [
         width: 150, align: 'right', headerAlign: 'right',
         renderCell: (params) => (
             <>
-                <IconButton sx={{ ml: '0.3rem' }} color="primary" onClick={() => handleRowClick(params.row, "print_quotation")}>
-                    <PrintIcon />
-                </IconButton>
+                <Link href={`/quotations/${params.row.id}`}>
+                    <IconButton sx={{ ml: '0.3rem' }} color="primary">
+                        <PrintIcon />
+                    </IconButton>
+                </Link>
                 <IconButton sx={{ ml: '0.3rem' }} color="error" onClick={() => handleRowClick(params.row, "delete_quotation")}>
                     <DeleteIcon />
                 </IconButton>

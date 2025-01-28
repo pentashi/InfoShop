@@ -492,8 +492,12 @@ export default function CartItemModal() {
                         <Grid size={formState.product_type !== "reload"?6:4}>
                             <TextField
                                 fullWidth
-                                type={showCost ? "number" : "password"}
-                                autoComplete={showCost ? 'off' : 'new-password'}
+                                type={showCost ? "number" : "text"}
+                                style={{
+                                    WebkitTextSecurity: showCost ? "none" : "disc",
+                                    MozTextSecurity: showCost ? "none" : "disc",
+                                    msTextSecurity: showCost ? "none" : "disc",
+                                }}
                                 disabled={showCost ? false : true}
                                 name="cost"
                                 label="Cost"

@@ -17,6 +17,7 @@ class SettingController extends Controller
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
         $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
+        $settingArray['tinymce'] = asset('tinymce/tinymce.min.js');
         // Render the 'Settings' component with data
         return Inertia::render('Settings/Settings', [
             'settings' => $settingArray,
@@ -342,5 +343,25 @@ class SettingController extends Controller
         );
 
         return response()->json(['message' => 'Modules have been updated successfully!'], 200);
+    }
+
+    public function getTemplate(Request $request)
+    {
+        $templateName = $request->template_name;
+        $setting = Setting::where('meta_key', $templateName)->first();
+        $template = $setting && $setting->meta_value ? $setting->meta_value : '';
+
+        return response()->json(['template' => $template], 200);
+    }
+
+    public function saveTemplate(Request $request)
+    {
+        $templateName = $request->template_name;
+        $template = $request->template;
+        Setting::updateOrCreate(
+            ['meta_key' => $templateName],
+            ['meta_value' => $template]
+        );
+        return response()->json(['message' => 'Template updated successfully!'], 200);
     }
 }

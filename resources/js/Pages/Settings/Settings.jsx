@@ -25,6 +25,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import MiscSetting from "./Partials/MiscSetting";
 import ModuleSetting from "./Partials/ModuleSetting";
+import Template from "./Partials/Template";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -220,6 +221,7 @@ export default function Setting({ settings }) {
                         <Tab label="BARCODE" />
                         <Tab label="MISC" />
                         <Tab label="MODULES" />
+                        <Tab label="TEMPLATES" />
                     </Tabs>
                 </Box>
 
@@ -598,6 +600,9 @@ export default function Setting({ settings }) {
                 </TabPanel>
                 <TabPanel value={tabValue} index={4}>
                   <ModuleSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                </TabPanel>
+                <TabPanel value={tabValue} index={5}>
+                  <Template/>
                 </TabPanel>
             </Box>
         </AuthenticatedLayout>

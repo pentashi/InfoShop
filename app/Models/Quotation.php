@@ -18,4 +18,9 @@ class Quotation extends Model
     public function items() {
         return $this->hasMany(QuotationItem::class);
     }
+
+    public function quotationItems()
+    {
+        return $this->hasMany(QuotationItem::class);
+    }
 }

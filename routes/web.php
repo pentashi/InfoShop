@@ -114,6 +114,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/custom-css', [SettingController::class, 'customCSS']);
     Route::post('/settings/custom-css', [SettingController::class, 'updateCustomCSS']);
     Route::post('/settings/module/{action}', [SettingController::class, 'updateModule']);
+    Route::post('/settings/get-template', [SettingController::class, 'getTemplate'])->name('settings.gettemplate');
+    Route::post('/settings/save-template', [SettingController::class, 'saveTemplate'])->name('settings.savetemplate');
 
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expense', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -170,6 +172,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/quotations', [QuotaionController::class, 'store'])->name('quotations.store');
     Route::get('/quotations', [QuotaionController::class, 'index'])->name('quotations.index');
     Route::post('/quotations/{quotation}', [QuotaionController::class, 'destroy'])->name('quotations.destroy');
+    Route::get('/quotations/{quotation}', [QuotaionController::class, 'show'])->name('quotations.show');
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

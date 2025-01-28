@@ -59,7 +59,7 @@ export default function CartFooter() {
                 flexDirection={'row'}
             >
                 
-                <Grid size={4}>
+                <Grid size={{xs:3, sm:4}}>
                 <Button
                     variant="contained"
                     color="warning"
@@ -75,12 +75,8 @@ export default function CartFooter() {
                 </Button>
                 </Grid>
                 
-                <Grid size={5}>
+                <Grid size={{xs:6, sm:5}}>
                 <Button
-                    // sx={{
-                    //     bgcolor: "text.primary",
-                    //     color: "white",
-                    // }}
                     endIcon={<ShoppingCartIcon />}
                     color="primary"
                     variant="contained"
@@ -92,7 +88,7 @@ export default function CartFooter() {
                     HOLD ITEMS
                 </Button>
                 </Grid>
-                <Grid size={3}>
+                <Grid size={{xs:3, sm:3}}>
                 <Button
                     variant="contained"
                     color="error"
@@ -108,7 +104,7 @@ export default function CartFooter() {
                 </Button>
                 </Grid>
 
-                <Grid size={6}>
+                <Grid size={{xs:6, sm:6}}>
                 <Button
                     variant="contained"
                     endIcon={<ReceiptIcon />}
