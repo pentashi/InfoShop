@@ -1,14 +1,15 @@
 #### README.md
 
-# Point of Sale (POS) System
+# InfoShop Point of Sale (POS) System
 
-Welcome to the Point of Sale (POS) System! This is a comprehensive application built with modern web technologies to streamline sales and inventory management. 
+Welcome to the InfoShop Point of Sale (POS) System! This is a comprehensive application built with modern web technologies to streamline sales and inventory management. 
 
 ## Table of Contents
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Modules](#modules)
 - [Features](#features)
+- [Attribution](#attribution)
 - [License](#license)
 
 ## Requirements
@@ -84,10 +85,17 @@ The POS system includes the following modules:
 - Styled with **Tailwind CSS** for a clean and customizable look.
 - MySQL as the database for reliable data storage.
 
+## Attribution
+
+If you use this project or any of its contents, please provide proper attribution. You can mention:
+
+"This project is based on Infoshop by Infomax/Nifras Usanar."
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
+
 
 Feel free to contribute to this project or reach out with any questions. Happy coding! 🚀

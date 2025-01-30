@@ -235,8 +235,13 @@ class SettingController extends Controller
                 'shop_name' => 'required|string',
                 'shop_logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-        } else if ($setting_type == "receipt") {
-        } else if ($setting_type == "barcode") {
+        } 
+        else if ($setting_type == "receipt") 
+        {
+            
+        } 
+        else if ($setting_type == "barcode") 
+        {
             $settingsData['show_barcode_store'] = $request->has('show_barcode_store') ? 'on' : 'off';
             $settingsData['show_barcode_product_price'] = $request->has('show_barcode_product_price') ? 'on' : 'off';
             $settingsData['show_barcode_product_name'] = $request->has('show_barcode_product_name') ? 'on' : 'off';
@@ -245,14 +250,29 @@ class SettingController extends Controller
             if ($request->has('barcodeSettings')) {
                 $settingsData['barcode_settings'] = $request->input('barcodeSettings');
             }
-        } else if ($setting_type == 'misc_settings') {
+        }
+        else if ($setting_type == 'misc_settings') {
             $miscSettings['optimize_image_size'] = $request->input('optimize_image_size');
             $miscSettings['optimize_image_width'] = $request->input('optimize_image_width');
             $miscSettings['cheque_alert'] = $request->input('cheque_alert');
             $miscSettings['product_alert'] = $request->input('product_alert');
             $settingsData['misc_settings'] = json_encode($miscSettings);
-        } else if ($setting_type == 'modules') {
+        } 
+        else if ($setting_type == 'modules') 
+        {
             $settingsData['modules'] = $request->input('modules');
+        } 
+        else if ($setting_type == 'mail_settings') 
+        {
+            $miscSettings['mail_host'] = $request->input('mail_host');
+            $miscSettings['mail_port'] = $request->input('mail_port');
+            $miscSettings['mail_username'] = $request->input('mail_username');
+            $miscSettings['mail_password'] = $request->input('mail_password');
+            $miscSettings['mail_encryption'] = $request->input('mail_encryption');
+            $miscSettings['mail_from_address'] = $request->input('mail_from_address');
+            $miscSettings['mail_from_name'] = $request->input('mail_from_name');
+            $miscSettings['admin_email'] = $request->input('admin_email');
+            $settingsData['mail_settings'] = json_encode($miscSettings);
         }
 
         foreach ($settingsData as $metaKey => $metaValue) {

@@ -111,6 +111,16 @@ export default function PaymentsCheckoutDialog({
                 setDiscount(0);
                 setPayments([])
                 if (!is_sale) router.visit("/purchases");
+                else {
+                    router.visit('/reciept/' + resp.data.sale_id)
+                    axios.get('/sale-mail/' + resp.data.sale_id)
+                        .then((resp) => {
+                            console.log("Email sent successfully:", resp.data.success);
+                        })
+                        .catch((error) => {
+                            console.error("Failed to send email:", error.response.data.error);
+                        });
+                }
                 setOpen(false)
             })
             .catch((error) => {
@@ -348,11 +358,11 @@ export default function PaymentsCheckoutDialog({
                                         {payment.payment_method === 'Cash' && <PaymentsIcon />}
                                         {payment.payment_method === 'Cheque' && <CreditCardIcon />}
                                         {payment.payment_method === 'Credit' && <PauseCircleOutlineIcon />}
-                                        
+
                                     </TableCell>
 
                                     <TableCell>
-                                    <strong>{payment.payment_method}</strong>
+                                        <strong>{payment.payment_method}</strong>
                                     </TableCell>
                                     {/* Display Payment Amount */}
                                     <TableCell align="right">

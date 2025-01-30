@@ -10,6 +10,9 @@ use App\Models\Setting;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\SaleCreated;
 
 class SaleController extends Controller
 {
@@ -213,10 +216,40 @@ class SaleController extends Controller
             'sales.created_at'
         )
         ->where('sales.contact_id', $contact_id) // Filter by contact_id
-        ->where('sales.status', 'pending') // Filter by status = pending
+        ->where('sales.status', 'pending')
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id') // Join with contacts table using customer_id
         ->join('stores', 'sales.store_id','=','stores.id')
         ->get(); // Fetch all matching sales
+
+        // Fetch return sale for the pending sales
+        $completedSales = Sale::select(
+            'sales.id',
+            'sale_date',         
+            'total_amount',
+            'discount',
+            'amount_received',
+            'status',
+            'stores.address',
+            'contacts.name',
+            'contacts.whatsapp',
+            'contacts.balance',
+            'invoice_number',
+            'stores.sale_prefix',
+            'stores.contact_number',
+            'sales.created_at'
+        )
+        ->where('sales.contact_id', $contact_id)
+        ->where('sales.status', 'completed')
+        ->where(function ($query) use ($sales) {
+            foreach ($sales as $sale) {
+                $query->orWhere('sales.reference_id', $sale->id);
+            }
+        })
+        ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
+        ->join('stores', 'sales.store_id','=','stores.id')
+        ->get();
+
+        $sales = $sales->merge($completedSales);
 
         if ($sales->isEmpty()) {
             return Inertia::render('Sale/Reciept',[
@@ -280,5 +313,25 @@ class SaleController extends Controller
         }
         // $sale->delete();
         return response()->json(['success' => 'Sale deleted successfully'], 200);
+    }
+
+    public function sendMail($id){
+
+        $sale = Sale::select('sales.*', 'users.name as created_by')
+                    ->leftJoin('users', 'sales.created_by', '=', 'users.id')
+                    ->where('sales.id', $id)
+                    ->first();
+        $adminMail = Setting::where('meta_key', 'mail_settings')->first();
+        if ($adminMail) {
+            $adminMail = json_decode($adminMail->meta_value, true);
+            $adminMail = $adminMail['admin_email'];
+            Notification::route('mail', $adminMail)->notify(new SaleCreated($sale));
+        }
+        else{
+            return response()->json(['error' => 'Admin mail settings not found'], 404);
+        }
+
+        return response()->json(['success' => 'Mail sent successfully'], 200);
+
     }
 }

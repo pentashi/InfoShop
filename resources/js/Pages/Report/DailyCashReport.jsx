@@ -11,6 +11,7 @@ import axios from "axios";
 import numeral from "numeral";
 
 import DailyCashDialog from "./Partial/DailyCashDialog";
+import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -51,6 +52,8 @@ export default function DailyReport({ logs, stores, users }) {
         dayjs().format("YYYY-MM-DD")
     );
     const [modalOpen, setModalOpen] = useState(false);
+    const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     const refreshLogs = (url = window.location.pathname, selected_date = transaction_date, user=selectedUser) => {
         const options = {
@@ -194,7 +197,14 @@ export default function DailyReport({ logs, stores, users }) {
                                         <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}>
                                             {row.transaction_date}
                                         </StyledTableCell>
-                                        <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}>
+                                        <StyledTableCell align="left" sx={{ whiteSpace: 'nowrap' }}
+                                            onClick={() => {
+                                                if (row.sales_id !== null) {
+                                                    setSelectedTransaction(row.sales_id);
+                                                    setViewDetailsModalOpen(true);
+                                                }
+                                            }}
+                                        >
                                             {
                                                 row.source.charAt(0).toUpperCase() + row.source.slice(1) +
                                                 (row.sales_id ? ' (#' + row.sales_id + ')' : "") +
@@ -260,6 +270,16 @@ export default function DailyReport({ logs, stores, users }) {
                 stores={stores}
                 refreshTransactions={refreshLogs}
             />
+
+            {selectedTransaction && (
+                <ViewDetailsDialog
+                    open={viewDetailsModalOpen}
+                    setOpen={setViewDetailsModalOpen}
+                    type={"sale"}
+                    selectedTransaction={selectedTransaction}
+                />
+            )}
+
         </AuthenticatedLayout>
     );
 }

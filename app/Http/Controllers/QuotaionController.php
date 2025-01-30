@@ -11,6 +11,7 @@ use App\Models\Setting;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class QuotaionController extends Controller
@@ -37,7 +38,7 @@ class QuotaionController extends Controller
             $quotation->quotation_date = $request->input('quotation_date');
             $quotation->terms_conditions = $request->input('terms_conditions');
             $quotation->total = $request->input('total');
-            $quotation->store_id = session('store_id') ?? 1;
+            $quotation->store_id = session('store_id', Auth::user()->store_id);
             $quotation->quotation_number = 'QTN';
             $quotation->subtotal = 0;
 

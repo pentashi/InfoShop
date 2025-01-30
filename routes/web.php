@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::get('/sold-items', [SaleController::class, 'solditems'])->name('sales.items');
+    Route::get('/sale-mail/{id}', [SaleController::class, 'sendMail']);
 
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');
@@ -102,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments/{type}', [TransactionController::class, 'viewPayments']); //It will be purchases or sales
 
     Route::post('/getpayments/{type}', [TransactionController::class, 'findPayments']); //It will be purchases or sales
-    Route::post('/delete-payment/{type}', [TransactionController::class, 'deletePayment']);
+    Route::post('/delete-payment/{type}', [TransactionController::class, 'deletePayment']); //It will be purchases or sales
     Route::post('/getorderdetails/{type}', [ReportController::class, 'viewOrderDetails']); //It will be purchases or sales
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
@@ -182,17 +183,13 @@ Route::middleware('auth')->group(function () {
         Artisan::call('event:clear');
         // Artisan::call('optimize:clear'); // This command is deprecated
 
-        // Artisan::call('config:cache');
-        // Artisan::call('route:cache');
-        // Artisan::call('view:cache');
-        // Artisan::call('event:cache');
-
         return 'All caches cleared and configurations updated!';
     });
 
     Route::get('/check-update', function () {
         return 'Update';
     });
+    
 });
 
 require __DIR__ . '/auth.php';

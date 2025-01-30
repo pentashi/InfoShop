@@ -315,6 +315,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                     onChange={handleChange}
                                     name="unit"
                                     select
+                                    fullWidth
                                 >
                                     <MenuItem value={"PC"}>PC</MenuItem>
                                     <MenuItem value={"KG"}>KG</MenuItem>

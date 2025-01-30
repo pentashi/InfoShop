@@ -27,7 +27,7 @@ import numeral from "numeral";
 
 import Summaries from "./Partials/Summaries";
 
-export default function Dashboard({ data, logo, version }) {
+export default function Dashboard({ data, logo, version, store_name }) {
     const auth = usePage().props.auth.user;
     const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -303,6 +303,9 @@ export default function Dashboard({ data, logo, version }) {
                                 </Typography>
                                 <Typography variant="h2" color="initial">
                                     {auth.name}
+                                </Typography>
+                                <Typography variant="h4" color="initial">
+                                    {store_name}
                                 </Typography>
                             </Grid>
                         </CardContent>

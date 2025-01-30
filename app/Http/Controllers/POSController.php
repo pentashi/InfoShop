@@ -13,12 +13,16 @@ use App\Models\ProductStock;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\ReloadAndBillMeta;
+use App\Models\Setting;
+use App\Notifications\SaleCreated;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class POSController extends Controller
 {
@@ -46,7 +50,7 @@ class POSController extends Controller
         )
             ->leftJoin('product_batches AS pb', 'products.id', '=', 'pb.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'pb.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
-            ->where('product_stocks.store_id', session('store_id'));
+            ->where('product_stocks.store_id', session('store_id', Auth::user()->store_id));
 
 
         // Apply category filter if set
@@ -93,7 +97,7 @@ class POSController extends Controller
     public function index()
     {
         $contacts = Contact::select('id', 'name', 'balance')->customers()->get();
-        $currentStore = Store::find(session('store_id'));
+        $currentStore = Store::find(session('store_id', Auth::user()->store_id));
 
         if (!$currentStore) {
             return redirect()->route('store'); // Adjust the route name as necessary
@@ -192,7 +196,7 @@ class POSController extends Controller
         DB::beginTransaction();
         try {
             $sale = Sale::create([
-                'store_id' => session('store_id'), // Assign appropriate store ID
+                'store_id' => session('store_id', Auth::user()->store_id), // Assign appropriate store ID
                 'reference_id' => $reference_id,
                 'sale_type' => $sale_type,
                 'contact_id' => $customerID, // Assign appropriate customer ID
@@ -328,6 +332,7 @@ class POSController extends Controller
             }
 
             DB::commit();
+
             return response()->json(['message' => 'Sale recorded successfully!', 'sale_id' => $sale->id], 201);
         } catch (\Exception $e) {
             // Rollback transaction in case of error

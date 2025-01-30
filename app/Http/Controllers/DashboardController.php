@@ -13,9 +13,9 @@ use App\Models\Sale;
 use App\Models\Transaction;
 use App\Models\Expense;
 use App\Models\Setting;
-
+use App\Models\Store;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function index()
@@ -27,6 +27,8 @@ class DashboardController extends Controller
         $settings = Setting::whereIn('meta_key', ['shop_logo', 'misc_settings'])->get();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
         $settingArray['shop_logo'] = $imageUrl . $settingArray['shop_logo'];
+        $store_id = session('store_id', Auth::user()->store_id);
+        $store_name = Store::where('id', $store_id)->value('name');
 
         if (isset($settingArray['misc_settings'])) {
             $miscSettings = json_decode($settingArray['misc_settings'], true);
@@ -77,6 +79,7 @@ class DashboardController extends Controller
             'data' => $data,
             'logo' => $settingArray['shop_logo'],
             'version' => $version,
+            'store_name' => $store_name
         ]);
     }
 

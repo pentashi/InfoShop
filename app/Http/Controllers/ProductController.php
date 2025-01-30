@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Attachment;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -368,7 +369,7 @@ class ProductController extends Controller
 
         // it means, If it is a sale
         if ($is_purchase == 0) {
-            $products = $products->where('product_stocks.store_id', session('store_id'));
+            $products = $products->where('product_stocks.store_id', session('store_id', Auth::user()->store_id));
         }
 
         $products = $products

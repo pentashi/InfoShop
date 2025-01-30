@@ -382,8 +382,10 @@ class TransactionController extends Controller
 
                 if ($reference->amount_received != $reference->total_amount) {
                     $reference->status = 'pending';
+                    $reference->payment_status = 'pending';
                 } else {
                     $reference->status = 'completed';
+                    $reference->payment_status = 'completed';
                 }
                 $reference->save();
             }
@@ -402,8 +404,10 @@ class TransactionController extends Controller
 
                         if ($reference->amount_received != $reference->total_amount) {
                             $reference->status = 'pending';
+                            $reference->payment_status = 'pending';
                         } else {
                             $reference->status = 'completed';
+                            $reference->payment_status = 'completed';
                         }
                         $reference->save();
                     }

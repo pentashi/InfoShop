@@ -21,11 +21,11 @@ export default function CashCheckoutDialog({ disabled }) {
     const return_sale = usePage().props.return_sale;
     const return_sale_id = usePage().props.sale_id;
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
-    const {selectedCustomer, saleDate} = useContext(SharedContext); 
+    const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [loading, setLoading] = useState(false);
 
     const [discount, setDiscount] = useState(0);
-    const [amountRecieved, setAmountRecieved]=useState(0);
+    const [amountRecieved, setAmountRecieved] = useState(0);
 
     const handleDiscountChange = (event) => {
         const inputDiscount = event.target.value;
@@ -53,7 +53,7 @@ export default function CashCheckoutDialog({ disabled }) {
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
         formJson.cartItems = cartState;
-        formJson.profit_amount = totalProfit-discount; //total profit is from the sale items, but we apply discount for the bill also
+        formJson.profit_amount = totalProfit - discount; //total profit is from the sale items, but we apply discount for the bill also
         formJson.sale_date = saleDate;
         formJson.payment_method = 'Cash'
         formJson.contact_id = selectedCustomer.id
@@ -61,38 +61,45 @@ export default function CashCheckoutDialog({ disabled }) {
         formJson.return_sale_id = return_sale_id;
 
         axios.post('/pos/checkout', formJson)
-        .then((resp) => {
-            Swal.fire({
-                title: "Success!",
-                text: resp.data.message,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .then((resp) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                emptyCart() //Clear the cart from the Context API
+                setAmountRecieved(0)
+                setDiscount(0)
+                router.visit('/reciept/' + resp.data.sale_id)
+                axios.get('/sale-mail/' + resp.data.sale_id)
+                    .then((resp) => {
+                        console.log("Email sent successfully:", resp.data.success);
+                    })
+                    .catch((error) => {
+                        console.error("Failed to send email:", error.response.data.error);
+                    });
+                setOpen(false)
+            })
+            .catch((error) => {
+                // console.error("Submission failed with errors:", error);
+                Swal.fire({
+                    title: "Failed!",
+                    text: error.response.data.error,
+                    icon: "error",
+                    showConfirmButton: true,
+                    // timer: 2000,
+                    // timerProgressBar: true,
+                });
+                console.log(error);
+            }).finally(() => {
+                setLoading(false); // Reset submitting state
             });
-            emptyCart() //Clear the cart from the Context API
-            setAmountRecieved(0)
-            setDiscount(0)
-            router.visit('/reciept/'+resp.data.sale_id)
-            setOpen(false)
-        })
-        .catch((error) => {
-            // console.error("Submission failed with errors:", error);
-            Swal.fire({
-                title: "Failed!",
-                text: error.response.data.error,
-                icon: "error",
-                showConfirmButton: true,
-                // timer: 2000,
-                // timerProgressBar: true,
-            });
-            console.log(error);
-        }).finally(() => {
-            setLoading(false); // Reset submitting state
-        });
     };
 
-    const discountPercentage=()=>{
+    const discountPercentage = () => {
         if (discount < 0 || discount > 100) {
             alert("Discount must be between 0 and 100");
             return;
@@ -123,7 +130,7 @@ export default function CashCheckoutDialog({ disabled }) {
                 PaperProps={{
                     component: 'form',
                     onSubmit: handleSubmit,
-                  }}
+                }}
             >
                 <DialogTitle id="alert-dialog-title">
                     {"Cash Checkout"}
@@ -141,7 +148,7 @@ export default function CashCheckoutDialog({ disabled }) {
                     <CloseIcon />
                 </IconButton>
                 <DialogContent>
-                <TextField 
+                    <TextField
                         id="txtAmount"
                         fullWidth
                         autoFocus
@@ -151,19 +158,19 @@ export default function CashCheckoutDialog({ disabled }) {
                         name="amount_recieved"
                         onFocus={event => {
                             event.target.select();
-                          }}
+                        }}
                         // onChange={(e)=>{setAmountRecieved(e.target.value)}}
 
                         onChange={(event) => {
                             const value = event.target.value;
-                            
+
                             const numericValue = parseFloat(value); // Convert to number
                             setAmountRecieved(
-                                    return_sale && numericValue > 0 ? -numericValue : numericValue
+                                return_sale && numericValue > 0 ? -numericValue : numericValue
                             );
                         }}
 
-                        sx={{ input: {textAlign: "center", fontSize:'2rem'},}}
+                        sx={{ input: { textAlign: "center", fontSize: '2rem' }, }}
                         value={amountRecieved}
                         slotProps={{
                             input: {
@@ -172,9 +179,9 @@ export default function CashCheckoutDialog({ disabled }) {
                                 startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
                             },
                         }}
-                />
+                    />
 
-                <TextField
+                    <TextField
                         fullWidth
                         id="txtDiscount"
                         // label="Discount"
@@ -183,21 +190,21 @@ export default function CashCheckoutDialog({ disabled }) {
                         label="Discount"
                         variant="outlined"
                         value={discount}
-                        sx={{ mt: "2rem", input: {textAlign: "center", fontSize:'2rem'},}}
+                        sx={{ mt: "2rem", input: { textAlign: "center", fontSize: '2rem' }, }}
                         onChange={handleDiscountChange}
                         onFocus={event => {
                             event.target.select();
-                          }}
+                        }}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,
                             },
-                            input:{
+                            input: {
                                 startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                endAdornment:(
+                                endAdornment: (
                                     <InputAdornment position="start">
                                         <IconButton color="primary" onClick={discountPercentage}>
-                                          <PercentIcon fontSize="large"></PercentIcon>
+                                            <PercentIcon fontSize="large"></PercentIcon>
                                         </IconButton>
                                     </InputAdornment>
                                 ),
@@ -207,49 +214,49 @@ export default function CashCheckoutDialog({ disabled }) {
 
                     <Box className="flex items-center">
 
-                    {/* Net total (after discount) */}
-                    <TextField
-                        fullWidth
-                        label="Payable Amount"
-                        variant="outlined"
-                        name="net_total"
-                        value={(cartTotal-discount).toFixed(2)}
-                        sx={{ mt: "2rem", input: {textAlign: "center", fontSize:'2rem'},}}
-                        slotProps={{
-                            input: {
-                                readOnly: true,
-                                style: { textAlign: 'center' },
-                                startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                            },
-                        }}
-                    />
-                    
-                    <TextField
-                        id="txtChange"
-                        fullWidth
-                        label="Change"
-                        variant="outlined"
-                        name="change_amount"
-                        sx={{ mt: "2rem", ml:'1rem', input: {textAlign: "center", fontSize:'2rem'} }}
-                        value={(amountRecieved-(cartTotal-discount)).toFixed(2)}//Change calculation
-                        slotProps={{
-                            input: {
-                                readOnly: true,
-                                startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                            },
-                        }}
-                    />
+                        {/* Net total (after discount) */}
+                        <TextField
+                            fullWidth
+                            label="Payable Amount"
+                            variant="outlined"
+                            name="net_total"
+                            value={(cartTotal - discount).toFixed(2)}
+                            sx={{ mt: "2rem", input: { textAlign: "center", fontSize: '2rem' }, }}
+                            slotProps={{
+                                input: {
+                                    readOnly: true,
+                                    style: { textAlign: 'center' },
+                                    startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                },
+                            }}
+                        />
+
+                        <TextField
+                            id="txtChange"
+                            fullWidth
+                            label="Change"
+                            variant="outlined"
+                            name="change_amount"
+                            sx={{ mt: "2rem", ml: '1rem', input: { textAlign: "center", fontSize: '2rem' } }}
+                            value={(amountRecieved - (cartTotal - discount)).toFixed(2)}//Change calculation
+                            slotProps={{
+                                input: {
+                                    readOnly: true,
+                                    startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                },
+                            }}
+                        />
                     </Box>
 
-                    <TextField 
+                    <TextField
                         fullWidth
                         variant="outlined"
                         label={'Note'}
                         name="note"
                         multiline
-                        sx={{ mt:'2rem',}}
+                        sx={{ mt: '2rem', }}
                     />
- 
+
                 </DialogContent>
                 <DialogActions>
                     <Button
