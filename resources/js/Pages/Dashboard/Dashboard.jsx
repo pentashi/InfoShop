@@ -68,6 +68,9 @@ export default function Dashboard({ data, logo, version, store_name }) {
             }
         >
             <Head title="Dashboard" />
+
+            {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
+            
             <Grid size={12} spacing={{xs:0.5, sm:1}} flexDirection={'row'} container sx={{ mb: 2 }}>
                 {parseFloat(data.lowStock) != 0 && (
                     <Grid size={{ xs: 12, sm: 3 }}>
@@ -98,7 +101,10 @@ export default function Dashboard({ data, logo, version, store_name }) {
                     </Grid>
                 )}
             </Grid>
+            )}
+            
 
+            {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
             <Grid
                 container
                 spacing={2}
@@ -183,6 +189,8 @@ export default function Dashboard({ data, logo, version, store_name }) {
                     </Card>
                 </Grid>
             </Grid>
+            )}
+
 
             <Grid
                 container
@@ -190,6 +198,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 sx={{ mt: "3rem", paddingBottom: 4 }}
                 spacing={2}
             >
+                {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
                 <Grid size={{ xs: 12, sm: 8, md: 4 }}>
                     <Card sx={{ width: "100%" }}>
                         <CardContent>
@@ -288,6 +297,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
                         </CardContent>
                     </Card>
                 </Grid>
+                )}
                 <Grid size={{ xs: 12, sm: 4, md: 4 }}>
                     <Card sx={{ width: "100%", height: "100%" }}>
                         <CardContent>
@@ -317,7 +327,9 @@ export default function Dashboard({ data, logo, version, store_name }) {
                     </Card>
                 </Grid>
 
+                {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
                 <Summaries></Summaries>
+                )}
             </Grid>
 
             <Box sx={{ justifyContent: 'end', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px' }}>

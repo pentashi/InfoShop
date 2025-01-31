@@ -66,10 +66,10 @@ export default function CartItemModal() {
         // Update other fields (e.g., quantity, cost, price)
         setFormState((prevState) => {
             let newState = { ...prevState };
-            if(name === "quantity" && value === "") {
+            if (name === "quantity" && value === "") {
                 newState.quantity = 0;
             }
-            
+
             if (name === "fixed_commission") {
                 // We store the percentage value of fixed_commission, but it's only used for calculation
                 newState.meta_data = {
@@ -101,7 +101,7 @@ export default function CartItemModal() {
                     // Recalculate the cost if price or commission changes
                     const calculatedCost =
                         parseFloat(newState.price) -
-                            parseFloat(newState.commission) || 0;
+                        parseFloat(newState.commission) || 0;
                     newState.cost = calculatedCost; // Update the cost field
                 }
             }
@@ -136,19 +136,19 @@ export default function CartItemModal() {
             >
                 <DialogTitle id="alert-dialog-title">
                     {formState.name}
-                   
+
                     {formState.stock_quantity && formState.product_type !== "reload" &&
-                    formState.stock_quantity !== "" ? (
+                        formState.stock_quantity !== "" ? (
                         <>
                             <Button
-                            inert
-                             disableElevation={true}
+                                inert
+                                disableElevation={true}
                                 color={
                                     parseFloat(formState.stock_quantity) <= 0
                                         ? "error"
                                         : parseFloat(formState.stock_quantity) <= parseFloat(formState.alert_quantity)
-                                        ? "warning"
-                                        : "primary"
+                                            ? "warning"
+                                            : "primary"
                                 }
                                 variant="contained"
                                 sx={{ ml: 1.5 }}
@@ -188,7 +188,7 @@ export default function CartItemModal() {
                             onChange={handleInputChange}
                             inert
                         />
-                        <input type="hidden" name="id" value={formState.id} onChange={handleInputChange} inert/>
+                        <input type="hidden" name="id" value={formState.id} onChange={handleInputChange} inert />
 
                         <Grid size={6}>
                             {formState.product_type !== "reload" ? (
@@ -208,7 +208,7 @@ export default function CartItemModal() {
                                                 name: "quantity",
                                                 value:
                                                     return_sale &&
-                                                    numericValue > 0
+                                                        numericValue > 0
                                                         ? -numericValue
                                                         : numericValue,
                                             },
@@ -390,70 +390,70 @@ export default function CartItemModal() {
                         )}
                         {formState.product_type === "reload" && (
                             <>
-                            <Grid size={4}>
-                                <TextField
-                                    fullWidth
-                                    type="number"
-                                    name="reload"
-                                    label="Reload amount"
-                                    variant="outlined"
-                                    required
-                                    value={formState.price - formState.additional_commission}
-                                    onChange={handleInputChange}
-                                    sx={{
-                                        mt: "0.5rem",
-                                        input: { fontSize: "1rem", fontWeight:'bold'},
-                                    }}
-                                    onFocus={(event) => {
-                                        event.target.select();
-                                    }}
-                                    slotProps={{
-                                        inputLabel: {
-                                            shrink: true,
-                                        },
-                                        input: {
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    Rs.
-                                                </InputAdornment>
-                                            ),
-                                            readOnly: true,
-                                        },
-                                    }}
-                                />
-                            </Grid>
-                            <Grid size={4}>
-                                <TextField
-                                    fullWidth
-                                    type="number"
-                                    name="commission"
-                                    label="Total Commission"
-                                    variant="outlined"
-                                    required
-                                    value={formState.commission}
-                                    onChange={handleInputChange}
-                                    sx={{
-                                        mt: "0.5rem",
-                                        input: { fontSize: "1rem" },
-                                    }}
-                                    onFocus={(event) => {
-                                        event.target.select();
-                                    }}
-                                    slotProps={{
-                                        inputLabel: {
-                                            shrink: true,
-                                        },
-                                        input: {
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    Rs.
-                                                </InputAdornment>
-                                            ),
-                                            readOnly: true,
-                                        },
-                                    }}
-                                />
-                            </Grid>
+                                <Grid size={4}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        name="reload"
+                                        label="Reload amount"
+                                        variant="outlined"
+                                        required
+                                        value={formState.price - formState.additional_commission}
+                                        onChange={handleInputChange}
+                                        sx={{
+                                            mt: "0.5rem",
+                                            input: { fontSize: "1rem", fontWeight: 'bold' },
+                                        }}
+                                        onFocus={(event) => {
+                                            event.target.select();
+                                        }}
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                            input: {
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        Rs.
+                                                    </InputAdornment>
+                                                ),
+                                                readOnly: true,
+                                            },
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid size={4}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        name="commission"
+                                        label="Total Commission"
+                                        variant="outlined"
+                                        required
+                                        value={formState.commission}
+                                        onChange={handleInputChange}
+                                        sx={{
+                                            mt: "0.5rem",
+                                            input: { fontSize: "1rem" },
+                                        }}
+                                        onFocus={(event) => {
+                                            event.target.select();
+                                        }}
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                            input: {
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        Rs.
+                                                    </InputAdornment>
+                                                ),
+                                                readOnly: true,
+                                            },
+                                        }}
+                                    />
+                                </Grid>
                             </>
                         )}
                         {formState.product_type !== "reload" && (
@@ -489,7 +489,7 @@ export default function CartItemModal() {
                                 />
                             </Grid>
                         )}
-                        <Grid size={formState.product_type !== "reload"?6:4}>
+                        <Grid size={formState.product_type !== "reload" ? 6 : 4}>
                             <TextField
                                 fullWidth
                                 type={showCost ? "number" : "text"}
@@ -549,40 +549,46 @@ export default function CartItemModal() {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{ paddingY: "10px", fontSize: "1.2rem" }}
-                        type="submit"
-                        color={formState.quantity < 0 ? "error" : "primary"}
-                    >
-                        {formState.quantity < 0 ? "RETURN" : "UPDATE CART"}
-                    </Button>
+                    <Grid container spacing={1} size={12} justifyContent={'center'} width={'100%'}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                                type="submit"
+                                color={formState.quantity < 0 ? "error" : "primary"}
+                            >
+                                {formState.quantity < 0 ? "RETURN" : "UPDATE CART"}
+                            </Button>
+                        </Grid>
 
-                    {formState.quantity > 0 && (
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{ paddingY: "10px", fontSize: "1.2rem" }}
-                            type="button"
-                            color={"error"}
-                            onClick={(e) => {
-                                // Update the quantity to a negative value before submitting the form
-                                const updatedFormState = {
-                                    ...formState,
-                                    quantity: -Math.abs(formState.quantity), // Ensure quantity is negative
-                                };
+                        {formState.quantity > 0 && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                                    type="button"
+                                    color={"error"}
+                                    onClick={(e) => {
+                                        // Update the quantity to a negative value before submitting the form
+                                        const updatedFormState = {
+                                            ...formState,
+                                            quantity: -Math.abs(formState.quantity), // Ensure quantity is negative
+                                        };
 
-                                // Submit the updated form state
-                                updateCartItem(updatedFormState);
+                                        // Submit the updated form state
+                                        updateCartItem(updatedFormState);
 
-                                // Close the form or dialog
-                                handleClose();
-                            }}
-                        >
-                            RETURN
-                        </Button>
-                    )}
+                                        // Close the form or dialog
+                                        handleClose();
+                                    }}
+                                >
+                                    RETURN
+                                </Button>
+                            </Grid>
+                        )}
+                    </Grid>
                 </DialogActions>
             </Dialog>
         </React.Fragment>

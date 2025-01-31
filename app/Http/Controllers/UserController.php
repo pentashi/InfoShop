@@ -55,7 +55,10 @@ class UserController extends Controller
             'name' => $request->user_role,  // Set the role name from the request
         ]);
 
-        $permissions = Permission::whereIn('name', $request->permissions)->get();
+        $permissions = collect($request->permissions)->map(function ($permission) {
+            return Permission::firstOrCreate(['name' => $permission]);
+        });
+
         // Attach the permissions to the new role
         $role->syncPermissions($permissions);
 
@@ -79,7 +82,9 @@ class UserController extends Controller
         $role = Role::findOrFail($roleId);
 
          // Sync permissions to the role (replace the existing permissions with the new ones)
-        $permissions = Permission::whereIn('name', $request->permissions)->get();
+         $permissions = collect($request->permissions)->map(function ($permission) {
+            return Permission::firstOrCreate(['name' => $permission]);
+        });
         $role->syncPermissions($permissions);
 
         // Redirect back to the user roles page with success message

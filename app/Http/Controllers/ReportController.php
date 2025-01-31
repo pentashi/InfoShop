@@ -24,10 +24,11 @@ class ReportController extends Controller
     {
         $transaction_date = $request->only(['transaction_date']);
         $user = $request->user;
+        $store_id = $request->store_id;
 
         if (empty($transaction_date)) $transaction_date = Carbon::today()->toDateString();
 
-        $stores = Store::select('id', 'name')->get();
+        $stores = Store::forCurrentUser()->select('id', 'name')->get();
         if (Auth::user()->user_role !== 'admin' && Auth::user()->user_role !== 'super-admin') {
             $users = User::where('id', Auth::id())->select('id', 'name')->get();
         } else {
@@ -66,10 +67,16 @@ class ReportController extends Controller
             $cashLogs = $cashLogs->where('cash_logs.created_by', $user);
         }
 
+        if(isset($store_id) && $store_id !== 'All') {
+            $cashLogs = $cashLogs->where('cash_logs.store_id', $store_id);
+        }
+
         if (Auth::user()->user_role === 'admin' || Auth::user()->user_role === 'super-admin') {
-            // Admin or super-admin can access all cash logs, no filtering needed
+            
         } else {
-            // $cashLogs = $cashLogs->where('cash_logs.created_by', Auth::id());
+            if(!isset($store_id)) {
+                $cashLogs = $cashLogs->where('cash_logs.store_id', Auth::user()->store_id);
+            }
         }
 
 
@@ -135,6 +142,7 @@ class ReportController extends Controller
     {
         $start_date = $request->input('start_date', Carbon::now()->toDateString());
         $end_date = $request->input('end_date', Carbon::today()->toDateString());
+        $store_id = $request->input('store');
 
         // Filter Sales within the specified date range
         $salesQuery = Sale::with(['transactions' => function ($query) use ($start_date, $end_date) {
@@ -148,6 +156,9 @@ class ReportController extends Controller
             ->whereBetween('sale_date', [$start_date, $end_date]) // Filter Sales within the specified date range
             ->orderBy('sale_date', 'desc');
 
+        if (isset($store_id) && $store_id !== 'All') {
+            $salesQuery->where('store_id', $store_id);
+        }
         // Execute the query to get the sales
         $sales = $salesQuery->get();
         $report = [];
@@ -184,7 +195,7 @@ class ReportController extends Controller
 
         // return response()->json($report);
 
-        $stores = Store::select('id', 'name')->get();
+        $stores = Store::forCurrentUser()->select('id', 'name')->get();
         return Inertia::render('Report/SalesReport', [
             'stores' => $stores,
             'report' => $report,
@@ -292,7 +303,7 @@ class ReportController extends Controller
 
         // return response()->json($report)
 
-        $stores = Store::select('id', 'name')->get();
+        $stores = Store::forCurrentUser()->select('id', 'name')->get();
         $contacts = Contact::select('id', 'name', 'balance')->customers()->get();
         $contact = Contact::find($contact_id);
         return Inertia::render('Report/ContactReport', [
@@ -405,7 +416,7 @@ class ReportController extends Controller
             return strtotime($a['date']) - strtotime($b['date']);
         });
 
-        $stores = Store::select('id', 'name')->get();
+        $stores = Store::forCurrentUser()->select('id', 'name')->get();
         $contacts = Contact::select('id', 'name', 'balance')->vendors()->get();
         $contact = Contact::find($contact_id);
         return Inertia::render('Report/ContactReport', [

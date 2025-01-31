@@ -82,7 +82,7 @@ class SaleCreated extends Notification
                 "Created at: " . \Carbon\Carbon::parse($this->sale['created_at'])->format('Y-m-d h:i A') . "\n"
             )
             ->token($this->botToken)
-            ->button('View Sale', url('/sales/'.$this->sale['id']));  // Optional button to view the sale
+            ->button('View Sale', url('/reciept/'.$this->sale['id']));  // Optional button to view the sale
     }
 
     /**

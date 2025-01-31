@@ -47,15 +47,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function DailyReport({ logs, stores, users }) {
     const auth = usePage().props.auth.user
     const [dataLogs, setDataLogs] = useState(logs);
-    const [selectedUser, setSelectedUser] = useState(auth.user_role === "admin" ? "All" : auth.id);
-    const [transaction_date, setTransactionDate] = useState(
-        dayjs().format("YYYY-MM-DD")
-    );
     const [modalOpen, setModalOpen] = useState(false);
     const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
     const [selectedTransaction, setSelectedTransaction] = useState(null);
+    const [formState, setFormState] = useState({
+        user_id: auth.user_role === "admin" ? "All" : auth.id,
+        transaction_date: dayjs().format("YYYY-MM-DD"),
+        store_id: auth.user_role === "admin" ? "All" : auth.store_id,
+    });
 
-    const refreshLogs = (url = window.location.pathname, selected_date = transaction_date, user=selectedUser) => {
+    const refreshLogs = (url = window.location.pathname, transaction_date = formState.transaction_date, user = formState.user_id, store_id = formState.store_id) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -67,16 +68,25 @@ export default function DailyReport({ logs, stores, users }) {
         router.get(
             url,
             {
-                transaction_date: selected_date,
+                transaction_date: transaction_date,
                 user: user,
+                store_id: store_id
             },
             options
         );
     };
 
-    useEffect(() => {
-        // refreshLogs();
-    }, [transaction_date])
+    const handleFieldChange = (event) => {
+        const { name, value } = event.target;
+        setFormState((prevState) => {
+            const updatedFormState = {
+                ...prevState,
+                [name]: value,
+            };
+            refreshLogs(window.location.pathname, updatedFormState.transaction_date, updatedFormState.user_id, updatedFormState.store_id);
+            return updatedFormState;
+        });
+    }
 
     const totalCashIn = dataLogs.reduce((sum, row) => sum + parseFloat(row.cash_in), 0);
     const totalCashOut = dataLogs.reduce((sum, row) => sum + parseFloat(row.cash_out), 0);
@@ -106,26 +116,41 @@ export default function DailyReport({ logs, stores, users }) {
                                 shrink: true,
                             },
                         }}
-                        value={transaction_date}
-                        onChange={(e) => {
-                            const newDate = e.target.value;
-                            setTransactionDate(newDate); // Update the state with the new date
-                            refreshLogs(window.location.pathname, newDate)
-                        }}
+                        value={formState.transaction_date}
+                        onChange={handleFieldChange}
                         required
                     />
                 </Grid>
+                <Grid size={{ xs: 12, md: 2, sm: 3 }}>
+                    <TextField
+                        fullWidth
+                        select
+                        value={formState.store_id}
+                        label="Store"
+                        onChange={handleFieldChange}
+                        required
+                        name="store_id"
+                    >
+                        {auth.user_role === 'admin' || auth.user_role === 'super-admin' ? (
+                            <MenuItem value="All">All</MenuItem>
+                        ) : null}
+                        {stores?.map((store) => (
+                            <MenuItem
+                                key={store.id}
+                                value={store.id}
+                            >
+                                {store.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid>
                 <Grid size={{ xs: 8, sm: 3, md: 2 }}>
                     <TextField
-                        value={selectedUser}
+                        value={formState.user_id}
                         fullWidth
                         name="user_id"
                         label="User/Cashier"
-                        onChange={(e) => {
-                            const user = e.target.value;
-                            setSelectedUser(user); // Update the state with the new user
-                            refreshLogs(window.location.pathname, transaction_date, user);
-                        }}
+                        onChange={handleFieldChange}
                         select
                     >
                         {/* {auth.user_role === 'admin' || auth.user_role === 'super-admin' ? (
@@ -268,6 +293,7 @@ export default function DailyReport({ logs, stores, users }) {
                 open={modalOpen}
                 setOpen={setModalOpen}
                 stores={stores}
+                auth={auth}
                 refreshTransactions={refreshLogs}
             />
 

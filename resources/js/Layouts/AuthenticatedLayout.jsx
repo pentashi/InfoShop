@@ -51,6 +51,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
     const modules = usePage().props.modules;
     const pageLabel = usePage().props.pageLabel;
     const pathname = usePage().url;
+    const permissions = usePage().props.userPermissions;
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
@@ -131,7 +132,7 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         ]}
                     >
                         {icontype && icontype === 'fa' ? (
-                            <FontAwesomeIcon icon={Icon} size="xl"/>
+                            <FontAwesomeIcon icon={Icon} size="xl" />
                         ) : (
                             Icon && <Icon />
                         )}
@@ -163,6 +164,8 @@ function AuthenticatedLayout({ header, children, ...props }) {
             </Toolbar>
             <Divider />
             <List>
+
+
                 <NavItem
                     href="/dashboard"
                     icon={DashboardIcon}
@@ -170,27 +173,35 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/dashboard")}
                 />
-                <NavItem
-                    href="/pos"
-                    icon={PointOfSaleIcon}
-                    label="POS"
-                    open={open}
-                    selected={isSelected("/pos")}
-                />
-                <NavItem
-                    href="/products"
-                    icon={InventoryIcon}
-                    label="Products"
-                    open={open}
-                    selected={isSelected("/products")}
-                />
-                <NavItem
-                    href="/sales"
-                    icon={PaidIcon}
-                    label="Sales"
-                    open={open}
-                    selected={isSelected("/sales")}
-                />
+
+                {permissions.includes("pos") && (
+                    <NavItem
+                        href="/pos"
+                        icon={PointOfSaleIcon}
+                        label="POS"
+                        open={open}
+                        selected={isSelected("/pos")}
+                    />
+                )}
+                {permissions.includes("products") && (
+                    <NavItem
+                        href="/products"
+                        icon={InventoryIcon}
+                        label="Products"
+                        open={open}
+                        selected={isSelected("/products")}
+                    />
+                )}
+
+                {permissions.includes("sales") && (
+                    <NavItem
+                        href="/sales"
+                        icon={PaidIcon}
+                        label="Sales"
+                        open={open}
+                        selected={isSelected("/sales")}
+                    />
+                )}
                 <NavItem
                     href="/reports/dailycash"
                     icon={WorkIcon}
@@ -198,122 +209,148 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     open={open}
                     selected={isSelected("/reports/dailycash")}
                 />
-                <NavItem
-                    href="/customers"
-                    icon={CustomerIcon}
-                    label="Customers"
-                    open={open}
-                    selected={isSelected("/customers")}
-                />
-                <NavItem
-                    href="/vendors"
-                    icon={VendorIcon}
-                    label="Suppliers"
-                    open={open}
-                    selected={isSelected("/vendors")}
-                />
-                
-                <NavItem
-                    href="/collections"
-                    icon={AccountTreeIcon}
-                    label="Collections"
-                    open={open}
-                    selected={isSelected("/collections")}
-                />
 
-                <NavItem
-                    href="/expenses"
-                    icon={AccountBalanceWalletIcon}
-                    label="Expenses"
-                    open={open}
-                    selected={isSelected("/expenses")}
-                />
-
-                <NavItem
-                    href="/quotations"
-                    icon={faFileInvoice}
-                    icontype={'fa'}
-                    label="Quotations"
-                    open={open}
-                    selected={isSelected("/quotations")}
-                />
-
-                {modules.includes("Reloads") && (
-                <NavItem
-                    href="/reloads"
-                    icon={PhoneForwardedIcon}
-                    label="Reloads"
-                    open={open}
-                    selected={isSelected("/reloads")}
-                />
+                {permissions.includes("customers") && (
+                    <NavItem
+                        href="/customers"
+                        icon={CustomerIcon}
+                        label="Customers"
+                        open={open}
+                        selected={isSelected("/customers")}
+                    />
+                )}
+                {permissions.includes("vendors") && (
+                    <NavItem
+                        href="/vendors"
+                        icon={VendorIcon}
+                        label="Suppliers"
+                        open={open}
+                        selected={isSelected("/vendors")}
+                    />
+                )}
+                {permissions.includes("collections") && (
+                    <NavItem
+                        href="/collections"
+                        icon={AccountTreeIcon}
+                        label="Collections"
+                        open={open}
+                        selected={isSelected("/collections")}
+                    />
                 )}
 
-                {modules.includes("Cheques") && (
-                <NavItem
-                    href="/cheques?status=pending"
-                    icon={faMoneyCheck}
-                    icontype={'fa'}
-                    label="Cheques"
-                    open={open}
-                    selected={isSelected("/cheques")}
-                />
+                {permissions.includes("expenses") && (
+                    <NavItem
+                        href="/expenses"
+                        icon={AccountBalanceWalletIcon}
+                        label="Expenses"
+                        open={open}
+                        selected={isSelected("/expenses")}
+                    />
                 )}
-                <NavItem
-                    href="/sold-items"
-                    icon={ShoppingCartCheckoutIcon}
-                    label="Sold Items"
-                    open={open}
-                    selected={isSelected("/sold-items")}
-                />
-                <NavItem
-                    href="/purchases"
-                    icon={AddShoppingCartIcon}
-                    label="Purchases"
-                    open={open}
-                    selected={isSelected("/purchases")}
-                />
-                <NavItem
-                    href="/payments/sales"
-                    icon={PaymentsIcon}
-                    label="Payments"
-                    open={open}
-                    selected={isSelected("/payments")}
-                />
-                <NavItem
-                    href="/stores"
-                    icon={StoreIcon}
-                    label="Stores"
-                    open={open}
-                    selected={isSelected("/stores")}
-                />
-                <NavItem
-                    href="/employees"
-                    icon={BadgeIcon}
-                    label="Employees"
-                    open={open}
-                    selected={isSelected("/employees")}
-                />
-                <NavItem
-                    href="/payroll"
-                    icon={ReceiptIcon}
-                    label="Payroll"
-                    open={open}
-                    selected={isSelected("/payroll")}
-                />
-                <NavItem
-                    href="/media"
-                    icon={PermMediaIcon}
-                    label="Media"
-                    open={open}
-                    selected={isSelected("/media")}
-                />
-                <NavItem
-                    href="/settings"
-                    icon={SettingsIcon}
-                    label="Settings"
-                    open={open}
-                    selected={isSelected("/settings")}
-                />
+
+                {permissions.includes("quotations") && (
+                    <NavItem
+                        href="/quotations"
+                        icon={faFileInvoice}
+                        icontype={'fa'}
+                        label="Quotations"
+                        open={open}
+                        selected={isSelected("/quotations")}
+                    />
+                )}
+
+                {(permissions.includes("reloads") && modules.includes("Reloads")) && (
+                    <NavItem
+                        href="/reloads"
+                        icon={PhoneForwardedIcon}
+                        label="Reloads"
+                        open={open}
+                        selected={isSelected("/reloads")}
+                    />
+                )}
+
+                {(permissions.includes("cheques") && modules.includes("Cheques")) && (
+                    <NavItem
+                        href="/cheques?status=pending"
+                        icon={faMoneyCheck}
+                        icontype={'fa'}
+                        label="Cheques"
+                        open={open}
+                        selected={isSelected("/cheques")}
+                    />
+                )}
+                {permissions.includes("sold-items") && (
+                    <NavItem
+                        href="/sold-items"
+                        icon={ShoppingCartCheckoutIcon}
+                        label="Sold Items"
+                        open={open}
+                        selected={isSelected("/sold-items")}
+                    />
+                )}
+                {permissions.includes("purchases") && (
+                    <NavItem
+                        href="/purchases"
+                        icon={AddShoppingCartIcon}
+                        label="Purchases"
+                        open={open}
+                        selected={isSelected("/purchases")}
+                    />
+                )}
+                {permissions.includes("payments") && (
+                    <NavItem
+                        href="/payments/sales"
+                        icon={PaymentsIcon}
+                        label="Payments"
+                        open={open}
+                        selected={isSelected("/payments")}
+                    />
+                )}
+                {permissions.includes("stores") && (
+                    <NavItem
+                        href="/stores"
+                        icon={StoreIcon}
+                        label="Stores"
+                        open={open}
+                        selected={isSelected("/stores")}
+                    />
+                )}
+                {permissions.includes("employees") && (
+                    <NavItem
+                        href="/employees"
+                        icon={BadgeIcon}
+                        label="Employees"
+                        open={open}
+                        selected={isSelected("/employees")}
+                    />
+                )}
+                {permissions.includes("payroll") && (
+                    <NavItem
+                        href="/payroll"
+                        icon={ReceiptIcon}
+                        label="Payroll"
+                        open={open}
+                        selected={isSelected("/payroll")}
+                    />
+                )}
+                {permissions.includes("media") && (
+                    <NavItem
+                        href="/media"
+                        icon={PermMediaIcon}
+                        label="Media"
+                        open={open}
+                        selected={isSelected("/media")}
+                    />
+                )}
+                {permissions.includes("settings") && (
+                    <NavItem
+                        href="/settings"
+                        icon={SettingsIcon}
+                        label="Settings"
+                        open={open}
+                        selected={isSelected("/settings")}
+                    />
+                )}
                 <NavItem
                     href="/profile"
                     icon={ManageAccountsIcon}

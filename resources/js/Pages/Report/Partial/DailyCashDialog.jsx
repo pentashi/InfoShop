@@ -9,31 +9,28 @@ import {
     TextField,
     Grid2 as Grid,
     Divider,
-    Select,
-    InputLabel,
-    FormControl,
     MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import Swal from "sweetalert2";
-
-// Initial state of the form
-const initialFormState = {
-    amount: 0,
-    transaction_date: new Date().toISOString().substring(0, 10), // Today's date in 'YYYY-MM-DD' format
-    description: "",
-    store_id: 1,
-    transaction_type: "deposit", // Added transaction_type
-};
-
+import dayjs from "dayjs";
 export default function DailyCashDialog({
     open,
     setOpen,
     stores,
     refreshTransactions,
+    auth
 }) {
+    const initialFormState = {
+        amount: 0,
+        transaction_date: dayjs().format("YYYY-MM-DD"), // Today's date in 'YYYY-MM-DD' format
+        description: "",
+        store_id: auth.store_id,
+        transaction_type: "deposit", // Added transaction_type
+    };
+
     const [formState, setFormState] = useState(initialFormState);
     const [loading, setLoading] = useState(false);
 
@@ -60,7 +57,7 @@ export default function DailyCashDialog({
         let formJson = Object.fromEntries(submittedFormData.entries());
 
         let url = "/reports/dailycash"; // Assuming your endpoint is '/transaction'
-        
+
         // Send the POST request to save the transaction
         axios
             .post(url, formJson)
@@ -176,11 +173,11 @@ export default function DailyCashDialog({
                                     // Set default description based on transaction type
                                     let defaultDescription = "";
                                     if (e.target.value === "open_cashier") {
-                                        defaultDescription = "Opening Cashier Balance - "+currentTime;
+                                        defaultDescription = "Opening Cashier Balance - " + currentTime;
                                     } else if (e.target.value === "close_cashier") {
-                                        defaultDescription = "Closing Cashier Balance - "+currentTime;
-                                    }else defaultDescription = '';
-                                    
+                                        defaultDescription = "Closing Cashier Balance - " + currentTime;
+                                    } else defaultDescription = '';
+
                                     setFormState({
                                         ...formState,
                                         [name]: value,
@@ -209,26 +206,25 @@ export default function DailyCashDialog({
                             />
                         </Grid>
 
-                        <Grid item size={12}>
-                            <FormControl sx={{ width: "100%", mt: "0.6rem" }}>
-                                <InputLabel>Store</InputLabel>
-                                <Select
-                                    value={formState.store_id}
-                                    label="Store"
-                                    onChange={handleFieldChange}
-                                    required
-                                    name="store_id"
-                                >
-                                    {stores?.map((store) => (
-                                        <MenuItem
-                                            key={store.id}
-                                            value={store.id}
-                                        >
-                                            {store.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                        <Grid size={12}>
+                            <TextField
+                                value={formState.store_id}
+                                label="Store"
+                                onChange={handleFieldChange}
+                                required
+                                name="store_id"
+                                select
+                                fullWidth
+                            >
+                                {stores?.map((store) => (
+                                    <MenuItem
+                                        key={store.id}
+                                        value={store.id}
+                                    >
+                                        {store.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                     </Grid>
 
@@ -246,7 +242,7 @@ export default function DailyCashDialog({
                         }
                     >
                         {loading ? 'Loading...' : 'SAVE'}
-                        
+
                     </Button>
                 </DialogActions>
             </Dialog>

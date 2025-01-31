@@ -70,7 +70,31 @@ const TelegramSetting = ({handleSubmit, settingFormData, handleChange, setSettin
                         size={12}
                         justifyContent={"end"}
                         sx={{ display: "flex" }}
+                        spacing={1}
+                        container
                     >
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                                axios.post(
+                                    `https://api.telegram.org/bot${settingFormData.token}/sendMessage`,
+                                    {
+                                        chat_id: settingFormData.chat_id,
+                                        text: "Testing from the settings panel",
+                                    }
+                                ).then((res) => {
+                                    console.log(res);
+                                }).catch((err) => {
+                                    console.error(err);
+                                });
+                            }}
+                        >
+                            TEST
+                        </Button>
+                        
                         <Button
                             type="submit"
                             variant="outlined"

@@ -31,20 +31,24 @@ class DatabaseSeeder extends Seeder
         $userRole = Role::firstOrCreate(['name' => 'user']);
 
         $permissions = [
-            'profile',       // Covers all profile actions (view, edit, delete)
-            'dashboard',     // Covers dashboard viewing and summary actions
-            'stores',        // Covers store creation, update, and selection
-            'products',      // Covers products, collections, quantities, barcodes, etc.
-            'pos',           // Covers POS actions like checkout
-            'contacts',      // Covers customers, vendors, and contact management
-            'sales',         // Covers sales, receipts, and sold items
-            'purchases',     // Covers purchases and related actions
-            'transactions',  // Covers customer/vendor transactions and payments
-            'settings',      // Covers application settings management
-            'expenses',      // Covers expenses creation and deletion
-            'users',         // Covers user creation, update, and listing
-            'reports',       // Covers viewing and storing reports
-            'reload'          // Covers linking storage action
+            'pos',
+            'products',
+            'sales',
+            'customers',
+            'vendors',
+            'collections',
+            'expenses',
+            'quotations',
+            'reloads',
+            'cheques',
+            'sold-items',
+            'purchases',
+            'payments',
+            'stores',
+            'employees',
+            'payroll',
+            'media',
+            'settings',
         ];
 
         foreach ($permissions as $permission) {
@@ -53,20 +57,24 @@ class DatabaseSeeder extends Seeder
         $superAdminRole->givePermissionTo(Permission::all());
 
         $adminPermissions = [
-            'profile',
-            'dashboard',
-            'stores',
-            'products',
             'pos',
-            'contacts',
+            'products',
             'sales',
-            'purchases',
-            'transactions',
-            'settings',
+            'customers',
+            'vendors',
+            'collections',
             'expenses',
-            'users',
-            'reports',
-            'reload'
+            'quotations',
+            'reloads',
+            'cheques',
+            'sold-items',
+            'purchases',
+            'payments',
+            'stores',
+            'employees',
+            'payroll',
+            'media',
+            'settings',
         ];
         $adminRole->givePermissionTo($adminPermissions);
 
@@ -82,7 +90,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'user_name'=>'master',
             'user_role'=>'super-admin',
-            'email' => 'master@clearcodeweb.xyz.lk',
+            'email' => 'master@infomax.lk',
             'store_id' => 1,
             'password' => Hash::make('8236'),
         ]);
@@ -92,7 +100,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'user_name'=>'admin',
             'user_role'=>'admin',
-            'email' => 'admin@clearcodeweb.xyz.lk',
+            'email' => 'admin@infomax.lk',
             'store_id' => 1,
             'password' => Hash::make('8236'),
         ]);

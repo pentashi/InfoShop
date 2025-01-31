@@ -25,7 +25,7 @@ const columns = (handleRowClick) => [
           </Link>
       ),
     },
-    { field: 'balance', headerName: 'Balance', width: 100,
+    { field: 'balance', headerName: 'Balance', width: 160,
         valueGetter: (value) => parseFloat(value),
       renderCell: (params) => (
         <Button

@@ -50,7 +50,7 @@ export default function SalesReport({ stores, report }) {
     const [searchTerms, setSearchTerms] = useState({
         start_date: dayjs().format("YYYY-MM-DD"),
         end_date: dayjs().format("YYYY-MM-DD"),
-        store: 0,
+        store: 'All',
     });
 
     const handleFieldChange = ({ target: { name, value } }) => {
@@ -135,7 +135,7 @@ export default function SalesReport({ stores, report }) {
                         onChange={handleFieldChange}
                         required
                     >
-                        <MenuItem value={0}>All</MenuItem>
+                        <MenuItem value={'All'}>All</MenuItem>
                         {stores.map((store) => (
                             <MenuItem key={store.id} value={store.id}>
                                 {store.name}
@@ -144,7 +144,7 @@ export default function SalesReport({ stores, report }) {
                     </TextField>
                 </Grid>
 
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 3, md: 2 }}>
                     <TextField
                         label="Start Date"
                         name="start_date"
@@ -162,7 +162,7 @@ export default function SalesReport({ stores, report }) {
                     />
                 </Grid>
 
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 3, md: 2 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -179,7 +179,7 @@ export default function SalesReport({ stores, report }) {
                         required
                     />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 2 }}>
+                <Grid size={{ xs: 12, sm: 2, md: 1 }}>
                     <Button
                         variant="contained"
                         onClick={() => refreshReport(window.location.pathname)}

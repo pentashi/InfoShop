@@ -192,9 +192,9 @@ Route::middleware('auth')->group(function () {
         return 'Update';
     });
     
-    Route::get('/test-mail', function (Request $request) {
-        Mail::raw('Test email from laravel', function ($message) use ($request) {
-            $message->to($request->input('test_mail'))->subject('Test email');
+    Route::post('/test-mail', function (Request $request) {
+        Mail::raw('Test email', function ($message) use ($request) {
+            $message->to($request->input('test_mail'))->subject('Mail received');
         });
         return 'Mail sent';
     });

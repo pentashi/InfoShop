@@ -427,7 +427,7 @@ export default function Product({ products, stores, contacts }) {
                     alignItems={"center"}
                     justifyContent={{ xs: "center", sm: "end" }}
                 >
-                    <Grid size={{ xs: 12, sm: 2 }}>
+                    <Grid size={{ xs: 12, sm: 3, md:2 }}>
                         <TextField
                             value={filters.store}
                             label="Store"
@@ -446,7 +446,7 @@ export default function Product({ products, stores, contacts }) {
                         </TextField>
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 3 }}>
+                    <Grid size={{ xs: 12, sm: 4, md: 3 }}>
                         <Select2
                             fullWidth
                             placeholder="Select a supplier..."
@@ -489,7 +489,7 @@ export default function Product({ products, stores, contacts }) {
                         </TextField>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 2 }}>
+                    <Grid size={{ xs: 6, sm: 2, md:1 }}>
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
@@ -505,7 +505,7 @@ export default function Product({ products, stores, contacts }) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 3 }}>
+                    <Grid size={{ xs: 12, sm: 3, md:3 }}>
                         <TextField
                             fullWidth
                             name="search_query"
@@ -531,7 +531,7 @@ export default function Product({ products, stores, contacts }) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 1 }}>
+                    <Grid size={{ xs: 6, sm: 2, md: 1 }}>
                         <Button
                             fullWidth
                             variant="contained"
@@ -543,7 +543,7 @@ export default function Product({ products, stores, contacts }) {
                         </Button>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 3 }}>
+                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
                         <Link href="/products/create">
                             <Button
                                 variant="contained"
@@ -581,7 +581,6 @@ export default function Product({ products, stores, contacts }) {
                         initialState={{
                             columns: {
                                 columnVisibilityModel: {
-                                    // Hide columns status and traderName, the other columns will remain visible
                                     cost: false,
                                     created_at: false,
                                 },

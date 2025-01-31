@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Grid2 as Grid, Paper, TextField } from '@mui/material';
 import { useEffect } from 'react';
 
-const MailSetting = ({handleSubmit, settingFormData, handleChange, setSettingFormData, settings}) => {
+const MailSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFormData, settings }) => {
 
     useEffect(() => {
         try {
@@ -45,7 +45,7 @@ const MailSetting = ({handleSubmit, settingFormData, handleChange, setSettingFor
                     flexDirection={'column'}
                 >
                     <Grid container size={12} spacing={2}>
-                        <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width:'100%' }}>
+                        <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width: '100%' }}>
                             <Grid size={12} container spacing={2}>
                                 <Grid size={6}>
                                     <TextField
@@ -142,7 +142,26 @@ const MailSetting = ({handleSubmit, settingFormData, handleChange, setSettingFor
                         size={12}
                         justifyContent={"end"}
                         sx={{ display: "flex" }}
+                        spacing={1}
+                        container
                     >
+                        <Button
+                            variant="outlined"
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                                axios.post('/test-mail', { test_mail: settingFormData.admin_email })
+                                    .then(response => {
+                                        alert('Test mail sent successfully!');
+                                    })
+                                    .catch(error => {
+                                        console.error("Error sending test mail:", error);
+                                    });
+                            }}
+                        >
+                            Test Mail
+                        </Button>
+
                         <Button
                             type="submit"
                             variant="outlined"
