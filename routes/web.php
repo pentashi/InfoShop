@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -190,6 +192,12 @@ Route::middleware('auth')->group(function () {
         return 'Update';
     });
     
+    Route::get('/test-mail', function (Request $request) {
+        Mail::raw('Test email from laravel', function ($message) use ($request) {
+            $message->to($request->input('test_mail'))->subject('Test email');
+        });
+        return 'Mail sent';
+    });
 });
 
 require __DIR__ . '/auth.php';

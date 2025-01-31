@@ -322,6 +322,13 @@ class SaleController extends Controller
                     ->where('sales.id', $id)
                     ->first();
         $adminMail = Setting::where('meta_key', 'mail_settings')->first();
+        $telegramSettings = Setting::where('meta_key', 'telegram_settings')->first();
+
+        if($telegramSettings){
+            $telegramSettings = json_decode($telegramSettings->meta_value, true);
+            Notification::route('telegram', $telegramSettings['chat_id'])->notify(new SaleCreated($sale, $telegramSettings['token']));
+        }
+
         if ($adminMail) {
             $adminMail = json_decode($adminMail->meta_value, true);
             $adminMail = $adminMail['admin_email'];

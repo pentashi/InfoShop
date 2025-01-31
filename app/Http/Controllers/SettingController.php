@@ -274,6 +274,12 @@ class SettingController extends Controller
             $miscSettings['admin_email'] = $request->input('admin_email');
             $settingsData['mail_settings'] = json_encode($miscSettings);
         }
+        else if ($setting_type == 'telegram_settings')
+        {
+            $miscSettings['token'] = $request->input('token');
+            $miscSettings['chat_id'] = $request->input('chat_id');
+            $settingsData['telegram_settings'] = json_encode($miscSettings);
+        }
 
         foreach ($settingsData as $metaKey => $metaValue) {
             if ($metaValue !== null) { // Ensure the value is not null before updating

@@ -27,6 +27,7 @@ import MiscSetting from "./Partials/MiscSetting";
 import ModuleSetting from "./Partials/ModuleSetting";
 import Template from "./Partials/Template";
 import MailSetting from "./Partials/MailSetting";
+import TelegramSetting from "./Partials/TelegramSetting";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -224,6 +225,7 @@ export default function Setting({ settings }) {
                         <Tab label="MODULES" />
                         <Tab label="TEMPLATES" />
                         <Tab label="MAIL" />
+                        <Tab label="TELEGRAM"/>
                     </Tabs>
                 </Box>
 
@@ -608,6 +610,9 @@ export default function Setting({ settings }) {
                 </TabPanel>
                 <TabPanel value={tabValue} index={6}>
                   <MailSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                </TabPanel>
+                <TabPanel value={tabValue} index={7}>
+                  <TelegramSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
                 </TabPanel>
             </Box>
         </AuthenticatedLayout>
