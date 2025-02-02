@@ -315,7 +315,7 @@ class SaleController extends Controller
         return response()->json(['success' => 'Sale deleted successfully'], 200);
     }
 
-    public function sendMail($id){
+    public function sendNotification($id){
 
         $sale = Sale::select('sales.*', 'users.name as created_by')
                     ->leftJoin('users', 'sales.created_by', '=', 'users.id')

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Grid2 as Grid, Paper, TextField } from '@mui/material';
+import { Box, Button, Grid2 as Grid, Paper, TextField, Typography } from '@mui/material';
 import { useEffect } from 'react';
 
 const MailSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFormData, settings }) => {
@@ -136,12 +136,11 @@ const MailSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFo
                                     />
                                 </Grid>
                             </Grid>
-                        </Paper>
-                    </Grid>
-                    <Grid
+
+                            <Grid
                         size={12}
                         justifyContent={"end"}
-                        sx={{ display: "flex" }}
+                        sx={{ display: "flex", mt:1 }}
                         spacing={1}
                         container
                     >
@@ -171,6 +170,9 @@ const MailSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFo
                             UPDATE
                         </Button>
                     </Grid>
+                        </Paper>
+                    </Grid>
+                    
                 </Grid>
             </Box>
         </form>

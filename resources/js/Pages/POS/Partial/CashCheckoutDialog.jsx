@@ -74,12 +74,12 @@ export default function CashCheckoutDialog({ disabled }) {
                 setAmountRecieved(0)
                 setDiscount(0)
                 router.visit('/reciept/' + resp.data.sale_id)
-                axios.get('/sale-mail/' + resp.data.sale_id)
+                axios.get('/sale-notification/' + resp.data.sale_id)
                     .then((resp) => {
-                        console.log("Email sent successfully:", resp.data.success);
+                        console.log("Notification sent successfully:", resp.data.success);
                     })
                     .catch((error) => {
-                        console.error("Failed to send email:", error.response.data.error);
+                        console.error("Failed to send notification:", error.response.data.error);
                     });
                 setOpen(false)
             })

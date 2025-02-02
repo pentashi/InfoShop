@@ -1,40 +1,18 @@
-CREATE TABLE IF NOT EXISTS `quotations` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `contact_id` bigint unsigned NOT NULL,
-  `quotation_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `quotation_date` date NOT NULL,
-  `expiry_date` date DEFAULT NULL,
-  `quotation_terms` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subject` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtotal` decimal(10,2) NOT NULL,
-  `discount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `total` decimal(10,2) NOT NULL,
-  `profit` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `customer_notes` text COLLATE utf8mb4_unicode_ci,
-  `terms_conditions` text COLLATE utf8mb4_unicode_ci,
-  `custom_fields` json DEFAULT NULL,
-  `created_by` int DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `quotations_quotation_number_unique` (`quotation_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE `contacts` ADD `loyalty_points_balance` DECIMAL(8,2) DEFAULT 0 AFTER `loyalty_points`;
 
-CREATE TABLE IF NOT EXISTS `quotation_items` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `quotation_id` bigint unsigned NOT NULL,
-  `product_id` bigint unsigned DEFAULT NULL,
-  `custom_description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `quantity` decimal(10,2) NOT NULL,
-  `cost` decimal(10,2) DEFAULT NULL,
-  `total` decimal(10,2) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-ALTER TABLE quotations ADD COLUMN store_id BIGINT UNSIGNED NULL AFTER id;
-ALTER TABLE quotation_items ADD COLUMN batch_id BIGINT UNSIGNED NULL AFTER id;
-ALTER TABLE quotation_items ADD COLUMN discount DECIMAL(8, 2) NULL AFTER price;
+CREATE TABLE `loyalty_point_transactions` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `contact_id` BIGINT UNSIGNED NOT NULL,
+    `store_id` BIGINT UNSIGNED NOT NULL,
+    `points` DECIMAL(8,2) NOT NULL,
+    `type` ENUM('earn', 'redeem', 'expire', 'manual_adjustment') NOT NULL,
+    `description` VARCHAR(255) NULL,
+    `expires_at` DATETIME NULL,
+    `reference_id` BIGINT UNSIGNED NULL,
+    `created_by` BIGINT UNSIGNED NOT NULL,
+    `deleted_at` TIMESTAMP NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT `loyalty_point_transactions_contact_id_foreign` FOREIGN KEY (`contact_id`) REFERENCES `contacts` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `loyalty_point_transactions_store_id_foreign` FOREIGN KEY (`store_id`) REFERENCES `stores` (`id`) ON DELETE CASCADE
+);

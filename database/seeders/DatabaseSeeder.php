@@ -79,8 +79,6 @@ class DatabaseSeeder extends Seeder
         $adminRole->givePermissionTo($adminPermissions);
 
         $userPermissions = [
-            'profile',
-            'dashboard',
             'products',
             'pos'
         ];

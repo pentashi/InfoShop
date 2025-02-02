@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\App;
 use App\Models\Setting;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,7 +34,12 @@ class AppServiceProvider extends ServiceProvider
             return $user && $user->hasRole('super-admin');
         });
 
-        $mailSetting = Setting::where('meta_key', 'mail_settings')->first();
+        // It's possible that the database hasn't been migrated yet, so we need to check that the setting exists before trying to retrieve it.
+        if (!App::runningInConsole()) {
+            $mailSetting = Setting::where('meta_key', 'mail_settings')->first();
+        } else {
+            $mailSetting = null;
+        }
         if ($mailSetting) {
             $mailSettings = json_decode($mailSetting->meta_value);
             Config::set(['mail.driver' => 'smtp']);

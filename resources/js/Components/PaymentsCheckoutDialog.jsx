@@ -18,6 +18,8 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import InputAdornment from "@mui/material/InputAdornment";
 import { router } from "@inertiajs/react";
 import axios from "axios";
@@ -113,12 +115,12 @@ export default function PaymentsCheckoutDialog({
                 if (!is_sale) router.visit("/purchases");
                 else {
                     router.visit('/reciept/' + resp.data.sale_id)
-                    axios.get('/sale-mail/' + resp.data.sale_id)
+                    axios.get('/sale-notification/' + resp.data.sale_id)
                         .then((resp) => {
-                            console.log("Email sent successfully:", resp.data.success);
+                            console.log("Notification sent successfully:", resp.data.success);
                         })
                         .catch((error) => {
-                            console.error("Failed to send email:", error.response.data.error);
+                            console.error("Failed to send notification:", error.response.data.error);
                         });
                 }
                 setOpen(false)
@@ -342,6 +344,15 @@ export default function PaymentsCheckoutDialog({
                                     onClick={() => addPayment('Cheque')}
                                 >
                                     CHEQUE
+                                </Button>
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="contained"
+                                    startIcon={<FontAwesomeIcon icon={faCreditCard} size={"2xl"} />}
+                                    onClick={() => addPayment('Card')}
+                                >
+                                    CARD
                                 </Button>
                             </Grid>
                         </Grid>

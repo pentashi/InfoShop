@@ -116,7 +116,11 @@ class ProductController extends Controller
         $incrementValue = $incrementValue ? $incrementValue : 1000;
 
         $lastProduct = Product::latest('id')->first();
-        $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : (int)$incrementValue + 1;
+        do {
+            $nextItemCode = $lastProduct ? ((int)$lastProduct->id + (int)$incrementValue + 1) : (int)$incrementValue + 1;
+            $lastProduct = Product::where('barcode', $nextItemCode)->first();
+            $incrementValue++; // Increment the value to ensure uniqueness
+        } while ($lastProduct);
 
         $collection = Collection::select('id', 'name', 'collection_type')->get();
         $contacts = Contact::select('id', 'name')->vendors()->get();

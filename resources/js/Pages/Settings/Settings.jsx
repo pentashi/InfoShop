@@ -28,6 +28,7 @@ import ModuleSetting from "./Partials/ModuleSetting";
 import Template from "./Partials/Template";
 import MailSetting from "./Partials/MailSetting";
 import TelegramSetting from "./Partials/TelegramSetting";
+import LoyaltyPointsSetting from "./Partials/LoyaltyPointsSetting";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -226,6 +227,7 @@ export default function Setting({ settings }) {
                         <Tab label="TEMPLATES" />
                         <Tab label="MAIL" />
                         <Tab label="TELEGRAM"/>
+                        <Tab label="LOYALTY" />
                     </Tabs>
                 </Box>
 
@@ -613,6 +615,9 @@ export default function Setting({ settings }) {
                 </TabPanel>
                 <TabPanel value={tabValue} index={7}>
                   <TelegramSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                </TabPanel>
+                <TabPanel value={tabValue} index={8}>
+                  <LoyaltyPointsSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
                 </TabPanel>
             </Box>
         </AuthenticatedLayout>

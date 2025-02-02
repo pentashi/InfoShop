@@ -49,17 +49,32 @@ To get started with the POS system, follow these steps:
    php artisan key:generate
    ```
 
-6. **Run migrations**:
-   ```bash
-   php artisan migrate
+6. **Create the Database**:
+
+   Set up a new database in MySQL and update the database details in the `.env` file with the following fields:
+
+   Make sure to replace the values (e.g., db_infoshop, root, and the password) with your actual database name, username, and password. If your MySQL server does not require a password, leave the DB_PASSWORD field empty as shown.
+
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=db_infoshop
+   DB_USERNAME=root
+   DB_PASSWORD=
    ```
 
-7. **Start the application**:
+7. **Run migrations**:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+8. **Start the application**:
    ```bash
    php artisan serve
    ```
 
-8. **Compile assets**:
+9. **Compile assets**:
    ```bash
    npm run dev
    ```

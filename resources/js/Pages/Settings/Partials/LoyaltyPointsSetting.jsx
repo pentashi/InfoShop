@@ -2,18 +2,20 @@ import React from 'react';
 import { Box, Button, Grid2 as Grid, Paper, TextField, Typography } from '@mui/material';
 import { useEffect } from 'react';
 
-const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFormData, settings }) => {
+const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFormData, settings }) => {
 
     useEffect(() => {
         try {
-            const parsedSettings = JSON.parse(settings.telegram_settings);
+            const parsedSettings = JSON.parse(settings.loyalty_points_settings);
             setSettingFormData({
                 ...settingFormData,
-                token: parsedSettings.token,
-                chat_id: parsedSettings.chat_id,
+                amount_per_point: parsedSettings.amount_per_point,
+                max_points_per_purchase: parsedSettings.max_points_per_purchase,
+                points_expiration_days: parsedSettings.points_expiration_days,
+                min_points_for_redeem: parsedSettings.min_points_for_redeem,
             });
         } catch (error) {
-            console.error("Failed to parse telegram settings:", error);
+            console.error("Failed to parse loyalty points settings:", error);
         }
     }, []);
 
@@ -22,7 +24,7 @@ const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSetti
             onSubmit={handleSubmit}
             method="post"
         >
-            <input type="hidden" name="setting_type" value={'telegram_settings'} />
+            <input type="hidden" name="setting_type" value={'loyalty_points_settings'} />
             <Box
                 sx={{
                     justifyContent: "center",
@@ -41,25 +43,47 @@ const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSetti
                     <Grid container size={12} spacing={2}>
                         <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width: '100%' }}>
                             <Grid size={12} container spacing={2}>
-                                <Grid size={12}>
+                                <Grid size={6}>
                                     <TextField
                                         fullWidth
                                         variant="outlined"
-                                        label={"Telegram Bot Token"}
-                                        name="token"
+                                        label={"Amount per point"}
+                                        name="amount_per_point"
                                         required
-                                        value={settingFormData.token}
+                                        value={settingFormData.amount_per_point}
                                         onChange={handleChange}
                                     />
                                 </Grid>
-                                <Grid size={12}>
+                                <Grid size={6}>
                                     <TextField
                                         fullWidth
                                         variant="outlined"
-                                        label={"Telegram Chat ID"}
-                                        name="chat_id"
+                                        label={"Max points per purchase"}
+                                        name="max_points_per_purchase"
                                         required
-                                        value={settingFormData.chat_id}
+                                        value={settingFormData.max_points_per_purchase}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid size={6}>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        label={"Points expiration days"}
+                                        name="points_expiration_days"
+                                        required
+                                        value={settingFormData.points_expiration_days}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
+                                <Grid size={6}>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        label={"Min points for redeem"}
+                                        name="min_points_for_redeem"
+                                        required
+                                        value={settingFormData.min_points_for_redeem}
                                         onChange={handleChange}
                                     />
                                 </Grid>
@@ -72,28 +96,6 @@ const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSetti
                                 spacing={1}
                                 container
                             >
-                                <Button
-                                    type="button"
-                                    variant="outlined"
-                                    size="large"
-                                    color="primary"
-                                    onClick={() => {
-                                        axios.post(
-                                            `https://api.telegram.org/bot${settingFormData.token}/sendMessage`,
-                                            {
-                                                chat_id: settingFormData.chat_id,
-                                                text: "Testing from the settings panel",
-                                            }
-                                        ).then((res) => {
-                                            console.log(res);
-                                        }).catch((err) => {
-                                            console.error(err);
-                                        });
-                                    }}
-                                >
-                                    TEST TELEGRAM
-                                </Button>
-
                                 <Button
                                     type="submit"
                                     variant="outlined"
@@ -111,5 +113,5 @@ const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSetti
     );
 };
 
-export default TelegramSetting;
+export default LoyaltyPointsSetting;
 

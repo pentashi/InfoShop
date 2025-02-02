@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::get('/sold-items', [SaleController::class, 'solditems'])->name('sales.items');
-    Route::get('/sale-mail/{id}', [SaleController::class, 'sendMail']);
+    Route::get('/sale-notification/{id}', [SaleController::class, 'sendNotification']);
 
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');

@@ -180,6 +180,8 @@ export default function AddPaymentDialog({
                                 >
                                     <MenuItem value={'Cash'}>Cash</MenuItem>
                                     <MenuItem value={'Cheque'}>Cheque</MenuItem>
+                                    <MenuItem value={'Card'}>Card</MenuItem>
+                                    <MenuItem value={'Bank'}>Bank</MenuItem>
                                     {selectedTransaction === null && (
                                         <MenuItem value={'Account Balance'}>Account Balance</MenuItem>
                                     )}

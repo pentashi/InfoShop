@@ -46,3 +46,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.Select.is-open {
+  z-index: 1000 !important;
+}

@@ -252,10 +252,12 @@ class SettingController extends Controller
             }
         }
         else if ($setting_type == 'misc_settings') {
-            $miscSettings['optimize_image_size'] = $request->input('optimize_image_size');
-            $miscSettings['optimize_image_width'] = $request->input('optimize_image_width');
-            $miscSettings['cheque_alert'] = $request->input('cheque_alert');
-            $miscSettings['product_alert'] = $request->input('product_alert');
+            $miscSettings = [
+                'optimize_image_size' => $request->input('optimize_image_size'),
+                'optimize_image_width' => $request->input('optimize_image_width'),
+                'cheque_alert' => $request->input('cheque_alert'),
+                'product_alert' => $request->input('product_alert'),
+            ];
             $settingsData['misc_settings'] = json_encode($miscSettings);
         } 
         else if ($setting_type == 'modules') 
@@ -279,6 +281,16 @@ class SettingController extends Controller
             $miscSettings['token'] = $request->input('token');
             $miscSettings['chat_id'] = $request->input('chat_id');
             $settingsData['telegram_settings'] = json_encode($miscSettings);
+        }
+        else if ($setting_type == 'loyalty_points_settings')
+        {
+            $loyaltyPointsSettings = [
+                'amount_per_point' => $request->input('amount_per_point'), // 50 Rs = 1 point
+                'max_points_per_purchase' => $request->input('max_points_per_purchase'), // Max points per purchase
+                'points_expiration_days' => $request->input('points_expiration_days'), // Days before points expire
+                'min_points_for_redeem' => $request->input('min_points_for_redeem'), // Min points for redemption
+            ];
+            $settingsData['loyalty_points_settings'] = json_encode($loyaltyPointsSettings);
         }
 
         foreach ($settingsData as $metaKey => $metaValue) {

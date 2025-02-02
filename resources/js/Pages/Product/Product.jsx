@@ -436,6 +436,7 @@ export default function Product({ products, stores, contacts }) {
                             name="store"
                             select
                             fullWidth
+                            margin="dense"
                         >
                             <MenuItem value={0}>All</MenuItem>
                             {stores.map((store) => (
@@ -479,6 +480,7 @@ export default function Product({ products, stores, contacts }) {
                             name="status"
                             fullWidth
                             select
+                            margin="dense"
                         >
                             <MenuItem value={1}>Active</MenuItem>
                             <MenuItem value={0}>Inactive</MenuItem>
