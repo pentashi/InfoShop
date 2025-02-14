@@ -69,11 +69,20 @@ function POS({ products, customers, return_sale, categories }) {
         }
     };
 
+    useEffect(() => {
+        if(cartType === "sales_return_cart") {
+            localStorage.setItem('sales_return_cart', []);
+        }
+    },[cartType])
+
+
     // useEffect(() => {
-    //     if(cartType === "sales_return_cart") {
-    //         localStorage.setItem('sales_return_cart', []);
-    //     }
-    // },[cartType])
+    //     document.addEventListener("keydown", detectKyDown, true);
+    // },[])
+
+    // const detectKyDown = (e) => {
+    //     console.log(e.key);
+    // }
 
     const drawer = (
         <>
@@ -101,6 +110,7 @@ function POS({ products, customers, return_sale, categories }) {
 
     return (
         <SalesProvider cartType={cartType}>
+            
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -225,6 +235,7 @@ function POS({ products, customers, return_sale, categories }) {
                     </Drawer>
                 </Box>
             </Box>
+            
         </SalesProvider>
     );
 }

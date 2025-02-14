@@ -114,7 +114,7 @@ export default function PaymentsCheckoutDialog({
                 setPayments([])
                 if (!is_sale) router.visit("/purchases");
                 else {
-                    router.visit('/reciept/' + resp.data.sale_id)
+                    router.visit('/receipt/' + resp.data.sale_id)
                     axios.get('/sale-notification/' + resp.data.sale_id)
                         .then((resp) => {
                             console.log("Notification sent successfully:", resp.data.success);

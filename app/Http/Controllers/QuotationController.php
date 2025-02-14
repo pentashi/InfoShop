@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class QuotaionController extends Controller
+class QuotationController extends Controller
 {
 
     public function store(Request $request)
@@ -83,7 +83,7 @@ class QuotaionController extends Controller
             ->join('contacts', 'quotations.contact_id', '=', 'contacts.id')
             ->paginate(50);
 
-        return Inertia::render('Quotaion/Quotaion', [
+        return Inertia::render('Quotation/Quotation', [
             'quotations' => $quotations,
             'stores' => $stores,
             'pageLabel' => 'Quotations',
@@ -114,7 +114,7 @@ class QuotaionController extends Controller
         $contact = Contact::find($quotation->contact_id);
         $quotation->contact = $contact;
 
-        return Inertia::render('Quotaion/QuotationView', [
+        return Inertia::render('Quotation/QuotationView', [
             'quotation' => $quotation,
             'template' => $template->meta_value,
         ]);

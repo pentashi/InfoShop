@@ -145,7 +145,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $metaData = $product->meta_data;
-        if ($product->product_type === 'reload' && isset($metaData['fixed_commission'])) {
+        if (in_array($product->product_type, ['reload', 'commission']) && isset($metaData['fixed_commission'])) {
             $product->fixed_commission = $metaData['fixed_commission'];
         }
         $product->meta_data = $metaData;
@@ -204,7 +204,7 @@ class ProductController extends Controller
         $metaData = $request->meta_data ?? []; // If no meta_data is provided, default to an empty array
 
         // Check if the product type is 'reload' and add specific fields (e.g., fixed_commission) to meta_data
-        if ($request->product_type === 'reload') {
+        if (in_array($request->product_type, ['reload', 'commission'])) {
             $metaData['fixed_commission'] = $request->fixed_commission ?? 0; // Optional fixed_commission field
         }
 
@@ -299,8 +299,7 @@ class ProductController extends Controller
             }
 
             $metaData = $product->meta_data ?? [];
-            if ($request->product_type == 'reload' && $request->has('fixed_commission')) {
-                // Merge existing meta_data with the fixed_commission field
+            if (in_array($request->product_type, ['reload', 'commission']) && $request->has('fixed_commission')) {
                 $metaData['fixed_commission'] = $request->fixed_commission;
             }
 

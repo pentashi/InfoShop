@@ -98,7 +98,7 @@ const columns = (handleRowClick) => [
         width: 150,
         renderCell: (params) => (
             <>
-                <Link href={"/reciept/" + params.row.id}>
+                <Link href={"/receipt/" + params.row.id}>
                     <IconButton color="primary">
                         <PrintIcon />
                     </IconButton>

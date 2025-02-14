@@ -45,7 +45,7 @@ class SaleCreated extends Notification
             ->line('#' . $this->sale['invoice_number'].' By '.$this->sale['created_by'])
             ->line('Amount: ' . $this->sale['total_amount'])
             ->line('Created at: ' . \Carbon\Carbon::parse($this->sale['created_at'])->format('Y-m-d h:i A'))
-            ->action('View Sale', url('/reciept/' . $this->sale['id']));
+            ->action('View Sale', url('/receipt/' . $this->sale['id']));
     }
 
     public function toDatabase($notifiable)
@@ -82,7 +82,7 @@ class SaleCreated extends Notification
                 "Created at: " . \Carbon\Carbon::parse($this->sale['created_at'])->format('Y-m-d h:i A') . "\n"
             )
             ->token($this->botToken)
-            ->button('View Sale', url('/reciept/'.$this->sale['id']));  // Optional button to view the sale
+            ->button('View Sale', url('/receipt/'.$this->sale['id']));  // Optional button to view the sale
     }
 
     /**

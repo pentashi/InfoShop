@@ -28,7 +28,7 @@ use App\Http\Controllers\SalaryRecordController;
 use App\Http\Controllers\EmployeeBalanceController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ChequeController;
-use App\Http\Controllers\QuotaionController;
+use App\Http\Controllers\QuotationController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -42,7 +42,7 @@ Route::get('/editor', function () {
     return Inertia::render('BlockEditor/Editor');
 });
 
-Route::get('/reciept/{id}', [SaleController::class, 'reciept'])->name('sales.reciept');
+Route::get('/receipt/{id}', [SaleController::class, 'receipt'])->name('sales.receipt');
 Route::get('/pending-sales-receipt/{contact_id}', [SaleController::class, 'pendingSalesReceipt']);
 
 // Route::get('/dashboard', function () {
@@ -151,6 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{vendor}/vendor-pending', [ReportController::class, 'getVendorPendingReport']);
     Route::get('reports/{id}/customer', [ReportController::class, 'getCustomerReport'])->name('reports.customer');
     Route::get('reports/{id}/vendor', [ReportController::class, 'getVendorReport'])->name('reports.vendor');
+    Route::get('reports/summary-report', [ReportController::class, 'getSummaryReport'])->name('reports.summary');
 
     Route::get('/reloads', [ReloadController::class, 'index']);
     Route::post('/reloads/{id}/update', [ReloadController::class, 'update']);
@@ -172,10 +173,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/cheques/{cheque}/update', [ChequeController::class, 'update'])->name('cheques.update');
     Route::post('/cheques/{cheque}/destroy', [ChequeController::class, 'destroy'])->name('cheques.destroy');
 
-    Route::post('/quotations', [QuotaionController::class, 'store'])->name('quotations.store');
-    Route::get('/quotations', [QuotaionController::class, 'index'])->name('quotations.index');
-    Route::post('/quotations/{quotation}', [QuotaionController::class, 'destroy'])->name('quotations.destroy');
-    Route::get('/quotations/{quotation}', [QuotaionController::class, 'show'])->name('quotations.show');
+    Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
+    Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
+    Route::post('/quotations/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.destroy');
+    Route::get('/quotations/{quotation}', [QuotationController::class, 'show'])->name('quotations.show');
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

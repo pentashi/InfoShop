@@ -486,14 +486,15 @@ export default function Product({ product, collection, product_code, contacts, p
                             >
                                 <MenuItem value={"simple"}>SIMPLE</MenuItem>
                                 <MenuItem value={"reload"}>RELOAD</MenuItem>
+                                <MenuItem value={"commission"}>COMMISSION</MenuItem>
                                 <MenuItem value={"custom"}>CUSTOM</MenuItem>
                             </TextField>
                         </Grid>
 
-                        {productFormData.product_type == 'reload' && (
+                        {(productFormData.product_type === 'reload' || productFormData.product_type === 'commission') && (
                             <Grid size={{ xs: 6, sm: 2 }} className={'mb-3'}>
                                 <TextField
-                                    label="Fixed Commission"
+                                    label={productFormData.product_type === 'reload' ? 'Commission (%)' : 'Fixed Commission'}
                                     name="fixed_commission"
                                     type="number"
                                     fullWidth

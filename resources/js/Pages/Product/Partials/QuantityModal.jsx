@@ -167,9 +167,14 @@ export default function QuantityModal({
                 open={modalOpen}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
-                PaperProps={{
-                    component: "form",
-                    onSubmit: handleSubmit,
+                component="form"
+                onSubmit={handleSubmit}
+                slotProps={{
+                    paper: {
+                        style: {
+                            overflow: 'visible', // Apply overflow: visible to the Paper component
+                        },
+                    },
                 }}
             >
                 <DialogTitle
@@ -190,7 +195,7 @@ export default function QuantityModal({
                 >
                     <CloseIcon />
                 </IconButton>
-                <DialogContent>
+                <DialogContent sx={{overflow:'visible'}}>
                     <Grid
                         container
                         spacing={2}
@@ -227,6 +232,7 @@ export default function QuantityModal({
                         </Grid>
 
                         <Grid size={12} sx={{ mt: "0.6rem" }}>
+                            <div style={{position:'relative', zIndex:999}}>
                             <CreatableSelect
                                 isClearable
                                 options={reasonOptions}
@@ -234,16 +240,19 @@ export default function QuantityModal({
                                 placeholder="Select or create a reason"
                                 name="reason"
                                 required
-                                
+                                menuContainerStyle={{'zIndex': 999}}
                                 styles={{
                                     control: (baseStyles, state) => ({
                                         ...baseStyles,
                                         height: "55px",
                                         zIndex: 999,
                                     }),
+                                    
                                     menuPortal: base => ({ ...base, zIndex: 999 })
                                 }}
                             />
+                            </div>
+                            
                             {/* <TextField
                                 fullWidth
                                 name="reason"

@@ -80,7 +80,7 @@ class SaleController extends Controller
         ]);
     }
 
-    public function reciept($id){
+    public function receipt($id){
         $imageUrl='';
         if (app()->environment('production')) $imageUrl='public/';
 
@@ -134,7 +134,7 @@ class SaleController extends Controller
         ->where('sale_items.sale_id',$id)
         ->get();
         
-        return Inertia::render('Sale/Reciept',[
+        return Inertia::render('Sale/Receipt',[
             'sale'=>$sale,
             'salesItems'=>$salesItems,
             'settings'=>$settingArray,
@@ -252,7 +252,7 @@ class SaleController extends Controller
         $sales = $sales->merge($completedSales);
 
         if ($sales->isEmpty()) {
-            return Inertia::render('Sale/Reciept',[
+            return Inertia::render('Sale/Receipt',[
                 'sale'=>'',
                 'salesItems'=>'',
                 'settings'=>$settingArray,
@@ -298,7 +298,7 @@ class SaleController extends Controller
             'whatsapp'=>$sales->first()->whatsapp
         ];
         
-        return Inertia::render('Sale/Reciept',[
+        return Inertia::render('Sale/Receipt',[
             'sale'=>$mergedSale,
             'salesItems'=>$salesItems,
             'settings'=>$settingArray,

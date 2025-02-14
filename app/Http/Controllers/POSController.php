@@ -191,8 +191,6 @@ class POSController extends Controller
         $reference_id = $request->input('return_sale_id');
         $sale_type = $request->input('return_sale') ? 'return' : 'sale';
 
-        // dd($request);
-
         DB::beginTransaction();
         try {
             $sale = Sale::create([
@@ -282,7 +280,7 @@ class POSController extends Controller
                 ]);
 
                 if ($item['is_stock_managed'] == 1) {
-                    $productStock = ProductStock::where('store_id', $sale->store_id) // Assuming you have store_id from $sale or $item
+                    $productStock = ProductStock::where('store_id', $sale->store_id)
                         ->where('batch_id', $item['batch_id'])
                         ->first();
 
@@ -296,11 +294,8 @@ class POSController extends Controller
                             $productStock->quantity = 0;
                         }
 
-                        // Save the updated stock quantity
                         $productStock->save();
                     } else {
-                        // Handle case if stock does not exist (optional)
-                        // e.g., throw an exception or log an error
                         DB::rollBack();
                         return response()->json(['error' => 'Stock for product not found in the specified store or batch'], 500);
                     }
@@ -321,12 +316,12 @@ class POSController extends Controller
 
                     // Create a ReloadAndBillMeta record with description 'reload'
                     ReloadAndBillMeta::create([
-                        'sale_item_id' => $sale_item->id, // Link the reload meta to the SaleItem
-                        'transaction_type' => 'reload', // Set transaction type as 'reload'
-                        'account_number' => $item['account_number'], // Assuming 'account_number' exists in the cart item
-                        'commission' => $item['commission'], // You can adjust commission as needed
-                        'additional_commission' => $item['additional_commission'], // Set additional commission if needed
-                        'description' => $item['product_type'], // Set the description as 'reload'
+                        'sale_item_id' => $sale_item->id,
+                        'transaction_type' => 'reload',
+                        'account_number' => $item['account_number'],
+                        'commission' => $item['commission'],
+                        'additional_commission' => $item['additional_commission'],
+                        'description' => $item['product_type'],
                     ]);
                 }
             }

@@ -78,4 +78,24 @@ class Sale extends Model
     {
         return $this->hasMany(Transaction::class, 'sales_id');
     }
+
+    
+    // Scope to filter sales by store_id
+    public function scopeStoreId($query, $storeId)
+    {
+        if ($storeId !== 'All' && $storeId !== 0) {
+            return $query->where('store_id', $storeId);
+        }
+        return $query;
+    }
+
+    
+    // Scope to filter sales by start_date and end_date
+    public function scopeDateFilter($query, $start_date, $end_date)
+    {
+        if (!empty($start_date) && !empty($end_date)) {
+            return $query->whereBetween('sale_date', [$start_date, $end_date]);
+        }
+        return $query;
+    }
 }

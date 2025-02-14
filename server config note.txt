@@ -28,4 +28,4 @@ RewriteRule ^(.*)$ public/$1 [L]
 Feature update
 ---------------------------------------------------------------------------------
 composer update after adding a laravel package,
-then copy the vendor folder to the production server / copy the package folder as in vendor folder and move it to the zip file
+then copy the vendor folder to the production server / copy the package folder and composer folder as in vendor folder and move it to the zip file

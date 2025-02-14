@@ -23,7 +23,7 @@ import numeral from "numeral";
 import dayjs from "dayjs";
 import { useReactToPrint } from "react-to-print";
 
-export default function Reciept({ sale, salesItems, settings, user_name, credit_sale = false }) {
+export default function Receipt({ sale, salesItems, settings, user_name, credit_sale = false }) {
     const user = usePage().props.auth.user;
     const contentRef = useRef(null);
     const reactToPrintFn = useReactToPrint({ contentRef });
@@ -51,7 +51,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
         window.open(whatsappUrl, '_blank'); // Open in a new tab
     };
 
-    const RecieptContainer = styled(Paper)(({ theme }) => ({
+    const ReceiptContainer = styled(Paper)(({ theme }) => ({
         width: "500px",
         padding: theme.spacing(3),
         textAlign: "center",
@@ -61,7 +61,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
         },
     }));
 
-    const RecieptPrintContainer = styled(Paper)(({ theme }) => ({
+    const ReceiptPrintContainer = styled(Paper)(({ theme }) => ({
         width: "100%",
         fontFamily: settings.sale_print_font,
         textAlign: "center",
@@ -135,9 +135,9 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
 
     return (
         <>
-            <Head title="Sale Reciept" />
+            <Head title="Sale Receipt" />
             <Box className="flex justify-center mt-10 p-0">
-                <RecieptContainer square={false} className="receipt-container">
+                <ReceiptContainer square={false} className="receipt-container">
                     <Box className="flex justify-between mb-3 print:hidden">
 
                         {user && (
@@ -176,7 +176,7 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                         className="p-0"
                         style={styles.printArea}
                     >
-                        <RecieptPrintContainer square={false}>
+                        <ReceiptPrintContainer square={false}>
                             <Box className="flex justify-center items-center mt-0 flex-col">
                                 <Card sx={{ width: 160, boxShadow: 0 }}>
                                     <CardMedia
@@ -767,9 +767,9 @@ export default function Reciept({ sale, salesItems, settings, user_name, credit_
                                     __html: settings.sale_receipt_second_note,
                                 }}
                             />
-                        </RecieptPrintContainer>
+                        </ReceiptPrintContainer>
                     </div>
-                </RecieptContainer>
+                </ReceiptContainer>
             </Box>
         </>
     );

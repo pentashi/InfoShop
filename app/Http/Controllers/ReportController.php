@@ -16,6 +16,7 @@ use App\Models\PurchaseTransaction;
 use App\Models\PurchaseItem;
 use App\Models\SaleItem;
 use App\Models\User;
+use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -481,6 +482,29 @@ class ReportController extends Controller
             'payments' => $paymentResults,
             'items' => $itemResults,
             'details' => $details
+        ]);
+    }
+
+    public function getSummaryReport(){
+        $stores = Store::forCurrentUser()->select('id', 'name')->get();
+
+        $start_date = request()->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $end_date = request()->input('end_date', Carbon::today()->toDateString());
+        $store_id = request()->input('store', 'All');
+
+        $report = [];
+        $report['total_sales'] = Sale::StoreId($store_id)->DateFilter($start_date, $end_date)->sum('total_amount');
+        $report['total_received'] = Sale::StoreId($store_id)->DateFilter($start_date, $end_date)->sum(DB::raw('LEAST(total_amount, amount_received)'));
+        $report['total_expenses'] = Expense::StoreId($store_id)->DateFilter($start_date, $end_date)->sum('amount');
+        $report['total_profit'] = Sale::StoreId($store_id)->DateFilter($start_date, $end_date)->sum('profit_amount');
+        $report['cash_sale'] = Transaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->where('amount', '>=', 0)->sum('amount');
+        $report['cash_refund'] = Transaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->where('amount', '<', 0)->sum('amount');
+        $report['cash_purchase'] = PurchaseTransaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->sum('amount');
+
+        return Inertia::render('Report/SummaryReport', [
+            'pageLabel' => 'Summary Report',
+            'stores' => $stores,
+            'report' => $report,
         ]);
     }
 }

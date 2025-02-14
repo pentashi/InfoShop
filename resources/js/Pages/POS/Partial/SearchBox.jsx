@@ -25,7 +25,7 @@ export default function SearchBox() {
     const [inputValue, setInputValue] = useState("");
     const searchRef = useRef(null);
 
-    const fetchProducts  =  (search_query) => {
+    const fetchProducts = (search_query) => {
         if (search_query.length > 2) {
             setLoading(true);
             axios
@@ -46,14 +46,14 @@ export default function SearchBox() {
                         if (existingProductIndex !== -1) {
                             product[0].quantity = cartState[existingProductIndex].quantity
                         }
-                        else{
+                        else {
                             product[0].quantity = 1;
                             addToCart(product[0]);
                             console.log(product[0])
                         }
 
                         // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item
-                        if (product[0].product_type === "reload") {                           
+                        if (product[0].product_type === "reload") {
                             const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
                             product[0].cart_index = lastAddedIndex;
                         }
@@ -90,13 +90,28 @@ export default function SearchBox() {
         debouncedFetchProducts(input); // Call the debounced fetch logic
     };
 
+    useEffect(() => {
+        document.addEventListener("keydown", detectKyDown, true);
+    }, [])
+
+    const detectKyDown = (e) => {
+        if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const searchBox = document.getElementById('searchBox');
+            if (searchBox) {
+                searchBox.focus();
+                searchBox.select();
+            }
+        }
+    }
+
     return (
         <>
             <Box
                 elevation={0}
                 sx={{
                     p: "2px 2px",
-                    ml: {sm:"2rem", xs:'0.5rem'},
+                    ml: { sm: "2rem", xs: '0.5rem' },
                     display: "flex",
                     alignItems: "center",
                     width: "100%",
@@ -106,12 +121,15 @@ export default function SearchBox() {
                 }}
             >
                 <Autocomplete
-                disabled={return_sale}
+                    id="searchBox"
+                    disabled={return_sale}
                     fullWidth
                     disableCloseOnSelect
                     freeSolo
                     options={options}
                     inputValue={inputValue}
+                    handleHomeEndKeys
+
                     onInputChange={(event, value) => {
                         setInputValue(value);
                     }}
@@ -121,7 +139,7 @@ export default function SearchBox() {
                             ? option
                             : `${option.name} | ${option.barcode} ${option.sku ? `| ${option.sku}` : ""} | ${option.batch_number} | Rs.${option.price}`
                     }
-                    getOptionKey={(option) => option.id+option.batch_id}
+                    getOptionKey={(option) => option.id + option.batch_id}
                     onChange={(event, product) => {
                         if (
                             product &&
@@ -132,10 +150,10 @@ export default function SearchBox() {
                             product.quantity = 1
 
                             // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item
-                        if (product.product_type === "reload") {
-                            const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
-                            product.cart_index = lastAddedIndex;
-                        }
+                            if (product.product_type === "reload") {
+                                const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
+                                product.cart_index = lastAddedIndex;
+                            }
 
                             setSelectedCartItem(product)
                             setCartItemModalOpen(true)
@@ -146,7 +164,8 @@ export default function SearchBox() {
                             {...params}
                             inputRef={searchRef}
                             fullWidth
-                            placeholder="Search product..."
+                            placeholder="Search product... Use Arrow up key to focus ⬆️"
+                            id="searchBox"
                             onChange={
                                 onSearchInputChange
                             }
@@ -169,7 +188,7 @@ export default function SearchBox() {
                         />
                     )}
                 />
-                
+
                 <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
                 <IconButton
                     type="button"
@@ -178,7 +197,7 @@ export default function SearchBox() {
                 >
                     <SearchIcon />
                 </IconButton>
-                
+
             </Box>
         </>
     );

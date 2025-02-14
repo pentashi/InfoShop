@@ -13,9 +13,10 @@ import { usePage } from "@inertiajs/react";
 
 import { useSales } from "@/Context/SalesContext";
 import { SharedContext } from "@/Context/SharedContext";
+import Commission from "../ProductTypes/Commission";
 
 export default function CartItemModal() {
-    const return_sale = usePage().props.return_sale;
+    const { return_sale } = usePage().props ?? {};
     const [showCost, setShowCost] = useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
     const focusInputRef = useRef(null);
@@ -52,10 +53,6 @@ export default function CartItemModal() {
     // Update selectedBatch when products change
     useEffect(() => {
         if (selectedCartItem) {
-            // setFormState((prevState) => ({
-            //     ...prevState,
-            //     ...selectedCartItem,
-            // }));
             setFormState(selectedCartItem);
         }
     }, [selectedCartItem]);
@@ -80,8 +77,14 @@ export default function CartItemModal() {
                 newState[name] = value; // Update fields outside of meta_data
             }
 
+            if(newState.product_type==="commission"){
+                const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
+                const price = parseFloat(newState.price) || 0;
+                newState.cost = price - fixedCommission;
+            }
+
             // If product type is "reload", we need to calculate the cost based on the price and commission
-            //Additional commision = customer commissions
+            //Additional commission = customer commissions
             if (newState.product_type === "reload") {
                 const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
                 const price = parseFloat(newState.price) || 0;
@@ -119,10 +122,8 @@ export default function CartItemModal() {
                 disableEnforceFocus
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
-                PaperProps={{
-                    component: "form",
-                    onSubmit: handleAddToCartSubmit,
-                }}
+                component={"form"}
+                onSubmit={handleAddToCartSubmit}
                 slotProps={{
                     backdrop: {
                         onTransitionEnd: () => {
@@ -207,10 +208,7 @@ export default function CartItemModal() {
                                             target: {
                                                 name: "quantity",
                                                 value:
-                                                    return_sale &&
-                                                        numericValue > 0
-                                                        ? -numericValue
-                                                        : numericValue,
+                                                    return_sale && numericValue > 0 ? -numericValue : numericValue,
                                             },
                                         });
                                     }}
@@ -288,6 +286,11 @@ export default function CartItemModal() {
                                 }}
                             />
                         </Grid>
+
+                        {formState.product_type==='commission' && (
+                            <Commission handleChange={handleInputChange} formState={formState} />
+                        )}
+
                         {formState.product_type === "reload" && (
                             <Grid size={4}>
                                 <TextField
@@ -456,7 +459,7 @@ export default function CartItemModal() {
                                 </Grid>
                             </>
                         )}
-                        {formState.product_type !== "reload" && (
+                        {formState.product_type === "simple" && (
                             <Grid size={6}>
                                 <TextField
                                     fullWidth

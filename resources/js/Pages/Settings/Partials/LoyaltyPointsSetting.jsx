@@ -49,7 +49,6 @@ const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, set
                                         variant="outlined"
                                         label={"Amount per point"}
                                         name="amount_per_point"
-                                        required
                                         value={settingFormData.amount_per_point}
                                         onChange={handleChange}
                                     />
@@ -60,7 +59,6 @@ const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, set
                                         variant="outlined"
                                         label={"Max points per purchase"}
                                         name="max_points_per_purchase"
-                                        required
                                         value={settingFormData.max_points_per_purchase}
                                         onChange={handleChange}
                                     />
@@ -71,7 +69,6 @@ const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, set
                                         variant="outlined"
                                         label={"Points expiration days"}
                                         name="points_expiration_days"
-                                        required
                                         value={settingFormData.points_expiration_days}
                                         onChange={handleChange}
                                     />
@@ -82,7 +79,6 @@ const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, set
                                         variant="outlined"
                                         label={"Min points for redeem"}
                                         name="min_points_for_redeem"
-                                        required
                                         value={settingFormData.min_points_for_redeem}
                                         onChange={handleChange}
                                     />

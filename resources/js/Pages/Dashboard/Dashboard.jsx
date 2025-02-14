@@ -70,125 +70,125 @@ export default function Dashboard({ data, logo, version, store_name }) {
             <Head title="Dashboard" />
 
             {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-            
-            <Grid size={12} spacing={{xs:0.5, sm:1}} flexDirection={'row'} container sx={{ mb: 2 }}>
-                {parseFloat(data.lowStock) != 0 && (
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Link href={"/products?status=alert&per_page=" + data.lowStock}>
-                            <Alert severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
-                        </Link>
-                    </Grid>
-                )}
-                {parseFloat(data.outOfStock) != 0 && (
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Link href={"/products?status=out_of_stock&per_page=" + data.outOfStock}>
-                            <Alert severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
-                        </Link>
-                    </Grid>
-                )}
-                {parseFloat(data.pending_cheque_count) != 0 && (
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Link href={"/cheques?status=pending&per_page=" + data.pending_cheque_count}>
-                            <Alert severity="primary"><strong>{data.pending_cheque_count}</strong> Pending Cheque/s</Alert>
-                        </Link>
-                    </Grid>
-                )}
-                {parseFloat(data.cheque_alert_count) != 0 && (
-                    <Grid size={{ xs: 12, sm: 3 }}>
-                        <Link href={`/cheques?status=alert&per_page=${data.cheque_alert_count}`}>
-                            <Alert severity="error"><strong>{data.cheque_alert_count}</strong> Alert Cheque/s</Alert>
-                        </Link>
-                    </Grid>
-                )}
-            </Grid>
+
+                <Grid size={12} spacing={{ xs: 0.5, sm: 1 }} flexDirection={'row'} container sx={{ mb: 2 }}>
+                    {parseFloat(data.lowStock) != 0 && (
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                            <Link href={"/products?status=alert&per_page=" + data.lowStock}>
+                                <Alert severity="warning"><strong>{data.lowStock}</strong> Alert Products</Alert>
+                            </Link>
+                        </Grid>
+                    )}
+                    {parseFloat(data.outOfStock) != 0 && (
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                            <Link href={"/products?status=out_of_stock&per_page=" + data.outOfStock}>
+                                <Alert severity="error"><strong>{data.outOfStock}</strong> Out of Stocks</Alert>
+                            </Link>
+                        </Grid>
+                    )}
+                    {parseFloat(data.pending_cheque_count) != 0 && (
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                            <Link href={"/cheques?status=pending&per_page=" + data.pending_cheque_count}>
+                                <Alert severity="primary"><strong>{data.pending_cheque_count}</strong> Pending Cheque/s</Alert>
+                            </Link>
+                        </Grid>
+                    )}
+                    {parseFloat(data.cheque_alert_count) != 0 && (
+                        <Grid size={{ xs: 12, sm: 3 }}>
+                            <Link href={`/cheques?status=alert&per_page=${data.cheque_alert_count}`}>
+                                <Alert severity="error"><strong>{data.cheque_alert_count}</strong> Alert Cheque/s</Alert>
+                            </Link>
+                        </Grid>
+                    )}
+                </Grid>
             )}
-            
+
 
             {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-            <Grid
-                container
-                spacing={2}
-                sx={{ display: "flex", flexDirection: "row" }}
-                width={"100%"}
-            >
-                <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                    <Card sx={{ height: "100%", backgroundColor: "#77E4C8" }}>
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                sx={{
-                                    color: "text.secondary",
-                                    fontSize: 14,
-                                    textTransform: "uppercase",
-                                }}
-                            >
-                                Total items
-                            </Typography>
-                            <Typography variant="h5" component="div">
-                                {data.totalItems}
-                            </Typography>
-                            <span>{data.totalQuantities} QTY</span>
-                        </CardContent>
-                    </Card>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{ display: "flex", flexDirection: "row" }}
+                    width={"100%"}
+                >
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <Card sx={{ height: "100%", backgroundColor: "#77E4C8" }}>
+                            <CardContent>
+                                <Typography
+                                    gutterBottom
+                                    sx={{
+                                        color: "text.secondary",
+                                        fontSize: 14,
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    Total items
+                                </Typography>
+                                <Typography variant="h5" component="div">
+                                    {data.totalItems}
+                                </Typography>
+                                <span>{data.totalQuantities} QTY</span>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <Card sx={{ height: "100%", backgroundColor: "#FDFFE2" }}>
+                            <CardContent>
+                                <Typography
+                                    gutterBottom
+                                    sx={{
+                                        color: "text.secondary",
+                                        fontSize: 14,
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    Total valuation
+                                </Typography>
+                                <Typography variant="h5" component="div">
+                                    Rs. {data.totalValuation}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <Card sx={{ height: "100%", backgroundColor: "#FFEBD4" }}>
+                            <CardContent>
+                                <Typography
+                                    gutterBottom
+                                    sx={{
+                                        color: "text.secondary",
+                                        fontSize: 14,
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    Sold Items
+                                </Typography>
+                                <Typography variant="h5" component="div">
+                                    {data.soldItems}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <Card sx={{ height: "100%", backgroundColor: "#D1E9F6" }}>
+                            <CardContent>
+                                <Typography
+                                    gutterBottom
+                                    sx={{
+                                        color: "text.secondary",
+                                        fontSize: 14,
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    Customer balance
+                                </Typography>
+                                <Typography variant="h5" component="div">
+                                    Rs. {data.customerBalance}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 </Grid>
-                <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                    <Card sx={{ height: "100%", backgroundColor: "#FDFFE2" }}>
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                sx={{
-                                    color: "text.secondary",
-                                    fontSize: 14,
-                                    textTransform: "uppercase",
-                                }}
-                            >
-                                Total valuation
-                            </Typography>
-                            <Typography variant="h5" component="div">
-                                Rs. {data.totalValuation}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                    <Card sx={{ height: "100%", backgroundColor: "#FFEBD4" }}>
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                sx={{
-                                    color: "text.secondary",
-                                    fontSize: 14,
-                                    textTransform: "uppercase",
-                                }}
-                            >
-                                Sold Items
-                            </Typography>
-                            <Typography variant="h5" component="div">
-                                {data.soldItems}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                    <Card sx={{ height: "100%", backgroundColor: "#D1E9F6" }}>
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                sx={{
-                                    color: "text.secondary",
-                                    fontSize: 14,
-                                    textTransform: "uppercase",
-                                }}
-                            >
-                                Customer balance
-                            </Typography>
-                            <Typography variant="h5" component="div">
-                                Rs. {data.customerBalance}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
             )}
 
 
@@ -199,104 +199,110 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 spacing={2}
             >
                 {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-                <Grid size={{ xs: 12, sm: 8, md: 4 }}>
-                    <Card sx={{ width: "100%" }}>
-                        <CardContent>
-                            <Grid
-                                container
-                                display="flex"
-                                spacing={2}
-                                width={"100%"}
-                            >
-                                <Grid size={6}>
-                                    <TextField
-                                        label="Start Date"
-                                        name="start_date"
-                                        placeholder="Start Date"
-                                        type="date"
-                                        fullWidth
-                                        slotProps={{
-                                            inputLabel: {
-                                                shrink: true,
-                                            },
-                                        }}
-                                        value={startDate}
-                                        onChange={(e) =>
-                                            setStartDate(e.target.value)
-                                        }
-                                        required
-                                    />
+                    <Grid size={{ xs: 12, sm: 8, md: 4 }}>
+                        <Card sx={{ width: "100%" }}>
+                            <CardContent>
+                                <Grid
+                                    container
+                                    display="flex"
+                                    spacing={2}
+                                    width={"100%"}
+                                >
+                                    <Grid size={6}>
+                                        <TextField
+                                            label="Start Date"
+                                            name="start_date"
+                                            placeholder="Start Date"
+                                            type="date"
+                                            fullWidth
+                                            slotProps={{
+                                                inputLabel: {
+                                                    shrink: true,
+                                                },
+                                            }}
+                                            value={startDate}
+                                            onChange={(e) =>
+                                                setStartDate(e.target.value)
+                                            }
+                                            required
+                                        />
+                                    </Grid>
+                                    <Grid size={6}>
+                                        <TextField
+                                            label="End Date"
+                                            name="end_date"
+                                            placeholder="End Date"
+                                            type="date"
+                                            fullWidth
+                                            slotProps={{
+                                                inputLabel: {
+                                                    shrink: true,
+                                                },
+                                            }}
+                                            value={endDate}
+                                            onChange={(e) =>
+                                                setEndDate(e.target.value)
+                                            }
+                                            required
+                                        />
+                                    </Grid>
                                 </Grid>
-                                <Grid size={6}>
-                                    <TextField
-                                        label="End Date"
-                                        name="end_date"
-                                        placeholder="End Date"
-                                        type="date"
-                                        fullWidth
-                                        slotProps={{
-                                            inputLabel: {
-                                                shrink: true,
-                                            },
-                                        }}
-                                        value={endDate}
-                                        onChange={(e) =>
-                                            setEndDate(e.target.value)
-                                        }
-                                        required
-                                    />
-                                </Grid>
-                            </Grid>
 
-                            <List>
-                                <Link href="/reports/sales">
-                                    <ListItem
-                                        secondaryAction={numeral(
-                                            total_sales
-                                        ).format("0,0.00")}
-                                    >
-                                        <ListItemButton>
-                                            <ListItemIcon>
-                                                <PaidIcon />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Sales" />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </Link>
-                                <Divider />
-                                <Link href="/reports/dailycash">
-                                    <ListItem
-                                        secondaryAction={numeral(
-                                            cash_in
-                                        ).format("0,0.00")}
-                                    >
-                                        <ListItemButton>
-                                            <ListItemIcon>
-                                                <PaymentsIcon />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Cash" />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </Link>
-                                <Divider />
-                                <Link href="/expenses">
-                                    <ListItem
-                                        secondaryAction={numeral(
-                                            expenses
-                                        ).format("0,0.00")}
-                                    >
-                                        <ListItemButton>
-                                            <ListItemIcon>
-                                                <AccountBalanceWalletIcon />
-                                            </ListItemIcon>
-                                            <ListItemText primary="Expenses" />
-                                        </ListItemButton>
-                                    </ListItem>
-                                </Link>
-                            </List>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                                <List>
+                                    <Link href="/reports/sales">
+                                        <ListItem
+                                            secondaryAction={numeral(
+                                                total_sales
+                                            ).format("0,0.00")}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <PaidIcon />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Sales" />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </Link>
+                                    <Divider />
+                                    <Link href="/reports/dailycash">
+                                        <ListItem
+                                            secondaryAction={numeral(
+                                                cash_in
+                                            ).format("0,0.00")}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <PaymentsIcon />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Cash" />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </Link>
+                                    <Divider />
+                                    <Link href="/expenses">
+                                        <ListItem
+                                            secondaryAction={numeral(
+                                                expenses
+                                            ).format("0,0.00")}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <AccountBalanceWalletIcon />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Expenses" />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </Link>
+                                    <Divider />
+                                    <Link href="/reports/summary-report">
+                                        <ListItem>
+                                            <ListItemText sx={{ textAlign: 'center', color: '#1976d2', textDecoration:'underline' }} primary="VIEW SUMMARY" />
+                                        </ListItem>
+                                    </Link>
+                                </List>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 )}
                 <Grid size={{ xs: 12, sm: 4, md: 4 }}>
                     <Card sx={{ width: "100%", height: "100%" }}>
@@ -328,7 +334,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 </Grid>
 
                 {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-                <Summaries></Summaries>
+                    <Summaries></Summaries>
                 )}
             </Grid>
 

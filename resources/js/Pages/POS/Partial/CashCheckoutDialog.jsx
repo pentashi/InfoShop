@@ -73,7 +73,7 @@ export default function CashCheckoutDialog({ disabled }) {
                 emptyCart() //Clear the cart from the Context API
                 setAmountRecieved(0)
                 setDiscount(0)
-                router.visit('/reciept/' + resp.data.sale_id)
+                router.visit('/receipt/' + resp.data.sale_id)
                 axios.get('/sale-notification/' + resp.data.sale_id)
                     .then((resp) => {
                         console.log("Notification sent successfully:", resp.data.success);
@@ -119,7 +119,7 @@ export default function CashCheckoutDialog({ disabled }) {
                 onClick={handleClickOpen}
                 disabled={disabled}
             >
-                CASH
+                {cartTotal < 0 ? `REFUND Rs.${Math.abs(cartTotal)}` : `CASH Rs.${cartTotal}`}
             </Button>
             <Dialog
                 fullWidth={true}
