@@ -14,6 +14,7 @@ use App\Models\Transaction;
 use App\Models\Expense;
 use App\Models\Setting;
 use App\Models\Store;
+use App\Models\SalaryRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
@@ -91,6 +92,8 @@ class DashboardController extends Controller
         $data['total_sales'] = Sale::whereBetween('sale_date', [$startDate, $endDate])->sum('total_amount');
         $data['cash_in'] = Transaction::where('payment_method', 'cash')->whereBetween('transaction_date', [$startDate, $endDate])->sum('amount');
         $data['expenses'] = Expense::whereBetween('expense_date', [$startDate, $endDate])->sum('amount');
+        $data['salary_expense'] = SalaryRecord::DateFilter($startDate, $endDate)->sum('net_salary');
+        $data['expenses'] += $data['salary_expense'];
         return response()->json([
             'summary' => $data,
         ], 200);

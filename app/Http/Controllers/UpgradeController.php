@@ -100,6 +100,7 @@ class UpgradeController extends Controller
             Artisan::call('route:clear');
             Artisan::call('view:clear');
             Artisan::call('event:clear');
+            Artisan::call('optimize:clear');
 
             return redirect()->back()->with('success', 'Application upgrade applied successfully.');
         }

@@ -257,6 +257,7 @@ class SettingController extends Controller
                 'optimize_image_width' => $request->input('optimize_image_width'),
                 'cheque_alert' => $request->input('cheque_alert'),
                 'product_alert' => $request->input('product_alert'),
+                'cart_first_focus' => $request->input('cart_first_focus'),
             ];
             $settingsData['misc_settings'] = json_encode($miscSettings);
         } 

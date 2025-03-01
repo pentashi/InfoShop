@@ -184,7 +184,7 @@ Route::middleware('auth')->group(function () {
         Artisan::call('route:clear');
         Artisan::call('view:clear');
         Artisan::call('event:clear');
-        // Artisan::call('optimize:clear'); // This command is deprecated
+        Artisan::call('optimize:clear');
 
         return 'All caches cleared and configurations updated!';
     });

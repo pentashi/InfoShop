@@ -199,27 +199,6 @@ export default function PaymentsCheckoutDialog({
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2} alignItems={'center'}>
-                        {/* <Grid size={4}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label={"Sub total"}
-                                type="number"
-                                name="sub_total"
-                                value={cartTotal}
-                                slotProps={{
-                                    input: {
-                                        style: { textAlign: "center" },
-                                        placeholder: "Total",
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                Rs.
-                                            </InputAdornment>
-                                        ),
-                                    },
-                                }}
-                            />
-                        </Grid> */}
                         <Grid size={6}>
                             <TextField
                                 fullWidth
@@ -326,16 +305,19 @@ export default function PaymentsCheckoutDialog({
                                 >
                                     CASH
                                 </Button>
-                                <Button
-                                    component="label"
-                                    role={undefined}
-                                    variant="contained"
-                                    startIcon={<PauseCircleOutlineIcon />}
-                                    onClick={() => addPayment('Credit')}
-                                    color="error"
-                                >
-                                    CREDIT
-                                </Button>
+                                {selectedContact?.id !== 1 && (
+                                    <Button
+                                        component="label"
+                                        role={undefined}
+                                        variant="contained"
+                                        startIcon={<PauseCircleOutlineIcon />}
+                                        onClick={() => addPayment('Credit')}
+                                        color="error"
+                                    >
+                                        CREDIT
+                                    </Button>
+                                )}
+
                                 <Button
                                     component="label"
                                     role={undefined}

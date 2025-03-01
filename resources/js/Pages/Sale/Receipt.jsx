@@ -133,6 +133,8 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
         );
     }
 
+    const itemDiscount = salesItems.reduce((acc, item) => acc + item.discount * item.quantity, 0);
+
     return (
         <>
             <Head title="Sale Receipt" />
@@ -397,7 +399,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             }
                                                             color="initial"
                                                         >
-                                                            {item.quantity}x
+                                                            <strong>{item.quantity}x</strong>
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -467,6 +469,27 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                 }}
                                             />
                                         </TableRow>
+
+                                        {itemDiscount !== 0 && (
+                                            <TableRow
+                                                sx={{ border: "none",}}
+                                                className="receipt-summary-row"
+                                            >
+                                                <TableCell
+                                                    sx={{...styles.receiptSummaryText, paddingBottom:1}}
+                                                    colSpan={5}
+                                                    align="center"
+                                                >
+                                                    <Typography
+                                                        sx={{...styles.receiptSummaryText, border:'solid 2px', width:'100%', padding:1}}
+                                                        color="initial"
+                                                    >
+                                                        Item Discount: {numeral(itemDiscount).format("0,0.00")}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+
                                         {/* Row for Total, Discount, Subtotal, Amount Received, Change */}
                                         <TableRow
                                             sx={{ border: "none" }}
@@ -510,47 +533,51 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
+
+                                        {parseFloat(sale.discount) !== 0 && (
+                                            <TableRow
+                                                sx={{ border: "none" }}
+                                                className="receipt-summary-row"
+                                            >
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    colSpan={4}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={
+                                                            styles.receiptSummaryTyp
+                                                        }
+                                                        color="initial"
+                                                    >
+                                                        Discount:
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={styles.receiptSummaryText}
+                                                    align="right"
+                                                >
+                                                    <Typography
+                                                        sx={
+                                                            styles.receiptSummaryTyp
+                                                        }
+                                                        color="initial"
+                                                    >
+                                                        Rs.
+                                                        {numeral(
+                                                            sale.discount
+                                                        ).format("0,0.00")}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+
                                         <TableRow
                                             sx={{ border: "none" }}
                                             className="receipt-summary-row"
                                         >
                                             <TableCell
-                                                sx={styles.receiptSummaryText}
-                                                colSpan={4}
-                                                align="right"
-                                            >
-                                                <Typography
-                                                    sx={
-                                                        styles.receiptSummaryTyp
-                                                    }
-                                                    color="initial"
-                                                >
-                                                    Discount:
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell
-                                                sx={styles.receiptSummaryText}
-                                                align="right"
-                                            >
-                                                <Typography
-                                                    sx={
-                                                        styles.receiptSummaryTyp
-                                                    }
-                                                    color="initial"
-                                                >
-                                                    Rs.
-                                                    {numeral(
-                                                        sale.discount
-                                                    ).format("0,0.00")}
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow
-                                            sx={{ border: "none" }}
-                                            className="receipt-summary-row"
-                                        >
-                                            <TableCell
-                                                sx={styles.receiptSummaryText}
+                                                sx={{...styles.receiptSummaryText, paddingBottom:2}}
                                                 colSpan={4}
                                                 align="right"
                                             >
@@ -564,7 +591,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                 </Typography>
                                             </TableCell>
                                             <TableCell
-                                                sx={styles.receiptSummaryText}
+                                                sx={{...styles.receiptSummaryText, paddingBottom:2}}
                                                 align="right"
                                             >
                                                 <Typography
@@ -580,6 +607,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
+                                        
                                         <TableRow
                                             sx={{ border: "none" }}
                                             className="receipt-summary-row"
@@ -595,26 +623,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     }
                                                     color="initial"
                                                 >
-                                                    <br />
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow
-                                            sx={{ border: "none" }}
-                                            className="receipt-summary-row"
-                                        >
-                                            <TableCell
-                                                sx={styles.receiptSummaryText}
-                                                colSpan={4}
-                                                align="right"
-                                            >
-                                                <Typography
-                                                    sx={
-                                                        styles.receiptSummaryTyp
-                                                    }
-                                                    color="initial"
-                                                >
-                                                    Cash:
+                                                    Paid:
                                                 </Typography>
                                             </TableCell>
                                             <TableCell

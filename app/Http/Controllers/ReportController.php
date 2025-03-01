@@ -17,6 +17,7 @@ use App\Models\PurchaseItem;
 use App\Models\SaleItem;
 use App\Models\User;
 use App\Models\Expense;
+use App\Models\SalaryRecord;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -500,7 +501,8 @@ class ReportController extends Controller
         $report['cash_sale'] = Transaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->where('amount', '>=', 0)->sum('amount');
         $report['cash_refund'] = Transaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->where('amount', '<', 0)->sum('amount');
         $report['cash_purchase'] = PurchaseTransaction::StoreId($store_id)->DateFilter($start_date, $end_date)->where('payment_method', 'cash')->sum('amount');
-
+        $report['salary_expense'] = SalaryRecord::StoreId($store_id)->DateFilter($start_date, $end_date)->sum('net_salary');
+        $report['total_expenses'] += $report['salary_expense'];
         return Inertia::render('Report/SummaryReport', [
             'pageLabel' => 'Summary Report',
             'stores' => $stores,

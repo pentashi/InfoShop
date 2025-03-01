@@ -4,13 +4,16 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
 import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import FindReplaceIcon from "@mui/icons-material/FindReplace";
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import Select2 from "react-select";
 import numeral from "numeral";
 import dayjs from "dayjs";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+
+import PrintIcon from "@mui/icons-material/Print";
+import FindReplaceIcon from "@mui/icons-material/FindReplace";
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
 import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
@@ -114,6 +117,10 @@ const columns = (handleRowClick) => [
                         <KeyboardReturnIcon />
                     </IconButton>
                 )}
+
+                {/* <IconButton color="error">
+                    <HighlightOffIcon />
+                </IconButton> */}
             </>
         ),
     },

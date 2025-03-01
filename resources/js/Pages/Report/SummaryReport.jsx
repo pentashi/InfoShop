@@ -8,7 +8,6 @@ import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import dayjs from "dayjs";
 import numeral from "numeral";
 
-import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
 
 export default function SalesReport({ stores, report }) {
@@ -213,12 +212,12 @@ export default function SalesReport({ stores, report }) {
                 <BarChart
                     xAxis={[{ scaleType: 'band', data: ['Sales', 'Cash Flow', 'Profit'] }]}
                     series={[
-                        { data: [parseFloat(report.total_sales), parseFloat(report.total_received), parseFloat(report.total_profit)] },
-                        { data: [parseFloat(report.total_received), parseFloat(report.total_profit), parseFloat(report.total_profit) - parseFloat(report.total_expenses)] },
-                        { data: [parseFloat(report.total_profit), parseFloat(report.total_expenses), parseFloat(report.total_profit) - parseFloat(report.total_expenses)] },
+                        { data: [parseFloat(dataReport.total_sales), parseFloat(dataReport.cash_sale), parseFloat(dataReport.total_profit)] },
+                        { data: [parseFloat(dataReport.total_received), parseFloat(dataReport.cash_refund), parseFloat(dataReport.total_expenses)] },
+                        { data: [parseFloat(dataReport.total_profit), parseFloat(dataReport.cash_purchase), parseFloat(dataReport.total_profit) - parseFloat(dataReport.total_expenses)] },
                     ]}
                     height={300}
-                    barLabel="value"
+                    barLabel={(item) => numeral(item.value).format('0,0')}
                 />
             </Grid>
 

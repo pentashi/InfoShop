@@ -104,7 +104,9 @@ class POSController extends Controller
         }
         $categories = Collection::where('collection_type', 'category')->get();
         $products = $this->getProducts();
-
+        $miscSettings = Setting::where('meta_key', 'misc_settings')->first();
+        $miscSettings = json_decode($miscSettings->meta_value, true);
+        $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
         return Inertia::render('POS/POS', [
             'products' => $products,
             'urlImage' => url('storage/'),
@@ -113,6 +115,7 @@ class POSController extends Controller
             'return_sale' => false,
             'sale_id' => null,
             'categories' => $categories,
+            'cart_first_focus' => $cart_first_focus
         ]);
     }
 
@@ -124,6 +127,10 @@ class POSController extends Controller
         $sale = Sale::find($sale_id);
         $contacts = Contact::select('id', 'name', 'balance')->where('id', $sale->contact_id)->get();
         $currentStore = Store::find($sale->store_id);
+
+        $miscSettings = Setting::where('meta_key', 'misc_settings')->first();
+        $miscSettings = json_decode($miscSettings->meta_value, true);
+        $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
 
         if (!$currentStore) {
             return redirect()->route('store'); // Adjust the route name as necessary
@@ -172,6 +179,7 @@ class POSController extends Controller
             'customers' => $contacts,
             'return_sale' => true,
             'sale_id' => $sale_id,
+            'cart_first_focus' => $cart_first_focus
         ]);
     }
 

@@ -16,7 +16,7 @@ import { SharedContext } from "@/Context/SharedContext";
 import Commission from "../ProductTypes/Commission";
 
 export default function CartItemModal() {
-    const { return_sale } = usePage().props ?? {};
+    const { return_sale, cart_first_focus } = usePage().props ?? {};
     const [showCost, setShowCost] = useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
     const focusInputRef = useRef(null);
@@ -212,7 +212,7 @@ export default function CartItemModal() {
                                             },
                                         });
                                     }}
-                                    inputRef={focusInputRef}
+                                    inputRef={cart_first_focus === "quantity" ? focusInputRef : undefined}
                                     sx={{
                                         mt: "0.5rem",
                                         input: { fontSize: "1rem" },
@@ -221,7 +221,6 @@ export default function CartItemModal() {
                                     onFocus={(event) => {
                                         event.target.select();
                                     }}
-                                    autoFocus
                                     slotProps={{
                                         inputLabel: {
                                             shrink: true,
@@ -470,6 +469,7 @@ export default function CartItemModal() {
                                     required
                                     value={formState.discount}
                                     onChange={handleInputChange}
+                                    inputRef={cart_first_focus === "discount" ? focusInputRef : undefined}
                                     sx={{
                                         mt: "0.5rem",
                                         input: { fontSize: "1rem" },

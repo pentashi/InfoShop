@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, Button, Grid2 as Grid, Paper, TextField } from '@mui/material';
+import { Box, Button, Grid2 as Grid, Paper, TextField, MenuItem } from '@mui/material';
 import { useEffect } from 'react';
 
-const MiscSetting = ({handleSubmit, settingFormData, handleChange, setSettingFormData, settings}) => {
+const MiscSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFormData, settings }) => {
 
     useEffect(() => {
         try {
@@ -13,6 +13,7 @@ const MiscSetting = ({handleSubmit, settingFormData, handleChange, setSettingFor
                 optimize_image_size: parsedSettings.optimize_image_size,
                 cheque_alert: parsedSettings.cheque_alert,
                 product_alert: parsedSettings.product_alert,
+                cart_first_focus: parsedSettings.cart_first_focus ? parsedSettings.cart_first_focus : 'quantity',
             });
         } catch (error) {
             console.error("Failed to parse misc settings:", error);
@@ -41,7 +42,7 @@ const MiscSetting = ({handleSubmit, settingFormData, handleChange, setSettingFor
                     flexDirection={'column'}
                 >
                     <Grid container size={12} spacing={2}>
-                        <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width:'100%' }}>
+                        <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width: '100%' }}>
                             <Grid size={12} container spacing={2}>
                                 <Grid size={3}>
                                     <TextField
@@ -68,6 +69,23 @@ const MiscSetting = ({handleSubmit, settingFormData, handleChange, setSettingFor
                                         value={settingFormData.product_alert}
                                         onChange={handleChange}
                                     />
+                                </Grid>
+                                <Grid size={6}>
+                                    <TextField
+                                        fullWidth
+                                        variant="outlined"
+                                        label={"Cart First Focus"}
+                                        name="cart_first_focus"
+                                        required
+                                        sx={{ mt: "2rem" }}
+                                        value={settingFormData.cart_first_focus}
+                                        onChange={handleChange}
+                                        select
+                                    >
+                                        <MenuItem value="quantity">Quantity</MenuItem>
+                                        <MenuItem value="discount">Discount</MenuItem>
+                                        <MenuItem value="price">Price</MenuItem>
+                                    </TextField>
                                 </Grid>
                             </Grid>
                             <Grid size={12} container spacing={2}>

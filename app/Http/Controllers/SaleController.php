@@ -221,6 +221,8 @@ class SaleController extends Controller
         ->join('stores', 'sales.store_id','=','stores.id')
         ->get(); // Fetch all matching sales
 
+        $saleIds = $sales->pluck('id')->toArray();
+
         // Fetch return sale for the pending sales
         $completedSales = Sale::select(
             'sales.id',
@@ -239,12 +241,7 @@ class SaleController extends Controller
             'sales.created_at'
         )
         ->where('sales.contact_id', $contact_id)
-        ->where('sales.status', 'completed')
-        ->where(function ($query) use ($sales) {
-            foreach ($sales as $sale) {
-                $query->orWhere('sales.reference_id', $sale->id);
-            }
-        })
+        ->whereIn('sales.reference_id', $saleIds)
         ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
         ->join('stores', 'sales.store_id','=','stores.id')
         ->get();
