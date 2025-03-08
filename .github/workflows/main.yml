@@ -14,14 +14,11 @@ jobs:
       with:
         fetch-depth: 2  # Ensures the last two commits are fetched
 
-    - name: Install Git
-      run: sudo apt-get install git -y
-
     - name: Archive Changes
       run: git archive -o update.zip HEAD $(git diff --name-only HEAD^)
 
     - name: Upload Archive
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: update-zip
         path: update.zip
