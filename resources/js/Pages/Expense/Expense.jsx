@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head,router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid2";
 import {
     Button,
@@ -39,27 +39,28 @@ const columns = (handleRowClick) => [
         headerName: "Source",
         width: 120,
         renderCell: (params) => {
-            return params.value?params.value.toUpperCase():'-';
+            return params.value ? params.value.toUpperCase() : '-';
         },
     },
-    { field: "amount", headerName: "Amount", width: 130, align:'right',headerAlign: 'right', 
+    {
+        field: "amount", headerName: "Amount", width: 130, align: 'right', headerAlign: 'right',
         renderCell: (params) => {
             return numeral(params.value).format('0,0.00');
         },
-    }, 
-    
+    },
+
     {
         field: 'action',
         headerName: 'Actions',
-        width: 150, align:'right',headerAlign: 'right',
+        width: 150, align: 'right', headerAlign: 'right',
         renderCell: (params) => (
-          <>
-          <IconButton sx={{ml:'0.3rem'}} color="error" onClick={() => handleRowClick(params.row, "delete_expense")}>
-            <DeleteIcon />
-          </IconButton>
-          </>
+            <>
+                <IconButton sx={{ ml: '0.3rem' }} color="error" onClick={() => handleRowClick(params.row, "delete_expense")}>
+                    <DeleteIcon />
+                </IconButton>
+            </>
         ),
-      },
+    },
 ];
 
 export default function Expense({ expenses, stores }) {
@@ -73,12 +74,12 @@ export default function Expense({ expenses, stores }) {
     });
 
     const handleRowClick = (expense, action) => {
-        if(action==='delete_expense'){
+        if (action === 'delete_expense') {
             deleteExpense(expense.id);
         }
     };
 
-    const deleteExpense=(expenseID)=> {
+    const deleteExpense = (expenseID) => {
         Swal.fire({
             title: "Do you want to remove the record?",
             showDenyButton: true,
@@ -87,21 +88,21 @@ export default function Expense({ expenses, stores }) {
         }).then((result) => {
             if (result.isConfirmed) {
                 axios.post(`/expense/${expenseID}/delete`)
-                .then((response) => {
-                    const updatedData = dataExpenses.data.filter((item) => item.id !== expenseID);
-                    setDataExpenses({ ...dataExpenses, data: updatedData });
-                    Swal.fire({
-                        title: "Success!",
-                        text: response.data.message,
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
+                    .then((response) => {
+                        const updatedData = dataExpenses.data.filter((item) => item.id !== expenseID);
+                        setDataExpenses({ ...dataExpenses, data: updatedData });
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.data.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Deletion failed with errors:", error);
                     });
-                })
-                .catch((error) => {
-                    console.error("Deletion failed with errors:", error);
-                });
             }
         });
     }
@@ -115,7 +116,7 @@ export default function Expense({ expenses, stores }) {
                 setDataExpenses(response.props.expenses);
             },
         };
-        router.get(url,searchTerms,options);
+        router.get(url, searchTerms, options);
     };
 
     //Get total expenses
@@ -147,8 +148,8 @@ export default function Expense({ expenses, stores }) {
                 size={12}
             >
 
-<Grid size={{xs:12, sm:3}}>
-                <TextField
+                <Grid size={{ xs: 12, sm: 3 }}>
+                    <TextField
                         label="Search..."
                         name="search_query"
                         placeholder="Start typing..."
@@ -157,8 +158,8 @@ export default function Expense({ expenses, stores }) {
                         fullWidth
                     />
                 </Grid>
-                <Grid size={{xs:6, sm:2}}>
-                <TextField
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
@@ -174,9 +175,9 @@ export default function Expense({ expenses, stores }) {
                         required
                     />
                 </Grid>
-                    
 
-                <Grid size={{xs:6, sm:2}}>
+
+                <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="End Date"
                         name="end_date"
@@ -194,35 +195,35 @@ export default function Expense({ expenses, stores }) {
                     />
                 </Grid>
 
-                <Grid size={{xs:4, sm:1}}>
-                <Button
-                    variant="contained"
-                    onClick={() => refreshExpenses(window.location.pathname)}
-                    sx={{ height: "100%" }}
-                    size="large"
-                    fullWidth
-                >
-                    <FindReplaceIcon />
-                </Button>
+                <Grid size={{ xs: 4, sm: 1 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => refreshExpenses(window.location.pathname)}
+                        sx={{ height: "100%" }}
+                        size="large"
+                        fullWidth
+                    >
+                        <FindReplaceIcon />
+                    </Button>
                 </Grid>
-                <Grid size={{xs:8, sm:3}}>
-                <Button
-                    variant="contained"
-                    onClick={() => setExpenseModalOpen(true)}
-                    sx={{ height: "100%" }}
-                    startIcon={<AddCircleIcon />}
-                    size="large"
-                    fullWidth
-                    color="success"
-                >
-                    ADD EXPENSE
-                </Button>
+                <Grid size={{ xs: 8, sm: 3 }}>
+                    <Button
+                        variant="contained"
+                        onClick={() => setExpenseModalOpen(true)}
+                        sx={{ height: "100%" }}
+                        startIcon={<AddCircleIcon />}
+                        size="large"
+                        fullWidth
+                        color="success"
+                    >
+                        ADD EXPENSE
+                    </Button>
                 </Grid>
             </Grid>
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height:'70vh'}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 200px)",}}
             >
                 <DataGrid
                     rows={dataExpenses?.data}
@@ -237,7 +238,7 @@ export default function Expense({ expenses, stores }) {
                 />
             </Box>
             <Grid size={12} container justifyContent={"end"}>
-            <Chip size="large" label={'Total:'+numeral(totalExpense).format('0,0')} color="primary" />
+                <Chip size="large" label={'Total:' + numeral(totalExpense).format('0,0')} color="primary" />
                 <CustomPagination
                     dataLinks={dataExpenses?.links}
                     refreshTable={refreshExpenses}

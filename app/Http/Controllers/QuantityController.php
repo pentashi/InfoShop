@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductBatch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\QuantityAdjustment;
@@ -37,11 +38,13 @@ class QuantityController extends Controller
                 $productStock->quantity += $validated['quantity'];
                 $productStock->save();
             } else {
+                $product = ProductBatch::find($validated['batch_id']);
                 // If stock doesn't exist, create a new ProductStock record
                 $productStock = ProductStock::create([
                     'store_id' => $validated['store_id'],
                     'batch_id' => $validated['batch_id'],
                     'quantity' => $validated['quantity'],
+                    'product_id' => $product->product_id
                 ]);
 
                 // Since this is a new record, previous quantity will be 0

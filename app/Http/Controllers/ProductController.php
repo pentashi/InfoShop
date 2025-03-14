@@ -535,12 +535,20 @@ class ProductController extends Controller
         $templateName = 'barcode-template.html'; // or get this from the request
         $templatePath = storage_path("app/public/templates/{$templateName}");
         $content = File::exists($templatePath) ? File::get($templatePath) : '';
-        //dd($settingArray);
+
+        $template = Setting::where('meta_key', 'barcode-template')->first();
+
         // Render the 'Products' component with data
         return Inertia::render('Product/Barcode', [
             'product' => $product,
             'barcode_settings' => $settingArray,
             'template' => $content,
         ]);
+
+        // return Inertia::render('Product/BarcodeView', [
+        //     'product' => $product,
+        //     'barcode_settings' => $settingArray,
+        //     'template' => $template->meta_value,
+        // ]);
     }
 }

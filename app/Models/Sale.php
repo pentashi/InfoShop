@@ -28,6 +28,7 @@ class Sale extends Model
         'payment_status',
         'note',        // Note
         'created_by',
+        'deleted_by',
     ];
 
     protected static function boot()
@@ -79,6 +80,11 @@ class Sale extends Model
         return $this->hasMany(Transaction::class, 'sales_id');
     }
 
+    // Relationship to sale items
+    public function saleItems()
+    {
+        return $this->hasMany(SaleItem::class, 'sale_id');
+    }
     
     // Scope to filter sales by store_id
     public function scopeStoreId($query, $storeId)

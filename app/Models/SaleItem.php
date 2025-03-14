@@ -25,4 +25,9 @@ class SaleItem extends Model
         'description',
         'note',
     ];
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class);
+    }
 }

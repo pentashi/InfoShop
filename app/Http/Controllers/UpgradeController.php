@@ -9,12 +9,15 @@ use ZipArchive;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
+use Inertia\Inertia;
 
 class UpgradeController extends Controller
 {
     public function showUploadForm()
     {
-        return view('upload');
+        return Inertia::render('Update/Update',[
+            'pageLabel'=>'Update',
+        ]);
     }
 
     public function handleUpload(Request $request)
@@ -88,23 +91,25 @@ class UpgradeController extends Controller
                 Log::info('SQL file executed successfully.');
             } catch (\Exception $e) {
                 // Handle any exceptions
-                return redirect()->back()->with('error', 'Failed to execute the SQL file: ' . $e->getMessage());
+                Log::error('Failed to execute the SQL file: ' . $e->getMessage());
+                File::deleteDirectory($temporaryPath);
+                return response()->json(['error' => 'Failed to execute the SQL file. Check the logs for more information.'], 500);
             }
         }
 
             // Clean up temporary files
             File::deleteDirectory($temporaryPath);
 
-            Artisan::call('cache:clear');
-            Artisan::call('config:clear');
-            Artisan::call('route:clear');
-            Artisan::call('view:clear');
-            Artisan::call('event:clear');
-            Artisan::call('optimize:clear');
+            // Artisan::call('cache:clear');
+            // Artisan::call('config:clear');
+            // Artisan::call('route:clear');
+            // Artisan::call('view:clear');
+            // Artisan::call('event:clear');
+            // Artisan::call('optimize:clear');
 
-            return redirect()->back()->with('success', 'Application upgrade applied successfully.');
+            return response()->json(['success' => 'Application upgrade applied successfully.'], 200);
         }
 
-        return redirect()->back()->with('error', 'Failed to extract the ZIP file.');
+        return response()->json(['error' => 'Failed to extract the ZIP file.'], 500);
     }
 }

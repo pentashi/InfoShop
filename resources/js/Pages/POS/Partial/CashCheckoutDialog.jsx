@@ -25,7 +25,7 @@ export default function CashCheckoutDialog({ disabled }) {
     const [loading, setLoading] = useState(false);
 
     const [discount, setDiscount] = useState(0);
-    const [amountRecieved, setAmountRecieved] = useState(0);
+    const [amountReceived, setAmountReceived] = useState(0);
 
     const handleDiscountChange = (event) => {
         const inputDiscount = event.target.value;
@@ -40,7 +40,7 @@ export default function CashCheckoutDialog({ disabled }) {
     };
 
     const handleClose = () => {
-        setAmountRecieved(0)
+        setAmountReceived(0)
         setDiscount(0)
         setOpen(false);
     };
@@ -71,7 +71,7 @@ export default function CashCheckoutDialog({ disabled }) {
                     timerProgressBar: true,
                 });
                 emptyCart() //Clear the cart from the Context API
-                setAmountRecieved(0)
+                setAmountReceived(0)
                 setDiscount(0)
                 router.visit('/receipt/' + resp.data.sale_id)
                 axios.get('/sale-notification/' + resp.data.sale_id)
@@ -155,23 +155,22 @@ export default function CashCheckoutDialog({ disabled }) {
                         variant="outlined"
                         label={cartTotal < 0 ? 'Refund' : 'Amount Received'}
                         type="number"
-                        name="amount_recieved"
+                        name="amount_received"
                         onFocus={event => {
                             event.target.select();
                         }}
-                        // onChange={(e)=>{setAmountRecieved(e.target.value)}}
-
+                    
                         onChange={(event) => {
                             const value = event.target.value;
 
                             const numericValue = parseFloat(value); // Convert to number
-                            setAmountRecieved(
+                            setAmountReceived(
                                 return_sale && numericValue > 0 ? -numericValue : numericValue
                             );
                         }}
 
                         sx={{ input: { textAlign: "center", fontSize: '2rem' }, }}
-                        value={amountRecieved}
+                        value={amountReceived}
                         slotProps={{
                             input: {
                                 style: { textAlign: 'center' },
@@ -238,7 +237,7 @@ export default function CashCheckoutDialog({ disabled }) {
                             variant="outlined"
                             name="change_amount"
                             sx={{ mt: "2rem", ml: '1rem', input: { textAlign: "center", fontSize: '2rem' } }}
-                            value={(amountRecieved - (cartTotal - discount)).toFixed(2)}//Change calculation
+                            value={(amountReceived - (cartTotal - discount)).toFixed(2)}//Change calculation
                             slotProps={{
                                 input: {
                                     readOnly: true,
@@ -266,14 +265,13 @@ export default function CashCheckoutDialog({ disabled }) {
                         type="submit"
                         // onClick={handleClose}
                         disabled={
-                            !amountRecieved ||
-                            // (amountRecieved - (cartTotal - discount)) < 0 || loading
-                            (cartTotal < 0 && amountRecieved === 0) || // Disable if refund and amount received is 0
-                            (cartTotal < 0 && amountRecieved != (cartTotal - discount)) || // Disable if refund and amount received doesn't match cart total minus discount
-                            (cartTotal >= 0 && (amountRecieved - (cartTotal - discount)) < 0) || // Disable if cartTotal is positive and amount is insufficient
+                            !amountReceived ||
+                            (cartTotal < 0 && amountReceived === 0) || // Disable if refund and amount received is 0
+                            (cartTotal < 0 && amountReceived != (cartTotal - discount)) || // Disable if refund and amount received doesn't match cart total minus discount
+                            (cartTotal >= 0 && (amountReceived - (cartTotal - discount)) < 0) || // Disable if cartTotal is positive and amount is insufficient
                             loading // Disable during loading
 
-                        } //amountRecieved-(cartTotal-discount) 
+                        } //amountReceived-(cartTotal-discount) 
                     >
                         {loading ? 'Loading...' : cartTotal < 0 ? 'REFUND' : 'PAY'}
                     </Button>

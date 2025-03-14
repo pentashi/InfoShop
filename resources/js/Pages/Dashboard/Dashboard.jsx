@@ -15,13 +15,16 @@ import {
     ListItemText,
     Divider,
     Alert,
-    Box
+    Box,
+    IconButton
 } from "@mui/material";
 import dayjs from "dayjs";
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PaidIcon from "@mui/icons-material/Paid";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 import numeral from "numeral";
 
@@ -296,7 +299,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                     <Divider />
                                     <Link href="/reports/summary-report">
                                         <ListItem>
-                                            <ListItemText sx={{ textAlign: 'center', color: '#1976d2', textDecoration:'underline' }} primary="VIEW SUMMARY" />
+                                            <ListItemText sx={{ textAlign: 'center', color: '#1976d2', textDecoration: 'underline' }} primary="VIEW SUMMARY" />
                                         </ListItem>
                                     </Link>
                                 </List>
@@ -338,8 +341,32 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 )}
             </Grid>
 
-            <Box sx={{ justifyContent: 'end', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px' }}>
-                VERSION {version}
+            <Box sx={{ justifyContent: 'center', alignItems: 'center', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px', paddingRight:2 }}>
+                <Grid container spacing={1} alignItems={'center'}>
+
+                    <Grid>
+                        <Link href="/clear-cache" title="Refresh cache">
+                            <IconButton>
+                                <RefreshIcon />
+                            </IconButton>
+                        </Link>
+                    </Grid>
+                    <Grid>
+                        <IconButton onClick={() => {
+                            const password = prompt("Enter password:");
+                            if (password === "infomax2025") {
+                                window.location.href = "/update";
+                            } else {
+                                alert("Wrong password!");
+                            }
+                        }}>
+                            <CloudUploadIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid>
+                        VERSION {version}
+                    </Grid>
+                </Grid>
             </Box>
         </AuthenticatedLayout>
     );

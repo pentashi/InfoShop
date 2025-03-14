@@ -13,6 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid2";
+import { MenuItem } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -43,6 +44,7 @@ import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoneyCheck, faFileInvoice } from "@fortawesome/free-solid-svg-icons";
 import infoshopLogo from "@/infoshop.png";
+import { TextField } from "@mui/material";
 const drawerWidth = 240;
 
 function AuthenticatedLayout({ header, children, ...props }) {
@@ -155,17 +157,17 @@ function AuthenticatedLayout({ header, children, ...props }) {
                     alignItems={"center"}
                     justifyContent={"space-between"}
                     paddingLeft={"0.5rem"}
+                    size={12}
                 >
                     <img
                         src={infoshopLogo}
                         style={{ height: "80px", objectFit: "contain" }}
                     ></img>
+
                 </Grid>
             </Toolbar>
             <Divider />
             <List>
-
-
                 <NavItem
                     href="/dashboard"
                     icon={DashboardIcon}

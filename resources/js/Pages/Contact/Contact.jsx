@@ -223,7 +223,7 @@ export default function Contact({contacts, type, stores}) {
 
               <Box
                   className="py-6 w-full"
-                  sx={{ display: "grid", gridTemplateColumns: "1fr", height:'75vh'}}
+                  sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 240px)",}}
               >
                   <DataGrid
                       rows={dataContacts.data}

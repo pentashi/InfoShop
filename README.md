@@ -43,7 +43,7 @@ To get started with the POS system, follow these steps:
 
 4. **Set up your environment file**:
    Copy the `.env.example` to `.env` and configure your database and other settings.
-
+<br>
 5. **Generate the application key**:
    ```bash
    php artisan key:generate
@@ -69,12 +69,21 @@ To get started with the POS system, follow these steps:
    php artisan migrate --seed
    ```
 
-8. **Start the application**:
+8. **Link Storage**:
+   ```bash
+   php artisan link:storage
+   ```
+
+9. **Copy template files**:
+   Make sure to place the template files in the `storage/app/public/templates` folder by copying them from `resources/views/templates`.
+<br>
+
+10. **Start the application**:
    ```bash
    php artisan serve
    ```
 
-9. **Compile assets**:
+11. **Compile assets**:
    ```bash
    npm run dev
    ```
@@ -104,7 +113,7 @@ The POS system includes the following modules:
 
 If you use this project or any of its contents, please provide proper attribution. You can mention:
 
-"This project is based on Infoshop by Infomax/Nifras Usanar."
+"This project is based on Infoshop by Infomax / Nifras Usanar."
 
 ## License
 

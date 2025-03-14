@@ -565,7 +565,7 @@ export default function Product({ products, stores, contacts }) {
                     sx={{
                         display: "grid",
                         gridTemplateColumns: "1fr",
-                        height: "calc(100vh - 280px)",
+                        height: "calc(100vh - 290px)",
                     }}
                 >
                     <DataGrid

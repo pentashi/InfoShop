@@ -45,7 +45,6 @@ export default function ProoductBarcode({
       });
     }
 
-
     useEffect(() => {
         const data = {
             product,

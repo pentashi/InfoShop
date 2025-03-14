@@ -303,7 +303,7 @@ export default function Employee({ employees, stores, }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '70vh' }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 200px)", }}
             >
                 <DataGrid
                     rows={dataEmployees?.data}

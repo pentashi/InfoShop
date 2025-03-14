@@ -110,9 +110,9 @@ class QuotationController extends Controller
         $quotation = Quotation::with(['quotationItems' => function ($q) {
             $q->join('products', 'quotation_items.product_id', '=', 'products.id')
                 ->select('quotation_items.*', 'products.name as product_name');
-        }])->find($id);
-        $contact = Contact::find($quotation->contact_id);
-        $quotation->contact = $contact;
+        }, 'contact'])->find($id);
+        // $contact = Contact::find($quotation->contact_id);
+        // $quotation->contact = $contact;
 
         return Inertia::render('Quotation/QuotationView', [
             'quotation' => $quotation,

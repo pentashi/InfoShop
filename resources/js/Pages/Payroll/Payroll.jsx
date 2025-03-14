@@ -223,7 +223,7 @@ export default function Payroll({ salaries, employees, stores }) {
                 </Grid>
             </Grid>
 
-            <Box className="py-6 w-full" sx={{ display: "grid", height: "70vh" }}>
+            <Box className="py-6 w-full" sx={{ display: "grid", height: "calc(100vh - 190px)", }}>
                 <DataGrid
                     rows={dataSalaries?.data}
                     columns={columns(handleRowClick)}

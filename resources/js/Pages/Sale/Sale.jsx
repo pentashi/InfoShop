@@ -2,12 +2,12 @@ import * as React from "react";
 import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import Grid from "@mui/material/Grid2";
-import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip } from "@mui/material";
+import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip, Grid2 as Grid } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Select2 from "react-select";
 import numeral from "numeral";
 import dayjs from "dayjs";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Swal from "sweetalert2";
 
 import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
@@ -117,10 +117,11 @@ const columns = (handleRowClick) => [
                         <KeyboardReturnIcon />
                     </IconButton>
                 )}
-
-                {/* <IconButton color="error">
-                    <HighlightOffIcon />
-                </IconButton> */}
+                {dayjs(params.row.created_at).isSame(dayjs(), 'day') && (
+                    <IconButton color="error" onClick={() => handleRowClick(params.row, "delete")}>
+                        <HighlightOffIcon />
+                    </IconButton>
+                )}
             </>
         ),
     },
@@ -146,17 +147,52 @@ export default function Sale({ sales, contacts }) {
 
     const handleRowClick = (sale, action) => {
         setSelectedTransaction(sale);
-        if (action == "add_payment") {
-            const amountLimit = Math.max(
-                0,
-                parseFloat(sale.total_amount) - parseFloat(sale.amount_received)
-            );
-            setSelectedContact(sale.contact_id);
-            setAmountLimit(amountLimit);
-            setPaymentModalOpen(true);
-        } else if (action == "view_details") {
-            setViewDetailsModalOpen(true);
+        switch (action) {
+            case "add_payment":
+                const amountLimit = Math.max(
+                    0,
+                    parseFloat(sale.total_amount) - parseFloat(sale.amount_received)
+                );
+                setSelectedContact(sale.contact_id);
+                setAmountLimit(amountLimit);
+                setPaymentModalOpen(true);
+                break;
+            case "view_details":
+                setViewDetailsModalOpen(true);
+                break;
+            case "delete":
+                deleteSale(sale.id);
+                break;
+            default:
         }
+    };
+
+    const deleteSale = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios
+                    .delete(`/sales/${id}`)
+                    .then(response => {
+                        Swal.fire('Deleted!', 'The sale has been deleted.', 'success');
+                        refreshSales(window.location.pathname)
+                        // Optionally refresh the sales data or update the UI here
+                    })
+                    .catch(error => {
+                        Swal.fire('Error!', error.response.data.error, 'error');
+                    });
+    
+            }
+        });
     };
 
     const refreshSales = (url) => {
@@ -293,7 +329,7 @@ export default function Sale({ sales, contacts }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height: '75vh' }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 195px)", }}
             >
                 <DataGrid
                     rows={dataSales.data}

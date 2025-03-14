@@ -185,7 +185,7 @@ class POSController extends Controller
 
     public function checkout(Request $request)
     {
-        $amountReceived = $request->input('amount_recieved', 0);
+        $amountReceived = $request->input('amount_received', 0);
         $discount = $request->input('discount');
         $total = $request->input('net_total');
         $note = $request->input('note');

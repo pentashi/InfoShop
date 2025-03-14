@@ -75,8 +75,8 @@ const Template = () => {
                                 >
                                     <MenuItem value="invoice-template">Invoice Template</MenuItem>
                                     <MenuItem value="quotation-template">Quotation Template</MenuItem>
-                                    <MenuItem value="receipt-template">Receipt Template</MenuItem>
-                                    <MenuItem value="barcode-template">Barcode Template</MenuItem>
+                                    {/* <MenuItem value="receipt-template">Receipt Template</MenuItem>
+                                    <MenuItem value="barcode-template">Barcode Template</MenuItem> */}
                                 </TextField>
                             </Grid>
                         </Grid>

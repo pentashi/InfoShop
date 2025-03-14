@@ -92,8 +92,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
     Route::get('/sold-items', [SaleController::class, 'solditems'])->name('sales.items');
+    Route::delete('/sales/{id}', [SaleController::class, 'destroy'])->name('sales.destroy');
     Route::get('/sale-notification/{id}', [SaleController::class, 'sendNotification']);
-
+    
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchase/create', [PurchaseController::class, 'create'])->name('purchases.create');
     Route::post('/purchase/store', [PurchaseController::class, 'store'])->name('purchases.store');
@@ -161,7 +162,7 @@ Route::middleware('auth')->group(function () {
         return 'Linked with storage';
     });
 
-    Route::get('/upload', [UpgradeController::class, 'showUploadForm'])->name('upload.form');
+    Route::get('/update', [UpgradeController::class, 'showUploadForm'])->name('upload.form');
     Route::post('/upload', [UpgradeController::class, 'handleUpload'])->name('upload.handle');
 
     Route::get('/media', [MediaController::class, 'index']);

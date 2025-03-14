@@ -226,6 +226,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                     >
                         <MenuItem value={"All"}>All</MenuItem>
                         <MenuItem value={"Cash"}>Cash</MenuItem>
+                        <MenuItem value={"Card"}>Card</MenuItem>
                         <MenuItem value={"Credit"}>Credit</MenuItem>
                         <MenuItem value={"Cheque"}>Cheque</MenuItem>
                         <MenuItem value={"Account Balance"}>Account Balance</MenuItem>

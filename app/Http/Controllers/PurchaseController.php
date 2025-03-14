@@ -165,6 +165,7 @@ class PurchaseController extends Controller
                         [
                             'store_id' => $purchase->store_id,
                             'batch_id' => $batch_id,
+                            'product_id' => $item['id'],
                         ],
                         [
                             'quantity' => 0,  // Initial quantity for new stock
@@ -212,7 +213,7 @@ class PurchaseController extends Controller
             }
             if ($purchaseAmountPaid >= $purchase->total_amount) $purchase->status = 'completed';
             $purchase->amount_paid = $purchaseAmountPaid;
-            $purchase->save(); //Update amount recieved
+            $purchase->save(); //Update amount received
 
             DB::commit();
             // Return a successful response
