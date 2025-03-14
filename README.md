@@ -82,8 +82,12 @@ To get started with the POS system, follow these steps:
    ```bash
    php artisan serve
    ```
+9. **Link the storage**:
+   ```bash
+   php artisan storage:link
+   ```
 
-11. **Compile assets**:
+10. **Compile assets**:
    ```bash
    npm run dev
    ```
