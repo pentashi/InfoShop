@@ -71,7 +71,7 @@ To get started with the POS system, follow these steps:
 
 8. **Link Storage**:
    ```bash
-   php artisan link:storage
+   php artisan storage:link
    ```
 
 9. **Copy template files**:
@@ -82,12 +82,8 @@ To get started with the POS system, follow these steps:
    ```bash
    php artisan serve
    ```
-9. **Link the storage**:
-   ```bash
-   php artisan storage:link
-   ```
 
-10. **Compile assets**:
+11. **Compile assets**:
    ```bash
    npm run dev
    ```
