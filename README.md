@@ -2,7 +2,12 @@
 
 # InfoShop Point of Sale (POS) System
 
-Welcome to the InfoShop Point of Sale (POS) System! This is a comprehensive application built with modern web technologies to streamline sales and inventory management. 
+Welcome to the InfoShop Point of Sale (POS) System! This is a comprehensive application built with modern web technologies to streamline sales and inventory management.
+
+<h2><a href="https://clearcodeweb.xyz.lk/" target="_blank" rel="noopener noreferrer">Try the demo</a></h2>
+
+**Username:** `admin`
+**Password:** `infomax12345`
 
 ## Table of Contents
 - [Requirements](#requirements)
