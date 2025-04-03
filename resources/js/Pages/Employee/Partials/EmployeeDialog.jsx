@@ -74,6 +74,7 @@ export default function EmployeeDialog({
                     timerProgressBar: true,
                 });
                 refreshEmployees(window.location.pathname)
+                setEmployeeFormState(initialEmployeeFormState);
                 setOpen(false)
                 setLoading(false);
             })
