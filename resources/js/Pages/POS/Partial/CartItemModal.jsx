@@ -286,7 +286,8 @@ export default function CartItemModal() {
                             />
                         </Grid>
 
-                        {formState.product_type==='commission' && (
+                        {/* Render Commission component for 'commission' product type */}
+                        {formState.product_type === 'commission' && (
                             <Commission handleChange={handleInputChange} formState={formState} />
                         )}
 

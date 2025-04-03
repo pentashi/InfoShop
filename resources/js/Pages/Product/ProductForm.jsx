@@ -424,6 +424,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                             name="expiry_date"
                                             label="Expiry Date"
                                             className="w-full"
+                                            format="YYYY-MM-DD"
                                         />
                                     </LocalizationProvider>
                                 </Grid>
