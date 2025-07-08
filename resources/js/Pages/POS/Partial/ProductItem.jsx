@@ -12,20 +12,25 @@ import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 export default function ProductItem({ product }) {
     const return_sale = usePage().props.return_sale;
     const { name, price, image_url, quantity } = product;
-    const { addToCart, cartState} = useCart();
+    const { addToCart, cartState } = useCart();
     const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);
 
     return (
         <Card
             onClick={() => {
 
-                if(return_sale){
+                if (return_sale) {
                     product.quantity = -1
                 }
                 else product.quantity = 1;
 
+                if (product.discount_percentage && Number(product.discount_percentage) !== 0) {
+                    const discount = (product.price * product.discount_percentage) / 100;
+                    product.discount = discount;
+                }
+                console.log(product);
                 addToCart(product, product.quantity);
-                
+
                 if (product.product_type === "reload") {
                     const lastAddedIndex = cartState.length > 0 ? cartState.length : 0;
                     product.cart_index = lastAddedIndex;
@@ -53,19 +58,19 @@ export default function ProductItem({ product }) {
                 </Typography>
             </CardContent>
             {price > 0 && (
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                }}
-            >
-                Rs.{price}
-            </Box>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                        color: 'white',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                    }}
+                >
+                    Rs.{price}
+                </Box>
             )}
         </Card>
     );

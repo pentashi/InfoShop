@@ -46,6 +46,8 @@ class ProductController extends Controller
             'products.alert_quantity',
             'product_batches.contact_id',
             'contacts.name as contact_name',
+            'product_batches.discount',
+            'product_batches.discount_percentage',
         )
             ->leftJoin('products', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
@@ -171,16 +173,18 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'sku' => 'nullable|string|unique:products',
             'barcode' => 'nullable|string|unique:products',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000', // Image validation
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000',
             'unit' => 'nullable|string|max:100',
             'quantity' => 'required|numeric|min:0',
             'alert_quantity' => 'nullable|numeric|min:0',
-            'cost' => 'required|numeric|min:0', // Cost price validation
-            'price' => 'required|numeric|min:0', // Sale price validation
+            'cost' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
             'is_stock_managed' => 'boolean',
             'is_active' => 'boolean',
-            'brand_id' => 'nullable|exists:collections,id', // Assuming brands table exists
-            'category_id' => 'nullable|exists:collections,id', // Assuming categories table exists
+            'brand_id' => 'nullable|exists:collections,id',
+            'category_id' => 'nullable|exists:collections,id',
+            'discount' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $imageUrl = null;
@@ -234,6 +238,8 @@ class ProductController extends Controller
             'cost' => $request->cost,
             'price' => $request->price,
             'contact_id' => $request->contact_id,
+            'discount' => $request->discount,
+            'discount_percentage' => $request->discount_percentage,
         ]);
 
         ProductStock::create([
@@ -349,7 +355,6 @@ class ProductController extends Controller
             'products.name',
             'products.barcode',
             // DB::raw("COALESCE(products.sku, 'N/A') AS sku"), //if we comment it, it will not generate on front end
-            'products.discount',
             'products.is_stock_managed',
             DB::raw("COALESCE(product_batches.batch_number, 'N/A') AS batch_number"),
             'product_batches.cost',
@@ -360,6 +365,8 @@ class ProductController extends Controller
             'products.meta_data',
             'products.product_type',
             'products.alert_quantity',
+            'product_batches.discount',
+            'product_batches.discount_percentage',
         )
             ->leftJoin('product_batches', 'products.id', '=', 'product_batches.product_id') // Join with product_batches using product_id
             ->leftJoin('product_stocks', 'product_batches.id', '=', 'product_stocks.batch_id') // Join with product_stocks using batch_id
@@ -393,6 +400,8 @@ class ProductController extends Controller
                 'products.meta_data',
                 'products.product_type',
                 'products.alert_quantity',
+                'product_batches.discount',
+                'product_batches.discount_percentage',
             )
             ->limit(10)->get();
 
@@ -415,6 +424,8 @@ class ProductController extends Controller
                 ],
                 'cost' => 'required|numeric|min:0',
                 'price' => 'required|numeric|min:0',
+                'discount' => 'nullable|numeric|min:0',
+                'discount_percentage' => 'nullable|numeric|min:0|max:100',
             ],
             [
                 // Custom error message for unique validation
@@ -428,6 +439,8 @@ class ProductController extends Controller
             'cost' => $validatedData['cost'],
             'price' => $validatedData['price'],
             'contact_id' => $request->contact_id,
+            'discount' => $validatedData['discount'],
+            'discount_percentage' => $validatedData['discount_percentage'],
         ]);
 
         return response()->json([
@@ -487,6 +500,8 @@ class ProductController extends Controller
             ],
             'cost' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $batch->update([
@@ -497,6 +512,8 @@ class ProductController extends Controller
             'is_active' => $request->is_active ?? 0,
             'is_featured' => $request->is_featured ?? 0,
             'contact_id' => $request->contact_id,
+            'discount' => $validatedData['discount'],
+            'discount_percentage' => $validatedData['discount_percentage'],
         ]);
 
         return response()->json([
@@ -518,7 +535,7 @@ class ProductController extends Controller
         $imageUrl = '';
         if (app()->environment('production')) $imageUrl = 'public/';
 
-        $product = ProductBatch::select('products.name', 'products.barcode', 'product_batches.price')
+        $product = ProductBatch::select('products.name', 'products.barcode', 'product_batches.price', 'product_batches.discount', 'product_batches.discount_percentage')
             ->join('products', 'product_batches.product_id', '=', 'products.id')
             ->where('product_batches.id', $batch_id)
             ->first();

@@ -24,10 +24,12 @@ export default function BatchModal({
         quantity: "",
         cost: "",
         price: "",
-        batch_number:"",
-        expiry_date:'',
-        is_active:true,
-        contact_id:'',
+        batch_number: "",
+        expiry_date: '',
+        is_active: true,
+        contact_id: '',
+        discount: 0,
+        discount_percentage: 0,
     }
 
     const [isNew, setIsNew] = useState(false)
@@ -50,39 +52,35 @@ export default function BatchModal({
         formJson.new_batch = formState.batch_number;
         formJson.id = selectedProduct.id
 
-        let url='/storebatch';
-        if(!isNew) url='/productbatch/'+formState.batch_id
-
-        // let response;
-        // if(isNew) {response = await axios.post('/storebatch/', formJson);}
-        // else {response = await axios.post('/productbatch/'+formState.batch_id, formJson);}
+        let url = '/storebatch';
+        if (!isNew) url = '/productbatch/' + formState.batch_id
 
         axios
-        .post(url, formJson)
-        .then((resp) => {
-            Swal.fire({
-                title: "Success!",
-                text: resp.data.message,
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
+            .post(url, formJson)
+            .then((resp) => {
+                Swal.fire({
+                    title: "Success!",
+                    text: resp.data.message,
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+                refreshProducts()
+                handleClose()
+            })
+            .catch((error) => {
+                const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
+                Swal.fire({
+                    title: "Failed!",
+                    text: errorMessages,
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+                console.log(error);
+            }).finally(() => {
+                setLoading(false); // Reset submitting state
             });
-            refreshProducts()
-            handleClose()
-        })
-        .catch((error) => {
-            const errorMessages = Object.values(error.response.data.errors).flat().join(' | ');
-            Swal.fire({
-                title: "Failed!",
-                text: errorMessages,
-                icon: "error",
-                showConfirmButton: true,
-            });
-            console.log(error);
-        }).finally(() => {
-            setLoading(false); // Reset submitting state
-        });
     };
 
     // Function to update form state based on a batch object
@@ -97,6 +95,8 @@ export default function BatchModal({
             is_active: batch.is_active === 1 ? true : false,
             is_featured: batch.is_featured === 1 ? true : false,
             contact_id: batch.contact_id,
+            discount: batch.discount || 0, // Default to 0 if not present
+            discount_percentage: batch.discount_percentage || 0, // Default to 0 if not present
         }));
     };
 
@@ -113,35 +113,35 @@ export default function BatchModal({
 
     // Handle form input changes
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        // Update other fields (e.g., quantity, cost, price)
-        setFormState((prevState) => {
-            if (name === 'is_active') {
-                return {
-                    ...prevState,
-                    is_active: e.target.checked, // Update is_active based on the checkbox state
-                };
-            }else if (name === 'is_featured') {
-                return {
-                    ...prevState,
-                    is_featured: e.target.checked, // Update is_active based on the checkbox state
-                };
-            }else {
-                return {
-                    ...prevState,
-                    [name]: value, // For other inputs, update based on their name
-                };
-            }
-        });
-    };
+    const { name, value, type, checked } = e.target;
+
+    setFormState((prevState) => {
+        const newState = { ...prevState };
+
+        if (name === 'is_active' || name === 'is_featured') {
+            newState[name] = checked;
+        } else {
+            newState[name] = value;
+        }
+
+        if (name === "discount_percentage") {
+            newState.discount = 0;
+        } else if (name === "discount") {
+            newState.discount_percentage = 0;
+        }
+
+        return newState;
+    });
+};
+
 
     const handleSelectChange = (selectedOption) => {
         // `selectedOption` will contain the selected option object (e.g., { id: 1, name: 'Supplier 1' })
         setFormState({
-          ...formState,
-          contact_id: selectedOption ? selectedOption.id : null, // Set contact_id to the selected option's id, or null if cleared
+            ...formState,
+            contact_id: selectedOption ? selectedOption.id : null, // Set contact_id to the selected option's id, or null if cleared
         });
-      };
+    };
 
     return (
         <React.Fragment>
@@ -195,7 +195,7 @@ export default function BatchModal({
                         sx={{ justifyContent: "center" }}
                         direction="row"
                     >
-                        <Grid size={6}>
+                        <Grid size={4}>
                             <TextField
                                 fullWidth
                                 // type="number"
@@ -224,7 +224,7 @@ export default function BatchModal({
                             />
                         </Grid>
 
-                        <Grid size={6}>
+                        <Grid size={4}>
                             <TextField
                                 fullWidth
                                 type="number"
@@ -252,7 +252,7 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        <Grid size={6}>
+                        <Grid size={4}>
                             <TextField
                                 fullWidth
                                 type={"number"}
@@ -280,7 +280,45 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        <Grid size={6}>
+
+                        <Grid size={4}>
+                            <TextField
+                                fullWidth
+                                type={"number"}
+                                name="discount_percentage"
+                                label="Discount (%)"
+                                variant="outlined"
+                                required
+                                value={formState.discount_percentage}
+                                onChange={handleInputChange}
+                                sx={{
+                                    mt: "0.5rem",
+                                    input: { fontSize: "1rem" }
+                                }}
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }} />
+                        </Grid>
+                        <Grid size={4}>
+                            <TextField
+                                fullWidth
+                                type={"number"}
+                                name="discount"
+                                label="Flat Discount"
+                                variant="outlined"
+                                required
+                                value={formState.discount}
+                                onChange={handleInputChange}
+                                sx={{
+                                    mt: "0.5rem",
+                                    input: { fontSize: "1rem" }
+                                }}
+                                onFocus={(event) => {
+                                    event.target.select();
+                                }} />
+                        </Grid>
+
+                        <Grid size={4}>
                             <TextField
                                 fullWidth
                                 type={"date"}
@@ -303,30 +341,30 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 12 }} sx={{zIndex:100,}}>
-                        <Select2
-                                    className="w-full"
-                                    placeholder="Select a supplier..."
-                                    name="contact_id"
-                                    styles={{
-                                        control: (baseStyles, state) => ({
-                                            ...baseStyles,
-                                            height: "55px",
-                                            zIndex:100,
-                                        }),
-                                        menuPortal: (baseStyles) => ({
-                                            ...baseStyles,
-                                            zIndex: 9999, // Set z-index for the dropdown menu to ensure it appears on top of other elements
-                                          }),
-                                    }}
-                                    value={contacts.find((contact) => contact.id === formState.contact_id) || null}
-                                    onChange={(selectedOption) => handleSelectChange(selectedOption)}
-                                    options={contacts} // Options to display in the dropdown
-                                    // onChange={(selectedOption) => handleChange(selectedOption)}
-                                    isClearable // Allow the user to clear the selected option
-                                    getOptionLabel={(option) => option.name}
-                                    getOptionValue={(option) => option.id}
-                                ></Select2>
+                        <Grid size={{ xs: 12, sm: 12 }} sx={{ zIndex: 100, }}>
+                            <Select2
+                                className="w-full"
+                                placeholder="Select a supplier..."
+                                name="contact_id"
+                                styles={{
+                                    control: (baseStyles, state) => ({
+                                        ...baseStyles,
+                                        height: "55px",
+                                        zIndex: 100,
+                                    }),
+                                    menuPortal: (baseStyles) => ({
+                                        ...baseStyles,
+                                        zIndex: 9999, // Set z-index for the dropdown menu to ensure it appears on top of other elements
+                                    }),
+                                }}
+                                value={contacts.find((contact) => contact.id === formState.contact_id) || null}
+                                onChange={(selectedOption) => handleSelectChange(selectedOption)}
+                                options={contacts} // Options to display in the dropdown
+                                // onChange={(selectedOption) => handleChange(selectedOption)}
+                                isClearable // Allow the user to clear the selected option
+                                getOptionLabel={(option) => option.name}
+                                getOptionValue={(option) => option.id}
+                            ></Select2>
                         </Grid>
                         <Grid
                             size={6}

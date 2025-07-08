@@ -37,6 +37,11 @@ export default function ProoductBarcode({
 
     function generateBarcode() {
       // Ensure that the barcode element is available before calling JsBarcode
+      if (product.barcode.length > 6) {
+        settings.barcodeWidth = 1.2;
+      }
+      console.log(settings.barcodeWidth);
+      
       JsBarcode("#barcode", product.barcode, {
         format: settings.barcodeFormat,
         width: settings.barcodeWidth,

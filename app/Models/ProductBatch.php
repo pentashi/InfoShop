@@ -14,14 +14,15 @@ class ProductBatch extends Model
     use Userstamps;
 
     protected $fillable = [
-        'product_id',      // The ID of the product this batch belongs to
-        'batch_number',    // The batch number (e.g., 'DEFAULT')
-        'expiry_date',     // The expiry date of the batch
-        'cost',      // The cost price of this batch
-        'price',      // The sale price of this batch
+        'product_id',
+        'batch_number',
+        'expiry_date', 
+        'cost', 
+        'price',
         'is_active',
         'is_featured',
         'discount',
         'contact_id',
+        'discount_percentage',
     ];
 }

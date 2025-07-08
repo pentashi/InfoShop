@@ -38,6 +38,11 @@ export default function SearchBox() {
 
                     if (response.data.products.length === 1) {
                         const product = response.data.products;
+                        if (product[0].discount_percentage && Number(product[0].discount_percentage) !== 0) {
+                            const discount = (product[0].price * product[0].discount_percentage) / 100;
+                            product[0].discount = discount;
+                        }
+
                         const existingProductIndex = _.findIndex(cartState, (item) =>
                             item.id === product.id &&
                             item.batch_number === product.batch_number &&

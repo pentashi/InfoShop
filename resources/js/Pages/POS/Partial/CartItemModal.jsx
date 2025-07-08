@@ -60,7 +60,6 @@ export default function CartItemModal() {
     // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // Update other fields (e.g., quantity, cost, price)
         setFormState((prevState) => {
             let newState = { ...prevState };
             if (name === "quantity" && value === "") {
@@ -77,7 +76,23 @@ export default function CartItemModal() {
                 newState[name] = value; // Update fields outside of meta_data
             }
 
-            if(newState.product_type==="commission"){
+            // 👇 Derive subtotal from price * quantity
+            const price = parseFloat(newState.price) || 0;
+
+            if (name === "discount") {
+                const discount = parseFloat(value) || 0;
+                newState.discount_percentage = ((discount / price) * 100).toFixed(2);
+            }
+            else if (name === "price") {
+                newState.discount = parseFloat(newState.discount) || 0;
+                newState.discount_percentage = ((newState.discount / price) * 100).toFixed(2);
+            }
+            else if (name === "discount_percentage") {
+                const discount_percentage = parseFloat(value) || 0;
+                newState.discount = ((discount_percentage / 100) * price).toFixed(2);
+            }
+
+            if (newState.product_type === "commission") {
                 const fixedCommission = parseFloat(newState.meta_data?.fixed_commission) || 0;
                 const price = parseFloat(newState.price) || 0;
                 newState.cost = price - fixedCommission;
@@ -105,7 +120,7 @@ export default function CartItemModal() {
                     const calculatedCost =
                         parseFloat(newState.price) -
                         parseFloat(newState.commission) || 0;
-                    newState.cost = calculatedCost; // Update the cost field
+                    newState.cost = calculatedCost;
                 }
             }
             return newState;
@@ -460,40 +475,75 @@ export default function CartItemModal() {
                             </>
                         )}
                         {formState.product_type === "simple" && (
-                            <Grid size={6}>
-                                <TextField
-                                    fullWidth
-                                    type="number"
-                                    name="discount"
-                                    label="Discount"
-                                    variant="outlined"
-                                    required
-                                    value={formState.discount}
-                                    onChange={handleInputChange}
-                                    inputRef={cart_first_focus === "discount" ? focusInputRef : undefined}
-                                    sx={{
-                                        mt: "0.5rem",
-                                        input: { fontSize: "1rem" },
-                                    }}
-                                    onFocus={(event) => {
-                                        event.target.select();
-                                    }}
-                                    slotProps={{
-                                        inputLabel: {
-                                            shrink: true,
-                                        },
-                                        input: {
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    Rs.
-                                                </InputAdornment>
-                                            ),
-                                        },
-                                    }}
-                                />
-                            </Grid>
+
+                            <>
+                                <Grid size={4}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        name="discount"
+                                        label="Discount"
+                                        variant="outlined"
+                                        required
+                                        value={formState.discount}
+                                        onChange={handleInputChange}
+                                        inputRef={cart_first_focus === "discount" ? focusInputRef : undefined}
+                                        sx={{
+                                            mt: "0.5rem",
+                                            input: { fontSize: "1rem" },
+                                        }}
+                                        onFocus={(event) => {
+                                            event.target.select();
+                                        }}
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                            input: {
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        Rs.
+                                                    </InputAdornment>
+                                                ),
+                                            },
+                                        }}
+                                    />
+                                </Grid>
+
+                                <Grid size={4}>
+                                    <TextField
+                                        fullWidth
+                                        type="number"
+                                        name="discount_percentage"
+                                        label="Discount (%)"
+                                        variant="outlined"
+                                        required
+                                        value={formState.discount_percentage || 0}
+                                        onChange={handleInputChange}
+                                        sx={{
+                                            mt: "0.5rem",
+                                            input: { fontSize: "1rem" },
+                                        }}
+                                        onFocus={(event) => {
+                                            event.target.select();
+                                        }}
+                                        slotProps={{
+                                            inputLabel: {
+                                                shrink: true,
+                                            },
+                                            input: {
+                                                endAdornment: (
+                                                    <InputAdornment position="start">
+                                                        %
+                                                    </InputAdornment>
+                                                ),
+                                            },
+                                        }}
+                                    />
+                                </Grid>
+                            </>
                         )}
-                        <Grid size={formState.product_type !== "reload" ? 6 : 4}>
+                        <Grid size={formState.product_type !== "reload" ? 4 : 4}>
                             <TextField
                                 fullWidth
                                 type={showCost ? "number" : "text"}

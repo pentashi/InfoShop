@@ -9,6 +9,7 @@ import {
     Divider,
     Typography,
     MenuItem,
+    RadioGroup, FormControlLabel, Radio, Select
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -41,6 +42,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
+
+
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -54,6 +57,18 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function Product({ product, collection, product_code, contacts, product_alert, misc_setting }) {
+
+    const [discountType, setDiscountType] = useState("percentage");
+    const handleDiscountTypeChange = (event) => {
+        const selectedType = event.target.value;
+        setDiscountType(selectedType);
+
+        setProductFormData((prev) => ({
+            discount_percentage: selectedType === "percentage" ? prev.discount_percentage : "",
+            discount: selectedType === "discount" ? prev.discount : "",
+        }));
+    };
+
     const [loading, setLoading] = useState(false);
     const [compressedFile, setCompressedFile] = useState(null);
 
@@ -92,16 +107,34 @@ export default function Product({ product, collection, product_code, contacts, p
         product_type: "simple",
         fixed_commission: 0,
         batch_number: dayjs().format('DDMMYYYY'), // Initial value for batch number
+        discount: 0,
+        discount_percentage: 0,
+        price: '',
     });
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData({
+
+        const updatedForm = {
             ...productFormData,
             [name]: type === "checkbox" ? checked : value,
-        });
+        };
+
+        const quantity = parseFloat(updatedForm.quantity) || 0;
+        const price = parseFloat(updatedForm.price) || 0;
+
+        // If discount_percentage changes, calculate flat discount
+        if (name === "discount_percentage") {
+            updatedForm.discount = "0";
+            updatedForm.discount_percentage = value;
+        } else if (name === "discount") {
+            updatedForm.discount_percentage = "0";
+        }
+
+        setFormData(updatedForm);
     };
+
+
 
     // Handle file input change
     const handleFileChange = async (e) => {
@@ -114,7 +147,7 @@ export default function Product({ product, collection, product_code, contacts, p
             try {
                 const options = {
                     maxSizeMB: (misc_setting && misc_setting.optimize_image_size) || 0.5, // Maximum size in MB
-                    maxWidthOrHeight:(misc_setting && misc_setting.optimize_image_width) || 720, // Max width or height
+                    maxWidthOrHeight: (misc_setting && misc_setting.optimize_image_width) || 720, // Max width or height
                     useWebWorker: true, // Use web worker for faster compression
                 };
                 console.log(options)
@@ -309,18 +342,18 @@ export default function Product({ product, collection, product_code, contacts, p
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 2 }}>
-                                <TextField
-                                    value={productFormData.unit}
-                                    label="Product Unit"
-                                    onChange={handleChange}
-                                    name="unit"
-                                    select
-                                    fullWidth
-                                >
-                                    <MenuItem value={"PC"}>PC</MenuItem>
-                                    <MenuItem value={"KG"}>KG</MenuItem>
-                                    <MenuItem value={"Meter"}>Meter</MenuItem>
-                                </TextField>
+                            <TextField
+                                value={productFormData.unit}
+                                label="Product Unit"
+                                onChange={handleChange}
+                                name="unit"
+                                select
+                                fullWidth
+                            >
+                                <MenuItem value={"PC"}>PC</MenuItem>
+                                <MenuItem value={"KG"}>KG</MenuItem>
+                                <MenuItem value={"Meter"}>Meter</MenuItem>
+                            </TextField>
                         </Grid>
                     </Grid>
                     <Box className="sm:columns-1 md:columns-2 mb-4">
@@ -387,7 +420,31 @@ export default function Product({ product, collection, product_code, contacts, p
                                         onChange={handleChange}
                                     />
                                 </Grid>
-                                
+
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Discount Percentage %"
+                                        name="discount_percentage"
+                                        type="number"
+                                        fullWidth
+                                        value={productFormData.discount_percentage}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Grid>
+
+                                <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
+                                    <TextField
+                                        label="Flat Discount"
+                                        name="discount"
+                                        type="number"
+                                        fullWidth
+                                        value={productFormData.discount}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Grid>
+
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
                                         label="Batch number"
@@ -398,22 +455,22 @@ export default function Product({ product, collection, product_code, contacts, p
                                     />
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4 }} className="mb-3">
-                                <Select2
-                                    className="w-full"
-                                    placeholder="Select a supplier..."
-                                    name="contact_id"
-                                    styles={{
-                                        control: (baseStyles, state) => ({
-                                            ...baseStyles,
-                                            height: "55px",
-                                        }),
-                                    }}
-                                    options={contacts} // Options to display in the dropdown
-                                    // onChange={(selectedOption) => handleChange(selectedOption)}
-                                    isClearable // Allow the user to clear the selected option
-                                    getOptionLabel={(option) => option.name}
-                                    getOptionValue={(option) => option.id}
-                                ></Select2>
+                                    <Select2
+                                        className="w-full"
+                                        placeholder="Select a supplier..."
+                                        name="contact_id"
+                                        styles={{
+                                            control: (baseStyles, state) => ({
+                                                ...baseStyles,
+                                                height: "55px",
+                                            }),
+                                        }}
+                                        options={contacts} // Options to display in the dropdown
+                                        // onChange={(selectedOption) => handleChange(selectedOption)}
+                                        isClearable // Allow the user to clear the selected option
+                                        getOptionLabel={(option) => option.name}
+                                        getOptionValue={(option) => option.id}
+                                    ></Select2>
                                 </Grid>
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <LocalizationProvider
@@ -537,35 +594,35 @@ export default function Product({ product, collection, product_code, contacts, p
                             />
                         </Grid>
                         <Grid size={{ xs: 6, sm: 2 }}>
-                        <Autocomplete
-                                        disablePortal
-                                        value={selectedCategory || null}
-                                        onChange={(event, newValue) => {
-                                            setSelectedCategory(newValue);
-                                        }}
-                                        options={categoryOptions}
-                                        getOptionLabel={(options) =>
-                                            options.label
-                                        }
-                                        fullWidth
-                                        id="category"
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Category"
-                                            />
-                                        )}
+                            <Autocomplete
+                                disablePortal
+                                value={selectedCategory || null}
+                                onChange={(event, newValue) => {
+                                    setSelectedCategory(newValue);
+                                }}
+                                options={categoryOptions}
+                                getOptionLabel={(options) =>
+                                    options.label
+                                }
+                                fullWidth
+                                id="category"
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Category"
                                     />
+                                )}
+                            />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 8 }}>
-                        <TextField
-                                        label="Product Description"
-                                        id="product-description"
-                                        name="description"
-                                        fullWidth
-                                        value={productFormData.description}
-                                        onChange={handleChange}
-                                    />
+                            <TextField
+                                label="Product Description"
+                                id="product-description"
+                                name="description"
+                                fullWidth
+                                value={productFormData.description}
+                                onChange={handleChange}
+                            />
                         </Grid>
                     </Grid>
 
@@ -573,13 +630,13 @@ export default function Product({ product, collection, product_code, contacts, p
                         <Grid container spacing={2}>
                             <Grid size={{ xs: 12, md: 4 }}>
                                 <div className="mb-3">
-                                    
+
                                 </div>
                             </Grid>
                             <Grid size={{ xs: 12, md: 8 }}>
                                 {/* Product Description */}
                                 <div className="mb-3">
-                                    
+
                                 </div>
                             </Grid>
 
