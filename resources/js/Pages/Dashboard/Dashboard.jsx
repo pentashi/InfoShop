@@ -25,6 +25,7 @@ import PaidIcon from "@mui/icons-material/Paid";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import axios from "axios";
 import numeral from "numeral";
 
@@ -32,12 +33,14 @@ import Summaries from "./Partials/Summaries";
 
 export default function Dashboard({ data, logo, version, store_name }) {
     const auth = usePage().props.auth.user;
+    const modules = usePage().props.modules;
     const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
     const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM-DD"));
 
     const [cash_in, setCashIn] = useState(0);
     const [total_sales, setTotalSales] = useState(0);
     const [expenses, setExpenses] = useState(0);
+    const [inventory_purchase, setInventoryPurchase] = useState(0);
 
     const refreshSummary = async () => {
         try {
@@ -45,10 +48,11 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 start_date: startDate,
                 end_date: endDate,
             });
-            const { cash_in, total_sales, expenses } = response.data.summary;
+            const { cash_in, total_sales, expenses, inventory_purchase } = response.data.summary;
             setCashIn(cash_in);
             setTotalSales(total_sales);
             setExpenses(expenses);
+            setInventoryPurchase(inventory_purchase);
         } catch (error) {
             console.error("Error fetching summary:", error);
         }
@@ -281,6 +285,25 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                             </ListItemButton>
                                         </ListItem>
                                     </Link>
+                                    {modules?.includes('Inventory') && (
+                                        <React.Fragment>
+                                            <Divider />
+                                            <Link href="#">
+                                                <ListItem
+                                                    secondaryAction={numeral(
+                                                        inventory_purchase
+                                                    ).format("0,0.00")}
+                                                >
+                                                    <ListItemButton>
+                                                        <ListItemIcon>
+                                                            <ShoppingCartCheckoutIcon/>
+                                                        </ListItemIcon>
+                                                        <ListItemText primary="Inventory Purchase" />
+                                                    </ListItemButton>
+                                                </ListItem>
+                                            </Link>
+                                        </React.Fragment>
+                                    )}
                                     <Divider />
                                     <Link href="/expenses">
                                         <ListItem
@@ -296,7 +319,8 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                             </ListItemButton>
                                         </ListItem>
                                     </Link>
-                                    <Divider />
+                                    
+                                    <Divider/>
                                     <Link href="/reports/summary-report">
                                         <ListItem>
                                             <ListItemText sx={{ textAlign: 'center', color: '#1976d2', textDecoration: 'underline' }} primary="VIEW SUMMARY" />

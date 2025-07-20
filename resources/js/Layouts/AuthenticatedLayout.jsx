@@ -42,9 +42,8 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoneyCheck, faFileInvoice } from "@fortawesome/free-solid-svg-icons";
+import { faMoneyCheck, faFileInvoice, faBoxesStacked } from "@fortawesome/free-solid-svg-icons";
 import infoshopLogo from "@/infoshop.png";
-import { TextField } from "@mui/material";
 const drawerWidth = 240;
 
 function AuthenticatedLayout({ header, children, ...props }) {
@@ -230,6 +229,19 @@ function AuthenticatedLayout({ header, children, ...props }) {
                         selected={isSelected("/vendors")}
                     />
                 )}
+
+                {(permissions.includes("inventory") && modules.includes("Inventory")) && (
+                    <NavItem
+                        href="/inventory"
+                        icon={faBoxesStacked}
+                        icontype={'fa'}
+                        label="Inventory"
+                        open={open}
+                        selected={isSelected("/inventory")}
+                    />
+                )}
+
+
                 {permissions.includes("collections") && (
                     <NavItem
                         href="/collections"
