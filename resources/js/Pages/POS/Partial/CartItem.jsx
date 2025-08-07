@@ -1,14 +1,16 @@
-import React, { useContext, useEffect} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import {Avatar, Box, Typography, IconButton } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { Avatar, Box, Typography, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import QuantityInput from './QuantityInput';
 import CartItemModal from './CartItemModal';
 import { usePage } from "@inertiajs/react";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
@@ -16,36 +18,63 @@ import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 export default function CartItems() {
   const return_sale = usePage().props.return_sale;
-  const { cartState, removeFromCart, emptyCart} = useCart();
+  const { cartState, removeFromCart, emptyCart, addToCart } = useCart();
   const { setCartItemModalOpen, setSelectedCartItem, cartItemModalOpen } = useContext(SharedContext);
 
+  // Handle cart item menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event, item) => {
+    setAnchorEl(event.currentTarget);
+    setMenuItem(item); // store the specific item
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  // Handle cart item menu end
+
+  const handleCartMenuClick = (item, type) => {
+    if (type === 'free') {
+      const freeItem = { ...item, discount: item.price, add_new_item: true, quantity: 1 };
+      addToCart(freeItem);
+    }
+    else if (type === "duplicate") {
+      const duplicateItem = { ...item, add_new_item: true };
+      addToCart(duplicateItem);
+    }
+    handleClose()
+  };
+
+
   useEffect(() => {
-    if(return_sale){
+    if (return_sale) {
       emptyCart()
     }
-  },[return_sale])
+  }, [return_sale])
 
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-      
-      {cartState.map((item, index) =>(
+      {cartState.map((item, index) => (
         <React.Fragment key={index}>
-          <ListItem alignItems="center" sx={{padding:{sm:0.5, xs:0}, paddingY:0.5}}>
-            <ListItemAvatar sx={{display:{xs:'none', sm:'block'}}}>
-              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url?item.image_url:productplaceholder} />
+          <ListItem alignItems="center" sx={{ padding: { sm: 0.5, xs: 0 }, paddingY: 0.5 }}>
+            <ListItemAvatar sx={{ display: { xs: 'none', sm: 'block' } }} onClick={(e) => handleClick(e, item)} className='cursor-pointer'>
+              <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url ? item.image_url : productplaceholder} />
             </ListItemAvatar>
             <ListItemText
               primary={
                 <Typography
                   component="h5"
-                  sx={{ fontWeight: 'bold', cursor:'pointer', fontSize:{sm:'1rem', xs:'0.9rem'} }}  // Makes the text bold
+                  sx={{ fontWeight: 'bold', cursor: 'pointer', fontSize: { sm: '1rem', xs: '0.9rem' } }}  // Makes the text bold
                   className='hover:underline'
-                  onClick={()=>{setSelectedCartItem({...item, cart_index:index}); setCartItemModalOpen(true);}}
+                  onClick={() => { setSelectedCartItem({ ...item, cart_index: index }); setCartItemModalOpen(true); }}
                 >
                   {item.name}
                 </Typography>
               }
-              sx={{ml:'10px'}}
+              sx={{ ml: '10px' }}
               secondary={
                 <>
                   <Typography
@@ -53,27 +82,46 @@ export default function CartItems() {
                     variant="body2"
                     sx={{ color: 'text.primary', display: 'inline' }}
                   >
-                    RS.{(item.price-item.discount).toFixed(2)} X {item.quantity} = <b>RS.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
-                    <br></br>
+                    {(item.price - item.discount) * item.quantity === 0 ? (
+                      <span className='bg-green-600 text-white px-2 py-1 rounded-md'>Free</span>
+                    ) : (
+                      <>
+                        RS.{(item.price - item.discount).toFixed(2)} X {item.quantity} = <b>RS.{((item.price - item.discount) * item.quantity).toFixed(2)}</b>
+                      </>
+                    )}
+                    <br/>
                   </Typography>
-                  </>
+                </>
               }
             />
-    
+
             <Box className="flex flex-row">
               <div className="relative w-full flex flex-row">
-              <QuantityInput cartItem={{...item, cart_index:index}}></QuantityInput>
-              <IconButton aria-label="delete" color='error' sx={{ml:'8px'}} onClick={() => removeFromCart(index)}>
-                <DeleteForeverIcon />
+                <QuantityInput cartItem={{ ...item, cart_index: index }}></QuantityInput>
+                <IconButton aria-label="delete" color='error' sx={{ ml: '8px' }} onClick={() => removeFromCart(index)}>
+                  <DeleteIcon />
                 </IconButton>
               </div>
             </Box>
           </ListItem>
-          
           <Divider variant="inset" component="li" />
+          <Menu
+            id="cart-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            slotProps={{
+              list: {
+                'aria-labelledby': 'basic-button',
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleCartMenuClick(menuItem, 'free')}>ADD FREE ITEMS</MenuItem>
+            <MenuItem onClick={() => handleCartMenuClick(menuItem, 'duplicate')}>DUPLICATE</MenuItem>
+          </Menu>
         </React.Fragment>
       ))}
-      
+
       {cartItemModalOpen && <CartItemModal />}
 
     </List>

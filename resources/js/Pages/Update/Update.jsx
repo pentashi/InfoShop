@@ -50,7 +50,6 @@ export default function Update() {
                 },
             });
 
-            console.log();
             Swal.fire({
                 title: 'Success!',
                 text: response.data.success,

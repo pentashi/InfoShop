@@ -53,8 +53,7 @@ export default function SearchBox() {
                         }
                         else {
                             product[0].quantity = 1;
-                            addToCart(product[0]);
-                            console.log(product[0])
+                            addToCart(product[0])
                         }
 
                         // This one enables the same item added multiple times and also ensure only the reload product is added, by this, we can get the last added item of reload product so we can modify the cart item. becuase we are using cartindex as an id to update cart item

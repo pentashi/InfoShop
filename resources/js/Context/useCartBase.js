@@ -6,13 +6,18 @@ const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const cart = [...state];
-      const existingProductIndex = cart.findIndex(
-        (item) =>
-          item.id === action.payload.id &&
-          item.batch_number === action.payload.batch_number &&
-          (item.product_type !== 'custom' && item.product_type !== 'reload')
-      );
+      const existingProductIndex =
+        action.payload.add_new_item === true
+          ? -1
+          : cart.findIndex(
+              (item) =>
+                item.id === action.payload.id &&
+                item.batch_number === action.payload.batch_number &&
+                (item.product_type !== 'custom' && item.product_type !== 'reload')
+            );
+
       if (existingProductIndex !== -1) {
+        // Item found, so just increase its quantity
         cart[existingProductIndex].quantity =
           parseFloat(cart[existingProductIndex].quantity) + 1;
       } else {
@@ -45,7 +50,7 @@ const cartReducer = (state, action) => {
     case 'UPDATE_CART_ITEM': {
       const cart = [...state];
       let existingProductIndex = action.payload.cart_index;
-      if (action.payload.product_type != 'reload' && action.payload.product_type != "custom") {
+      if (!['reload', 'custom'].includes(action.payload.product_type) && !existingProductIndex) {
         existingProductIndex = cart.findIndex(
           (item) =>
             item.id === action.payload.id &&

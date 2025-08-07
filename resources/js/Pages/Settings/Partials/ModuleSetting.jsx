@@ -34,7 +34,6 @@ const App = ({ handleSubmit, settingFormData, setSettingFormData, settings }) =>
             onSubmit={handleSubmit}
             method="post"
         >
-            {console.log(settingFormData.modules)}
             <Grid container spacing={2} size={12} width={'100%'} justifyContent={'center'}>
                 {modules_list.map((module) => (
                     <Grid size={{ xs: 12, sm: 3 }} key={module} justifyContent={'center'}>
@@ -66,7 +65,6 @@ const App = ({ handleSubmit, settingFormData, setSettingFormData, settings }) =>
 export default function ModuleSetting(props) {
     return (
       <SnackbarProvider maxSnack={3}>
-        {console.log(props)}
         <App {...props}/>
       </SnackbarProvider>
     );

@@ -28,7 +28,6 @@ export default function ProductItem({ product }) {
                     const discount = (product.price * product.discount_percentage) / 100;
                     product.discount = discount;
                 }
-                console.log(product);
                 addToCart(product, product.quantity);
 
                 if (product.product_type === "reload") {

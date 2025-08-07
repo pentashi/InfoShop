@@ -442,15 +442,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             color="initial"
                                                         >
                                                             <strong>
-                                                                {numeral(
-                                                                    parseFloat(
-                                                                        item.quantity
-                                                                    ) *
-                                                                    (item.unit_price -
-                                                                        item.discount)
-                                                                ).format(
-                                                                    "0,0.00"
-                                                                )}
+                                                                {parseFloat(item.quantity) * (item.unit_price - item.discount) === 0 ? 'Free' : numeral(parseFloat(item.quantity) * (item.unit_price - item.discount)).format("0,0.00")}
                                                             </strong>
                                                         </Typography>
                                                     </TableCell>
@@ -521,14 +513,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     color="initial"
                                                 >
                                                     Rs.
-                                                    {numeral(
-                                                        parseFloat(
-                                                            sale.total_amount
-                                                        ) +
-                                                        parseFloat(
-                                                            sale.discount
-                                                        )
-                                                    ).format("0,0.00")}
+                                                    {numeral(parseFloat( sale.total_amount) + parseFloat( sale.discount)).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>

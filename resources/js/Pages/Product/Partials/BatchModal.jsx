@@ -104,7 +104,6 @@ export default function BatchModal({
     useEffect(() => {
 
         if (selectedBatch) {
-            console.log(selectedBatch);
             updateFormStateFromBatch(selectedBatch); // Reuse the function to update state
             setIsNew(false);
         }

@@ -40,7 +40,6 @@ export default function ProoductBarcode({
       if (product.barcode.length > 6) {
         settings.barcodeWidth = 1.2;
       }
-      console.log(settings.barcodeWidth);
       
       JsBarcode("#barcode", product.barcode, {
         format: settings.barcodeFormat,

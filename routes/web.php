@@ -30,6 +30,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ChequeController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\SaleTemplateController;
 
 Route::get('/', function () {
     return redirect('login');
@@ -189,6 +190,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventory-purchase', [InventoryController::class, 'inventoryPurchase']);
     Route::post('/inventory-purchase', [InventoryController::class, 'inventoryPurchaseStore']);
     Route::get('/inventory-logs', [InventoryController::class, 'inventoryLogs']);
+
+    Route::resource('sale-templates', SaleTemplateController::class);
 
     Route::get('/clear-cache', function () {
         Artisan::call('cache:clear');

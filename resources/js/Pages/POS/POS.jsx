@@ -26,6 +26,7 @@ import CartIcon from "./Partial/CartIcon";
 import { SalesProvider } from "@/Context/SalesContext";
 import CartItemsTop from "./Partial/CartItemsTop";
 import POSBottomBar from "./Partial/POSBottomBar";
+import SaleTemplateItem from "./SaleTemplate/SaleTemplateItems";
 
 const drawerWidth = 530;
 
@@ -52,7 +53,8 @@ function POS({ products, customers, return_sale, categories }) {
     const cartType = return_sale ? 'sales_return_cart' : 'sales_cart';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const [dataProducts, setProducts] = useState(products);
+    const [dataProducts, setDataProducts] = useState(products);
+    const [templates, setTemplates] = useState([]);
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -70,10 +72,10 @@ function POS({ products, customers, return_sale, categories }) {
     };
 
     useEffect(() => {
-        if(cartType === "sales_return_cart") {
+        if (cartType === "sales_return_cart") {
             localStorage.setItem('sales_return_cart', []);
         }
-    },[cartType])
+    }, [cartType])
 
 
     // useEffect(() => {
@@ -110,7 +112,7 @@ function POS({ products, customers, return_sale, categories }) {
 
     return (
         <SalesProvider cartType={cartType}>
-            
+
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -171,7 +173,8 @@ function POS({ products, customers, return_sale, categories }) {
 
                     {/* Product items area  */}
                     <Grid container spacing={2} sx={{ mb: 8 }}>
-                        {dataProducts.map((product) => (
+                        <SaleTemplateItem templates={templates} setTemplates={setTemplates}/>
+                        {dataProducts?.map((product) => (
                             <Grid
                                 key={product.id + product.batch_number}
                                 size={{ xs: 6, sm: 6, md: 2 }}
@@ -183,7 +186,7 @@ function POS({ products, customers, return_sale, categories }) {
 
                         {/* Featured and categories */}
                         {!return_sale && (
-                            <POSBottomBar drawerWidth={drawerWidth} categories={categories} setProducts={setProducts} />
+                            <POSBottomBar drawerWidth={drawerWidth} categories={categories} setProducts={setDataProducts} setTemplates={setTemplates} />
                         )}
                     </Grid>
                 </Box>
@@ -235,7 +238,7 @@ function POS({ products, customers, return_sale, categories }) {
                     </Drawer>
                 </Box>
             </Box>
-            
+
         </SalesProvider>
     );
 }

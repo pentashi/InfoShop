@@ -562,7 +562,6 @@ export default function Product({ product, collection, product_code, contacts, p
                                 />
                             </Grid>
                         )}
-
                     </Grid>
 
                     <Divider></Divider>

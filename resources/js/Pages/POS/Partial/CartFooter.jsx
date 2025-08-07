@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PrintIcon from '@mui/icons-material/Print';
+import { FolderCopy } from "@mui/icons-material";
 import { styled, alpha } from '@mui/material/styles';
 
 import { useSales as useCart } from "@/Context/SalesContext";
@@ -22,6 +23,7 @@ import HeldItemsModal from "./HeldItemsModal";
 import PaymentsCheckoutDialog from "@/Components/PaymentsCheckoutDialog";
 import QuotationDialog from "./QuotationDialog";
 import CashCheckoutDialog from "./CashCheckoutDialog";
+import SaleTemplateDialog from "../SaleTemplate/SaleTemplateDialog";
 
 import Swal from "sweetalert2";
 
@@ -75,6 +77,7 @@ export default function CartFooter() {
     const [heldModalOpen, setHeldModalOpen] = useState(false);
     const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
     const [quotationModalOpen, setQuotationModalOpen] = useState(false);
+    const [saleTemplateModalOpen, setSaleTemplateModalOpen] = useState(false);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -176,6 +179,11 @@ export default function CartFooter() {
                             HOLD ITEMS
                         </MenuItem>
                         <Divider sx={{ my: 0.5 }} />
+                        <MenuItem disabled={cartState.length === 0} onClick={() => {setSaleTemplateModalOpen(true); handleClose();}}>
+                            <FolderCopy />
+                            GROUP ITEMS
+                        </MenuItem>
+                        <Divider sx={{ my: 0.5 }} />
                         {/* <Link href={`/receipt/1`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <MenuItem>
                                 <PrintIcon />
@@ -231,6 +239,8 @@ export default function CartFooter() {
                 setOpen={setQuotationModalOpen}
                 selectedContact={selectedCustomer}
             />
+
+            <SaleTemplateDialog open={saleTemplateModalOpen} setOpen={setSaleTemplateModalOpen} />
         </Grid>
     );
 }
