@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import {
     AppBar,
     Box,
@@ -17,7 +17,6 @@ import HomeIcon from "@mui/icons-material/Home";
 
 import ProductItem from "./Partial/ProductItem";
 import CartItems from "./Partial/CartItem";
-import CustomerSelect from "./Partial/CartItemsTop";
 import CartSummary from "./Partial/CartSummary";
 import CartFooter from "./Partial/CartFooter";
 import SearchBox from "./Partial/SearchBox";
@@ -27,6 +26,7 @@ import { SalesProvider } from "@/Context/SalesContext";
 import CartItemsTop from "./Partial/CartItemsTop";
 import POSBottomBar from "./Partial/POSBottomBar";
 import SaleTemplateItem from "./SaleTemplate/SaleTemplateItems";
+import Swal from "sweetalert2";
 
 const drawerWidth = 530;
 
@@ -49,8 +49,8 @@ const DrawerFooter = styled("div")(({ theme }) => ({
 }));
 
 
-function POS({ products, customers, return_sale, categories }) {
-    const cartType = return_sale ? 'sales_return_cart' : 'sales_cart';
+function POS({ products, customers, return_sale, categories, edit_sale, sale_data }) {
+    const cartType = edit_sale ? 'sale_edit_cart' : (return_sale ? 'sales_return_cart' : 'sales_cart');
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [dataProducts, setDataProducts] = useState(products);
@@ -75,7 +75,27 @@ function POS({ products, customers, return_sale, categories }) {
         if (cartType === "sales_return_cart") {
             localStorage.setItem('sales_return_cart', []);
         }
+
+        if (cartType === "sale_edit_cart") {
+            localStorage.setItem('sale_edit_cart', []);
+        }
     }, [cartType])
+
+    useEffect(() => {
+        if (edit_sale && !sale_data.cart_snapshot) {
+            Swal.fire({
+                title: 'Only recent sales can be edited',
+                text: 'Please select a recent sale to edit',
+                icon: 'error',
+                confirmButtonText: 'Go to Sales',
+                showCancelButton: false,
+                showCloseButton: false,
+                allowOutsideClick: false
+            }).then(() => {
+                router.get("/sales")
+            })
+        }
+    })
 
 
     // useEffect(() => {
@@ -88,31 +108,36 @@ function POS({ products, customers, return_sale, categories }) {
 
     const drawer = (
         <>
-            <form action="/pos" method="post">
-                <Toolbar sx={{ display: { xs: "none", sm: "flex" } }}>
-                    <CustomerSelect customers={customers} />
-                </Toolbar>
+            <form
+                action="/pos"
+                method="post"
+                className="p-2 h-[calc(100vh-80px)]"
+            >
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    <CartItemsTop customers={customers} />
+                </Box>
                 <Divider />
                 <Box
-                    className="flex flex-col overflow-auto"
-                    sx={{ height: { sm: "calc(100vh - 275px);", xs: "calc(100vh - 350px);" } }}
+                    className="flex flex-col overflow-auto h-full"
                 >
-                    {/* Cart Items - List of all items */}
-                    <CartItems />
-                    {/* Cart Summary - Total and discount area */}
-                    <CartSummary />
+                    <Box className="flex-grow">
+                        {/* Cart Items - List of all items */}
+                        <CartItems />
+                        {/* Cart Summary - Total and discount area */}
+                        <CartSummary />
+                    </Box>
+                    <DrawerFooter>
+                        {/* Cart footer - Buttons */}
+                        <CartFooter />
+                    </DrawerFooter>
                 </Box>
-                <DrawerFooter>
-                    {/* Cart footer - Buttons */}
-                    <CartFooter />
-                </DrawerFooter>
+
             </form>
         </>
     );
 
     return (
         <SalesProvider cartType={cartType}>
-
             <Head title="Point of Sale" />
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
@@ -173,7 +198,7 @@ function POS({ products, customers, return_sale, categories }) {
 
                     {/* Product items area  */}
                     <Grid container spacing={2} sx={{ mb: 8 }}>
-                        <SaleTemplateItem templates={templates} setTemplates={setTemplates}/>
+                        <SaleTemplateItem templates={templates} setTemplates={setTemplates} />
                         {dataProducts?.map((product) => (
                             <Grid
                                 key={product.id + product.batch_number}

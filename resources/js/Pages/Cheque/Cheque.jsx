@@ -162,13 +162,14 @@ export default function Cheque({ cheques, stores }) {
                     <TextField
                         label="Store"
                         name="store"
+                        size="small"
                         placeholder="Search by store"
                         value={searchTerms.store}
                         onChange={handleSearchChange}
                         fullWidth
                         slotProps={{
                             inputLabel: {
-                                shrink: true, // Ensures label stays above the input
+                                shrink: true,
                             },
                         }}
                         select
@@ -190,6 +191,7 @@ export default function Cheque({ cheques, stores }) {
                     <TextField
                         label="Direction"
                         name="direction"
+                        size="small"
                         value={searchTerms.direction}
                         onChange={handleSearchChange}
                         fullWidth
@@ -211,6 +213,7 @@ export default function Cheque({ cheques, stores }) {
                     <TextField
                         label="Status"
                         name="status"
+                        size="small"
                         placeholder="Search by status"
                         value={searchTerms.status}
                         onChange={handleSearchChange}
@@ -234,6 +237,7 @@ export default function Cheque({ cheques, stores }) {
                 <Grid size={{ xs: 12, sm: 3 }}>
                     <TextField
                         label="Search Query"
+                        size="small"
                         name="search_query"
                         placeholder="Search by cheque number, payee, or bank"
                         value={searchTerms.search_query}
@@ -253,6 +257,7 @@ export default function Cheque({ cheques, stores }) {
                         label="Start Date"
                         name="start_date"
                         type="date"
+                        size="small"
                         value={searchTerms.start_date}
                         onChange={handleSearchChange}
                         fullWidth
@@ -270,6 +275,7 @@ export default function Cheque({ cheques, stores }) {
                         label="End Date"
                         name="end_date"
                         type="date"
+                        size="small"
                         value={searchTerms.end_date}
                         onChange={handleSearchChange}
                         fullWidth

@@ -30,7 +30,7 @@ const columns = (handleRowClick) => [
             </Tooltip>
         ),
     },
-    {field: 'barcode', headerName: 'Barcode', width: 200, selector: row => row.barcode, sortable: true,hideable: true},
+    { field: 'barcode', headerName: 'Barcode', width: 200, selector: row => row.barcode, sortable: true, hideable: true },
     { field: "product_name", headerName: "Product Name", width: 200, },
     {
         field: "quantity", headerName: "Quantity", width: 100, align: 'right', headerAlign: 'right',
@@ -65,12 +65,21 @@ const columns = (handleRowClick) => [
     {
         field: 'total',
         headerName: "Total",
-        width: 100,
+        width: 120,
         align: 'right',
         headerAlign: 'right',
         renderCell: (params) => {
-            const change = (params.row.unit_price - params.row.discount) * params.row.quantity;
-            return numeral(change).format('0,0.00');
+            const total = (params.row.unit_price - params.row.discount) * params.row.quantity;
+
+            if (total === 0) {
+                return (
+                    <span className="bg-green-600 text-white px-2 py-1 rounded-md">
+                        Free
+                    </span>
+                );
+            }
+
+            return numeral(total).format('0,0.00');
         },
     },
     // { field: 'profit_amount', headerName: 'Profit Amount', width: 120 },
@@ -82,7 +91,7 @@ const columns = (handleRowClick) => [
     {
         field: "action",
         headerName: "Action",
-        width: 150,
+        width: 80,
         renderCell: (params) => {
             if (params.row.quantity < 0) return null;
             return (
@@ -107,7 +116,8 @@ export default function SoldItem({ sold_items, contacts }) {
         contact_id: '',
         status: 'all',
         query: '',
-        order_by:'default',
+        order_by: 'default',
+        item_type: "all",
         per_page: 100,
     });
 
@@ -163,7 +173,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "55px",
+                                height: "40px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -179,6 +189,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
+                        size="small"
                         fullWidth
                         type="date"
                         slotProps={{
@@ -197,6 +208,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slots={{ toolbar: GridToolbar }}
                         slotProps={{
@@ -212,9 +224,33 @@ export default function SoldItem({ sold_items, contacts }) {
 
                 <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
+                        label="Item type"
+                        name="item_type"
+                        size="small"
+                        fullWidth
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                        value={searchTerms.item_type}
+                        onChange={handleSearchChange}
+                        required
+                        select
+                    >
+                        <MenuItem value={'all'}>All</MenuItem>
+                        <MenuItem value={'regular'}>Regular</MenuItem>
+                        <MenuItem value={'free'}>Free</MenuItem>
+                        <MenuItem value={'return'}>Return</MenuItem>
+                    </TextField>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 2 }}>
+                    <TextField
                         label="Search"
                         name="query"
                         placeholder="Search"
+                        size="small"
                         fullWidth
                         slotProps={{
                             inputLabel: {
@@ -230,6 +266,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         }}
                     />
                 </Grid>
+
                 {/* <Grid size={{ xs: 6, sm: 2 }}>
                     <TextField
                         label="Order By"
@@ -251,7 +288,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         </TextField>
                 </Grid> */}
                 <Grid size={{ xs: 12, sm: 1 }}>
-                    <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="large">
+                    <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="small">
                         <FindReplaceIcon />
                     </Button>
                 </Grid>

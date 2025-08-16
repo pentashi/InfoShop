@@ -9,12 +9,12 @@ export default function CartSummary() {
     const { cartState, cartTotal, totalQuantity } = useCart();
 
     return (
-        <List sx={{ width: "100%", bgcolor: "background.paper",}}>
+        <List sx={{ width: "100%", bgcolor: "background.paper",pb:3}}>
             <Divider
                 sx={{
                     borderBottom: "2px dashed",
                     borderColor: "grey.500",
-                    my: "1.5rem",
+                    my: 1,
                 }}
             />
             <ListItem

@@ -5,7 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import { Box, IconButton, TextField } from "@mui/material";
+import { Box, Grid2 as Grid, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -16,10 +16,14 @@ import { usePage } from "@inertiajs/react";
 
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
+import numeral from "numeral";
 
 export default function CashCheckoutDialog({ disabled }) {
     const return_sale = usePage().props.return_sale;
     const return_sale_id = usePage().props.sale_id;
+    const edit_sale = usePage().props.edit_sale;
+    const edit_sale_id = usePage().props.sale_id;
+
     const { cartState, cartTotal, totalProfit, emptyCart } = useCart();
     const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [loading, setLoading] = useState(false);
@@ -59,6 +63,8 @@ export default function CashCheckoutDialog({ disabled }) {
         formJson.contact_id = selectedCustomer.id
         formJson.return_sale = return_sale;
         formJson.return_sale_id = return_sale_id;
+        formJson.edit_sale_id = edit_sale_id;
+        formJson.edit_sale = edit_sale;
 
         axios.post('/pos/checkout', formJson)
             .then((resp) => {
@@ -109,7 +115,7 @@ export default function CashCheckoutDialog({ disabled }) {
     }
 
     return (
-        <>
+        <Grid size={12}>
             <Button
                 variant="contained"
                 color="success"
@@ -118,8 +124,9 @@ export default function CashCheckoutDialog({ disabled }) {
                 endIcon={<PaymentsIcon />}
                 onClick={handleClickOpen}
                 disabled={disabled}
+                fullWidth
             >
-                {cartTotal < 0 ? `REFUND Rs.${Math.abs(cartTotal)}` : `CASH Rs.${cartTotal}`}
+                {cartTotal < 0 ? `REFUND Rs.${Math.abs(cartTotal)}` : `CASH Rs.${numeral(cartTotal).format('0,0.00')}`}
             </Button>
             <Dialog
                 fullWidth={true}
@@ -159,7 +166,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         onFocus={event => {
                             event.target.select();
                         }}
-                    
+
                         onChange={(event) => {
                             const value = event.target.value;
 
@@ -189,7 +196,7 @@ export default function CashCheckoutDialog({ disabled }) {
                         label="Discount"
                         variant="outlined"
                         value={discount}
-                        sx={{ mt: "2rem", input: { textAlign: "center", fontSize: '2rem' }, }}
+                        sx={{ mt: "1.5rem", input: { textAlign: "center", fontSize: '2rem' }, }}
                         onChange={handleDiscountChange}
                         onFocus={event => {
                             event.target.select();
@@ -211,32 +218,33 @@ export default function CashCheckoutDialog({ disabled }) {
                         }}
                     />
 
-                    <Box className="flex items-center">
-
-                        {/* Net total (after discount) */}
-                        <TextField
-                            fullWidth
-                            label="Payable Amount"
-                            variant="outlined"
-                            name="net_total"
-                            value={(cartTotal - discount).toFixed(2)}
-                            sx={{ mt: "2rem", input: { textAlign: "center", fontSize: '2rem' }, }}
-                            slotProps={{
-                                input: {
-                                    readOnly: true,
-                                    style: { textAlign: 'center' },
-                                    startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
-                                },
-                            }}
-                        />
-
-                        <TextField
+                    <Grid container spacing={{ xs: 2, md: 1 }} mt={3}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {/* Net total (after discount) */}
+                            <TextField
+                                fullWidth
+                                label="Payable Amount"
+                                variant="outlined"
+                                name="net_total"
+                                value={(cartTotal - discount).toFixed(2)}
+                                sx={{input: { textAlign: "center", fontSize: '2rem' }, }}
+                                slotProps={{
+                                    input: {
+                                        readOnly: true,
+                                        style: { textAlign: 'center' },
+                                        startAdornment: <InputAdornment position="start">Rs.</InputAdornment>,
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm:6}}>
+                            <TextField
                             id="txtChange"
                             fullWidth
                             label="Change"
                             variant="outlined"
                             name="change_amount"
-                            sx={{ mt: "2rem", ml: '1rem', input: { textAlign: "center", fontSize: '2rem' } }}
+                            sx={{input: { textAlign: "center", fontSize: '2rem' } }}
                             value={(amountReceived - (cartTotal - discount)).toFixed(2)}//Change calculation
                             slotProps={{
                                 input: {
@@ -245,7 +253,8 @@ export default function CashCheckoutDialog({ disabled }) {
                                 },
                             }}
                         />
-                    </Box>
+                        </Grid>
+                    </Grid>
 
                     <TextField
                         fullWidth
@@ -277,6 +286,6 @@ export default function CashCheckoutDialog({ disabled }) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+        </Grid>
     );
 }

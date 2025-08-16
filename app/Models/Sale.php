@@ -29,6 +29,7 @@ class Sale extends Model
         'note',        // Note
         'created_by',
         'deleted_by',
+        'cart_snapshot',
     ];
 
     protected static function boot()

@@ -423,12 +423,12 @@ export default function Product({ products, stores, contacts }) {
             <Head title="Products" />
             <Grid
                 container
-                spacing={2}
+                spacing={1}
                 alignItems="center"
             >
                 <Grid
                     size={12}
-                    spacing={2}
+                    spacing={1}
                     container
                     alignItems={"center"}
                     justifyContent={{ xs: "center", sm: "end" }}
@@ -443,6 +443,7 @@ export default function Product({ products, stores, contacts }) {
                             select
                             fullWidth
                             margin="dense"
+                            size="small"
                         >
                             <MenuItem value={0}>All</MenuItem>
                             {stores.map((store) => (
@@ -460,7 +461,7 @@ export default function Product({ products, stores, contacts }) {
                             styles={{
                                 control: (baseStyles, state) => ({
                                     ...baseStyles,
-                                    height: "55px",
+                                    height: "40px",
                                 }),
                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                             }}
@@ -481,6 +482,7 @@ export default function Product({ products, stores, contacts }) {
                         <TextField
                             value={filters.status}
                             label="Status"
+                            size="small"
                             onChange={handleFilterChange}
                             required
                             name="status"
@@ -501,6 +503,7 @@ export default function Product({ products, stores, contacts }) {
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
+                            size="small"
                             onChange={handleFilterChange}
                             placeholder="Alert Qty"
                             name="alert_quantity"
@@ -518,6 +521,7 @@ export default function Product({ products, stores, contacts }) {
                             fullWidth
                             name="search_query"
                             label="Search"
+                            size="small"
                             variant="outlined"
                             value={filters.search_query}
                             onChange={handleFilterChange}
@@ -539,7 +543,7 @@ export default function Product({ products, stores, contacts }) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 2, md: 1 }}>
+                    <Grid size={{ xs: 3, sm: 2, md: 1 }}>
                         <Button
                             fullWidth
                             variant="contained"
@@ -551,7 +555,7 @@ export default function Product({ products, stores, contacts }) {
                         </Button>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
+                    <Grid size={{ xs: 9, sm: 3, md: 2 }}>
                         <Link href="/products/create">
                             <Button
                                 variant="contained"

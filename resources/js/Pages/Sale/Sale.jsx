@@ -13,7 +13,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
+import EditIcon from "@mui/icons-material/Edit";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
 import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
@@ -88,7 +88,7 @@ const columns = (handleRowClick) => [
             return numeral(change).format('0,0.00');
         },
     },
-    // { field: 'profit_amount', headerName: 'Profit Amount', width: 120 },
+    { field: 'profit_amount', headerName: 'Profit', width: 120 },
     { field: "status", headerName: "Status", width: 100 },
     {
         field: "sale_date",
@@ -98,7 +98,7 @@ const columns = (handleRowClick) => [
     {
         field: "action",
         headerName: "Actions",
-        width: 150,
+        width: 180,
         renderCell: (params) => (
             <>
                 <Link href={"/receipt/" + params.row.id}>
@@ -117,7 +117,10 @@ const columns = (handleRowClick) => [
                         <KeyboardReturnIcon />
                     </IconButton>
                 )}
-                {dayjs(params.row.created_at).isSame(dayjs(), 'day') && (
+                <IconButton color="warning" onClick={() => handleRowClick(params.row, "edit")}>
+                    <EditIcon />
+                </IconButton>
+                {dayjs(params.row.created_at).subtract(7, 'day') && (
                     <IconButton color="error" onClick={() => handleRowClick(params.row, "delete")}>
                         <HighlightOffIcon />
                     </IconButton>
@@ -163,6 +166,9 @@ export default function Sale({ sales, contacts }) {
             case "delete":
                 deleteSale(sale.id);
                 break;
+            case "edit":
+                router.get("/pos/" + sale.id + "/edit");
+                break;
             default:
         }
     };
@@ -190,7 +196,7 @@ export default function Sale({ sales, contacts }) {
                     .catch(error => {
                         Swal.fire('Error!', error.response.data.error, 'error');
                     });
-    
+
             }
         });
     };
@@ -244,7 +250,7 @@ export default function Sale({ sales, contacts }) {
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "55px",
+                                height: "40px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -263,6 +269,7 @@ export default function Sale({ sales, contacts }) {
                         name="status"
                         select
                         fullWidth
+                        size="small"
                     >
                         <MenuItem value={"all"}>All</MenuItem>
                         <MenuItem value={"completed"}>Completed</MenuItem>
@@ -276,6 +283,7 @@ export default function Sale({ sales, contacts }) {
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -293,6 +301,7 @@ export default function Sale({ sales, contacts }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -308,6 +317,7 @@ export default function Sale({ sales, contacts }) {
                     <TextField
                         value={searchTerms.query}
                         label="Search"
+                        size="small"
                         onChange={handleSearchChange}
                         name="query"
                         fullWidth
@@ -320,7 +330,7 @@ export default function Sale({ sales, contacts }) {
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 1 }}>
-                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
+                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="small">
                         <FindReplaceIcon />
                     </Button>
                 </Grid>
@@ -338,6 +348,13 @@ export default function Sale({ sales, contacts }) {
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,
+                        },
+                    }}
+                    initialState={{
+                        columns: {
+                            columnVisibilityModel: {
+                                profit_amount: false,
+                            },
                         },
                     }}
                     hideFooter

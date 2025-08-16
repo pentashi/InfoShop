@@ -15,9 +15,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { useSales as useCart } from '@/Context/SalesContext';
 import { SharedContext } from "@/Context/SharedContext";
 import productplaceholder from "@/Pages/Product/product-placeholder.webp";
+import numeral from 'numeral';
 
 export default function CartItems() {
   const return_sale = usePage().props.return_sale;
+  const edit_sale = usePage().props.edit_sale;
+  const sale_data = usePage().props.sale_data;
+
   const { cartState, removeFromCart, emptyCart, addToCart } = useCart();
   const { setCartItemModalOpen, setSelectedCartItem, cartItemModalOpen } = useContext(SharedContext);
 
@@ -38,7 +42,7 @@ export default function CartItems() {
 
   const handleCartMenuClick = (item, type) => {
     if (type === 'free') {
-      const freeItem = { ...item, discount: item.price, add_new_item: true, quantity: 1 };
+      const freeItem = { ...item, price: 0, cost: 0, add_new_item: true, quantity: 1, is_free: true };
       addToCart(freeItem);
     }
     else if (type === "duplicate") {
@@ -55,12 +59,22 @@ export default function CartItems() {
     }
   }, [return_sale])
 
+  useEffect(() => {
+    if (edit_sale && sale_data?.cart_snapshot) {
+      emptyCart()
+      const cartItems = JSON.parse(sale_data.cart_snapshot);
+      cartItems.forEach((item) => {
+        addToCart(item, item.quantity);
+      })
+    }
+  }, [edit_sale, sale_data?.cart_snapshot])
+
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
       {cartState.map((item, index) => (
         <React.Fragment key={index}>
           <ListItem alignItems="center" sx={{ padding: { sm: 0.5, xs: 0 }, paddingY: 0.5 }}>
-            <ListItemAvatar sx={{ display: { xs: 'none', sm: 'block' } }} onClick={(e) => handleClick(e, item)} className='cursor-pointer'>
+            <ListItemAvatar onClick={(e) => handleClick(e, item)} className='cursor-pointer'>
               <Avatar variant="rounded" sx={{ width: 50, height: 50 }} alt={item.name} src={item.image_url ? item.image_url : productplaceholder} />
             </ListItemAvatar>
             <ListItemText
@@ -86,10 +100,10 @@ export default function CartItems() {
                       <span className='bg-green-600 text-white px-2 py-1 rounded-md'>Free</span>
                     ) : (
                       <>
-                        RS.{(item.price - item.discount).toFixed(2)} X {item.quantity} = <b>RS.{((item.price - item.discount) * item.quantity).toFixed(2)}</b>
+                        Rs.{(item.price - item.discount).toFixed(2)} X {item.quantity} = <b>Rs.{numeral((item.price - item.discount) * item.quantity).format('0,0.00')}</b>
                       </>
                     )}
-                    <br/>
+                    <br />
                   </Typography>
                 </>
               }

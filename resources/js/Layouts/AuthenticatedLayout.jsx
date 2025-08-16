@@ -149,21 +149,11 @@ function AuthenticatedLayout({ header, children, ...props }) {
 
     const drawer = (
         <>
-            <Toolbar>
-                <Grid
-                    container
-                    width={"100%"}
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                    paddingLeft={"0.5rem"}
-                    size={12}
-                >
-                    <img
-                        src={infoshopLogo}
-                        style={{ height: "80px", objectFit: "contain" }}
-                    ></img>
-
-                </Grid>
+            <Toolbar sx={{ display: "flex", justifyContent: "center" }}>
+                <img
+                    src={infoshopLogo}
+                    style={{ objectFit: "contain", height: "100%" }}
+                ></img>
             </Toolbar>
             <Divider />
             <List>

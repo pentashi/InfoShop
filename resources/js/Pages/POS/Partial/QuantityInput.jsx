@@ -59,6 +59,7 @@ const QuantityInput = ({ cartItem }) => {
         min={min}
         max={max}
         onChange={handleQuantityChange}
+        onFocus={(e) => e.target.select()}
       />
       <IconButton onClick={increaseValue} disabled={quantity >= max}>
         <AddIcon></AddIcon>

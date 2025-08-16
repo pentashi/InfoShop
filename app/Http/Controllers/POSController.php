@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashLog;
 use App\Models\Collection;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Mail;
 
 class POSController extends Controller
 {
-    public function getProducts($filters=[])
+    public function getProducts($filters = [])
     {
         $imageUrl = 'storage/';
         if (app()->environment('production')) $imageUrl = 'public/storage/';
@@ -122,6 +123,31 @@ class POSController extends Controller
         ]);
     }
 
+    public function editSale(Request $request, $sale_id)
+    {
+        $sale = Sale::findOrFail($sale_id);
+        $contacts = Contact::select('id', 'name', 'balance')->where('id', $sale->contact_id)->get();
+        $currentStore = Store::find($sale->store_id);
+
+        $categories = Collection::where('collection_type', 'category')->get();
+        $products = $this->getProducts();
+        $miscSettings = Setting::where('meta_key', 'misc_settings')->first();
+        $miscSettings = json_decode($miscSettings->meta_value, true);
+        $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
+        return Inertia::render('POS/POS', [
+            'products' => $products,
+            'urlImage' => url('storage/'),
+            'customers' => $contacts,
+            'currentStore' => $currentStore->name,
+            'return_sale' => false,
+            'sale_id' => $sale->id,
+            'categories' => $categories,
+            'cart_first_focus' => $cart_first_focus,
+            'edit_sale' => true,
+            'sale_data' => $sale
+        ]);
+    }
+
     public function returnIndex(Request $request, $sale_id)
     {
         $imageUrl = 'storage/';
@@ -186,39 +212,80 @@ class POSController extends Controller
         ]);
     }
 
+    public function prepareSaleData(Request $request)
+    {
+        $edit_sale = $request->input('edit_sale');
+        $edit_sale_id = $request->input('edit_sale_id');
+
+        $saleData = [
+            'store_id' => session('store_id', Auth::user()->store_id),
+            'reference_id' => $request->input('return_sale_id'),
+            'sale_type' => $request->input('return_sale') ? 'return' : 'sale',
+            'contact_id' => $request->input('contact_id'),
+            'sale_date' => $request->input('sale_date', Carbon::now()->toDateString()),
+            'total_amount' => $request->input('net_total'),
+            'discount' => $request->input('discount'),
+            'amount_received' => $request->input('amount_received', 0),
+            'profit_amount' => $request->input('profit_amount', 0),
+            'status' => 'pending',
+            'payment_status' => 'pending',
+            'note' => $request->input('note'),
+            'created_by' => Auth::id(),
+            'cart_snapshot' => json_encode($request->input('cartItems')),
+        ];
+
+        if ($edit_sale && $edit_sale_id) {
+            $sale = Sale::findOrFail($edit_sale_id);
+            $sale->update($saleData);
+
+            // Restore stock
+            foreach ($sale->saleItems as $item) {
+                $product = Product::find($item->product_id);
+
+                if ($product->is_stock_managed) {
+                    $stock = ProductStock::where('store_id', $sale->store_id)
+                        ->where('batch_id', $item->batch_id)
+                        ->first();
+                    if ($stock) {
+                        $stock->quantity += $item->quantity;
+                        $stock->save();
+                    }
+                }
+            }
+
+            // Update contact balance
+            foreach ($sale->transactions as $transaction) {
+                if (in_array($transaction->payment_method, ['Account', 'Credit'])) {
+                    Contact::where('id', $sale->contact_id)
+                        ->increment('balance', $transaction->amount);
+                }
+
+                if ($transaction->payment_method == 'Cash') {
+                    CashLog::where('reference_id', $transaction->id)->where('source', 'sales')->delete();
+                }
+            }
+
+            // Remove transactions and sale items
+            SaleItem::where('sale_id', $sale->id)->delete();
+            Transaction::where('sales_id', $sale->id)->delete();
+        } else {
+            $sale = Sale::create($saleData);
+        }
+
+        return $sale;
+    }
+
     public function checkout(Request $request)
     {
         $amountReceived = $request->input('amount_received', 0);
-        $discount = $request->input('discount');
         $total = $request->input('net_total');
-        $note = $request->input('note');
-        $profitAmount = $request->input('profit_amount', 0); // Default to 0 if not provided
         $cartItems = $request->input('cartItems');
         $paymentMethod = $request->input('payment_method', 'none');
-        $customerID = $request->input('contact_id');
-        $saleDate = $request->input('sale_date', Carbon::now()->toDateString());
         $payments = $request->payments;
-        $createdBy = Auth::id();
-        $reference_id = $request->input('return_sale_id');
-        $sale_type = $request->input('return_sale') ? 'return' : 'sale';
 
         DB::beginTransaction();
         try {
-            $sale = Sale::create([
-                'store_id' => session('store_id', Auth::user()->store_id), // Assign appropriate store ID
-                'reference_id' => $reference_id,
-                'sale_type' => $sale_type,
-                'contact_id' => $customerID, // Assign appropriate customer ID
-                'sale_date' => $saleDate, // Current date and time
-                'total_amount' => $total, //Net total (total after discount)
-                'discount' => $discount,
-                'amount_received' => $amountReceived,
-                'profit_amount' => $profitAmount,
-                'status' => 'pending', // Or 'pending', or other status as needed
-                'payment_status' => 'pending',
-                'note' => $note,
-                'created_by' => $createdBy,
-            ]);
+            $sale = $this->prepareSaleData($request);
 
             if ($paymentMethod == 'Cash') {
                 Transaction::create([
@@ -279,15 +346,16 @@ class POSController extends Controller
 
             foreach ($cartItems as $item) {
                 $sale_item = SaleItem::create([
-                    'sale_id' => $sale->id, // Associate the sales item with the newly created sale
-                    'product_id' => $item['id'], // Product ID (assuming you have this)
-                    'batch_id' => $item['batch_id'], // Batch ID from the cart item
-                    'quantity' => $item['quantity'], // Quantity sold
-                    'unit_price' => $item['price'], // Sale price per unit
-                    'unit_cost' => $item['cost'], // Cost price per unit
-                    'discount' => $item['discount'], // Discount applied to this item
+                    'sale_id' => $sale->id,
+                    'product_id' => $item['id'],
+                    'batch_id' => $item['batch_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['price'],
+                    'unit_cost' => $item['cost'],
+                    'discount' => $item['discount'],
                     'sale_date' => $sale->sale_date,
                     'description' => isset($item['category_name']) ? $item['category_name'] : null,
+                    'is_free' => isset($item['is_free']) ? $item['is_free'] : 0
                 ]);
 
                 if ($item['is_stock_managed'] == 1) {

@@ -37,6 +37,8 @@ export default function PaymentsCheckoutDialog({
     const { cartState, cartTotal, emptyCart, totalProfit } = useCart();
     const return_sale = usePage().props.return_sale;
     const return_sale_id = usePage().props.sale_id;
+    const edit_sale = usePage().props.edit_sale;
+    const edit_sale_id = usePage().props.sale_id;
 
     const [loading, setLoading] = useState(false);
 
@@ -95,6 +97,8 @@ export default function PaymentsCheckoutDialog({
 
         formJson.return_sale = return_sale;
         formJson.return_sale_id = return_sale_id;
+        formJson.edit_sale_id = edit_sale_id;
+        formJson.edit_sale = edit_sale;
 
         let url = '/pos/checkout';
         if (!is_sale) { url = "/purchase/store" }

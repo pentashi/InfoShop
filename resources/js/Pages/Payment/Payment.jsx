@@ -188,6 +188,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         name="payment_type"
                         fullWidth
                         select
+                        size="small"
                     >
                         <MenuItem value={"sales"}>Sales Payment</MenuItem>
                         <MenuItem value={"purchases"}>
@@ -203,7 +204,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "55px",
+                                height: "40px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -221,6 +222,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         required
                         name="payment_method"
+                        size="small"
                         select
                         fullWidth
                     >
@@ -240,6 +242,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -258,6 +261,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -273,6 +277,7 @@ export default function Payment({ payments, transactionType, contacts, selected_
                 <Grid size={{ xs: 6, sm: 1 }}>
                     <Button
                         variant="contained"
+                        size="small"
                         onClick={() => refreshPayments(window.location.pathname)}
                         sx={{ height: "100%" }}
                         fullWidth

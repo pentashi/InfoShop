@@ -175,6 +175,18 @@ class SaleController extends Controller
             ->join('contacts', 'sales.contact_id', '=', 'contacts.id')
             ->orderBy('sales.id', 'desc');
 
+        if (isset($filters['item_type'])) {
+            if ($filters['item_type'] == 'free') {
+                 $query->whereRaw('(unit_price - sale_items.discount) = 0');
+            }
+            if ($filters['item_type'] == 'regular') {
+                $query->whereRaw('(unit_price - sale_items.discount) > 0');
+            }
+            if ($filters['item_type'] == 'return') {
+                $query->where('sale_items.quantity', '<', 0);
+            }
+        }
+
         if (isset($filters['contact_id'])) {
             $query->where('sales.contact_id', $filters['contact_id']);
         }
@@ -198,7 +210,7 @@ class SaleController extends Controller
 
     public function solditems(Request $request)
     {
-        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page', 'order_by', 'query']);
+        $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page', 'order_by', 'query', 'item_type', 'is_report']);
         $soldItems = $this->getSoldItems($filters);
         $contacts = Contact::select('id', 'name', 'balance')->customers()->get();
         return Inertia::render('SoldItem/SoldItem', [

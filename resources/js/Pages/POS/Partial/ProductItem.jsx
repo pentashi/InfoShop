@@ -11,6 +11,7 @@ import productplaceholder from "@/Pages/Product/product-placeholder.webp";
 
 export default function ProductItem({ product }) {
     const return_sale = usePage().props.return_sale;
+    
     const { name, price, image_url, quantity } = product;
     const { addToCart, cartState } = useCart();
     const { setCartItemModalOpen, setSelectedCartItem } = useContext(SharedContext);

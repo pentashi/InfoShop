@@ -152,6 +152,7 @@ export default function Expense({ expenses, stores }) {
                     <TextField
                         label="Search..."
                         name="search_query"
+                        size="small"
                         placeholder="Start typing..."
                         value={searchTerms.search_query}
                         onChange={handleSearchChange}
@@ -164,6 +165,7 @@ export default function Expense({ expenses, stores }) {
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -181,6 +183,7 @@ export default function Expense({ expenses, stores }) {
                     <TextField
                         label="End Date"
                         name="end_date"
+                        size="small"
                         placeholder="End Date"
                         fullWidth
                         type="date"
@@ -200,19 +203,19 @@ export default function Expense({ expenses, stores }) {
                         variant="contained"
                         onClick={() => refreshExpenses(window.location.pathname)}
                         sx={{ height: "100%" }}
-                        size="large"
+                        size="small"
                         fullWidth
                     >
                         <FindReplaceIcon />
                     </Button>
                 </Grid>
-                <Grid size={{ xs: 8, sm: 3 }}>
+                <Grid size={{ xs: 8, sm: 2 }}>
                     <Button
                         variant="contained"
                         onClick={() => setExpenseModalOpen(true)}
                         sx={{ height: "100%" }}
                         startIcon={<AddCircleIcon />}
-                        size="large"
+                        size="small"
                         fullWidth
                         color="success"
                     >

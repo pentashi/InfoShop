@@ -477,7 +477,7 @@ export default function CartItemModal() {
                         {formState.product_type === "simple" && (
 
                             <>
-                                <Grid size={4}>
+                                <Grid size={{ sm: 6, xs: 6, md: 4 }}>
                                     <TextField
                                         fullWidth
                                         type="number"
@@ -510,7 +510,7 @@ export default function CartItemModal() {
                                     />
                                 </Grid>
 
-                                <Grid size={4}>
+                                <Grid size={{ sm: 6, xs: 6, md: 4 }}>
                                     <TextField
                                         fullWidth
                                         type="number"
@@ -543,7 +543,7 @@ export default function CartItemModal() {
                                 </Grid>
                             </>
                         )}
-                        <Grid size={formState.product_type !== "reload" ? 4 : 4}>
+                        <Grid size={{ sm: 12, xs: 12, md: 4 }}>
                             <TextField
                                 fullWidth
                                 type={showCost ? "number" : "text"}
@@ -611,24 +611,17 @@ export default function CartItemModal() {
                 </DialogContent>
                 <DialogActions>
                     <Grid container spacing={1} size={12} justifyContent={'center'} width={'100%'}>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                sx={{ paddingY: "10px", fontSize: "1.2rem" }}
-                                type="submit"
-                                color={formState.quantity < 0 ? "error" : "primary"}
-                            >
-                                {formState.quantity < 0 ? "RETURN" : "UPDATE CART"}
-                            </Button>
-                        </Grid>
+                        
 
                         {formState.quantity > 0 && (
-                            <Grid size={{ xs: 12, sm: 6 }}>
+                            <Grid size={{ xs: 6, sm: 6 }}>
                                 <Button
                                     variant="contained"
                                     fullWidth
-                                    sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                                    sx={{
+                                        paddingY: "10px",
+                                        fontSize: { xs: "1rem", sm: "1.2rem" },
+                                    }}
                                     type="button"
                                     color={"error"}
                                     onClick={(e) => {
@@ -649,6 +642,20 @@ export default function CartItemModal() {
                                 </Button>
                             </Grid>
                         )}
+                        <Grid size={{ xs: 6, sm: 6 }}>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                sx={{
+                                    paddingY: "10px",
+                                    fontSize: { xs: "1rem", sm: "1.2rem" },
+                                }}
+                                type="submit"
+                                color={formState.quantity < 0 ? "error" : "primary"}
+                            >
+                                {formState.quantity < 0 ? "RETURN" : "UPDATE"}
+                            </Button>
+                        </Grid>
                     </Grid>
                 </DialogActions>
             </Dialog>

@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
     Route::get('/pos/customer-display', [POSController::class, 'customerDisplay']);
     Route::post('/pos/filter', [POSController::class, 'getProductsByFilter']);
+    Route::get('/pos/{id}/edit', [POSController::class, 'editSale'])->name('pos.edit');
 
     Route::get('/customers', [ContactController::class, 'index'])->defaults('type', 'customer')->name('customers.index');
     Route::get('/vendors', [ContactController::class, 'index'])->defaults('type', 'vendor')->name('vendors.index');

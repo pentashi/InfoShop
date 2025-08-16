@@ -11,7 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import PrintIcon from '@mui/icons-material/Print';
+import { useTheme, useMediaQuery } from '@mui/material';
 import { FolderCopy } from "@mui/icons-material";
 import { styled, alpha } from '@mui/material/styles';
 
@@ -45,6 +45,9 @@ const StyledMenu = styled((props) => (
         borderRadius: 6,
         marginTop: theme.spacing(1),
         minWidth: 180,
+        [theme.breakpoints.down('sm')]: {
+            width: "100%",
+        },
         color: 'rgb(55, 65, 81)',
         boxShadow:
             'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
@@ -72,12 +75,17 @@ const StyledMenu = styled((props) => (
 
 export default function CartFooter() {
     const return_sale = usePage().props.return_sale;
+    const edit_sale = usePage().props.edit_sale;
+
     const { cartState, holdCart, emptyCart } = useCart();
     const { selectedCustomer, saleDate } = useContext(SharedContext);
     const [heldModalOpen, setHeldModalOpen] = useState(false);
     const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
     const [quotationModalOpen, setQuotationModalOpen] = useState(false);
     const [saleTemplateModalOpen, setSaleTemplateModalOpen] = useState(false);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -116,29 +124,31 @@ export default function CartFooter() {
     };
 
     return (
-        <Grid container sx={{ pt: "4.5rem" }} spacing={1}>
+        <div className={'w-full pb-2'}>
             <Grid
                 container
                 spacing={1}
-                width={"100%"}
+                size={12}
             >
-                <Grid size={{ xs: 6, sm: 3 }}>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        endIcon={<DeleteForeverIcon />}
-                        disabled={
-                            cartState.length === 0 || selectedCustomer === null
-                        }
-                        onClick={onCartEmpty}
-                        size="large"
-                        fullWidth
-                    >
-                        EMPTY
-                    </Button>
-                </Grid>
+                {!isMobile && (
+                    <Grid size={{ xs: 6, sm: 3 }}>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            endIcon={<DeleteForeverIcon />}
+                            disabled={
+                                cartState.length === 0 || selectedCustomer === null
+                            }
+                            onClick={onCartEmpty}
+                            size="large"
+                            fullWidth
+                        >
+                            EMPTY
+                        </Button>
+                    </Grid>
+                )}
 
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                     <Button
                         id="demo-customized-button"
                         aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -157,7 +167,7 @@ export default function CartFooter() {
                             },
                         }}
                     >
-                        More
+                        {isMobile ? "Actions" : "More"}
                     </Button>
                     <StyledMenu
                         id="demo-customized-menu"
@@ -168,9 +178,34 @@ export default function CartFooter() {
                         open={open}
                         onClose={handleClose}
                     >
+
+                        {isMobile ? (
+                            <div>
+                                <MenuItem
+                                    disableRipple
+                                    disabled={cartState.length === 0 || selectedCustomer === null || return_sale}
+                                    onClick={onCartEmpty}
+                                >
+                                    <DeleteForeverIcon />
+                                    EMPTY
+                                </MenuItem>
+                                <MenuItem
+                                    disableRipple
+                                    disabled={cartState.length === 0}
+                                    onClick={() => {
+                                        setPaymentsModalOpen(true);
+                                        handleClose();
+                                    }}
+                                >
+                                    <AddCardIcon />
+                                    PAYMENT
+                                </MenuItem>
+                            </div>
+                        ) : null}
+
                         <MenuItem disableRipple disabled={
                             cartState.length === 0 || selectedCustomer === null || return_sale
-                        } onClick={onCartHold}>
+                        } onClick={onCartHold} sx={{ width: '100%' }}>
                             <BackHandIcon />
                             HOLD
                         </MenuItem>
@@ -179,7 +214,7 @@ export default function CartFooter() {
                             HOLD ITEMS
                         </MenuItem>
                         <Divider sx={{ my: 0.5 }} />
-                        <MenuItem disabled={cartState.length === 0} onClick={() => {setSaleTemplateModalOpen(true); handleClose();}}>
+                        <MenuItem disabled={cartState.length === 0} onClick={() => { setSaleTemplateModalOpen(true); handleClose(); }}>
                             <FolderCopy />
                             GROUP ITEMS
                         </MenuItem>
@@ -197,23 +232,27 @@ export default function CartFooter() {
                         </MenuItem>
                     </StyledMenu>
                 </Grid>
-                <Grid size={{ xs: 6, sm: 6 }}>
-                    <Button
-                        variant="contained"
-                        endIcon={<AddCardIcon />}
-                        disabled={
-                            cartState.length === 0 || selectedCustomer === null || !saleDate
-                        }
-                        onClick={() => setPaymentsModalOpen(true)}
-                        size="large"
-                        fullWidth
-                    >
-                        PAYMENTS
-                    </Button>
-                </Grid>
+
+                {/* Show only for desktop, hide it for mobile */}
+                {!isMobile && (
+                    <Grid size={{ xs: 6, sm: 6 }}>
+                        <Button
+                            variant="contained"
+                            endIcon={<AddCardIcon />}
+                            disabled={
+                                cartState.length === 0 || selectedCustomer === null || !saleDate
+                            }
+                            onClick={() => setPaymentsModalOpen(true)}
+                            size="large"
+                            fullWidth
+                        >
+                            PAYMENTS
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
 
-            <Grid container sx={{ width: "100%" }}>
+            <Grid container mt={1}>
                 <CashCheckoutDialog
                     disabled={
                         cartState.length === 0 || selectedCustomer === null || !saleDate
@@ -241,6 +280,6 @@ export default function CartFooter() {
             />
 
             <SaleTemplateDialog open={saleTemplateModalOpen} setOpen={setSaleTemplateModalOpen} />
-        </Grid>
+        </div>
     );
 }

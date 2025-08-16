@@ -182,6 +182,7 @@ export default function Contact({contacts, type, stores}) {
                       name="search_query"
                       label="Search"
                       variant="outlined"
+                      size="small"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       required
