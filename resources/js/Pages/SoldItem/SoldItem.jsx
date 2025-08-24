@@ -320,6 +320,7 @@ export default function SoldItem({ sold_items, contacts }) {
             </Box>
             <Grid size={12} spacing={2} container justifyContent={"end"}>
                 <Chip size="large" label={'Total results : ' + dataSoldItems.total} color="primary" />
+                <Chip size="large" label={'Total Quantity : ' + dataSoldItems.data.reduce((sum, item) => sum + item.quantity, 0)} color="primary" />
                 <TextField
                     label="Per page"
                     value={searchTerms.per_page}

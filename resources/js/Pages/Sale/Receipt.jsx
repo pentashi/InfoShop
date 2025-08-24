@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import {
     Button,
@@ -29,6 +29,15 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
     const contentRef = useRef(null);
     const reactToPrintFn = useReactToPrint({ contentRef });
     const [receiptNo, setReceiptNo] = useState(' ' + sale.sale_prefix + "/" + sale.invoice_number);
+    const [isAndroid, setIsAndroid] = useState(false);
+
+    useEffect(() => {
+        setIsAndroid(/Android/i.test(navigator.userAgent));
+    }, []);
+
+    const shareToPrint = async (id) => {
+        window.open('https://app.infomaxcloud.com/?receipt_id=' + id, '_blank')
+    };
 
     const handleWhatsAppShare = () => {
         const currentUrl = window.location.href; // Get the current URL
@@ -164,7 +173,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                             </Button>
                         )}
 
-                        {user && (
+                        {user && !isAndroid && (
                             <Button
                                 onClick={reactToPrintFn}
                                 variant="contained"
@@ -173,6 +182,16 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                 Print
                             </Button>
                         )}
+                        {user && isAndroid && (
+                            <Button
+                                onClick={()=>shareToPrint(sale.id)}
+                                variant="contained"
+                                endIcon={<PrintIcon />}
+                            >
+                                BT Print
+                            </Button>
+                        )}
+
                     </Box>
                     <div
                         id="print-area"
@@ -268,8 +287,6 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                         </Typography>
                                     </>
                                 )}
-
-
 
                                 <Typography
                                     sx={styles.receiptTopText}
@@ -513,7 +530,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     color="initial"
                                                 >
                                                     Rs.
-                                                    {numeral(parseFloat( sale.total_amount) + parseFloat( sale.discount)).format("0,0.00")}
+                                                    {numeral(parseFloat(sale.total_amount) + parseFloat(sale.discount)).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>

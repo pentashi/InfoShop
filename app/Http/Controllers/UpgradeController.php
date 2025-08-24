@@ -112,4 +112,19 @@ class UpgradeController extends Controller
 
         return response()->json(['error' => 'Failed to extract the ZIP file.'], 500);
     }
+
+    public function checkVersion()
+    {
+        return response()->json(['version' => config('version.version')]);
+    }
+
+    public function applicationUpdate(Request $request)
+    {
+        $updateToken = env('UPDATE_TOKEN');
+        if ($updateToken !== request('update_token')) {
+            return response()->json(['error' => 'Invalid update token'], 401);
+        }
+
+        return $this->handleUpload($request);
+    }
 }

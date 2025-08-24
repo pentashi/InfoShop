@@ -177,7 +177,7 @@ class SaleController extends Controller
 
         if (isset($filters['item_type'])) {
             if ($filters['item_type'] == 'free') {
-                 $query->whereRaw('(unit_price - sale_items.discount) = 0');
+                $query->whereRaw('(unit_price - sale_items.discount) = 0');
             }
             if ($filters['item_type'] == 'regular') {
                 $query->whereRaw('(unit_price - sale_items.discount) > 0');
@@ -425,5 +425,116 @@ class SaleController extends Controller
         }
 
         return response()->json(['success' => 'Notification sent successfully'], 200);
+    }
+
+    public function apiReceipt($id)
+    {
+        $settings = Setting::all();
+        $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+
+        $sale = Sale::select(
+            'sales.id',
+            'contact_id',
+            'sale_date',
+            'total_amount',
+            'discount',
+            'amount_received',
+            'status',
+            'stores.address as store_address',
+            'stores.sale_prefix',
+            'stores.contact_number',
+            'contacts.name as client_name',
+            'sales.created_by',
+            'invoice_number'
+        )
+            ->leftJoin('contacts', 'sales.contact_id', '=', 'contacts.id')
+            ->join('stores', 'sales.store_id', '=', 'stores.id')
+            ->where('sales.id', $id)
+            ->first();
+
+        if (!$sale) {
+            return response()->json(['error' => 'Sale not found'], 404);
+        }
+
+        $user = User::find($sale->created_by);
+
+        $saleItems = SaleItem::select(
+            'sale_items.quantity',
+            'sale_items.unit_price',
+            'sale_items.discount',
+            'products.name as product_name',
+            DB::raw("CASE 
+            WHEN products.product_type = 'reload' 
+            THEN reload_and_bill_metas.account_number 
+            ELSE NULL 
+         END as account_number")
+        )
+            ->leftJoin('products', 'sale_items.product_id', '=', 'products.id')
+            ->leftJoin('reload_and_bill_metas', function ($join) {
+                $join->on('sale_items.id', '=', 'reload_and_bill_metas.sale_item_id')
+                    ->where('products.product_type', '=', 'reload');
+            })
+            ->where('sale_items.sale_id', $id)
+            ->get();
+
+        $lineWidth = 60;
+        $lineSep   = str_repeat("-", $lineWidth) . "\r\n";
+
+        // column widths (must sum <= $lineWidth)
+        $colQty   = 8;   // e.g. "9999x"
+        $colUnit  = 12;  // unit price
+        $colDisc  = 15;  // discount
+        $colTotal = 15;  // line total
+
+        $summaryPad = 38;
+
+        $text  = $lineSep;
+        $text .= "Sale: " . $sale->sale_prefix . "/" . $sale->invoice_number . "\r\n";
+        $text .= "Date: " . date('d-m-Y h:i A', strtotime($sale->sale_date)) . "\r\n";
+        $text .= "Client: " . $sale->client_name . "\r\n";
+        $text .= "Created By: " . ($user ? $user->name : '-') . "\r\n";
+        $text .= $lineSep;
+
+        // items
+        foreach ($saleItems as $index => $item) {
+            $productName = $item->product_name;
+            if ($item->account_number) {
+                $productName .= " (Acc:" . $item->account_number . ")";
+            }
+
+            // Line 1 → product name
+            $text .='#'.str_pad(($index + 1) . '.', 2, '0', STR_PAD_LEFT) . $productName . "\r\n";
+
+            // calculate values
+            $qty   = $item->quantity;
+            $unit  = number_format($item->unit_price, 2);
+            $disc  = number_format($item->discount, 2);
+            $total = number_format(($item->unit_price * $item->quantity) - $item->discount, 2);
+
+            // Line 2 → aligned columns
+            $lineQty   = str_pad($qty, $colQty, " ", STR_PAD_BOTH);
+            $lineUnit  = str_pad($unit, $colUnit, " ", STR_PAD_LEFT);
+            $lineDisc  = str_pad($disc, $colDisc, " ", STR_PAD_LEFT);
+            if ($total == 0) {
+                $lineTotal = str_pad('FREE', $colTotal, " ", STR_PAD_LEFT);
+            } else {
+                $lineTotal = str_pad($total, $colTotal, " ", STR_PAD_LEFT);
+            }
+
+            $text .= $lineQty.'x' . $lineUnit . $lineDisc . $lineTotal . "\r\n";
+        }
+
+        $netTotal = $sale->total_amount - $sale->discount;
+
+        $text .= $lineSep;
+        $text .= str_pad("Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Discount:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Paid:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
+        $text .= $settingArray['sale_receipt_note'] . "\r\n\n\n\n";
+
+        return response($text, 200)
+        ->header('Content-Type', 'text/plain');
     }
 }

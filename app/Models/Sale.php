@@ -105,4 +105,14 @@ class Sale extends Model
         }
         return $query;
     }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
 }

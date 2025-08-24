@@ -29,7 +29,7 @@ class POSController extends Controller
 {
     public function getProducts($filters = [])
     {
-        $imageUrl = 'storage/';
+        $imageUrl = '/storage/';
         if (app()->environment('production')) $imageUrl = 'public/storage/';
 
         $query = Product::query();
@@ -113,7 +113,7 @@ class POSController extends Controller
         $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
         return Inertia::render('POS/POS', [
             'products' => $products,
-            'urlImage' => url('storage/'),
+            'urlImage' => url('/storage/'),
             'customers' => $contacts,
             'currentStore' => $currentStore->name,
             'return_sale' => false,
@@ -136,7 +136,7 @@ class POSController extends Controller
         $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
         return Inertia::render('POS/POS', [
             'products' => $products,
-            'urlImage' => url('storage/'),
+            'urlImage' => url('/storage/'),
             'customers' => $contacts,
             'currentStore' => $currentStore->name,
             'return_sale' => false,
@@ -150,7 +150,7 @@ class POSController extends Controller
 
     public function returnIndex(Request $request, $sale_id)
     {
-        $imageUrl = 'storage/';
+        $imageUrl = '/storage/';
         if (app()->environment('production')) $imageUrl = 'public/storage/';
 
         $sale = Sale::find($sale_id);
@@ -204,7 +204,7 @@ class POSController extends Controller
 
         return Inertia::render('POS/POS', [
             'products' => $products,
-            'urlImage' => url('storage/'),
+            'urlImage' => url('/storage/'),
             'customers' => $contacts,
             'return_sale' => true,
             'sale_id' => $sale_id,

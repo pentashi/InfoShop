@@ -45,11 +45,12 @@ Route::get('/editor', function () {
 });
 
 Route::get('/receipt/{id}', [SaleController::class, 'receipt'])->name('sales.receipt');
-Route::get('/pending-sales-receipt/{contact_id}', [SaleController::class, 'pendingSalesReceipt']);
+Route::get('/api/receipt/{id}', [SaleController::class, 'apiReceipt']);
+Route::post('/pending-sales-receipt/{contact_id}', [SaleController::class, 'pendingSalesReceipt']);
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/version', [UpgradeController::class, 'checkVersion']);
+Route::post('/api/application-update', [UpgradeController::class, 'applicationUpdate']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
