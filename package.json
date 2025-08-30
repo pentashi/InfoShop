@@ -34,12 +34,16 @@
         "@mui/x-charts": "^7.26.0",
         "@mui/x-data-grid": "^7.26.0",
         "@mui/x-date-pickers": "^7.18.0",
+        "@radix-ui/react-select": "^2.2.6",
         "alpinejs": "^3.14.8",
         "browser-image-compression": "^2.0.2",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
         "ejs": "^3.1.10",
         "jsbarcode": "^3.11.6",
         "lodash": "^4.17.21",
+        "lucide-react": "^0.542.0",
         "mustache": "^4.2.0",
         "nanoid": "^5.0.9",
         "notistack": "^3.0.1",
@@ -50,6 +54,9 @@
         "react-hot-keys": "^2.7.3",
         "react-select": "^5.10.0",
         "react-to-print": "^3.0.4",
-        "sweetalert2": "^11.14.5"
+        "recharts": "^2.15.4",
+        "sweetalert2": "^11.14.5",
+        "tailwind-merge": "^3.3.1",
+        "tailwindcss-animate": "^1.0.7"
     }
 }

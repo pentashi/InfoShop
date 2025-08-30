@@ -208,6 +208,27 @@ class SaleController extends Controller
         return $results;
     }
 
+    public function soldItemSummary(Request $request){
+        $filters = $request->only(['start_date', 'end_date']);
+
+        if(empty($filters['start_date']) && empty($filters['end_date'])){
+            $filters['start_date'] = date('Y-m-d');
+            $filters['end_date'] = date('Y-m-d');
+        }
+
+        $soldItems = SaleItem::with('product')->select('product_id', DB::raw('sum(quantity) as total_quantity'))
+            ->groupBy('product_id');
+
+        if(!empty($filters['start_date']) && !empty($filters['end_date'])){
+            $soldItems=$soldItems->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
+        }
+        $soldItems = $soldItems->get();
+        return Inertia::render('SoldItem/SoldItemSummary', [
+            'sold_items' => $soldItems,
+            'pageLabel' => 'Sold Items',
+        ]);
+    }
+
     public function solditems(Request $request)
     {
         $filters = $request->only(['contact_id', 'start_date', 'end_date', 'per_page', 'order_by', 'query', 'item_type', 'is_report']);

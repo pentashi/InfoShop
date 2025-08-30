@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage, Link } from "@inertiajs/react";
 import {
-    Card,
-    CardContent,
     Typography,
     Grid2 as Grid,
     TextField,
@@ -19,6 +17,10 @@ import {
     IconButton
 } from "@mui/material";
 import dayjs from "dayjs";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card"
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -30,6 +32,8 @@ import axios from "axios";
 import numeral from "numeral";
 
 import Summaries from "./Partials/Summaries";
+import { SalesChart } from "./Partials/SalesChart";
+import { OverViewCards } from "./Partials/OverViewCards";
 
 export default function Dashboard({ data, logo, version, store_name }) {
     const auth = usePage().props.auth.user;
@@ -59,7 +63,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
     };
 
     useEffect(() => {
-        refreshSummary(); // Call on component mount
+        refreshSummary();
     }, []); // Empty dependency array means this runs once on mount
 
     useEffect(() => {
@@ -110,94 +114,9 @@ export default function Dashboard({ data, logo, version, store_name }) {
                 </Grid>
             )}
 
-
             {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{ display: "flex", flexDirection: "row" }}
-                    width={"100%"}
-                >
-                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                        <Card sx={{ height: "100%", backgroundColor: "#77E4C8" }}>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    sx={{
-                                        color: "text.secondary",
-                                        fontSize: 14,
-                                        textTransform: "uppercase",
-                                    }}
-                                >
-                                    Total items
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    {data.totalItems}
-                                </Typography>
-                                <span>{data.totalQuantities} QTY</span>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                        <Card sx={{ height: "100%", backgroundColor: "#FDFFE2" }}>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    sx={{
-                                        color: "text.secondary",
-                                        fontSize: 14,
-                                        textTransform: "uppercase",
-                                    }}
-                                >
-                                    Total valuation
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    Rs. {data.totalValuation}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                        <Card sx={{ height: "100%", backgroundColor: "#FFEBD4" }}>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    sx={{
-                                        color: "text.secondary",
-                                        fontSize: 14,
-                                        textTransform: "uppercase",
-                                    }}
-                                >
-                                    Sold Items
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    {data.soldItems}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
-                        <Card sx={{ height: "100%", backgroundColor: "#D1E9F6" }}>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    sx={{
-                                        color: "text.secondary",
-                                        fontSize: 14,
-                                        textTransform: "uppercase",
-                                    }}
-                                >
-                                    Customer balance
-                                </Typography>
-                                <Typography variant="h5" component="div">
-                                    Rs. {data.customerBalance}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+                <OverViewCards/>
             )}
-
 
             <Grid
                 container
@@ -207,8 +126,8 @@ export default function Dashboard({ data, logo, version, store_name }) {
             >
                 {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
                     <Grid size={{ xs: 12, sm: 8, md: 4 }}>
-                        <Card sx={{ width: "100%" }}>
-                            <CardContent>
+                        <Card className="pt-0 w-full">
+                            <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
                                 <Grid
                                     container
                                     display="flex"
@@ -296,7 +215,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                                 >
                                                     <ListItemButton>
                                                         <ListItemIcon>
-                                                            <ShoppingCartCheckoutIcon/>
+                                                            <ShoppingCartCheckoutIcon />
                                                         </ListItemIcon>
                                                         <ListItemText primary="Inventory Purchase" />
                                                     </ListItemButton>
@@ -319,8 +238,8 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                             </ListItemButton>
                                         </ListItem>
                                     </Link>
-                                    
-                                    <Divider/>
+
+                                    <Divider />
                                     <Link href="/reports/summary-report">
                                         <ListItem>
                                             <ListItemText sx={{ textAlign: 'center', color: '#1976d2', textDecoration: 'underline' }} primary="VIEW SUMMARY" />
@@ -331,9 +250,14 @@ export default function Dashboard({ data, logo, version, store_name }) {
                         </Card>
                     </Grid>
                 )}
-                <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-                    <Card sx={{ width: "100%", height: "100%" }}>
-                        <CardContent>
+
+                <Grid size={{ xs: 12, sm: 8, md: 8 }}>
+                    <SalesChart></SalesChart>
+                </Grid>
+
+                {/* <Grid size={{ xs: 12, sm: 4, md: 4 }}>
+                    <Card className="pt-0 w-full h-full">
+                            <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
                             <Grid
                                 container
                                 display="flex"
@@ -355,19 +279,18 @@ export default function Dashboard({ data, logo, version, store_name }) {
                     </Card>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-                    <Card sx={{ width: "100%", height: "100%", padding: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Card className="w-full h-full p-2 flex justify-center p-5">
                         <img src={logo} style={{ maxHeight: '250px', objectFit: 'contain' }} alt="" />
                     </Card>
-                </Grid>
+                </Grid> */}
 
                 {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
                     <Summaries></Summaries>
                 )}
             </Grid>
 
-            <Box sx={{ justifyContent: 'center', alignItems: 'center', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px', paddingRight:2 }}>
+            <Box sx={{ justifyContent: 'center', alignItems: 'center', position: 'fixed', backgroundColor: '#c9c9c9', bottom: '2px', right: '6px', padding: '10px', paddingRight: 2 }}>
                 <Grid container spacing={1} alignItems={'center'}>
-
                     <Grid>
                         <Link href="/clear-cache" title="Refresh cache">
                             <IconButton>

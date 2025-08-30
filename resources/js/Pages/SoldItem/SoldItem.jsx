@@ -120,11 +120,7 @@ export default function SoldItem({ sold_items, contacts }) {
         item_type: "all",
         per_page: 100,
     });
-
-    const handleRowClick = (sold_item, action) => {
-
-    };
-
+    
     const refreshSoldItems = (url) => {
         const options = {
             preserveState: true, // Preserves the current component's state

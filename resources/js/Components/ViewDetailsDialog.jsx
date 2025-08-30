@@ -14,10 +14,11 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-
+import dayjs from "dayjs";
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import numeral from "numeral";
 
 export default function ViewDetailsDialog({
     open,
