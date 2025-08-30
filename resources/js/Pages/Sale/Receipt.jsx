@@ -172,17 +172,15 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                 Whatsapp
                             </Button>
                         )}
-
-                        {user && !isAndroid && (
-                            <Button
-                                onClick={reactToPrintFn}
-                                variant="contained"
-                                endIcon={<PrintIcon />}
-                            >
-                                Print
-                            </Button>
-                        )}
-                        {user && isAndroid && (
+                        
+                        <Button
+                            onClick={reactToPrintFn}
+                            variant="contained"
+                            endIcon={<PrintIcon />}
+                        >
+                            Print
+                        </Button>
+                        {/* {user && isAndroid && (
                             <Button
                                 onClick={()=>shareToPrint(sale.id)}
                                 variant="contained"
@@ -190,7 +188,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                             >
                                 BT Print
                             </Button>
-                        )}
+                        )} */}
 
                     </Box>
                     <div

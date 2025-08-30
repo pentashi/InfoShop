@@ -427,10 +427,12 @@ class SaleController extends Controller
         return response()->json(['success' => 'Notification sent successfully'], 200);
     }
 
-    public function apiReceipt($id)
+    public function apiReceipt(Request $request, $id)
     {
         $settings = Setting::all();
         $settingArray = $settings->pluck('meta_value', 'meta_key')->all();
+        $settingArray['shop_logo'] = 'public/' . $settingArray['shop_logo'];
+        $isJson = $request->input('isJson');
 
         $sale = Sale::select(
             'sales.id',
@@ -477,16 +479,17 @@ class SaleController extends Controller
             ->where('sale_items.sale_id', $id)
             ->get();
 
-        $lineWidth = 60;
-        $lineSep   = str_repeat("-", $lineWidth) . "\r\n";
+        $lineWidth  = 44;
+        $lineSep    = str_repeat("-", $lineWidth) . "\r\n";
+        $itemSep    = str_repeat(".", $lineWidth) . "\r\n";
 
-        // column widths (must sum <= $lineWidth)
-        $colQty   = 8;   // e.g. "9999x"
-        $colUnit  = 12;  // unit price
-        $colDisc  = 15;  // discount
-        $colTotal = 15;  // line total
+        // columns (sum = 42)
+        $colQty     = 6;   // "999x"
+        $colUnit    = 10;  // unit price
+        $colDisc    = 10;  // discount
+        $colTotal   = 18;  // line total
 
-        $summaryPad = 38;
+        $summaryPad = 24;
 
         $text  = $lineSep;
         $text .= "Sale: " . $sale->sale_prefix . "/" . $sale->invoice_number . "\r\n";
@@ -503,7 +506,7 @@ class SaleController extends Controller
             }
 
             // Line 1 → product name
-            $text .='#'.str_pad(($index + 1) . '.', 2, '0', STR_PAD_LEFT) . $productName . "\r\n";
+            $text .= '#' . str_pad(($index + 1) . '.', 2, '0', STR_PAD_LEFT) . $productName . "\r\n";
 
             // calculate values
             $qty   = $item->quantity;
@@ -521,7 +524,10 @@ class SaleController extends Controller
                 $lineTotal = str_pad($total, $colTotal, " ", STR_PAD_LEFT);
             }
 
-            $text .= $lineQty.'x' . $lineUnit . $lineDisc . $lineTotal . "\r\n";
+            $text .= $lineQty . 'x' . $lineUnit . $lineDisc . $lineTotal . "\r\n";
+            if ($index < count($saleItems) - 1) {
+                $text .= $itemSep;
+            }
         }
 
         $netTotal = $sale->total_amount - $sale->discount;
@@ -532,9 +538,17 @@ class SaleController extends Controller
         $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Paid:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
-        $text .= $settingArray['sale_receipt_note'] . "\r\n\n\n\n";
+        $text .= $settingArray['sale_receipt_note'] . "\r\n\n";
+
+        if ($isJson) {
+            return response()->json([
+                'sale' => $sale,
+                'siteLogo' => $settingArray['shop_logo'],
+                'rawText' => $text,
+            ], 200);
+        }
 
         return response($text, 200)
-        ->header('Content-Type', 'text/plain');
+            ->header('Content-Type', 'text/plain');
     }
 }
