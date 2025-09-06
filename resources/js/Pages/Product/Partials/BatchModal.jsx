@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import {
     IconButton,
     TextField, Switch, FormControlLabel,
-    Grid2 as Grid, DialogTitle, DialogContent, DialogActions, Dialog, Button
+    Grid, DialogTitle, DialogContent, DialogActions, Dialog, Button
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
@@ -112,26 +112,26 @@ export default function BatchModal({
 
     // Handle form input changes
     const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+        const { name, value, type, checked } = e.target;
 
-    setFormState((prevState) => {
-        const newState = { ...prevState };
+        setFormState((prevState) => {
+            const newState = { ...prevState };
 
-        if (name === 'is_active' || name === 'is_featured') {
-            newState[name] = checked;
-        } else {
-            newState[name] = value;
-        }
+            if (name === 'is_active' || name === 'is_featured') {
+                newState[name] = checked;
+            } else {
+                newState[name] = value;
+            }
 
-        if (name === "discount_percentage") {
-            newState.discount = 0;
-        } else if (name === "discount") {
-            newState.discount_percentage = 0;
-        }
+            if (name === "discount_percentage") {
+                newState.discount = 0;
+            } else if (name === "discount") {
+                newState.discount_percentage = 0;
+            }
 
-        return newState;
-    });
-};
+            return newState;
+        });
+    };
 
 
     const handleSelectChange = (selectedOption) => {
@@ -146,6 +146,7 @@ export default function BatchModal({
         <React.Fragment>
             <Dialog
                 fullWidth={true}
+                fullScreen={window.innerWidth < 768}
                 maxWidth={"sm"}
                 open={batchModalOpen}
                 onClose={handleClose}
@@ -159,21 +160,21 @@ export default function BatchModal({
                     id="alert-dialog-title"
                     sx={{ alignItems: "center", display: "flex" }}
                 >
-                    {isNew ? "NEW BATCH" : "EDIT BATCH"}
-
-                    {!isNew && (
-                        <Button
-                            sx={{ ml: "1rem" }}
-                            variant="contained"
-                            color="success"
-                            onClick={() => {
-                                setIsNew(true);
-                                setFormState(initialFormState);
-                            }}
-                        >
-                            CREATE NEW BATCH
-                        </Button>
-                    )}
+                    <div className="flex sm:flex-row flex-col items-start sm:items-center">
+                        {!isNew && (
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="success"
+                                onClick={() => {
+                                    setIsNew(true);
+                                    setFormState(initialFormState);
+                                }}
+                            >
+                                CREATE NEW BATCH
+                            </Button>
+                        )}
+                    </div>
                 </DialogTitle>
                 <IconButton
                     aria-label="close"
@@ -187,27 +188,23 @@ export default function BatchModal({
                 >
                     <CloseIcon />
                 </IconButton>
-                <DialogContent>
+                <DialogContent sx={{padding:2}}>
                     <Grid
                         container
                         spacing={2}
                         sx={{ justifyContent: "center" }}
                         direction="row"
                     >
-                        <Grid size={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
-                                // type="number"
+                                size="small"
                                 name="batch_number"
                                 label="Batch Number"
                                 variant="outlined"
                                 autoFocus
                                 value={formState.batch_number}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.3rem",
-                                    input: { fontSize: "1rem" },
-                                }}
                                 required
                                 onFocus={(event) => {
                                     event.target.select();
@@ -223,20 +220,17 @@ export default function BatchModal({
                             />
                         </Grid>
 
-                        <Grid size={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type="number"
                                 name="price"
+                                size="small"
                                 label="Price"
                                 variant="outlined"
                                 required
                                 value={formState.price}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.3rem",
-                                    input: { fontSize: "1rem" },
-                                }}
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
@@ -251,7 +245,7 @@ export default function BatchModal({
                                 }}
                             />
                         </Grid>
-                        <Grid size={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type={"number"}
@@ -261,10 +255,7 @@ export default function BatchModal({
                                 required
                                 value={formState.cost}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
+                                size="small"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
@@ -280,7 +271,7 @@ export default function BatchModal({
                             />
                         </Grid>
 
-                        <Grid size={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type={"number"}
@@ -290,15 +281,12 @@ export default function BatchModal({
                                 required
                                 value={formState.discount_percentage}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" }
-                                }}
+                                size="small"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }} />
                         </Grid>
-                        <Grid size={4}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type={"number"}
@@ -308,16 +296,13 @@ export default function BatchModal({
                                 required
                                 value={formState.discount}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" }
-                                }}
+                                size="small"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }} />
                         </Grid>
 
-                        <Grid size={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 type={"date"}
@@ -326,10 +311,7 @@ export default function BatchModal({
                                 variant="outlined"
                                 value={formState.expiry_date}
                                 onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
+                                size="small"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
@@ -348,7 +330,7 @@ export default function BatchModal({
                                 styles={{
                                     control: (baseStyles, state) => ({
                                         ...baseStyles,
-                                        height: "55px",
+                                        height: "45px",
                                         zIndex: 100,
                                     }),
                                     menuPortal: (baseStyles) => ({

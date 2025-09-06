@@ -6,7 +6,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
     Button,
     Box,
-    Grid2 as Grid,
+     Grid,
     MenuItem,
     TextField,
     Chip,
@@ -26,150 +26,9 @@ import numeral from "numeral";
 import { useEffect } from "react";
 import Select2 from "react-select";
 
-import DataTable from 'react-data-table-component';
-
-const columns = [
-    {
-        name: 'Image',
-        selector: row => row.image_url,
-        cell: row =>
-            row.image_url ? (
-                <img
-                    src={row.image_url}
-                    style={{
-                        width: "75px",
-                        height: "51px",
-                        objectFit: "cover",
-                        padding: "5px",
-                        paddingBottom: "5px",
-                        paddingLeft: "0",
-                    }}
-                    alt="Product Image"
-                    loading="lazy"
-                />
-            ) : (
-                <span
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        padding: "5px",
-                        paddingBottom: "5px",
-                        paddingLeft: "0",
-                    }}
-                    className="text-center"
-                >
-                    No Image
-                </span>
-            ),
-    },
-    {
-        name: 'Product Name',
-        selector: row => row.name,
-        sortable: true,
-        width: '200px',
-        cell: row => (
-            <a
-                href={`/products/${row.id}/edit`}
-                style={{ textDecoration: "underline", fontWeight: "bold" }}
-            >
-                {row.name}
-            </a>
-        ),
-    },
-    {
-        name: 'Supplier',
-        selector: row => row.contact_name,
-        sortable: true,
-    },
-    {
-        name: 'Barcode',
-        selector: row => row.barcode,
-        sortable: true,
-    },
-    {
-        name: 'Batch',
-        selector: row => row.batch_number,
-        cell: row => (
-            <button
-                onClick={() => handleProductEdit(row, "batch")}
-                style={{
-                    textAlign: "left",
-                    fontWeight: "bold",
-                    width: "100%",
-                    background: "none",
-                    border: "none",
-                }}
-            >
-                {row.batch_number}
-            </button>
-        ),
-    },
-    {
-        name: 'Cost',
-        selector: row => row.cost,
-        sortable: true,
-    },
-    {
-        name: 'Price',
-        selector: row => row.price,
-        sortable: true,
-        cell: row => numeral(row.price).format("0,0.00"),
-    },
-    {
-        name: 'Valuation',
-        selector: row => row.valuation,
-        sortable: true,
-        cell: row => {
-            const price = row.cost;
-            const quantity = row.quantity;
-            return numeral(price * quantity).format("0,0.00");
-        },
-    },
-    {
-        name: 'Qty',
-        selector: row => row.quantity,
-        sortable: true,
-        cell: row => (
-            <button
-                onClick={() => handleProductEdit(row, "qty")}
-                style={{
-                    textAlign: "right",
-                    fontWeight: "bold",
-                    width: "100%",
-                    background: "none",
-                    border: "none",
-                }}
-            >
-                {numeral(row.quantity).format("0,0.00")}
-            </button>
-        ),
-    },
-    {
-        name: 'Action',
-        selector: row => row.action,
-        cell: row => (
-            <a href={`/product/${row.batch_id}/barcode`}>
-                <QrCode2Icon color="primary" />
-            </a>
-        ),
-    },
-    {
-        name: 'Featured',
-        selector: row => row.is_featured,
-        cell: row =>
-            row.is_featured === 1 ? (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <StarIcon color="primary" />
-                </div>
-            ) : (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <StarBorderIcon color="primary" />
-                </div>
-            ),
-    },
-];
-
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import ProductsList from "./Partials/ProductsList";
 
 const productColumns = (handleProductEdit) => [
     {
@@ -308,12 +167,12 @@ const productColumns = (handleProductEdit) => [
         renderCell: (params) => {
             return (
                 <>
-                <Link href={`/product/${params.row.batch_id}/barcode`}>
-                    <QrCode2Icon color="primary" />
-                </Link>
-                <Link href={`/quantity/${params.row.stock_id}/log`} className="ml-4">
-                <HistoryIcon color="primary" />
-                </Link>
+                    <Link href={`/product/${params.row.batch_id}/barcode`}>
+                        <QrCode2Icon color="primary" />
+                    </Link>
+                    <Link href={`/quantity/${params.row.stock_id}/log`} className="ml-4">
+                        <HistoryIcon color="primary" />
+                    </Link>
                 </>
             );
         },
@@ -351,6 +210,8 @@ const productColumns = (handleProductEdit) => [
 ];
 
 export default function Product({ products, stores, contacts }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const auth = usePage().props.auth.user;
     const [batchModalOpen, setBatchModalOpen] = useState(false);
     const [quantityModalOpen, setQuantityModalOpen] = useState(false);
@@ -358,6 +219,8 @@ export default function Product({ products, stores, contacts }) {
     const [dataProducts, setDataProducts] = useState(products);
     const [dataContacts, setContacts] = useState(contacts);
     const [totalValuation, setTotalValuation] = useState(0);
+
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const [filters, setFilters] = useState(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -433,7 +296,7 @@ export default function Product({ products, stores, contacts }) {
                     alignItems={"center"}
                     justifyContent={{ xs: "center", sm: "end" }}
                 >
-                    <Grid size={{ xs: 12, sm: 3, md:2 }}>
+                    <Grid size={{ xs: 12, sm: 3, md: 2 }}>
                         <TextField
                             value={filters.store}
                             label="Store"
@@ -499,7 +362,7 @@ export default function Product({ products, stores, contacts }) {
                         </TextField>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 2, md:1 }}>
+                    <Grid size={{ xs: 6, sm: 2, md: 1 }}>
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
@@ -516,7 +379,7 @@ export default function Product({ products, stores, contacts }) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 3, md:3 }}>
+                    <Grid size={{ xs: 12, sm: 3, md: 3 }}>
                         <TextField
                             fullWidth
                             name="search_query"
@@ -545,6 +408,7 @@ export default function Product({ products, stores, contacts }) {
 
                     <Grid size={{ xs: 3, sm: 2, md: 1 }}>
                         <Button
+                        size="small"
                             fullWidth
                             variant="contained"
                             onClick={() =>
@@ -558,6 +422,7 @@ export default function Product({ products, stores, contacts }) {
                     <Grid size={{ xs: 9, sm: 3, md: 2 }}>
                         <Link href="/products/create">
                             <Button
+                            size="small"
                                 variant="contained"
                                 color="success"
                                 startIcon={<AddIcon />}
@@ -570,49 +435,42 @@ export default function Product({ products, stores, contacts }) {
                     </Grid>
                 </Grid>
 
-                <Box
-                    className="py-2 w-full"
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr",
-                        height: "calc(100vh - 290px)",
-                    }}
-                >
-                    <DataGrid
-                        rows={dataProducts.data}
-                        columns={productColumns(handleProductEdit)}
-                        slots={{ toolbar: GridToolbar }}
-                        getRowId={(row) =>
-                            row.id + row.batch_number + row.store_id
-                        }
-                        slotProps={{
-                            toolbar: {
-                                showQuickFilter: true,
-                            },
+                {!isMobile && (
+                    <Box
+                        className="py-2 w-full"
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr",
+                            height: "calc(100vh - 290px)",
                         }}
-                        initialState={{
-                            columns: {
-                                columnVisibilityModel: {
-                                    cost: false,
-                                    created_at: false,
+                    >
+                        <DataGrid
+                            rows={dataProducts.data}
+                            columns={productColumns(handleProductEdit)}
+                            getRowId={(row) =>
+                                row.id + row.batch_number + row.store_id
+                            }
+                            slotProps={{
+                                toolbar: {
+                                    showQuickFilter: true,
                                 },
-                            },
-                        }}
-                        hideFooter={true}
-                    />
-                    {/* <DataTable
-                        columns={columns}
-                        data={dataProducts.data}
-                        pagination
-                        highlightOnHover
-                        paginationPerPage={100} 
-                        paginationRowsPerPageOptions={[100, 200, 300, 400, 500, 1000]}
-                        keyField="stock_id"
-                        fixedHeaderScrollHeight='300px'
-                        responsive={true}
-                    /> */}
-
-                </Box>
+                            }}
+                            initialState={{
+                                columns: {
+                                    columnVisibilityModel: {
+                                        cost: false,
+                                        created_at: false,
+                                    },
+                                },
+                            }}
+                            showToolbar
+                            hideFooter={true}
+                        />
+                    </Box>
+                )}
+                {isMobile && (
+                    <ProductsList products={dataProducts.data} handleProductEdit={handleProductEdit}/>
+                )}
                 <Grid
                     size={12}
                     spacing={2}

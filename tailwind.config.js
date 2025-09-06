@@ -11,18 +11,22 @@ export default {
         './resources/js/**/*.jsx',
     ],
     safelist: [
-        {pattern: /flex-./},
-      ],
+        { pattern: /flex-./ },
+    ],
 
     theme: {
-    	extend: {
-    		fontFamily: {
-    			sans: [
-    				'Figtree',
+        extend: {
+            fontFamily: {
+                sans: [
+                    'Figtree',
                     ...defaultTheme.fontFamily.sans
                 ]
-    		},
-    	}
+            },
+        },
+        borderColor: theme => ({
+  DEFAULT: 'var(--border)',
+  ...theme('colors'),
+})
     },
 
     plugins: [forms, require("tailwindcss-animate")],

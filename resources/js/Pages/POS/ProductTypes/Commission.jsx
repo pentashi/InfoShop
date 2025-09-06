@@ -1,4 +1,4 @@
-import { Grid2 as Grid, TextField, InputAdornment } from "@mui/material";
+import {  Grid, TextField, InputAdornment } from "@mui/material";
 
 export default function Commission({ handleChange, formState }) {
     return (

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -36,7 +36,7 @@ const chartConfig = {
   },
   cash: {
     label: "Cash",
-    color: "var(--chart-3)",
+    color: "var(--chart-4)",
   },
 }
 
@@ -47,7 +47,7 @@ export function SalesChart() {
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
+    const referenceDate = new Date()
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
@@ -60,7 +60,7 @@ export function SalesChart() {
   })
 
   return (
-    <Card className="pt-0 w-full">
+    <Card className="pt-0 w-full h-full">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
           <CardTitle>SALES</CardTitle>
@@ -75,7 +75,7 @@ export function SalesChart() {
           >
             <SelectValue placeholder="Last 3 months" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl">
+          <SelectContent className="rounded-xl bg-white">
             <SelectItem value="90d" className="rounded-lg">
               Last 3 months
             </SelectItem>
@@ -135,10 +135,17 @@ export function SalesChart() {
                 })
               }}
             />
+            {/* <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickCount={2}
+            /> */}
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
+                className="bg-white"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",

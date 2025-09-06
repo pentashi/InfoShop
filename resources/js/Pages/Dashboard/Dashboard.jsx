@@ -4,7 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage, Link } from "@inertiajs/react";
 import {
     Typography,
-    Grid2 as Grid,
+     Grid,
     TextField,
     ListItem,
     List,

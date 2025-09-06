@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { Button, Box, TextField, Tooltip, MenuItem, Chip, IconButton } from "@mui/material";
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
@@ -12,7 +12,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import CustomPagination from "@/Components/CustomPagination";
 
-const columns = (handleRowClick) => [
+const columns = () => [
     {
         field: "id",
         headerName: "ID",
@@ -296,7 +296,7 @@ export default function SoldItem({ sold_items, contacts }) {
             >
                 <DataGrid
                     rows={dataSoldItems.data}
-                    columns={columns(handleRowClick)}
+                    columns={columns()}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: {

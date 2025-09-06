@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Typography, Box, Grid2 as Grid, IconButton } from "@mui/material";
+import { Typography, Box,  Grid, IconButton } from "@mui/material";
 import { usePage } from "@inertiajs/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSales as useCart } from "@/Context/SalesContext";

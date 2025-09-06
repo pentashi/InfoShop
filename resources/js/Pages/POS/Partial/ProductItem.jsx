@@ -40,9 +40,10 @@ export default function ProductItem({ product }) {
                 setCartItemModalOpen(true);
             }}
             sx={{ height: '100%', position: 'relative' }}
+            elevation={1}
         >
             <CardMedia
-                sx={{ height: 120 }}
+                sx={{ height: {xs:70, sm:100} }}
                 image={image_url ? image_url : productplaceholder}
                 title={name}
             />

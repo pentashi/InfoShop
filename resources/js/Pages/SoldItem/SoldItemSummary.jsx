@@ -19,14 +19,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { Head } from "@inertiajs/react";
 import numeral from "numeral";
 import dayjs from "dayjs";
-import { TextField, Grid2 as Grid } from "@mui/material";
+import { TextField,  Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
 
 export default function SoldItemSummary({ sold_items }) {
   const [start_date, setStartDate] = useState(dayjs().format("YYYY-MM-DD"))
   const [end_date, setEndDate] = useState(dayjs().format('YYYY-MM-DD'))
-  const [sold_items_data, setSoldItemsData] = useState([])
+  const [sold_items_data, setSoldItemsData] = useState(sold_items)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -36,24 +36,21 @@ export default function SoldItemSummary({ sold_items }) {
       preserveScroll: true,
       only: ["sold_items"],
       onSuccess: (response) => {
-      console.log(response); // Log the full response
-      if (response?.props?.sold_items) {
-        setSoldItemsData(response.props.sold_items);
-      } else {
-        console.error("Missing sold_items in the response.");
-      }
-    },
+        if (response?.props?.sold_items) {
+          setSoldItemsData(response.props.sold_items);
+        } else {
+          console.error("Missing sold_items in the response.");
+        }
+      },
     };
     router.get(
       url, { start_date, end_date }, options
     );
   };
 
-  // useEffect(() => {
-  //   refreshSoldItems()
-  // }, []);
-
-
+  useEffect(() => {
+    refreshSoldItems()
+  }, []);
 
   return (
     <AuthenticatedLayout>
@@ -113,17 +110,18 @@ export default function SoldItemSummary({ sold_items }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sold_items_data.length > 0 && sold_items_data.map((sold_item) => (
-                <TableRow key={sold_item.id}>
+              {sold_items_data.map((sold_item) => (
+                <TableRow key={sold_item.product_id}>
                   <TableCell className="font-medium">{sold_item.product.name}</TableCell>
-                  <TableCell className="text-right">{numeral(sold_item.total_quantity).format("(0,0.00)")}</TableCell>
+                  <TableCell className="text-right">{numeral(Number(sold_item.total_quantity)).format("(0,0.00)")}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
+
             <TableFooter>
               <TableRow>
                 <TableCell>Total quantity</TableCell>
-                <TableCell className="text-right font-bold">{numeral(sold_items.reduce((total, item) => total + Number(item.total_quantity), 0)).format("(0,0.00)")}</TableCell>
+                <TableCell className="text-right font-bold">{numeral(sold_items_data.reduce((total, item) => total + Number(item.total_quantity), 0)).format("(0,0.00)")}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>

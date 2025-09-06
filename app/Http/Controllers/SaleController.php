@@ -551,14 +551,12 @@ class SaleController extends Controller
             }
         }
 
-        $netTotal = $sale->total_amount - $sale->discount;
-
         $text .= $lineSep;
         $text .= str_pad("Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Discount:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
-        $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Paid:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
-        $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $netTotal, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
+        $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
         $text .= $settingArray['sale_receipt_note'] . "\r\n\n";
 
         if ($isJson) {

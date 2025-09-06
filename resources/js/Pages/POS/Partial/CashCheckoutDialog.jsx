@@ -5,7 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import { Box, Grid2 as Grid, IconButton, TextField } from "@mui/material";
+import { Box,  Grid, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';

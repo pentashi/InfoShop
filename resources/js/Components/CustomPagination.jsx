@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid2 as Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
 const CustomPagination = ({ dataLinks, dataLastPage, refreshTable }) => {
 
@@ -8,7 +8,7 @@ const CustomPagination = ({ dataLinks, dataLastPage, refreshTable }) => {
             <Grid spacing={1} container>
             {dataLinks?.map((link, index) => (
                 <Button
-                    sx={{ padding: '6px 10px', minWidth: '10px', borderRadius: "10px" }}
+                    sx={{ padding: '4px 8px', minWidth: '5px', borderRadius: "10px" }}
                     key={index}
                     variant={link.active ? "contained" : "text"}
                     onClick={() => {

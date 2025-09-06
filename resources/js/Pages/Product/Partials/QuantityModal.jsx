@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import {
     IconButton, MenuItem,
     TextField, FormControl, InputLabel, Select,
-    Grid2 as Grid, DialogTitle, DialogContent, DialogActions, Dialog, Button
+     Grid, DialogTitle, DialogContent, DialogActions, Dialog, Button
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
@@ -207,6 +207,7 @@ export default function QuantityModal({
                     >
                         <Grid size={12}>
                             <TextField
+                            size="small"
                                 fullWidth
                                 type="number"
                                 name="quantity"
@@ -217,7 +218,7 @@ export default function QuantityModal({
                                 value={formState.quantity}
                                 onChange={handleInputChange}
                                 sx={{
-                                    mt: "0.3rem",
+                                    mt: "0.2rem",
                                     input: {
                                         fontSize: "1.3rem",
                                         textAlign: "center",
@@ -239,7 +240,6 @@ export default function QuantityModal({
                             <CreatableSelect
                                 isClearable
                                 options={reasonOptions}
-                                
                                 placeholder="Select or create a reason"
                                 name="reason"
                                 required
@@ -247,7 +247,7 @@ export default function QuantityModal({
                                 styles={{
                                     control: (baseStyles, state) => ({
                                         ...baseStyles,
-                                        height: "55px",
+                                        height: "45px",
                                         zIndex: 999,
                                     }),
                                     
@@ -255,28 +255,6 @@ export default function QuantityModal({
                                 }}
                             />
                             </div>
-                            
-                            {/* <TextField
-                                fullWidth
-                                name="reason"
-                                label="Reason"
-                                variant="outlined"
-                                required
-                                value={formState.reason}
-                                onChange={handleInputChange}
-                                sx={{
-                                    mt: "0.5rem",
-                                    input: { fontSize: "1rem" },
-                                }}
-                                onFocus={(event) => {
-                                    event.target.select();
-                                }}
-                                slotProps={{
-                                    inputLabel: {
-                                        shrink: true,
-                                    },
-                                }}
-                            /> */}
                         </Grid>
                         <Grid size={12} sx={{ mt: "0.6rem" }}>
                             <FormControl
@@ -289,6 +267,7 @@ export default function QuantityModal({
                                     onChange={handleInputChange}
                                     required
                                     name="store_id"
+                                    size="small"
                                 >
                                     {stores.map((store) => (
                                         <MenuItem
@@ -305,9 +284,10 @@ export default function QuantityModal({
                 </DialogContent>
                 <DialogActions>
                     <Button
+                    size="small"
                         variant="contained"
                         fullWidth
-                        sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                        sx={{ paddingY: "6px", fontSize: "1rem" }}
                         type="submit"
                         color={formState.quantity < 0 ? "error" : "primary"}
                         disabled={loading || !isValidQuantity(formState.quantity)}
@@ -316,9 +296,10 @@ export default function QuantityModal({
                     </Button>
                     {formState.quantity > 0 && (
                         <Button
+                        size="small"
                             variant="contained"
                             fullWidth
-                            sx={{ paddingY: "10px", fontSize: "1.2rem" }}
+                             sx={{ paddingY: "6px", fontSize: "1rem" }}
                             type="submit"
                             color={'error'}
                             name="remove"

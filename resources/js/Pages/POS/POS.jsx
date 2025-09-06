@@ -9,7 +9,7 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    Grid2 as Grid,
+     Grid,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -197,7 +197,7 @@ function POS({ products, customers, return_sale, categories, edit_sale, sale_dat
                     <Toolbar />
 
                     {/* Product items area  */}
-                    <Grid container spacing={2} sx={{ mb: 8 }}>
+                    <Grid container spacing={1} sx={{ mb: 8 }}>
                         <SaleTemplateItem templates={templates} setTemplates={setTemplates} />
                         {dataProducts?.map((product) => (
                             <Grid

@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import {
     IconButton,
     TextField,
-    Grid2 as Grid,
+    Grid,
     Divider,
     Table, TableBody, TableRow, TableCell,
 } from "@mui/material";
@@ -25,6 +25,7 @@ import { router } from "@inertiajs/react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { usePage } from "@inertiajs/react";
+import { X } from "lucide-react";
 
 export default function PaymentsCheckoutDialog({
     useCart,
@@ -179,6 +180,7 @@ export default function PaymentsCheckoutDialog({
         <>
             <Dialog
                 fullWidth={true}
+                fullScreen={window.innerWidth < 768}
                 maxWidth={"sm"}
                 open={open}
                 onClose={handleClose}
@@ -196,14 +198,14 @@ export default function PaymentsCheckoutDialog({
                         position: "absolute",
                         right: 8,
                         top: 8,
-                        color: theme.palette.grey[500],
+                        color: theme.palette.grey[600],
                     })}
                 >
-                    <CloseIcon />
+                    <X size={26} />
                 </IconButton>
                 <DialogContent>
                     <Grid container spacing={2} alignItems={'center'}>
-                        <Grid size={6}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
                                 fullWidth
                                 type="number"
@@ -237,9 +239,10 @@ export default function PaymentsCheckoutDialog({
                             />
                         </Grid>
 
-                        <Grid size={6}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
 
                             <TextField
+                                size="small"
                                 fullWidth
                                 type="number"
                                 name="net_total"
@@ -299,47 +302,58 @@ export default function PaymentsCheckoutDialog({
                             </Grid>
 
                             <Grid size={12} spacing={1} container justifyContent={'center'}>
-                                <Button
-                                    component="label"
-                                    role={undefined}
-                                    variant="contained"
-                                    startIcon={<PaymentsIcon />}
-                                    onClick={() => addPayment('Cash')}
-                                    color="success"
-                                >
-                                    CASH
-                                </Button>
-                                {selectedContact?.id !== 1 && (
+                                <Grid size={{xs:6,sm:4}}>
                                     <Button
+                                    fullWidth
                                         component="label"
                                         role={undefined}
                                         variant="contained"
-                                        startIcon={<PauseCircleOutlineIcon />}
-                                        onClick={() => addPayment('Credit')}
-                                        color="error"
+                                        startIcon={<PaymentsIcon />}
+                                        onClick={() => addPayment('Cash')}
+                                        color="success"
                                     >
-                                        CREDIT
+                                        CASH
                                     </Button>
+                                </Grid>
+                                {selectedContact?.id !== 1 && (
+                                    <Grid size={{xs:6,sm:4}}>
+                                        <Button
+                                        fullWidth
+                                            component="label"
+                                            role={undefined}
+                                            variant="contained"
+                                            startIcon={<PauseCircleOutlineIcon />}
+                                            onClick={() => addPayment('Credit')}
+                                            color="error"
+                                        >
+                                            CREDIT
+                                        </Button>
+                                    </Grid>
                                 )}
-
-                                <Button
-                                    component="label"
-                                    role={undefined}
-                                    variant="contained"
-                                    startIcon={<CreditCardIcon />}
-                                    onClick={() => addPayment('Cheque')}
-                                >
-                                    CHEQUE
-                                </Button>
-                                <Button
-                                    component="label"
-                                    role={undefined}
-                                    variant="contained"
-                                    startIcon={<FontAwesomeIcon icon={faCreditCard} size={"2xl"} />}
-                                    onClick={() => addPayment('Card')}
-                                >
-                                    CARD
-                                </Button>
+                                <Grid size={{xs:6,sm:4}}>
+                                    <Button
+                                    fullWidth
+                                        component="label"
+                                        role={undefined}
+                                        variant="contained"
+                                        startIcon={<CreditCardIcon />}
+                                        onClick={() => addPayment('Cheque')}
+                                    >
+                                        CHEQUE
+                                    </Button>
+                                </Grid>
+                                <Grid size={{xs:6,sm:4}}>
+                                    <Button
+                                    fullWidth
+                                        component="label"
+                                        role={undefined}
+                                        variant="contained"
+                                        startIcon={<FontAwesomeIcon icon={faCreditCard} size={"2xl"} />}
+                                        onClick={() => addPayment('Card')}
+                                    >
+                                        CARD
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -355,16 +369,14 @@ export default function PaymentsCheckoutDialog({
                                         {payment.payment_method === 'Cash' && <PaymentsIcon />}
                                         {payment.payment_method === 'Cheque' && <CreditCardIcon />}
                                         {payment.payment_method === 'Credit' && <PauseCircleOutlineIcon />}
-
+                                        <span className="ml-2"><strong>{payment.payment_method}</strong></span>
                                     </TableCell>
 
-                                    <TableCell>
-                                        <strong>{payment.payment_method}</strong>
-                                    </TableCell>
                                     {/* Display Payment Amount */}
                                     <TableCell align="right">
                                         <strong>Rs. {(payment.amount).toFixed(2)}</strong>
                                     </TableCell>
+                                    
                                     {/* Action Button to delete payment */}
                                     <TableCell align="center">
                                         <IconButton edge="end" color="error" onClick={() => deletePayment(index)}>
