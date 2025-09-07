@@ -109,7 +109,7 @@ export default function DailyReport({ logs, stores, users }) {
                         name="transaction_date"
                         placeholder="Transaction Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
                         sx={{ height: "100%" }}
                         slotProps={{
@@ -128,7 +128,7 @@ export default function DailyReport({ logs, stores, users }) {
                         select
                         value={formState.store_id}
                         label="Store"
-                        size="small"
+                        size="large"
                         onChange={handleFieldChange}
                         required
                         name="store_id"
@@ -151,7 +151,7 @@ export default function DailyReport({ logs, stores, users }) {
                         value={formState.user_id}
                         fullWidth
                         name="user_id"
-                        size="small"
+                        size="large"
                         label="User/Cashier"
                         onChange={handleFieldChange}
                         select
@@ -173,7 +173,7 @@ export default function DailyReport({ logs, stores, users }) {
                         onClick={() => refreshLogs(window.location.pathname)}
                         sx={{ height: "100%", }}
                         fullWidth
-                        size="small"
+                        size="large"
                     >
                         <FindReplaceIcon />
                     </Button>
@@ -185,7 +185,7 @@ export default function DailyReport({ logs, stores, users }) {
                         onClick={() => setModalOpen(true)}
                         sx={{ height: "100%", }}
                         startIcon={<AddCircleIcon />}
-                        size="small"
+                        size="large"
                         fullWidth
                         color="success"
                     >

@@ -10,10 +10,6 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
     ],
-    safelist: [
-        { pattern: /flex-./ },
-    ],
-
     theme: {
         extend: {
             fontFamily: {
@@ -23,10 +19,6 @@ export default {
                 ]
             },
         },
-        borderColor: theme => ({
-  DEFAULT: 'var(--border)',
-  ...theme('colors'),
-})
     },
 
     plugins: [forms, require("tailwindcss-animate")],

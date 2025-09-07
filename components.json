@@ -8,7 +8,7 @@
     "css": "resources/css/app.css",
     "baseColor": "neutral",
     "cssVariables": true,
-    "prefix": "tw-"
+    "prefix": ""
   },
   "iconLibrary": "lucide",
   "aliases": {
@@ -17,5 +17,6 @@
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
-  }
+  },
+  "registries": {}
 }

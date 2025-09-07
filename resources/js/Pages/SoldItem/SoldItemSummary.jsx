@@ -64,7 +64,7 @@ export default function SoldItemSummary({ sold_items }) {
                 name="start_date"
                 placeholder="From"
                 type="date"
-                size="small"
+                size="large"
                 fullWidth
                 value={start_date}
                 onChange={(e) => {
@@ -82,7 +82,7 @@ export default function SoldItemSummary({ sold_items }) {
               <TextField
                 label="End Date"
                 name="end_date"
-                size="small"
+                size="large"
                 placeholder="To"
                 type="date"
                 fullWidth

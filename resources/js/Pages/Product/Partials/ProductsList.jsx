@@ -9,7 +9,7 @@ const ProductsList = ({ products, handleProductEdit }) => {
             {products.map((product) => (
                 <li class="p-3 w-full shadow-sm">
                     <div class="flex justify-between items-center">
-                        <div class="uppercase tracking-wide text-xs text-blue-900 font-semibold">
+                        <div class="uppercase tracking-wide text-sm text-blue-900 font-semibold">
                             <Link
                                 href={"/products/" + product.id + "/edit"}
                             >
@@ -18,25 +18,25 @@ const ProductsList = ({ products, handleProductEdit }) => {
                         </div>
                         <div className='flex ml-2'>
                             <IconButton>
-                                <Star size={16} />
+                                <Star size={20} />
                             </IconButton>
                             <IconButton onClick={()=>router.visit(`/quantity/${product.stock_id}/log`)}>
-                                <History size={16} />
+                                <History size={20} />
                             </IconButton>
                         </div>
                     </div>
                     <div class="mt-2 grid grid-cols-3 gap-4">
                         <div onClick={() => handleProductEdit(product, 'batch')}>
-                            <div class="text-gray-500 text-xs">Sale Price</div>
-                            <div class="text-gray-700 text-xs font-bold">Rs. {product.price}</div>
+                            <div class="text-gray-500 text-sm">Sale Price</div>
+                            <div class="text-gray-700 text-sm font-bold">Rs. {product.price}</div>
                         </div>
                         <div onClick={() => handleProductEdit(product, 'batch')}>
-                            <div class="text-gray-500 text-xs">Cost</div>
-                            <div class="text-gray-700 text-xs font-bold">Rs {product.cost}</div>
+                            <div class="text-gray-500 text-sm">Cost</div>
+                            <div class="text-gray-700 text-sm font-bold">Rs {product.cost}</div>
                         </div>
                         <div onClick={() => handleProductEdit(product, 'qty')}>
-                            <div class="text-gray-500 text-xs">In Stock</div>
-                            <div class="text-gray-700 text-xs font-bold">{product.quantity}</div>
+                            <div class="text-gray-500 text-sm">In Stock</div>
+                            <div class="text-gray-700 text-sm font-bold">{product.quantity}</div>
                         </div>
                     </div>
                 </li>

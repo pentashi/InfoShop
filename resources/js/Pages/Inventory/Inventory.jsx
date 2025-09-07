@@ -19,7 +19,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import numeral from "numeral";
 
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
 import InventoryItemDialog from "./Partials/InventoryItemDialog";
 import InventoryTransactionDialog from "./Partials/InventoryTransactionDialog";
@@ -134,25 +134,6 @@ const Inventory = ({ inventory_items, stores }) => {
             >
 
                 <Grid size={{ xs: 12, sm: 3 }}>
-                    <TextField
-                        label="Search..."
-                        name="search_query"
-                        placeholder="Start typing..."
-                        fullWidth
-                    />
-                </Grid>
-                <Grid size={{ xs: 4, sm: 1 }}>
-                    <Button
-                        variant="contained"
-                        sx={{ height: "100%" }}
-                        size="large"
-                        fullWidth
-
-                    >
-                        <FindReplaceIcon />
-                    </Button>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 3 }}>
                     <Button
                         variant="contained"
                         sx={{ height: "100%" }}
@@ -176,7 +157,7 @@ const Inventory = ({ inventory_items, stores }) => {
                         size="large"
                         fullWidth
                         color="success"
-                        onClick={() => {router.get('/inventory-purchase')}}
+                        onClick={() => { router.get('/inventory-purchase') }}
                     >
                         PURCHASE
                     </Button>
@@ -189,7 +170,7 @@ const Inventory = ({ inventory_items, stores }) => {
                         size="large"
                         fullWidth
                         color="primary"
-                        onClick={() => {router.get('/inventory-logs')}}
+                        onClick={() => { router.get('/inventory-logs') }}
                     >
                         LOGS
                     </Button>
@@ -203,21 +184,16 @@ const Inventory = ({ inventory_items, stores }) => {
                 <DataGrid
                     rows={dataInventoryItems?.data ?? []} //.}
                     columns={columns(handleRowClick)}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
                     hideFooter
                 />
             </Box>
             <Grid size={12} container justifyContent={"end"}>
                 {/* <Chip size="large" label={'Total:' + numeral(totalExpense).format('0,0')} color="primary" /> */}
                 <CustomPagination
-                    dataLinks={dataInventoryItems?.links}
                     refreshTable={refreshInventoryItems}
-                    dataLastPage={dataInventoryItems?.last_page}
+                    setSearchTerms={setSearchTerms}
+                    searchTerms={searchTerms}
+                    data={dataInventoryItems}
                 ></CustomPagination>
             </Grid>
 

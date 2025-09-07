@@ -115,7 +115,7 @@ export default function ViewDetailsDialog({
                     <CloseIcon />
                 </IconButton>
                 <DialogContent sx={{ paddingY: '5px' }}>
-                    <Table size="small">
+                    <Table size="large">
                         <TableBody>
                             <TableRow>
                                 <TableCell align="left">Date</TableCell>

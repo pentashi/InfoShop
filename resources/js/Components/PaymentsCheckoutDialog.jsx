@@ -242,7 +242,7 @@ export default function PaymentsCheckoutDialog({
                         <Grid size={{ xs: 12, sm: 6 }}>
 
                             <TextField
-                                size="small"
+                                size="large"
                                 fullWidth
                                 type="number"
                                 name="net_total"
@@ -376,7 +376,7 @@ export default function PaymentsCheckoutDialog({
                                     <TableCell align="right">
                                         <strong>Rs. {(payment.amount).toFixed(2)}</strong>
                                     </TableCell>
-                                    
+
                                     {/* Action Button to delete payment */}
                                     <TableCell align="center">
                                         <IconButton edge="end" color="error" onClick={() => deletePayment(index)}>
@@ -395,7 +395,7 @@ export default function PaymentsCheckoutDialog({
                         name="note"
                         multiline
                         sx={{ mt: "1rem" }}
-                        size="small"
+                        size="large"
                     />
                 </DialogContent>
                 <DialogActions>

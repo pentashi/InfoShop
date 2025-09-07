@@ -91,7 +91,7 @@ export default function SaleTemplateItem({ templates, setTemplates }) {
                     >
                         <IconButton
                             aria-label="delete"
-                            size="small"
+                            size="large"
                             color="error"
                             sx={{
                                 position: 'absolute',

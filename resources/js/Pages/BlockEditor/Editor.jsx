@@ -182,7 +182,7 @@ const Editor = () => {
                         }}
                     >
                         <IconButton
-                            size="small"
+                            size="large"
                             color="primary"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -199,7 +199,7 @@ const Editor = () => {
                             <ArrowUpwardIcon fontSize="small" />
                         </IconButton>
                         <IconButton
-                            size="small"
+                            size="large"
                             color="primary"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -216,7 +216,7 @@ const Editor = () => {
                             <ArrowDownwardIcon fontSize="small" />
                         </IconButton>
                         <IconButton
-                            size="small"
+                            size="large"
                             color="error"
                             onClick={(e) => {
                                 e.stopPropagation();

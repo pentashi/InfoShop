@@ -6,7 +6,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
     Button,
     Box,
-     Grid,
+    Grid,
     MenuItem,
     TextField,
     Chip,
@@ -252,11 +252,6 @@ export default function Product({ products, stores, contacts }) {
         router.get(url, { ...filters }, options);
     };
 
-    // const handleFilterChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFilters((prev) => ({ ...prev, [name]: value }));
-    // };
-
     const handleFilterChange = (input) => {
         if (input?.target) {
             // Handle regular inputs (e.g., TextField)
@@ -280,6 +275,10 @@ export default function Product({ products, stores, contacts }) {
         );
         setTotalValuation(total);
     }, [dataProducts]);
+
+    useEffect(() => {
+        refreshProducts(window.location.pathname);
+    }, [filters]);
 
     return (
         <AuthenticatedLayout>
@@ -306,7 +305,7 @@ export default function Product({ products, stores, contacts }) {
                             select
                             fullWidth
                             margin="dense"
-                            size="small"
+                            size="large"
                         >
                             <MenuItem value={0}>All</MenuItem>
                             {stores.map((store) => (
@@ -324,7 +323,7 @@ export default function Product({ products, stores, contacts }) {
                             styles={{
                                 control: (baseStyles, state) => ({
                                     ...baseStyles,
-                                    height: "40px",
+                                    height: "55px",
                                 }),
                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                             }}
@@ -345,7 +344,7 @@ export default function Product({ products, stores, contacts }) {
                         <TextField
                             value={filters.status}
                             label="Status"
-                            size="small"
+                            size="large"
                             onChange={handleFilterChange}
                             required
                             name="status"
@@ -362,11 +361,11 @@ export default function Product({ products, stores, contacts }) {
                         </TextField>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 2, md: 1 }}>
+                    <Grid size={{ xs: 6, sm: 2, md: 2 }}>
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
-                            size="small"
+                            size="large"
                             onChange={handleFilterChange}
                             placeholder="Alert Qty"
                             name="alert_quantity"
@@ -384,7 +383,7 @@ export default function Product({ products, stores, contacts }) {
                             fullWidth
                             name="search_query"
                             label="Search"
-                            size="small"
+                            size="large"
                             variant="outlined"
                             value={filters.search_query}
                             onChange={handleFilterChange}
@@ -406,23 +405,10 @@ export default function Product({ products, stores, contacts }) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 3, sm: 2, md: 1 }}>
-                        <Button
-                        size="small"
-                            fullWidth
-                            variant="contained"
-                            onClick={() =>
-                                refreshProducts(window.location.pathname)
-                            }
-                        >
-                            <FindReplaceIcon />
-                        </Button>
-                    </Grid>
-
                     <Grid size={{ xs: 9, sm: 3, md: 2 }}>
                         <Link href="/products/create">
                             <Button
-                            size="small"
+                                size="large"
                                 variant="contained"
                                 color="success"
                                 startIcon={<AddIcon />}
@@ -469,7 +455,7 @@ export default function Product({ products, stores, contacts }) {
                     </Box>
                 )}
                 {isMobile && (
-                    <ProductsList products={dataProducts.data} handleProductEdit={handleProductEdit}/>
+                    <ProductsList products={dataProducts.data} handleProductEdit={handleProductEdit} />
                 )}
                 <Grid
                     size={12}
@@ -491,26 +477,12 @@ export default function Product({ products, stores, contacts }) {
                         }
                         color="primary"
                     />
-                    <TextField
-                        label="Per page"
-                        value={filters.per_page}
-                        onChange={handleFilterChange}
-                        name="per_page"
-                        select
-                        size="small"
-                        sx={{ minWidth: "100px" }}
-                    >
-                        <MenuItem value={100}>100</MenuItem>
-                        <MenuItem value={200}>200</MenuItem>
-                        <MenuItem value={300}>300</MenuItem>
-                        <MenuItem value={400}>400</MenuItem>
-                        <MenuItem value={500}>500</MenuItem>
-                        <MenuItem value={1000}>1000</MenuItem>
-                    </TextField>
+
                     <CustomPagination
-                        dataLinks={dataProducts?.links}
                         refreshTable={refreshProducts}
-                        dataLastPage={dataProducts?.last_page}
+                        setSearchTerms={setFilters}
+                        searchTerms={filters}
+                        data={dataProducts}
                     ></CustomPagination>
                 </Grid>
             </Grid>

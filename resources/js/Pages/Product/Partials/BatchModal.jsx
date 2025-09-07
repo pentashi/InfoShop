@@ -198,7 +198,7 @@ export default function BatchModal({
                         <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
-                                size="small"
+                                size="large"
                                 name="batch_number"
                                 label="Batch Number"
                                 variant="outlined"
@@ -225,7 +225,7 @@ export default function BatchModal({
                                 fullWidth
                                 type="number"
                                 name="price"
-                                size="small"
+                                size="large"
                                 label="Price"
                                 variant="outlined"
                                 required
@@ -255,7 +255,7 @@ export default function BatchModal({
                                 required
                                 value={formState.cost}
                                 onChange={handleInputChange}
-                                size="small"
+                                size="large"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}
@@ -281,7 +281,7 @@ export default function BatchModal({
                                 required
                                 value={formState.discount_percentage}
                                 onChange={handleInputChange}
-                                size="small"
+                                size="large"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }} />
@@ -296,7 +296,7 @@ export default function BatchModal({
                                 required
                                 value={formState.discount}
                                 onChange={handleInputChange}
-                                size="small"
+                                size="large"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }} />
@@ -311,7 +311,7 @@ export default function BatchModal({
                                 variant="outlined"
                                 value={formState.expiry_date}
                                 onChange={handleInputChange}
-                                size="small"
+                                size="large"
                                 onFocus={(event) => {
                                     event.target.select();
                                 }}

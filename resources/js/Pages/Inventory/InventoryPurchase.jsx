@@ -130,7 +130,7 @@ const InventoryPurchase = ({ inventory_items, stores }) => {
                         label="Store"
                         variant="outlined"
                         select
-                        size="small"
+                        size="large"
                         name="store_id"
                         value={purchaseForm.store_id}
                         onChange={(e) => setPurchaseForm({ ...purchaseForm, store_id: e.target.value })}
@@ -150,7 +150,7 @@ const InventoryPurchase = ({ inventory_items, stores }) => {
                         variant="outlined"
                         name="transaction_date"
                         type="date"
-                        size="small"
+                        size="large"
                         value={purchaseForm.transaction_date}
                         onChange={(e) => setPurchaseForm({ ...purchaseForm, transaction_date: e.target.value })}
                         slotProps={{
@@ -205,7 +205,7 @@ const InventoryPurchase = ({ inventory_items, stores }) => {
                                                 handleChange(index, 'item', newValue)
                                             }
                                             renderInput={(params) => (
-                                                <TextField {...params} size="small" fullWidth />
+                                                <TextField {...params} size="large" fullWidth />
                                             )}
                                         />
 
@@ -213,7 +213,7 @@ const InventoryPurchase = ({ inventory_items, stores }) => {
                                     <TableCell width={200}>
                                         <TextField
                                             fullWidth
-                                            size="small"
+                                            size="large"
                                             type="number"
                                             required
                                             placeholder="Unit Cost"
@@ -226,7 +226,7 @@ const InventoryPurchase = ({ inventory_items, stores }) => {
                                     >
                                         <TextField
                                             fullWidth
-                                            size="small"
+                                            size="large"
                                             type="number"
                                             placeholder="Quantity"
                                             value={row.quantity}

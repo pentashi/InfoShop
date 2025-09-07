@@ -4,7 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage, Link } from "@inertiajs/react";
 import {
     Typography,
-     Grid,
+    Grid,
     TextField,
     ListItem,
     List,
@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import {
-  Card,
-  CardContent,
+    Card,
+    CardContent,
 } from "@/components/ui/card"
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -34,6 +34,8 @@ import numeral from "numeral";
 import Summaries from "./Partials/Summaries";
 import { SalesChart } from "./Partials/SalesChart";
 import { OverViewCards } from "./Partials/OverViewCards";
+import { DatePicker } from "@mui/x-date-pickers";
+import MUIDatePicker from "@/Components/ui/MUIDatePicker";
 
 export default function Dashboard({ data, logo, version, store_name }) {
     const auth = usePage().props.auth.user;
@@ -115,7 +117,7 @@ export default function Dashboard({ data, logo, version, store_name }) {
             )}
 
             {(auth.user_role == "admin" || auth.user_role == "super-admin") && (
-                <OverViewCards/>
+                <OverViewCards />
             )}
 
             <Grid
@@ -135,42 +137,10 @@ export default function Dashboard({ data, logo, version, store_name }) {
                                     width={"100%"}
                                 >
                                     <Grid size={6}>
-                                        <TextField
-                                            label="Start Date"
-                                            name="start_date"
-                                            placeholder="Start Date"
-                                            type="date"
-                                            fullWidth
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: true,
-                                                },
-                                            }}
-                                            value={startDate}
-                                            onChange={(e) =>
-                                                setStartDate(e.target.value)
-                                            }
-                                            required
-                                        />
+                                        <MUIDatePicker name="start_date" label="Start Date" value={startDate} onChange={setStartDate} />
                                     </Grid>
                                     <Grid size={6}>
-                                        <TextField
-                                            label="End Date"
-                                            name="end_date"
-                                            placeholder="End Date"
-                                            type="date"
-                                            fullWidth
-                                            slotProps={{
-                                                inputLabel: {
-                                                    shrink: true,
-                                                },
-                                            }}
-                                            value={endDate}
-                                            onChange={(e) =>
-                                                setEndDate(e.target.value)
-                                            }
-                                            required
-                                        />
+                                        <MUIDatePicker name="end_date" label="End Date" value={endDate} onChange={setEndDate} />
                                     </Grid>
                                 </Grid>
 

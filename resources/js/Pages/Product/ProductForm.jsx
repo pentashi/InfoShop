@@ -294,7 +294,7 @@ export default function Product({ product, collection, product_code, contacts, p
                     <Grid container spacing={2}>
                         <Grid size={{ xs: 12, sm: 3 }}>
                             <TextField
-                                size="small"
+                                size="large"
                                 label="Barcode"
                                 id="barcode"
                                 name="barcode"
@@ -311,7 +311,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         </Grid>
                         {/* <Grid size={{ xs: 6, sm: 3 }}>
                             <TextField
-                                size="small"
+                                size="large"
                                 label="SKU"
                                 id="sku"
                                 name="sku"
@@ -322,7 +322,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         </Grid> */}
                         <Grid size={{ xs: 12, sm: 7 }}>
                             <TextField
-                                size="small"
+                                size="large"
                                 label="Product Name"
                                 name="name"
                                 fullWidth
@@ -333,7 +333,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         </Grid>
                         <Grid size={{ xs: 12, sm: 2 }}>
                             <TextField
-                                size="small"
+                                size="large"
                                 value={productFormData.unit}
                                 label="Product Unit"
                                 onChange={handleChange}
@@ -362,7 +362,7 @@ export default function Product({ product, collection, product_code, contacts, p
                             <>
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Cost"
                                         name="cost"
                                         type="number"
@@ -380,7 +380,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                 </Grid>
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Price"
                                         name="price"
                                         type="number"
@@ -397,7 +397,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                 </Grid>
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Quantity"
                                         name="quantity"
                                         type="number"
@@ -417,7 +417,7 @@ export default function Product({ product, collection, product_code, contacts, p
 
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Discount Percentage %"
                                         name="discount_percentage"
                                         type="number"
@@ -430,7 +430,7 @@ export default function Product({ product, collection, product_code, contacts, p
 
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Flat Discount"
                                         name="discount"
                                         type="number"
@@ -443,7 +443,7 @@ export default function Product({ product, collection, product_code, contacts, p
 
                                 <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                                     <TextField
-                                        size="small"
+                                        size="large"
                                         label="Batch number"
                                         name="batch_number"
                                         fullWidth
@@ -459,7 +459,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                         styles={{
                                             control: (baseStyles, state) => ({
                                                 ...baseStyles,
-                                                height: "40px",
+                                                height: "55px",
                                             }),
                                         }}
                                         options={contacts} // Options to display in the dropdown
@@ -475,11 +475,6 @@ export default function Product({ product, collection, product_code, contacts, p
                                         adapterLocale="en-gb"
                                     >
                                         <DatePicker
-                                            slotProps={{
-                                                textField: {
-                                                    size: 'small',
-                                                },
-                                            }}
                                             name="expiry_date"
                                             label="Expiry Date"
                                             className="w-full"
@@ -500,7 +495,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                 id="btn-manage-stock"
                                 variant="contained"
                                 fullWidth
-                                size="small"
+                                size="large"
                             >
                                 <ToggleButton
                                     value="1"
@@ -523,7 +518,7 @@ export default function Product({ product, collection, product_code, contacts, p
 
                         <Grid size={{ xs: 6, sm: 2 }} className="mb-3">
                             <TextField
-                                size="small"
+                                size="large"
                                 label="Alert Quantity"
                                 id="alert-quantity"
                                 name="alert_quantity"
@@ -536,7 +531,7 @@ export default function Product({ product, collection, product_code, contacts, p
 
                         <Grid size={{ xs: 6, sm: 2 }} mb={2}>
                             <TextField
-                                size="small"
+                                size="large"
                                 label="Product Type"
                                 name="product_type"
                                 select
@@ -555,7 +550,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         {(productFormData.product_type === 'reload' || productFormData.product_type === 'commission') && (
                             <Grid size={{ xs: 6, sm: 2 }} className={'mb-3'}>
                                 <TextField
-                                    size="small"
+                                    size="large"
                                     label={productFormData.product_type === 'reload' ? 'Commission (%)' : 'Fixed Commission'}
                                     name="fixed_commission"
                                     type="number"
@@ -576,7 +571,7 @@ export default function Product({ product, collection, product_code, contacts, p
                     <Grid container spacing={2} className="mt-3">
                         <Grid size={{ xs: 6, sm: 2 }}>
                             <Autocomplete
-                                size="small"
+                                size="large"
                                 disablePortal
                                 // defaultValue={brandOptions.find(option => option.id === null)}
                                 value={selectedBrand || null}
@@ -599,7 +594,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         </Grid>
                         <Grid size={{ xs: 6, sm: 2 }}>
                             <Autocomplete
-                                size="small"
+                                size="large"
                                 disablePortal
                                 value={selectedCategory || null}
                                 onChange={(event, newValue) => {
@@ -621,7 +616,7 @@ export default function Product({ product, collection, product_code, contacts, p
                         </Grid>
                         <Grid size={{ xs: 12, sm: 8 }}>
                             <TextField
-                                size="small"
+                                size="large"
                                 label="Product Description"
                                 id="product-description"
                                 name="description"
@@ -683,7 +678,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                     fullWidth
                                         variant="contained"
                                         color="warning"
-                                        size="small"
+                                        size="large"
                                         startIcon={<ArrowBackIosNewIcon />}
                                         sx={{ mr: "1rem" }}
                                         onClick={() => window.history.back()}
@@ -697,7 +692,7 @@ export default function Product({ product, collection, product_code, contacts, p
                                         variant="contained"
                                         type="submit"
                                         color="success"
-                                        size="small"
+                                        size="large"
                                         endIcon={<SaveIcon />}
                                         disabled={loading}
                                     >

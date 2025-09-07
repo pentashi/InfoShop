@@ -18,12 +18,13 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import numeral from "numeral";
 
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import CustomPagination from "@/Components/CustomPagination";
 import EmployeeDialog from "./Partials/EmployeeDialog";
 import SalaryFormDialog from "./Partials/SalaryFormDialog";
 import EmployeeBalanceDialog from "./Partials/EmployeeBalanceDialog";
 import PrintIcon from "@mui/icons-material/Print";
+import { data } from "autoprefixer";
 
 const columns = (handleRowClick) => [
     { field: "id", headerName: "ID", width: 80 },
@@ -205,13 +206,13 @@ export default function Employee({ employees, stores, }) {
         setTotalEmployees(total);
     }, [dataEmployees]);
 
+    useEffect(() => {
+                refreshEmployees(window.location.pathname);
+            }, [searchTerms]);
+
     const handleSearchChange = (e) => {
         const { name, value } = e.target;
         setSearchTerms((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSearch = () => {
-        refreshEmployees(window.location.pathname);
     };
 
     const handleEmployeeClickOpen = () => {
@@ -275,17 +276,6 @@ export default function Employee({ employees, stores, }) {
                         required
                     />
                 </Grid>
-                <Grid size={{ xs: 4, sm: 1 }}>
-                    <Button
-                        variant="contained"
-                        onClick={() => refreshEmployees(window.location.pathname)}
-                        sx={{ height: "100%" }}
-                        size="large"
-                        fullWidth
-                    >
-                        <FindReplaceIcon />
-                    </Button>
-                </Grid>
                 <Grid size={{ xs: 8, sm: 3 }}>
                     <Button
                         variant="contained"
@@ -308,12 +298,6 @@ export default function Employee({ employees, stores, }) {
                 <DataGrid
                     rows={dataEmployees?.data}
                     columns={columns(handleRowClick)}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
                     initialState={{
                         columns: {
                             columnVisibilityModel: {
@@ -328,12 +312,13 @@ export default function Employee({ employees, stores, }) {
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={"end"}>
+            <Grid size={12} container justifyContent={"end"} spacing={2} alignItems={"center"}>
                 <Chip size="large" label={'Total Balance:' + numeral(totalEmployees).format('0,0')} color="primary" />
                 <CustomPagination
-                    dataLinks={dataEmployees?.links}
                     refreshTable={refreshEmployees}
-                    dataLastPage={dataEmployees?.last_page}
+                   setSearchTerms={setSearchTerms}
+                    searchTerms={searchTerms}
+                    data={dataEmployees}
                 ></CustomPagination>
             </Grid>
 

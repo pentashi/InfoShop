@@ -71,6 +71,7 @@ export default function Expense({ expenses, stores }) {
         start_date: '',
         end_date: '',
         store: 0,
+        per_page: 100,
     });
 
     const handleRowClick = (expense, action) => {
@@ -132,9 +133,9 @@ export default function Expense({ expenses, stores }) {
         setSearchTerms((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSearch = () => {
+    useEffect(() => {
         refreshExpenses(window.location.pathname);
-    };
+    }, [searchTerms]);
 
     return (
         <AuthenticatedLayout>
@@ -152,7 +153,7 @@ export default function Expense({ expenses, stores }) {
                     <TextField
                         label="Search..."
                         name="search_query"
-                        size="small"
+                        size="large"
                         placeholder="Start typing..."
                         value={searchTerms.search_query}
                         onChange={handleSearchChange}
@@ -165,7 +166,7 @@ export default function Expense({ expenses, stores }) {
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -183,7 +184,7 @@ export default function Expense({ expenses, stores }) {
                     <TextField
                         label="End Date"
                         name="end_date"
-                        size="small"
+                        size="large"
                         placeholder="End Date"
                         fullWidth
                         type="date"
@@ -198,24 +199,13 @@ export default function Expense({ expenses, stores }) {
                     />
                 </Grid>
 
-                <Grid size={{ xs: 4, sm: 1 }}>
-                    <Button
-                        variant="contained"
-                        onClick={() => refreshExpenses(window.location.pathname)}
-                        sx={{ height: "100%" }}
-                        size="small"
-                        fullWidth
-                    >
-                        <FindReplaceIcon />
-                    </Button>
-                </Grid>
                 <Grid size={{ xs: 8, sm: 2 }}>
                     <Button
                         variant="contained"
                         onClick={() => setExpenseModalOpen(true)}
                         sx={{ height: "100%" }}
                         startIcon={<AddCircleIcon />}
-                        size="small"
+                        size="large"
                         fullWidth
                         color="success"
                     >
@@ -226,26 +216,21 @@ export default function Expense({ expenses, stores }) {
 
             <Box
                 className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 200px)",}}
+                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 200px)", }}
             >
                 <DataGrid
                     rows={dataExpenses?.data}
                     columns={columns(handleRowClick)}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
                     hideFooter
                 />
             </Box>
-            <Grid size={12} container justifyContent={"end"}>
+            <Grid size={12} container justifyContent={"end"} spacing={2} alignItems={"center"}>
                 <Chip size="large" label={'Total:' + numeral(totalExpense).format('0,0')} color="primary" />
                 <CustomPagination
-                    dataLinks={dataExpenses?.links}
                     refreshTable={refreshExpenses}
-                    dataLastPage={dataExpenses?.last_page}
+                    setSearchTerms={setSearchTerms}
+                    searchTerms={searchTerms}
+                    data={dataExpenses}
                 ></CustomPagination>
             </Grid>
 

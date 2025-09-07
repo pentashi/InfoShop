@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip,  Grid } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Button, Box, IconButton, TextField, MenuItem, Tooltip, Chip, Grid } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import Select2 from "react-select";
 import numeral from "numeral";
 import dayjs from "dayjs";
@@ -217,7 +217,6 @@ export default function Sale({ sales, contacts }) {
     };
 
     const handleSearchChange = (input) => {
-
         if (input?.target) {
             // Handle regular inputs (e.g., TextField)
             const { name, value } = input.target;
@@ -230,6 +229,10 @@ export default function Sale({ sales, contacts }) {
             }));
         }
     };
+
+    useEffect(() => {
+        refreshSales(window.location.pathname);
+    }, [searchTerms]);
 
     return (
         <AuthenticatedLayout>
@@ -250,7 +253,7 @@ export default function Sale({ sales, contacts }) {
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "40px",
+                                height: "55px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -269,7 +272,7 @@ export default function Sale({ sales, contacts }) {
                         name="status"
                         select
                         fullWidth
-                        size="small"
+                        size="large"
                     >
                         <MenuItem value={"all"}>All</MenuItem>
                         <MenuItem value={"completed"}>Completed</MenuItem>
@@ -283,7 +286,7 @@ export default function Sale({ sales, contacts }) {
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -301,7 +304,7 @@ export default function Sale({ sales, contacts }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -317,7 +320,7 @@ export default function Sale({ sales, contacts }) {
                     <TextField
                         value={searchTerms.query}
                         label="Search"
-                        size="small"
+                        size="large"
                         onChange={handleSearchChange}
                         name="query"
                         fullWidth
@@ -330,7 +333,7 @@ export default function Sale({ sales, contacts }) {
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 1 }}>
-                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="small">
+                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
                         <FindReplaceIcon />
                     </Button>
                 </Grid>
@@ -344,12 +347,6 @@ export default function Sale({ sales, contacts }) {
                 <DataGrid
                     rows={dataSales.data}
                     columns={columns(handleRowClick)}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
                     initialState={{
                         columns: {
                             columnVisibilityModel: {
@@ -358,33 +355,16 @@ export default function Sale({ sales, contacts }) {
                         },
                     }}
                     hideFooter
+                    showToolbar
                 />
             </Box>
-            <Grid size={12} spacing={2} container justifyContent={"end"}>
+            <Grid size={12} container justifyContent={"end"} spacing={2} alignItems={"center"}>
                 <Chip size="large" label={'Total results : ' + dataSales.total} color="primary" />
-                <TextField
-                    label="Per page"
-                    value={searchTerms.per_page}
-                    onChange={handleSearchChange}
-                    name="per_page"
-                    select
-                    size="small"
-                    sx={{ minWidth: '100px' }}
-                >
-                    <MenuItem value={100}>100</MenuItem>
-                    <MenuItem value={200}>200</MenuItem>
-                    <MenuItem value={300}>300</MenuItem>
-                    <MenuItem value={400}>400</MenuItem>
-                    <MenuItem value={500}>500</MenuItem>
-                    <MenuItem value={1000}>1000</MenuItem>
-                </TextField>
                 <CustomPagination
-                    dataLinks={dataSales?.links}
-                    next_page={dataSales.next_page_url}
-                    prev_page={dataSales?.prev_page_url}
-                    current_page={dataSales?.current_page}
                     refreshTable={refreshSales}
-                    dataLastPage={dataSales?.last_page}
+                    setSearchTerms={setSearchTerms}
+                    searchTerms={searchTerms}
+                    data={dataSales}
                 ></CustomPagination>
             </Grid>
 

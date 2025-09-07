@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import Grid from "@mui/material/Grid";
@@ -7,7 +7,7 @@ import { Button, Box, TextField, Tooltip, MenuItem, Chip, IconButton } from "@mu
 import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import Select2 from "react-select";
 import numeral from "numeral";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import CustomPagination from "@/Components/CustomPagination";
@@ -120,8 +120,8 @@ export default function SoldItem({ sold_items, contacts }) {
         item_type: "all",
         per_page: 100,
     });
-    
-    const refreshSoldItems = (url) => {
+
+    const refreshSoldItems = (url = window.location.pathname) => {
         const options = {
             preserveState: true, // Preserves the current component's state
             preserveScroll: true, // Preserves the current scroll position
@@ -134,6 +134,10 @@ export default function SoldItem({ sold_items, contacts }) {
             url, { ...searchTerms }, options
         );
     };
+
+    useEffect(() => {
+        refreshSoldItems(window.location.pathname);
+    }, [searchTerms]);
 
     const handleSearchChange = (input) => {
 
@@ -169,7 +173,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "40px",
+                                height: "55px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -185,7 +189,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
-                        size="small"
+                        size="large"
                         fullWidth
                         type="date"
                         slotProps={{
@@ -204,9 +208,8 @@ export default function SoldItem({ sold_items, contacts }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
-                        slots={{ toolbar: GridToolbar }}
                         slotProps={{
                             inputLabel: {
                                 shrink: true,
@@ -222,7 +225,7 @@ export default function SoldItem({ sold_items, contacts }) {
                     <TextField
                         label="Item type"
                         name="item_type"
-                        size="small"
+                        size="large"
                         fullWidth
                         slotProps={{
                             inputLabel: {
@@ -246,7 +249,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         label="Search"
                         name="query"
                         placeholder="Search"
-                        size="small"
+                        size="large"
                         fullWidth
                         slotProps={{
                             inputLabel: {
@@ -284,7 +287,7 @@ export default function SoldItem({ sold_items, contacts }) {
                         </TextField>
                 </Grid> */}
                 <Grid size={{ xs: 12, sm: 1 }}>
-                    <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="small">
+                    <Button fullWidth variant="contained" onClick={() => refreshSoldItems(window.location.pathname)} size="large">
                         <FindReplaceIcon />
                     </Button>
                 </Grid>
@@ -296,8 +299,8 @@ export default function SoldItem({ sold_items, contacts }) {
             >
                 <DataGrid
                     rows={dataSoldItems.data}
+                    getRowId={(row) => row.id}
                     columns={columns()}
-                    slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: {
                             showQuickFilter: true,
@@ -317,27 +320,12 @@ export default function SoldItem({ sold_items, contacts }) {
             <Grid size={12} spacing={2} container justifyContent={"end"}>
                 <Chip size="large" label={'Total results : ' + dataSoldItems.total} color="primary" />
                 <Chip size="large" label={'Total Quantity : ' + dataSoldItems.data.reduce((sum, item) => sum + item.quantity, 0)} color="primary" />
-                <TextField
-                    label="Per page"
-                    value={searchTerms.per_page}
-                    onChange={handleSearchChange}
-                    name="per_page"
-                    select
-                    size="small"
-                    sx={{ minWidth: '100px' }}
-                >
-                    <MenuItem value={100}>100</MenuItem>
-                    <MenuItem value={200}>200</MenuItem>
-                    <MenuItem value={300}>300</MenuItem>
-                    <MenuItem value={400}>400</MenuItem>
-                    <MenuItem value={500}>500</MenuItem>
-                    <MenuItem value={1000}>1000</MenuItem>
-                </TextField>
 
                 <CustomPagination
-                    dataLinks={dataSoldItems?.links}
                     refreshTable={refreshSoldItems}
-                    dataLastPage={dataSoldItems?.last_page}
+                    setSearchTerms={setSearchTerms}
+                    searchTerms={searchTerms}
+                    data={dataSoldItems}
                 ></CustomPagination>
             </Grid>
         </AuthenticatedLayout>

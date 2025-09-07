@@ -124,7 +124,7 @@ export default function SalesReport({ stores, report }) {
                     <TextField
                         label="Store"
                         name="store"
-                        size="small"
+                        size="large"
                         fullWidth
                         select
                         slotProps={{
@@ -150,7 +150,7 @@ export default function SalesReport({ stores, report }) {
                         label="Start Date"
                         name="start_date"
                         placeholder="Start Date"
-                        size="small"
+                        size="large"
                         fullWidth
                         type="date"
                         slotProps={{
@@ -170,7 +170,7 @@ export default function SalesReport({ stores, report }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
-                        size="small"
+                        size="large"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -186,7 +186,7 @@ export default function SalesReport({ stores, report }) {
                     <Button
                         variant="contained"
                         onClick={() => refreshReport(window.location.pathname)}
-                        size="small"
+                        size="large"
                         fullWidth
                     >
                         <FindReplaceIcon />
