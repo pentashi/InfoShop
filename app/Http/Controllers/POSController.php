@@ -58,11 +58,11 @@ class POSController extends Controller
         // Apply category filter if set
         if (isset($filters['category_id'])) {
             $query->where('products.category_id', $filters['category_id']);
-        } else {
+        } else if (!isset($filters['all_products'])) {
             $query->where('pb.is_featured', 1);
         }
 
-        $products = $query->groupBy(
+        $productsQuery = $query->groupBy(
             'products.id',
             'products.image_url',
             'products.name',
@@ -78,9 +78,13 @@ class POSController extends Controller
             'products.alert_quantity',
             'pb.discount',
             'pb.discount_percentage'
-        )
-            ->limit(20)
-            ->get();
+        );
+
+        if (!isset($allProducts)) {
+            $productsQuery->limit(20);
+        }
+
+        $products = $productsQuery->get();
 
         return $products;
     }
@@ -88,11 +92,19 @@ class POSController extends Controller
     public function getProductsByFilter(Request $request)
     {
         $categoryId = $request->input('category_id');
+        $allProducts = $request->input('all_products');
+
         $filters = [];
 
         if ($categoryId != 0) {
             $filters['category_id'] = $categoryId;
         }
+
+        //Return all products
+        if ($allProducts == 'true') {
+            $filters['all_products'] = true;
+        }
+
         $products = $this->getProducts($filters);
 
         return response()->json($products);
@@ -119,7 +131,8 @@ class POSController extends Controller
             'return_sale' => false,
             'sale_id' => null,
             'categories' => $categories,
-            'cart_first_focus' => $cart_first_focus
+            'cart_first_focus' => $cart_first_focus,
+            'misc_settings' => $miscSettings
         ]);
     }
 
@@ -134,6 +147,7 @@ class POSController extends Controller
         $miscSettings = Setting::where('meta_key', 'misc_settings')->first();
         $miscSettings = json_decode($miscSettings->meta_value, true);
         $cart_first_focus = $miscSettings['cart_first_focus'] ?? 'quantity';
+
         return Inertia::render('POS/POS', [
             'products' => $products,
             'urlImage' => url('/storage/'),
@@ -144,7 +158,8 @@ class POSController extends Controller
             'categories' => $categories,
             'cart_first_focus' => $cart_first_focus,
             'edit_sale' => true,
-            'sale_data' => $sale
+            'sale_data' => $sale,
+            'misc_settings' => $miscSettings
         ]);
     }
 
@@ -208,7 +223,8 @@ class POSController extends Controller
             'customers' => $contacts,
             'return_sale' => true,
             'sale_id' => $sale_id,
-            'cart_first_focus' => $cart_first_focus
+            'cart_first_focus' => $cart_first_focus,
+            'misc_settings' => $miscSettings
         ]);
     }
 
@@ -247,7 +263,8 @@ class POSController extends Controller
                         ->where('batch_id', $item->batch_id)
                         ->first();
                     if ($stock) {
-                        $stock->quantity += $item->quantity;
+                        $restoreQty = $item->quantity + ($item->free_quantity ?? 0);
+                        $stock->quantity += $restoreQty;
                         $stock->save();
                     }
                 }
@@ -352,10 +369,12 @@ class POSController extends Controller
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'unit_cost' => $item['cost'],
-                    'discount' => $item['discount'],
+                    'discount' => $item['discount'] ?? 0,
+                    'flat_discount' => $item['flat_discount'] ?? 0,
                     'sale_date' => $sale->sale_date,
                     'description' => isset($item['category_name']) ? $item['category_name'] : null,
-                    'is_free' => isset($item['is_free']) ? $item['is_free'] : 0
+                    'is_free' => isset($item['is_free']) ? $item['is_free'] : 0,
+                    'free_quantity' => isset($item['free_quantity']) ? $item['free_quantity'] : 0,
                 ]);
 
                 if ($item['is_stock_managed'] == 1) {
@@ -365,8 +384,9 @@ class POSController extends Controller
 
                     // Check if stock exists
                     if ($productStock) {
-                        // Deduct the quantity from the stock
-                        $productStock->quantity -= $item['quantity'];
+                         // Total deduction = sold qty + free qty
+                        $deduction = $item['quantity'] + ($item['free_quantity'] ?? 0);
+                        $productStock->quantity -= $deduction;
 
                         // Ensure that stock doesn't go negative
                         if ($productStock->quantity < 0) {

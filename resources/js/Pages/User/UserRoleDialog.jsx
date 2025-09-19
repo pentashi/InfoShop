@@ -100,6 +100,8 @@ export default function UserRoleDialog({ open, handleClose, user_role }) {
     });
   };
 
+  const isMobile = window.innerWidth < 768;
+
   return (
     <Dialog
       open={open}
@@ -110,6 +112,7 @@ export default function UserRoleDialog({ open, handleClose, user_role }) {
         component: 'form',
         onSubmit: handleSubmit,
       }}
+      fullScreen={isMobile}
     >
       <DialogTitle>User Role and Permissions</DialogTitle>
       <DialogContent>
@@ -135,9 +138,10 @@ export default function UserRoleDialog({ open, handleClose, user_role }) {
             {permissions.map((permission, index) => (
               <Grid
                 key={index}
-                size={{xs:3, sm:4}}
+                size={{xs:6, sm:4}}
               >
                 <FormControlLabel
+                sx={{textTransform: "capitalize"}}
                   control={
                     <Switch
                       checked={formState.permissions.includes(permission)} // Check if permission is in the list

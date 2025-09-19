@@ -10,13 +10,16 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 import PrintIcon from "@mui/icons-material/Print";
-import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import EditIcon from "@mui/icons-material/Edit";
 import AddPaymentDialog from "@/Components/AddPaymentDialog";
 import ViewDetailsDialog from "@/Components/ViewDetailsDialog";
 import CustomPagination from "@/Components/CustomPagination";
+
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import SalesList from "./Partials/SalesList";
 
 const columns = (handleRowClick) => [
     {
@@ -131,12 +134,15 @@ const columns = (handleRowClick) => [
 ];
 
 export default function Sale({ sales, contacts }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
     const [selectedContact, setSelectedContact] = useState(null);
     const [amountLimit, setAmountLimit] = useState(0);
     const [dataSales, setDataSales] = useState(sales);
+    const [initialized, setInitialized] = useState(false); //To avoid re fetch data on page load
 
     const [searchTerms, setSearchTerms] = useState({
         start_date: '',
@@ -231,6 +237,10 @@ export default function Sale({ sales, contacts }) {
     };
 
     useEffect(() => {
+        if (!initialized) {
+            setInitialized(true);
+            return;
+        }
         refreshSales(window.location.pathname);
     }, [searchTerms]);
 
@@ -246,14 +256,14 @@ export default function Sale({ sales, contacts }) {
                 sx={{ width: "100%" }}
                 size={12}
             >
-                <Grid size={{ xs: 12, sm: 3 }}>
+                <Grid size={{ xs: 12, sm: 3 }} zIndex={999}>
                     <Select2
                         className="w-full"
                         placeholder="Select a contact..."
                         styles={{
                             control: (baseStyles, state) => ({
                                 ...baseStyles,
-                                height: "55px",
+                                height: "40px",
                             }),
                         }}
                         options={contacts} // Options to display in the dropdown
@@ -272,7 +282,7 @@ export default function Sale({ sales, contacts }) {
                         name="status"
                         select
                         fullWidth
-                        size="large"
+                        size="small"
                     >
                         <MenuItem value={"all"}>All</MenuItem>
                         <MenuItem value={"completed"}>Completed</MenuItem>
@@ -286,7 +296,7 @@ export default function Sale({ sales, contacts }) {
                         name="start_date"
                         placeholder="Start Date"
                         fullWidth
-                        size="large"
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -304,7 +314,7 @@ export default function Sale({ sales, contacts }) {
                         name="end_date"
                         placeholder="End Date"
                         fullWidth
-                        size="large"
+                        size="small"
                         type="date"
                         slotProps={{
                             inputLabel: {
@@ -320,7 +330,7 @@ export default function Sale({ sales, contacts }) {
                     <TextField
                         value={searchTerms.query}
                         label="Search"
-                        size="large"
+                        size="small"
                         onChange={handleSearchChange}
                         name="query"
                         fullWidth
@@ -332,33 +342,32 @@ export default function Sale({ sales, contacts }) {
                         }}
                     />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 1 }}>
-                    <Button variant="contained" fullWidth onClick={() => refreshSales(window.location.pathname)} size="large">
-                        <FindReplaceIcon />
-                    </Button>
-                </Grid>
-
             </Grid>
 
-            <Box
-                className="py-6 w-full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 195px)", }}
-            >
-                <DataGrid
-                    rows={dataSales.data}
-                    columns={columns(handleRowClick)}
-                    initialState={{
-                        columns: {
-                            columnVisibilityModel: {
-                                profit_amount: false,
+            {!isMobile && (
+                <Box
+                    className="py-6 w-full"
+                    sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 195px)", }}
+                >
+                    <DataGrid
+                        rows={dataSales.data}
+                        columns={columns(handleRowClick)}
+                        initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                    profit_amount: false,
+                                },
                             },
-                        },
-                    }}
-                    hideFooter
-                    showToolbar
-                />
-            </Box>
-            <Grid size={12} container justifyContent={"end"} spacing={2} alignItems={"center"}>
+                        }}
+                        hideFooter
+                        showToolbar
+                    />
+                </Box>
+            )}
+            {isMobile && (
+                <SalesList sales={dataSales.data} handleRowClick={handleRowClick} />
+            )}
+            <Grid size={12} container justifyContent={"end"} spacing={2} alignItems={"center"} mt={2}>
                 <Chip size="large" label={'Total results : ' + dataSales.total} color="primary" />
                 <CustomPagination
                     refreshTable={refreshSales}

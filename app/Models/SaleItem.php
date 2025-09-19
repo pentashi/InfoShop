@@ -26,6 +26,8 @@ class SaleItem extends Model
         'note',
         'is_free',
         'meta_data',
+        'flat_discount',
+        'free_quantity',
     ];
 
     public function sale()

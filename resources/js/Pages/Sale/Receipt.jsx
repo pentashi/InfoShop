@@ -29,15 +29,6 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
     const contentRef = useRef(null);
     const reactToPrintFn = useReactToPrint({ contentRef });
     const [receiptNo, setReceiptNo] = useState(' ' + sale.sale_prefix + "/" + sale.invoice_number);
-    const [isAndroid, setIsAndroid] = useState(false);
-
-    useEffect(() => {
-        setIsAndroid(/Android/i.test(navigator.userAgent));
-    }, []);
-
-    const shareToPrint = async (id) => {
-        window.open('https://app.infomaxcloud.com/?receipt_id=' + id, '_blank')
-    };
 
     const handleWhatsAppShare = () => {
         const currentUrl = window.location.href; // Get the current URL
@@ -335,7 +326,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     sx={styles.itemsHeaderTyp}
                                                     color="initial"
                                                 >
-                                                    Price
+                                                    U.Price
                                                 </Typography>
                                             </TableCell>
                                             <TableCell
@@ -413,7 +404,10 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             }
                                                             color="initial"
                                                         >
-                                                            <strong>{item.quantity}x</strong>
+                                                            <strong>{item.quantity}</strong>
+                                                            {Number(item.free_quantity) !== 0 && (
+                                                                <strong> + [Free: {item.free_quantity}]</strong>
+                                                            )}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -441,9 +435,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             }
                                                             color="initial"
                                                         >
-                                                            {numeral(
-                                                                item.discount
-                                                            ).format("0,0.00")}
+                                                            {numeral(Number(item.discount*item.quantity)+Number(item.flat_discount)).format("0,0.00")}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell
@@ -457,7 +449,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             color="initial"
                                                         >
                                                             <strong>
-                                                                {parseFloat(item.quantity) * (item.unit_price - item.discount) === 0 ? 'Free' : numeral(parseFloat(item.quantity) * (item.unit_price - item.discount)).format("0,0.00")}
+                                                                {Number(item.quantity) * (item.unit_price - item.discount) === 0 ? 'Free' : numeral((Number(item.quantity) * (item.unit_price - item.discount))-Number(item.flat_discount)).format("0,0.00")}
                                                             </strong>
                                                         </Typography>
                                                     </TableCell>

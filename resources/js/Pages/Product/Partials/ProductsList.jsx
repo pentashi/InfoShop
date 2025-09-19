@@ -7,9 +7,9 @@ const ProductsList = ({ products, handleProductEdit }) => {
     return (
         <ul className='faded-bottom no-scrollbar grid gap-2 overflow-auto pt-1 pb-1 w-full'>
             {products.map((product) => (
-                <li class="p-3 w-full shadow-sm">
-                    <div class="flex justify-between items-center">
-                        <div class="uppercase tracking-wide text-sm text-blue-900 font-semibold">
+                <li className="p-3 w-full shadow-sm">
+                    <div className="flex justify-between items-center">
+                        <div className="uppercase tracking-wide text-sm text-blue-900 font-semibold">
                             <Link
                                 href={"/products/" + product.id + "/edit"}
                             >
@@ -25,24 +25,23 @@ const ProductsList = ({ products, handleProductEdit }) => {
                             </IconButton>
                         </div>
                     </div>
-                    <div class="mt-2 grid grid-cols-3 gap-4">
+                    <div className="mt-2 grid grid-cols-3 gap-4">
                         <div onClick={() => handleProductEdit(product, 'batch')}>
-                            <div class="text-gray-500 text-sm">Sale Price</div>
-                            <div class="text-gray-700 text-sm font-bold">Rs. {product.price}</div>
+                            <div className="text-gray-500 text-sm">Sale Price</div>
+                            <div className="text-gray-700 text-sm font-bold">Rs. {product.price}</div>
                         </div>
                         <div onClick={() => handleProductEdit(product, 'batch')}>
-                            <div class="text-gray-500 text-sm">Cost</div>
-                            <div class="text-gray-700 text-sm font-bold">Rs {product.cost}</div>
+                            <div className="text-gray-500 text-sm">Cost</div>
+                            <div className="text-gray-700 text-sm font-bold">Rs {product.cost}</div>
                         </div>
                         <div onClick={() => handleProductEdit(product, 'qty')}>
-                            <div class="text-gray-500 text-sm">In Stock</div>
-                            <div class="text-gray-700 text-sm font-bold">{product.quantity}</div>
+                            <div className="text-gray-500 text-sm">In Stock</div>
+                            <div className="text-gray-700 text-sm font-bold">{product.quantity}</div>
                         </div>
                     </div>
                 </li>
             ))}
         </ul>
-
     );
 };
 

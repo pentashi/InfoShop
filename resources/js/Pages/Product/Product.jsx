@@ -2,7 +2,7 @@ import * as React from "react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import {
     Button,
     Box,
@@ -276,7 +276,12 @@ export default function Product({ products, stores, contacts }) {
         setTotalValuation(total);
     }, [dataProducts]);
 
+    const [initialized, setInitialized] = useState(false); //To avoid re fetch data on page load
     useEffect(() => {
+        if (!initialized) {
+            setInitialized(true);
+            return; // Skip first run
+        }
         refreshProducts(window.location.pathname);
     }, [filters]);
 
@@ -305,7 +310,7 @@ export default function Product({ products, stores, contacts }) {
                             select
                             fullWidth
                             margin="dense"
-                            size="large"
+                            size="small"
                         >
                             <MenuItem value={0}>All</MenuItem>
                             {stores.map((store) => (
@@ -323,7 +328,7 @@ export default function Product({ products, stores, contacts }) {
                             styles={{
                                 control: (baseStyles, state) => ({
                                     ...baseStyles,
-                                    height: "55px",
+                                    height: "40px",
                                 }),
                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                             }}
@@ -344,7 +349,7 @@ export default function Product({ products, stores, contacts }) {
                         <TextField
                             value={filters.status}
                             label="Status"
-                            size="large"
+                            size="small"
                             onChange={handleFilterChange}
                             required
                             name="status"
@@ -365,7 +370,7 @@ export default function Product({ products, stores, contacts }) {
                         <TextField
                             value={filters.alert_quantity}
                             label="Alert Qty"
-                            size="large"
+                            size="small"
                             onChange={handleFilterChange}
                             placeholder="Alert Qty"
                             name="alert_quantity"
@@ -383,7 +388,7 @@ export default function Product({ products, stores, contacts }) {
                             fullWidth
                             name="search_query"
                             label="Search"
-                            size="large"
+                            size="small"
                             variant="outlined"
                             value={filters.search_query}
                             onChange={handleFilterChange}
@@ -408,7 +413,7 @@ export default function Product({ products, stores, contacts }) {
                     <Grid size={{ xs: 9, sm: 3, md: 2 }}>
                         <Link href="/products/create">
                             <Button
-                                size="large"
+                                size="small"
                                 variant="contained"
                                 color="success"
                                 startIcon={<AddIcon />}

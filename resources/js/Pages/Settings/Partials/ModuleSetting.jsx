@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
 const App = ({ handleSubmit, settingFormData, setSettingFormData, settings }) => {
-    const modules_list = ['Cheques', 'Reloads','Inventory'];
+    const modules_list = ['Cheques', 'Reloads','Inventory', 'Route', 'Catalog POS'];
     const [activatedModules, setActivatedModules] = useState(settings.modules ? settings.modules.split(',') : []);
     const { enqueueSnackbar } = useSnackbar();
 
@@ -34,14 +34,12 @@ const App = ({ handleSubmit, settingFormData, setSettingFormData, settings }) =>
             onSubmit={handleSubmit}
             method="post"
         >
-            <Grid container spacing={2} size={12} width={'100%'} justifyContent={'center'}>
+            <Grid container spacing={2} size={12} width={'100%'}>
                 {modules_list.map((module) => (
-                    <Grid size={{ xs: 12, sm: 3 }} key={module} justifyContent={'center'}>
+                    <Grid size={{ xs: 6, sm: 2 }} key={module} justifyContent={'center'}>
                         <Card>
                             <CardContent>
-                                <Typography variant="h6" component="div">
-                                    {module}
-                                </Typography>
+                                <p className='text-lg'>{module}</p>
                             </CardContent>
                             <CardActions>
                                 {activatedModules.includes(module) ? (

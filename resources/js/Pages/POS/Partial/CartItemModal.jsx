@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { IconButton, TextField,  Grid, Box, Alert } from "@mui/material";
+import { IconButton, TextField, Grid, Box, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -16,7 +16,7 @@ import { SharedContext } from "@/Context/SharedContext";
 import Commission from "../ProductTypes/Commission";
 
 export default function CartItemModal() {
-    const { return_sale, cart_first_focus } = usePage().props ?? {};
+    const { return_sale, cart_first_focus, misc_settings } = usePage().props ?? {};
     const [showCost, setShowCost] = useState(false);
     const handleClickShowCost = () => setShowCost((show) => !show);
     const focusInputRef = useRef(null);
@@ -28,6 +28,7 @@ export default function CartItemModal() {
         selectedCartItem,
         setSelectedCartItem,
     } = useContext(SharedContext);
+    
     const [formState, setFormState] = useState([]);
 
     const handleClose = () => {
@@ -475,72 +476,109 @@ export default function CartItemModal() {
                             </>
                         )}
                         {formState.product_type === "simple" && (
-
                             <>
-                                <Grid size={{ sm: 6, xs: 6, md: 4 }}>
-                                    <TextField
-                                        fullWidth
-                                        type="number"
-                                        name="discount"
-                                        label="Discount"
-                                        variant="outlined"
-                                        required
-                                        value={formState.discount}
-                                        onChange={handleInputChange}
-                                        inputRef={cart_first_focus === "discount" ? focusInputRef : undefined}
-                                        sx={{
-                                            mt: "0.5rem",
-                                            input: { fontSize: "1rem" },
-                                        }}
-                                        onFocus={(event) => {
-                                            event.target.select();
-                                        }}
-                                        slotProps={{
-                                            inputLabel: {
-                                                shrink: true,
-                                            },
-                                            input: {
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        Rs.
-                                                    </InputAdornment>
-                                                ),
-                                            },
-                                        }}
-                                    />
-                                </Grid>
+                                {misc_settings.enable_flat_item_discount === 'yes' && (
+                                    <Grid size={{ sm: 6, xs: 6, md: 4 }}>
+                                        <TextField
+                                            fullWidth
+                                            type="number"
+                                            name="flat_discount"
+                                            label="Flat Discount"
+                                            variant="outlined"
+                                            required
+                                            value={formState.flat_discount ?? 0}
+                                            onChange={handleInputChange}
+                                            sx={{
+                                                mt: "0.5rem",
+                                                input: { fontSize: "1rem" },
+                                            }}
+                                            onFocus={(event) => {
+                                                event.target.select();
+                                            }}
+                                            slotProps={{
+                                                inputLabel: {
+                                                    shrink: true,
+                                                },
+                                                input: {
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            Rs.
+                                                        </InputAdornment>
+                                                    ),
+                                                },
+                                            }}
+                                        />
+                                    </Grid>
+                                )}
 
-                                <Grid size={{ sm: 6, xs: 6, md: 4 }}>
-                                    <TextField
-                                        fullWidth
-                                        type="number"
-                                        name="discount_percentage"
-                                        label="Discount (%)"
-                                        variant="outlined"
-                                        required
-                                        value={formState.discount_percentage || 0}
-                                        onChange={handleInputChange}
-                                        sx={{
-                                            mt: "0.5rem",
-                                            input: { fontSize: "1rem" },
-                                        }}
-                                        onFocus={(event) => {
-                                            event.target.select();
-                                        }}
-                                        slotProps={{
-                                            inputLabel: {
-                                                shrink: true,
-                                            },
-                                            input: {
-                                                endAdornment: (
-                                                    <InputAdornment position="start">
-                                                        %
-                                                    </InputAdornment>
-                                                ),
-                                            },
-                                        }}
-                                    />
-                                </Grid>
+                                {misc_settings.enable_unit_discount === 'yes' && (
+                                    <>
+                                        <Grid size={{ sm: 6, xs: 6, md: 4 }}>
+                                            <TextField
+                                                fullWidth
+                                                type="number"
+                                                name="discount"
+                                                label="Unit Discount"
+                                                variant="outlined"
+                                                required
+                                                value={formState.discount}
+                                                onChange={handleInputChange}
+                                                inputRef={cart_first_focus === "discount" ? focusInputRef : undefined}
+                                                sx={{
+                                                    mt: "0.5rem",
+                                                    input: { fontSize: "1rem" },
+                                                }}
+                                                onFocus={(event) => {
+                                                    event.target.select();
+                                                }}
+                                                slotProps={{
+                                                    inputLabel: {
+                                                        shrink: true,
+                                                    },
+                                                    input: {
+                                                        startAdornment: (
+                                                            <InputAdornment position="start">
+                                                                Rs.
+                                                            </InputAdornment>
+                                                        ),
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+
+                                        <Grid size={{ sm: 6, xs: 6, md: 4 }}>
+                                            <TextField
+                                                fullWidth
+                                                type="number"
+                                                name="discount_percentage"
+                                                label="Unit Discount (%)"
+                                                variant="outlined"
+                                                required
+                                                value={formState.discount_percentage || 0}
+                                                onChange={handleInputChange}
+                                                sx={{
+                                                    mt: "0.5rem",
+                                                    input: { fontSize: "1rem" },
+                                                }}
+                                                onFocus={(event) => {
+                                                    event.target.select();
+                                                }}
+                                                slotProps={{
+                                                    inputLabel: {
+                                                        shrink: true,
+                                                    },
+                                                    input: {
+                                                        endAdornment: (
+                                                            <InputAdornment position="start">
+                                                                %
+                                                            </InputAdornment>
+                                                        ),
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+                                    </>
+                                )}
                             </>
                         )}
                         <Grid size={{ sm: 12, xs: 12, md: 4 }}>
@@ -611,7 +649,7 @@ export default function CartItemModal() {
                 </DialogContent>
                 <DialogActions>
                     <Grid container spacing={1} size={12} justifyContent={'center'} width={'100%'}>
-                        
+
 
                         {formState.quantity > 0 && (
                             <Grid size={{ xs: 6, sm: 6 }}>

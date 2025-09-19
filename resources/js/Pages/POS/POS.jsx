@@ -48,7 +48,6 @@ const DrawerFooter = styled("div")(({ theme }) => ({
     zIndex: "999",
 }));
 
-
 function POS({ products, customers, return_sale, categories, edit_sale, sale_data }) {
     const cartType = edit_sale ? 'sale_edit_cart' : (return_sale ? 'sales_return_cart' : 'sales_cart');
     const [mobileOpen, setMobileOpen] = useState(false);

@@ -93,6 +93,7 @@ const Template = () => {
                         size="large"
                         color="success"
                         onClick={handleSubmit}
+                        fullWidth
                     >
                         UPDATE
                     </Button>

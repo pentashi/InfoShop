@@ -3,18 +3,22 @@ import useCartBase from './useCartBase';
 
 const SalesContext = createContext();
 
-const SalesProvider = ({ children, cartType = 'sales_cart'}) => {
+const SalesProvider = ({ children, cartType = 'sales_cart' }) => {
 
   const { cartState, addToCart, removeFromCart, updateProductQuantity, emptyCart, updateCartItem, holdCart, setHeldCartToCart, removeHeldItem } = useCartBase(cartType);
 
   const { cartTotal, totalQuantity, totalProfit } = useMemo(() => {
     return cartState.reduce(
       (acc, item) => {
-        const quantity = parseFloat(item.quantity)
-        const cost = parseFloat(item.cost)
-        const discountedPrice = parseFloat(item.price) - parseFloat(item.discount);
-        const itemTotal = discountedPrice * quantity;
-        const itemProfit = (discountedPrice - cost) * quantity;
+        const quantity = Number(item.quantity)
+        const cost = Number(item.cost)
+        const unitPrice = Number(item.price);
+        const unitDiscount = Number(item.discount || 0);
+        const flatDiscount = Number(item.flat_discount || 0);
+
+        const discountedUnitPrice = unitPrice - unitDiscount;
+        const itemTotal = discountedUnitPrice * quantity - flatDiscount;
+        const itemProfit = (discountedUnitPrice - cost) * quantity - flatDiscount;
 
         acc.cartTotal += itemTotal;
         acc.totalQuantity += quantity;
@@ -27,24 +31,24 @@ const SalesProvider = ({ children, cartType = 'sales_cart'}) => {
   }, [cartState]);
 
   return (
-      <SalesContext.Provider
-          value={{
-              cartState,
-              cartTotal,
-              totalQuantity,
-              totalProfit,
-              addToCart,
-              removeFromCart,
-              updateProductQuantity,
-              emptyCart,
-              updateCartItem,
-              holdCart,
-              setHeldCartToCart,
-              removeHeldItem,
-          }}
-      >
-          {children}
-      </SalesContext.Provider>
+    <SalesContext.Provider
+      value={{
+        cartState,
+        cartTotal,
+        totalQuantity,
+        totalProfit,
+        addToCart,
+        removeFromCart,
+        updateProductQuantity,
+        emptyCart,
+        updateCartItem,
+        holdCart,
+        setHeldCartToCart,
+        removeHeldItem,
+      }}
+    >
+      {children}
+    </SalesContext.Provider>
   );
 };
 

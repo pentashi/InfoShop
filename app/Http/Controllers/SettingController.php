@@ -258,6 +258,8 @@ class SettingController extends Controller
                 'cheque_alert' => $request->input('cheque_alert'),
                 'product_alert' => $request->input('product_alert'),
                 'cart_first_focus' => $request->input('cart_first_focus'),
+                'enable_unit_discount' => $request->input('enable_unit_discount'),
+                'enable_flat_item_discount' => $request->input('enable_flat_item_discount'),
             ];
             $settingsData['misc_settings'] = json_encode($miscSettings);
         } 

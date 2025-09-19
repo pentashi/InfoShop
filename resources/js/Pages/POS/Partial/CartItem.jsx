@@ -100,7 +100,8 @@ export default function CartItems() {
                       <span className='bg-green-600 text-white px-2 py-1 rounded-md'>Free</span>
                     ) : (
                       <>
-                        Rs.{(item.price - item.discount).toFixed(2)} X {item.quantity} = <b>Rs.{numeral((item.price - item.discount) * item.quantity).format('0,0.00')}</b>
+                        {(item.price - item.discount).toFixed(2)} X {item.quantity} = <b>{numeral((item.price - item.discount) * item.quantity).format('0,0.00')} 
+                        {item.flat_discount > 0 && ' - '+numeral(item.flat_discount).format('0,0.00')}</b>
                       </>
                     )}
                     <br />

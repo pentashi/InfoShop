@@ -99,6 +99,7 @@ const TelegramSetting = ({ handleSubmit, settingFormData, handleChange, setSetti
                                     variant="outlined"
                                     size="large"
                                     color="success"
+                                    fullWidth
                                 >
                                     UPDATE
                                 </Button>

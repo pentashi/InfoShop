@@ -5,7 +5,6 @@ import { Head, Link, router } from '@inertiajs/react';
 import Grid from '@mui/material/Grid';
 import { Button, Box, TextField, IconButton, Alert, AlertTitle, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import FindReplaceIcon from "@mui/icons-material/FindReplace";
 import PrintIcon from "@mui/icons-material/Print";
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import numeral from 'numeral';
@@ -15,7 +14,13 @@ import CustomPagination from '@/Components/CustomPagination';
 import AddPaymentDialog from '@/Components/AddPaymentDialog';
 import PaymentsIcon from "@mui/icons-material/Payments";
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
-import { set } from 'lodash';
+
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import MobileContactsList from './Partial/MobileContactsList';
+
+import { syncPosProducts, getLocalPosProducts } from '@/localdb/pos_products';
+import { SalesProvider } from "@/Context/SalesContext";
 
 const columns = (handleRowClick) => [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -109,6 +114,9 @@ export default function Contact({ contacts, type, stores }) {
     const [dataContacts, setDataContacts] = useState(contacts);
     const [totalBalance, setTotalBalance] = useState(0);
 
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
     const [searchTerms, setSearchTerms] = useState({
         per_page: 100,
         search_query: "",
@@ -164,6 +172,13 @@ export default function Contact({ contacts, type, stores }) {
         }
     }, [dataContacts]);
 
+    useEffect(() => {
+        (async () => {
+            // sync fresh from API
+            const fresh = await syncPosProducts();
+        })();
+    }, [])
+
     return (
         <AuthenticatedLayout>
             {/* Capitalize first letter of type and add s at the end */}
@@ -176,10 +191,11 @@ export default function Contact({ contacts, type, stores }) {
                 sx={{ width: "100%" }}
             >
                 <Grid size={{ xs: 12, sm: 2, md: 3 }}>
-                    <Alert severity="error" icon={false}>
-                        <AlertTitle>Balance</AlertTitle>
-                        {numeral(totalBalance).format('0,00.00')}
-                    </Alert>
+                    <div className="bg-red-200 p-4 rounded text-red-950 text-sm">
+                        <div className="flex items-center justify-between">
+                            <div>Balance:</div> <div className="font-bold">{numeral(totalBalance).format('0,00.00')}</div>
+                        </div>
+                    </div>
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 10, md: 9 }} spacing={2} container justifyContent="end" alignItems={'center'} flexDirection={{ xs: 'column', sm: 'row' }}>
@@ -188,7 +204,7 @@ export default function Contact({ contacts, type, stores }) {
                             name="search_query"
                             label="Search"
                             variant="outlined"
-                            size="large"
+                            size="small"
                             value={searchTerms?.search_query}
                             onChange={(e) => setSearchTerms((prev) => ({ ...prev, search_query: e.target.value }))}
                             required
@@ -210,6 +226,7 @@ export default function Contact({ contacts, type, stores }) {
                             startIcon={<AddIcon />}
                             onClick={handleClickOpen}
                             fullWidth
+                            size="small"
                             color="success"
                         >
                             Add {type[0].toUpperCase() + type.slice(1)}
@@ -218,32 +235,41 @@ export default function Contact({ contacts, type, stores }) {
 
                 </Grid>
 
-                <Box
-                    className="py-6 w-full"
-                    sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 240px)", }}
-                >
-                    <DataGrid
-                        rows={dataContacts.data}
-                        columns={columns(handleRowClick)}
-                        getRowId={(row) => row.id}
-                        slotProps={{
-                            toolbar: {
-                                showQuickFilter: true,
-                            },
-                        }}
-                        initialState={{
-                            columns: {
-                                columnVisibilityModel: {
-                                    // Hide columns status and traderName, the other columns will remain visible
-                                    address: false,
-                                    email: false,
-                                    created_at: false,
+                {!isMobile && (
+                    <Box
+                        className="py-6 w-full"
+                        sx={{ display: "grid", gridTemplateColumns: "1fr", height: "calc(100vh - 240px)", }}
+                    >
+                        <DataGrid
+                            rows={dataContacts.data}
+                            columns={columns(handleRowClick)}
+                            getRowId={(row) => row.id}
+                            slotProps={{
+                                toolbar: {
+                                    showQuickFilter: true,
                                 },
-                            },
-                        }}
-                        hideFooter
-                    />
-                </Box>
+                            }}
+                            initialState={{
+                                columns: {
+                                    columnVisibilityModel: {
+                                        // Hide columns status and traderName, the other columns will remain visible
+                                        address: false,
+                                        email: false,
+                                        created_at: false,
+                                    },
+                                },
+                            }}
+                            hideFooter
+                        />
+                    </Box>
+                )}
+
+                {isMobile && (
+                    <SalesProvider cartType={'sales_cart'}>
+                        <MobileContactsList contacts={dataContacts.data} handleContactEdit={handleRowClick} />
+                    </SalesProvider>
+                )}
+
                 <Grid size={12} container justifyContent={"end"}>
                     <CustomPagination
                         refreshTable={refreshContacts}

@@ -12,7 +12,6 @@ import {
     Table, TableBody, TableRow, TableCell,
 } from "@mui/material";
 
-import CloseIcon from "@mui/icons-material/Close";
 import PercentIcon from '@mui/icons-material/Percent';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import CreditCardIcon from '@mui/icons-material/CreditCard';

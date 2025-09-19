@@ -135,7 +135,12 @@ export default function SoldItem({ sold_items, contacts }) {
         );
     };
 
-    useEffect(() => {
+    const [initialized, setInitialized] = useState(false); //To avoid re fetch data on page load
+        useEffect(() => {
+            if (!initialized) {
+                setInitialized(true);
+                return; // Skip first run
+            }
         refreshSoldItems(window.location.pathname);
     }, [searchTerms]);
 

@@ -166,6 +166,7 @@ const MailSetting = ({ handleSubmit, settingFormData, handleChange, setSettingFo
                             variant="outlined"
                             size="large"
                             color="success"
+                            fullWidth
                         >
                             UPDATE
                         </Button>

@@ -30,6 +30,7 @@ export default function CashCheckoutDialog({ disabled }) {
 
     const [discount, setDiscount] = useState(0);
     const [amountReceived, setAmountReceived] = useState(0);
+    const isMobile = window.innerWidth < 768;
 
     const handleDiscountChange = (event) => {
         const inputDiscount = event.target.value;
@@ -138,6 +139,7 @@ export default function CashCheckoutDialog({ disabled }) {
                     component: 'form',
                     onSubmit: handleSubmit,
                 }}
+                fullScreen={isMobile}
             >
                 <DialogTitle id="alert-dialog-title">
                     {"Cash Checkout"}

@@ -129,6 +129,8 @@ class SaleController extends Controller
             'sale_items.quantity',
             'sale_items.unit_price',
             'sale_items.discount',
+            'sale_items.flat_discount',
+            'sale_items.free_quantity',
             'products.name',
             DB::raw("CASE 
                 WHEN products.product_type = 'reload' 
@@ -163,11 +165,13 @@ class SaleController extends Controller
             'sale_items.unit_price',
             'sale_items.unit_cost',
             'sale_items.discount',
+            'sale_items.flat_discount',
             'products.name as product_name',
             'products.barcode',
             'sales.sale_date',
             'contacts.name as contact_name',
             'contacts.balance',
+
             DB::raw('((unit_price - sale_items.discount - unit_cost) * sale_items.quantity) as profit'),
         )
             ->join('products', 'sale_items.product_id', '=', 'products.id')
@@ -208,10 +212,11 @@ class SaleController extends Controller
         return $results;
     }
 
-    public function soldItemSummary(Request $request){
+    public function soldItemSummary(Request $request)
+    {
         $filters = $request->only(['start_date', 'end_date']);
 
-        if(empty($filters['start_date']) && empty($filters['end_date'])){
+        if (empty($filters['start_date']) && empty($filters['end_date'])) {
             $filters['start_date'] = date('Y-m-d');
             $filters['end_date'] = date('Y-m-d');
         }
@@ -219,8 +224,8 @@ class SaleController extends Controller
         $soldItems = SaleItem::with('product')->select('product_id', DB::raw('sum(quantity) as total_quantity'))
             ->groupBy('product_id');
 
-        if(!empty($filters['start_date']) && !empty($filters['end_date'])){
-            $soldItems=$soldItems->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $soldItems = $soldItems->whereBetween('sale_date', [$filters['start_date'], $filters['end_date']]);
         }
         $soldItems = $soldItems->get();
         return Inertia::render('SoldItem/SoldItemSummary', [
@@ -448,6 +453,7 @@ class SaleController extends Controller
         return response()->json(['success' => 'Notification sent successfully'], 200);
     }
 
+    // api: /api/receipt-text-raw/{id}
     public function apiReceipt(Request $request, $id)
     {
         $settings = Setting::all();
@@ -459,6 +465,7 @@ class SaleController extends Controller
             'sales.id',
             'contact_id',
             'sale_date',
+            'sales.created_at',
             'total_amount',
             'discount',
             'amount_received',
@@ -485,6 +492,8 @@ class SaleController extends Controller
             'sale_items.quantity',
             'sale_items.unit_price',
             'sale_items.discount',
+            'sale_items.flat_discount',
+            'sale_items.free_quantity',
             'products.name as product_name',
             DB::raw("CASE 
             WHEN products.product_type = 'reload' 
@@ -500,6 +509,31 @@ class SaleController extends Controller
             ->where('sale_items.sale_id', $id)
             ->get();
 
+        // $text = $this->rawReceiptProductLineTemplate($sale, $user, $saleItems, $settingArray);
+        $text = $this->rawReceiptProductSidedTemplate($sale, $user, $saleItems, $settingArray);
+
+        if ($isJson) {
+            return response()->json([
+                'sale' => $sale,
+                'siteLogo' => $settingArray['shop_logo'],
+                'rawText' => $text,
+            ], 200);
+        }
+
+        return response($text, 200)
+            ->header('Content-Type', 'text/plain');
+    }
+
+    function formatQuantity($quantity)
+    {
+        if (fmod($quantity, 1) !== 0.0) {
+            return number_format($quantity, 2);
+        }
+        return (int) $quantity;
+    }
+
+    public function rawReceiptProductLineTemplate($sale, $user, $saleItems, $settingArray)
+    {
         $lineWidth  = 44;
         $lineSep    = str_repeat("-", $lineWidth) . "\r\n";
         $itemSep    = str_repeat(".", $lineWidth) . "\r\n";
@@ -514,7 +548,7 @@ class SaleController extends Controller
 
         $text  = $lineSep;
         $text .= "Sale: " . $sale->sale_prefix . "/" . $sale->invoice_number . "\r\n";
-        $text .= "Date: " . date('d-m-Y h:i A', strtotime($sale->sale_date)) . "\r\n";
+        $text .= "Date: " . date('d-m-Y h:i A', strtotime($sale->created_at)) . "\r\n";
         $text .= "Client: " . $sale->client_name . "\r\n";
         $text .= "Created By: " . ($user ? $user->name : '-') . "\r\n";
         $text .= $lineSep;
@@ -552,22 +586,87 @@ class SaleController extends Controller
         }
 
         $text .= $lineSep;
-        $text .= str_pad("Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount + $sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Discount:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Paid:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
         $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
         $text .= $settingArray['sale_receipt_note'] . "\r\n\n";
 
-        if ($isJson) {
-            return response()->json([
-                'sale' => $sale,
-                'siteLogo' => $settingArray['shop_logo'],
-                'rawText' => $text,
-            ], 200);
+        return $text;
+    }
+    public function rawReceiptProductSidedTemplate($sale, $user, $saleItems, $settingArray)
+    {
+        $lineWidth = 48;
+        $lineSep = str_repeat("-", $lineWidth) . "\r\n";
+        $itemSep = str_repeat(".", $lineWidth) . "\r\n";
+
+        // Define fixed column widths
+        $colQty     = 10;   // "999x"
+        $colUnit    = 12;  // unit price
+        $colTotal   = 18;  // line total
+
+        $summaryPad = 24;
+        $text = $lineSep;
+        $text .= "Sale: " . $sale->sale_prefix . "/" . $sale->invoice_number . "\r\n";
+        $text .= "Date: " . date('d-m-Y h:i A', strtotime($sale->created_at)) . "\r\n";
+        $text .= "Client: " . $sale->client_name . "\r\n";
+        $text .= "Created By: " . ($user ? $user->name : '-') . "\r\n";
+        $text .= $lineSep;
+
+        foreach ($saleItems as $index => $item) {
+            $productName = $item->product_name;
+            if ($item->account_number) {
+                $productName .= " (Acc:" . $item->account_number . ")";
+            }
+
+            $unit  = number_format($item->unit_price, 2);
+            $disc = ($item->discount*$item->quantity)+$item->flat_discount;
+            $total = number_format(($item->unit_price * $item->quantity) - $disc, 2);
+
+            // Calculate space for product name (everything before the 'Total' column)
+            $spaceBeforeTotal = $lineWidth - $colTotal;
+            $prefix = '#' . str_pad(($index + 1) . '.', 2, '0', STR_PAD_LEFT) . ' ';
+
+            // Wrap product name to fit available width
+            $lines = [];
+            $words = explode(' ', $productName);
+            $currentLine = $prefix;
+            foreach ($words as $word) {
+                if (strlen($currentLine . $word) + 1 > $spaceBeforeTotal) {
+                    $lines[] = $currentLine;
+                    $currentLine = '   ' . $word; // indent wrapped lines
+                } else {
+                    $currentLine .= ($currentLine === $prefix ? '' : ' ') . $word;
+                }
+            }
+            $lines[] = $currentLine;
+
+            // Add wrapped product name lines
+            foreach ($lines as $line) {
+                $text .= $line . "\r\n";
+            }
+
+            // Line 2 → aligned columns
+            $lineQty   = str_pad('   ' . $item->quantity . ($item->free_quantity ? '+[Free: ' . $this->formatQuantity($item->free_quantity) . ']' : ''), $colQty, " ", STR_PAD_BOTH);
+            $lineUnit  = str_pad($unit, $colUnit, " ", STR_PAD_LEFT);
+            $lineTotal = ($disc == 0) ? str_pad($total, $colTotal, " ", STR_PAD_LEFT) : str_pad('(' . ($disc)*-1 . ') ' . $total, $colTotal, " ", STR_PAD_LEFT);
+
+            $text .= $lineUnit .$lineQty. $lineTotal . "\r\n";
+
+            if ($index < count($saleItems) - 1) {
+                $text .= $itemSep;
+            }
         }
 
-        return response($text, 200)
-            ->header('Content-Type', 'text/plain');
+        $text .= $lineSep;
+        $text .= str_pad("Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount + $sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Discount:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->discount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Net Total:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Paid:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received, 2), 20, " ", STR_PAD_LEFT) . "\r\n";
+        $text .= str_pad("Change:", $summaryPad, " ", STR_PAD_RIGHT) . str_pad(number_format($sale->amount_received - $sale->total_amount, 2), 20, " ", STR_PAD_LEFT) . "\r\n\n";
+        $text .= $settingArray['sale_receipt_note'] . "\r\n\n";
+
+        return $text;
     }
 }

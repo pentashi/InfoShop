@@ -181,7 +181,7 @@ export default function Setting({ settings }) {
         const submittedFormData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(submittedFormData.entries());
 
-        if(formJson.setting_type === 'barcode') {
+        if (formJson.setting_type === 'barcode') {
             const barcodeSettingsObject = Object.fromEntries(barcodeSettings);
             formJson.barcodeSettings = JSON.stringify(barcodeSettingsObject);
         }
@@ -217,8 +217,14 @@ export default function Setting({ settings }) {
         <AuthenticatedLayout>
             <Head title="Settings" />
             <Box component="div">
-                <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                    <Tabs value={tabValue} onChange={handleTabChange} centered>
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        maxWidth: { xs: 350, sm: '100%' },
+                        bgcolor: 'background.paper',
+                    }}
+                >
+                    <Tabs value={tabValue} onChange={handleTabChange} centered variant="scrollable" scrollButtons="auto">
                         <Tab label="SHOP" />
                         <Tab label="RECEIPT" />
                         <Tab label="BARCODE" />
@@ -226,7 +232,7 @@ export default function Setting({ settings }) {
                         <Tab label="MODULES" />
                         <Tab label="TEMPLATES" />
                         <Tab label="MAIL" />
-                        <Tab label="TELEGRAM"/>
+                        <Tab label="TELEGRAM" />
                         <Tab label="LOYALTY" />
                     </Tabs>
                 </Box>
@@ -249,13 +255,11 @@ export default function Setting({ settings }) {
                         >
                             <Grid
                                 container
-                                spacing={2}
                                 width={{ xs: "100%", sm: "60%" }}
                             >
-                                <Grid container size={12} spacing={2}>
-                                    <Paper sx={{ padding: {xs:'0.5rem', sm:"1rem"}, marginBottom: "1rem", width:'100%' }}>
-                                        <Grid size={12} container spacing={2}>
-                                            <Grid size={{xs: 12, sm: 6}}>
+                                <Paper sx={{ padding: { xs: '0.5rem', sm: "1rem" }, marginBottom: "1rem", width: '100%' }}>
+                                    <Grid size={12} container spacing={2}>
+                                        <Grid size={{ xs: 12, sm: 6 }}>
                                             <Card>
                                                 <CardMedia
                                                     sx={{
@@ -287,9 +291,9 @@ export default function Setting({ settings }) {
                                                     </Button>
                                                 </CardActions>
                                             </Card>
-                                            </Grid>
+                                        </Grid>
 
-                                            <Grid size={{xs: 12, sm: 6}}>
+                                        <Grid size={{ xs: 12, sm: 6 }}>
                                             <Card>
                                                 <CardMedia
                                                     sx={{
@@ -324,23 +328,20 @@ export default function Setting({ settings }) {
                                         </Grid>
 
                                         <Grid size={12}>
-                                        <TextField
-                                            fullWidth
-                                            variant="outlined"
-                                            label={"Shop name"}
-                                            name="shop_name"
-                                            multiline
-                                            required
-                                            sx={{ mt: "2rem" }}
-                                            value={settingFormData.shop_name}
-                                            onChange={handleChange}
-                                        />
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Shop name"}
+                                                name="shop_name"
+                                                multiline
+                                                required
+                                                sx={{ mt: "2rem" }}
+                                                value={settingFormData.shop_name}
+                                                onChange={handleChange}
+                                            />
                                         </Grid>
-                                        </Grid>
-                                        
-                                        
-                                    </Paper>
-                                </Grid>
+                                    </Grid>
+                                </Paper>
                                 <Grid
                                     size={12}
                                     justifyContent={"end"}
@@ -351,6 +352,7 @@ export default function Setting({ settings }) {
                                         variant="outlined"
                                         size="large"
                                         color="success"
+                                        fullWidth
                                     >
                                         UPDATE
                                     </Button>
@@ -381,103 +383,101 @@ export default function Setting({ settings }) {
                                 spacing={2}
                                 width={{ xs: "100%", sm: "60%" }}
                             >
-                                <Grid size={12}>
-                                    <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-                                        <Grid
-                                            container
-                                            sx={{
-                                                display: "flex",
-                                                width: "100%",
-                                            }}
-                                            spacing={3}
-                                        >
-                                            <Grid size={12}>
-                                                <TextField
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    label={"Receipt note"}
-                                                    name="sale_receipt_note"
-                                                    multiline
-                                                    required
-                                                    value={settingFormData.sale_receipt_note}
-                                                    onChange={handleChange}
-                                                />
-                                            </Grid>
-                                            <Grid size={12}>
-                                                <TextField
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    label={"Second note"}
-                                                    name="sale_receipt_second_note"
-                                                    multiline
-                                                    value={settingFormData.sale_receipt_second_note}
-                                                    onChange={handleChange}
-                                                />
-                                            </Grid>
-                                            <Grid size={12}>
-                                                <TextField
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    label={"Show shopname"}
-                                                    name="show_receipt_shop_name"
-                                                    multiline
-                                                    required
-                                                    value={settingFormData.show_receipt_shop_name}
-                                                    onChange={handleChange}
-                                                    select
-                                                >
-                                                    <MenuItem value={1}>Show</MenuItem>
-                                                    <MenuItem value={0}>Hide</MenuItem>
-                                                </TextField>
-                                            </Grid>
-                                            <Grid size={3}>
-                                                <TextField
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    label={"Padding Right"}
-                                                    name="sale_print_padding_right"
-                                                    multiline
-                                                    required
-                                                    value={settingFormData.sale_print_padding_right}
-                                                    onChange={handleChange}
-                                                />
-                                            </Grid>
-                                            <Grid size={3}>
-                                                <TextField
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    label={"Padding Left"}
-                                                    name="sale_print_padding_left"
-                                                    multiline
-                                                    required
-                                                    value={settingFormData.sale_print_padding_left}
-                                                    onChange={handleChange}
-                                                />
-                                            </Grid>
-                                            <Grid size={6}>
-                                                <TextField
-                                                    fullWidth
-                                                    name="sale_print_font"
-                                                    label="Choose Font for Receipt"
-                                                    value={settingFormData.sale_print_font}
-                                                    onChange={handleFontChange}
-                                                    select
-                                                >
-                                                    {fontOptions.map((option) => (
-                                                        <MenuItem
-                                                            key={option.fontFamily}
-                                                            value={option.fontFamily}
-                                                        >
-                                                            <Typography style={{ fontFamily: option.fontFamily }}>
-                                                                {option.label}
-                                                            </Typography>
-                                                        </MenuItem>
-                                                    ))}
-                                                </TextField>
-                                            </Grid>
+                                <Paper elevation={3} sx={{ padding: 3, marginBottom: 2 }}>
+                                    <Grid
+                                        container
+                                        sx={{
+                                            display: "flex",
+                                            width: "100%",
+                                        }}
+                                        spacing={2}
+                                    >
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Receipt note"}
+                                                name="sale_receipt_note"
+                                                multiline
+                                                required
+                                                value={settingFormData.sale_receipt_note}
+                                                onChange={handleChange}
+                                            />
                                         </Grid>
-                                    </Paper>
-                                </Grid>
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Second note"}
+                                                name="sale_receipt_second_note"
+                                                multiline
+                                                value={settingFormData.sale_receipt_second_note}
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={12}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Show shopname"}
+                                                name="show_receipt_shop_name"
+                                                multiline
+                                                required
+                                                value={settingFormData.show_receipt_shop_name}
+                                                onChange={handleChange}
+                                                select
+                                            >
+                                                <MenuItem value={1}>Show</MenuItem>
+                                                <MenuItem value={0}>Hide</MenuItem>
+                                            </TextField>
+                                        </Grid>
+                                        <Grid size={{xs:6, sm:3}}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Padding Right"}
+                                                name="sale_print_padding_right"
+                                                multiline
+                                                required
+                                                value={settingFormData.sale_print_padding_right}
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={{xs:6, sm:3}}>
+                                            <TextField
+                                                fullWidth
+                                                variant="outlined"
+                                                label={"Padding Left"}
+                                                name="sale_print_padding_left"
+                                                multiline
+                                                required
+                                                value={settingFormData.sale_print_padding_left}
+                                                onChange={handleChange}
+                                            />
+                                        </Grid>
+                                        <Grid size={{xs:12, sm:6}}>
+                                            <TextField
+                                                fullWidth
+                                                name="sale_print_font"
+                                                label="Choose Font for Receipt"
+                                                value={settingFormData.sale_print_font}
+                                                onChange={handleFontChange}
+                                                select
+                                            >
+                                                {fontOptions.map((option) => (
+                                                    <MenuItem
+                                                        key={option.fontFamily}
+                                                        value={option.fontFamily}
+                                                    >
+                                                        <Typography style={{ fontFamily: option.fontFamily }}>
+                                                            {option.label}
+                                                        </Typography>
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
                                 <Grid
                                     size={12}
                                     justifyContent={"end"}
@@ -488,6 +488,7 @@ export default function Setting({ settings }) {
                                         variant="outlined"
                                         size="large"
                                         color="success"
+                                        fullWidth
                                     >
                                         UPDATE
                                     </Button>
@@ -592,6 +593,7 @@ export default function Setting({ settings }) {
                                         variant="outlined"
                                         size="large"
                                         color="success"
+                                        fullWidth
                                     >
                                         UPDATE
                                     </Button>
@@ -602,22 +604,22 @@ export default function Setting({ settings }) {
                 </TabPanel>
 
                 <TabPanel value={tabValue} index={3}>
-                  <MiscSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                    <MiscSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={4}>
-                  <ModuleSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                    <ModuleSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={5}>
-                  <Template/>
+                    <Template />
                 </TabPanel>
                 <TabPanel value={tabValue} index={6}>
-                  <MailSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                    <MailSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={7}>
-                  <TelegramSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                    <TelegramSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={8}>
-                  <LoyaltyPointsSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings}/>
+                    <LoyaltyPointsSetting handleSubmit={handleSubmit} settingFormData={settingFormData} handleChange={handleChange} setSettingFormData={setSettingFormData} settings={settings} />
                 </TabPanel>
             </Box>
         </AuthenticatedLayout>

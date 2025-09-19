@@ -97,6 +97,7 @@ const LoyaltyPointsSetting = ({ handleSubmit, settingFormData, handleChange, set
                                     variant="outlined"
                                     size="large"
                                     color="success"
+                                    fullWidth
                                 >
                                     UPDATE
                                 </Button>
