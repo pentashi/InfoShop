@@ -161,7 +161,7 @@ export default function AddPaymentDialog({
                                     input: {
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                     },

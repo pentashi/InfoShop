@@ -294,7 +294,7 @@ export default function CartItemModal() {
                                     input: {
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                     },
@@ -332,7 +332,7 @@ export default function CartItemModal() {
                                         input: {
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    Rs.
+                                                    CFA.
                                                 </InputAdornment>
                                             ),
                                         },
@@ -366,7 +366,7 @@ export default function CartItemModal() {
                                         input: {
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    Rs.
+                                                    CFA.
                                                 </InputAdornment>
                                             ),
                                         },
@@ -433,7 +433,7 @@ export default function CartItemModal() {
                                             input: {
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        Rs.
+                                                        CFA.
                                                     </InputAdornment>
                                                 ),
                                                 readOnly: true,
@@ -465,7 +465,7 @@ export default function CartItemModal() {
                                             input: {
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        Rs.
+                                                        CFA.
                                                     </InputAdornment>
                                                 ),
                                                 readOnly: true,
@@ -502,7 +502,7 @@ export default function CartItemModal() {
                                                 input: {
                                                     startAdornment: (
                                                         <InputAdornment position="start">
-                                                            Rs.
+                                                            CFA.
                                                         </InputAdornment>
                                                     ),
                                                 },
@@ -538,7 +538,7 @@ export default function CartItemModal() {
                                                     input: {
                                                         startAdornment: (
                                                             <InputAdornment position="start">
-                                                                Rs.
+                                                                CFA.
                                                             </InputAdornment>
                                                         ),
                                                     },
@@ -614,7 +614,7 @@ export default function CartItemModal() {
                                             formState.product_type === "reload", //Make cost un editable if reload enabled
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                         endAdornment: (

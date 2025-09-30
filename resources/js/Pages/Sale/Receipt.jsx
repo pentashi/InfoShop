@@ -519,7 +519,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.
+                                                    CFA.
                                                     {numeral(parseFloat(sale.total_amount) + parseFloat(sale.discount)).format("0,0.00")}
                                                 </Typography>
                                             </TableCell>
@@ -554,7 +554,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                         }
                                                         color="initial"
                                                     >
-                                                        Rs.
+                                                        CFA.
                                                         {numeral(
                                                             sale.discount
                                                         ).format("0,0.00")}
@@ -591,7 +591,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.
+                                                    CFA.
                                                     {numeral(
                                                         sale.total_amount
                                                     ).format("0,0.00")}
@@ -627,7 +627,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.
+                                                    CFA.
                                                     {numeral(
                                                         sale.amount_received
                                                     ).format("0,0.00")}
@@ -662,7 +662,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                     }
                                                     color="initial"
                                                 >
-                                                    Rs.
+                                                    CFA.
                                                     {numeral(
                                                         parseFloat(
                                                             sale.amount_received
@@ -702,7 +702,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             sx={styles.receiptSummaryTyp}
                                                             color="initial"
                                                         >
-                                                            Rs.{numeral(
+                                                            CFA.{numeral(
                                                                 parseFloat(sale.balance) -
                                                                 (parseFloat(sale.amount_received) -
                                                                     parseFloat(sale.total_amount))
@@ -734,7 +734,7 @@ export default function Receipt({ sale, salesItems, settings, user_name, credit_
                                                             sx={styles.receiptSummaryTyp}
                                                             color="initial"
                                                         >
-                                                            Rs.{numeral(sale.balance).format("0,0.00")}
+                                                            CFA.{numeral(sale.balance).format("0,0.00")}
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>

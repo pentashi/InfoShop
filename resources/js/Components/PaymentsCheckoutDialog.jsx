@@ -223,7 +223,7 @@ export default function PaymentsCheckoutDialog({
                                     input: {
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                         endAdornment: (
@@ -259,7 +259,7 @@ export default function PaymentsCheckoutDialog({
                                     input: {
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                         readOnly: true,
@@ -292,7 +292,7 @@ export default function PaymentsCheckoutDialog({
                                         input: {
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    Rs.
+                                                    CFA.
                                                 </InputAdornment>
                                             ),
                                         },
@@ -373,7 +373,7 @@ export default function PaymentsCheckoutDialog({
 
                                     {/* Display Payment Amount */}
                                     <TableCell align="right">
-                                        <strong>Rs. {(payment.amount).toFixed(2)}</strong>
+                                        <strong>CFA. {(payment.amount).toFixed(2)}</strong>
                                     </TableCell>
 
                                     {/* Action Button to delete payment */}

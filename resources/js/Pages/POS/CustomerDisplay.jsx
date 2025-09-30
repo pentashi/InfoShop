@@ -49,7 +49,7 @@ const CartComponent = () => {
                             {item.name} | Qty.{item.quantity}
                         </Typography>
                         <Typography variant="h4" color="initial">
-                         <b>RS.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
+                         <b>CFA.{((item.price-item.discount) * item.quantity).toFixed(2)}</b>
                         </Typography>
                     </Item>
                 ))}
@@ -58,7 +58,7 @@ const CartComponent = () => {
                         <strong>Total</strong>
                     </Typography>
                     <Typography variant="h4" color="initial">
-                    <strong>Rs.{(cartTotal).toFixed(2)}</strong>
+                    <strong>CFA.{(cartTotal).toFixed(2)}</strong>
                     </Typography>
                 </Item>
             </Stack>

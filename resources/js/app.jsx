@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { PurchaseProvider } from './Context/PurchaseContext';
 import { SharedProvider } from './Context/SharedContext';
+import { ThemeProvider } from './Context/ThemeContext';
 
 const appName = import.meta.env.VITE_APP_NAME || 'InfoShop';
 
@@ -26,16 +27,14 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <PurchaseProvider>
-                <SharedProvider>
-                    <App {...props} />
-                </SharedProvider>
-            </PurchaseProvider>
+            <ThemeProvider>
+                <PurchaseProvider>
+                    <SharedProvider>
+                        <App {...props} />
+                    </SharedProvider>
+                </PurchaseProvider>
+            </ThemeProvider>
         );
     },
-    // progress: {
-    //     color: '#00c455',
-    //     showSpinner: true,
-    // },
     progress: false,
 });

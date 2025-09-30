@@ -91,7 +91,7 @@ const Catalog = ({ open, id, onClose }) => {
                                         <li key={product.id + product.batch_number} className="p-2 w-full shadow-sm">
                                             <div className="flex justify-between items-start">
                                                 <div className="uppercase tracking-wide text-sm text-blue-900 font-semibold">
-                                                    {product.name} Rs. {product.price}
+                                                    {product.name} CFA. {product.price}
                                                 </div>
                                                 <div className="flex ml-2">
                                                     {numeral(product.stock_quantity).format("0,0")}

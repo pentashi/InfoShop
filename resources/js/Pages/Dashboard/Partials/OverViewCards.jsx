@@ -38,7 +38,7 @@ export function OverViewCards() {
                             <ChartLine />
                         </CardHeader>
                         <CardContent>
-                            <div className='text-2xl font-bold'>Rs. {data.totalValuation}</div>
+                            <div className='text-2xl font-bold'>CFA. {data.totalValuation}</div>
                             {/* <p className='text-muted-foreground text-xs'>
                         +180.1% from last month
                     </p> */}
@@ -64,7 +64,7 @@ export function OverViewCards() {
                             <User />
                         </CardHeader>
                         <CardContent>
-                            <div className='text-2xl font-bold'>Rs. {data.customerBalance}</div>
+                            <div className='text-2xl font-bold'>CFA. {data.customerBalance}</div>
                             {/* <p className='text-muted-foreground text-xs'>
                         +201 since last hour
                     </p> */}

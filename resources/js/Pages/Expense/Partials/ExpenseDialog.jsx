@@ -123,7 +123,7 @@ export default function ExpenseDialog({
                                     input: {
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                Rs.
+                                                CFA.
                                             </InputAdornment>
                                         ),
                                     },

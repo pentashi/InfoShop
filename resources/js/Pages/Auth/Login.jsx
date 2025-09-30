@@ -1,10 +1,7 @@
-
 import Checkbox from '@mui/material/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 import infomaxlogo from '@/Infomax-logo.png';
 import infoshopLogo from '@/infoshop.png';
@@ -18,7 +15,6 @@ export default function Login({ status, canResetPassword, version }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('login'), {
             onFinish: () => reset('password'),
         });
@@ -28,77 +24,91 @@ export default function Login({ status, canResetPassword, version }) {
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+                <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+                    <div className="flex justify-center mb-6 space-x-4">
+                        {/* <img src={infomaxlogo} alt="Infomax" className="h-12 object-contain" /> */}
+                        <img src={infoshopLogo} alt="achapishop" className="h-12 object-contain" />
+                    </div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email or User name" />
+                    <h2 className="text-center text-2xl font-bold text-gray-800 mb-6">
+                        Welcome Back
+                    </h2>
 
-                    <TextInput
-                        id="email"
-                        type="text"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full p-3 border"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full p-3 border"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="block mt-4">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
-                        />
-                        <span className="ms-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Forgot your password?
-                        </Link>
+                    {status && (
+                        <div className="mb-4 text-sm font-medium text-green-600 bg-green-50 p-2 rounded-md text-center">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-            <div className="divide-y divide-gray-300 divde-solid">
-            <div className="text-center py-2"></div>
-            <div className="text-center py-3 text-gray-400 uppercase">info shop version {version} <br></br> Developed by: infomax </div>
-            </div>
+                    <form onSubmit={submit} className="space-y-5">
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email or Username
+                            </label>
+                            <input
+                                id="email"
+                                type="text"
+                                name="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3"
+                                autoComplete="username"
+                                autoFocus
+                            />
+                            <InputError message={errors.email} className="mt-2" />
+                        </div>
 
-            <div className='flex justify-center'>
-            <img src={infomaxlogo} alt="" style={{height:'60px', objectFit:'contain'}}/>
-                <img src={infoshopLogo} alt="" style={{height:'60px', objectFit:'contain'}}/>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Password
+                            </label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3"
+                                autoComplete="current-password"
+                            />
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <label className="flex items-center">
+                                <Checkbox
+                                    name="remember"
+                                    checked={data.remember}
+                                    onChange={(e) => setData('remember', e.target.checked)}
+                                    sx={{ padding: '0 6px 0 0' }}
+                                />
+                                <span className="ml-1 text-sm text-gray-600">Remember me</span>
+                            </label>
+
+                            {canResetPassword && (
+                                <Link
+                                    href={route('password.request')}
+                                    className="text-sm text-indigo-600 hover:text-indigo-800"
+                                >
+                                    Forgot password?
+                                </Link>
+                            )}
+                        </div>
+
+                        <PrimaryButton
+                            className="w-full justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg py-3"
+                            disabled={processing}
+                        >
+                            Log in
+                        </PrimaryButton>
+                    </form>
+
+                    <div className="mt-8 text-center text-xs text-gray-400">
+                         Developed by Mbongwe Brandon Egbe
+                    </div>
+                </div>
             </div>
-            
         </GuestLayout>
     );
 }

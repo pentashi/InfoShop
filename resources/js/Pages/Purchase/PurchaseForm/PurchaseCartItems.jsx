@@ -67,7 +67,7 @@ export default function PurchaseCartItems() {
                             <strong>Total Cost Amount:</strong>
                         </TableCell>
                         <TableCell>
-                            <strong>Rs.{cartTotal.toFixed(2)}</strong>
+                            <strong>CFA.{cartTotal.toFixed(2)}</strong>
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -75,7 +75,7 @@ export default function PurchaseCartItems() {
                             <strong>Total Profit Amount:</strong>
                         </TableCell>
                         <TableCell>
-                            <strong>Rs.{totalProfit.toFixed(2)}</strong>
+                            <strong>CFA.{totalProfit.toFixed(2)}</strong>
                         </TableCell>
                     </TableRow>
                     <TableRow>
