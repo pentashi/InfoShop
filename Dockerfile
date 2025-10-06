@@ -1,5 +1,5 @@
 # --------------------------
-# Base image with PHP 8.3
+# Base image with PHP 8.3 and FPM
 # --------------------------
 FROM php:8.3-fpm
 
@@ -23,12 +23,14 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client \
     build-essential \
     python3 \
+    nginx \
+    supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # --------------------------
-# Install Node.js & npm (latest stable)
+# Install Node.js & npm
 # --------------------------
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
@@ -40,7 +42,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # --------------------------
-# Copy only dependency files first for caching
+# Copy dependency files first for caching
 # --------------------------
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
@@ -59,7 +61,21 @@ COPY . .
 RUN npm run build
 
 # --------------------------
-# Expose port and start server
+# Configure Nginx
 # --------------------------
-EXPOSE 8000
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+RUN rm /etc/nginx/sites-enabled/default
+COPY ./nginx/default.conf /etc/nginx/conf.d/
+
+# --------------------------
+# Set permissions
+# --------------------------
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# --------------------------
+# Expose port and start services
+# --------------------------
+EXPOSE 80
+
+# Use Supervisor to run PHP-FPM and Nginx together
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
